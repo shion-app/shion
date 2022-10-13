@@ -1,0 +1,16 @@
+{
+  "name": "shion",
+  "private": true,
+  "version": "0.1.0",
+  "author": {
+    "name": "hanaTsuk1"
+  },
+  "scripts": {
+    "dev": "node scripts/wails dev",
+    "build": "node scripts/wails build",
+    "build:nsis": "node scripts/wails build -n"
+  },
+  "devDependencies": {
+    "commander": "^9.4.1"
+  }
+}
