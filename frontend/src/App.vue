@@ -58,7 +58,7 @@ function count() {
 }
 </script>
 
-<template>
+<!-- <template>
   <div>{{ clock }}</div>
   <button v-show="!isStart" @click="start" btn bg-green>开始</button>
   <button
@@ -70,6 +70,10 @@ function count() {
     {{ isPause ? "继续" : "暂停" }}
   </button>
   <button v-show="isStart" btn bg-red @click="finish">结束</button>
+</template> -->
+
+<template>
+  <RouterView />
 </template>
 
 <style></style>

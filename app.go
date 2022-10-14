@@ -2,17 +2,21 @@ package main
 
 import (
 	"context"
-	"fmt"
+
+	"go.etcd.io/bbolt"
 )
 
 // App struct
 type App struct {
 	ctx context.Context
+	db  bbolt.DB
 }
 
 // NewApp creates a new App application struct
-func NewApp() *App {
-	return &App{}
+func NewApp(db *bbolt.DB) *App {
+	return &App{
+		db: *db,
+	}
 }
 
 // startup is called when the app starts. The context is saved
@@ -21,7 +25,18 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
+func (a *App) InsertTime(name string) {
+	insertTime(&a.db, name)
 }
+
+func (a *App) SelectAllTime() []Time {
+	return selectAllTime(&a.db)
+}
+
+// func (a *App) InsertTimeItem(timeId int, collection []int) {
+// 	insertTimeItem(&a.db, timeId, collection)
+// }
+
+// func (a *App) SelectAllTimeItem(timeId int) []TimeItem {
+// 	return selectAllTimeItem(&a.db, timeId)
+// }

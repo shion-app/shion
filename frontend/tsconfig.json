@@ -14,7 +14,7 @@
       "DOM"
     ],
     "skipLibCheck": true,
-    "types": ["vite/client", "vue/ref-macros"]
+    "types": ["vite/client", "vue/ref-macros", "vite-plugin-pages/client"]
   },
   "include": [
     "src/**/*.ts",

@@ -3,6 +3,7 @@ import vue from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/vite";
 import Unocss from "unocss/vite";
 import { presetAttributify, presetUno } from "unocss";
+import Pages from "vite-plugin-pages";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -11,11 +12,10 @@ export default defineConfig({
       reactivityTransform: true,
     }),
     AutoImport({
-      imports: [
-        "vue",
-      ],
+      imports: ["vue", "vue-router"],
       vueTemplate: true,
       dts: "src/auto-imports.d.ts",
+      dirs: ["./wailsjs/**"],
     }),
     Unocss({
       presets: [presetUno(), presetAttributify()],
@@ -23,5 +23,6 @@ export default defineConfig({
         btn: "w-20 h-20 rounded-full",
       },
     }),
+    Pages(),
   ],
 });

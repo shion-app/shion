@@ -13,9 +13,12 @@ var assets embed.FS
 func main() {
 	dir := getAppConfigDir()
 	db, err := openDatabase(dir)
+	initDatabase(db)
+
+	// fmt.Printf("%v", selectAllTimeItem(db, 1))
 
 	// Create an instance of the app structure
-	app := NewApp()
+	app := NewApp(db)
 
 	// Create application with options
 	err = wails.Run(&options.App{
