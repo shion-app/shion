@@ -3,12 +3,15 @@ package main
 import (
 	"encoding/binary"
 	"encoding/json"
+	"fmt"
 	"path/filepath"
 
 	"go.etcd.io/bbolt"
 )
 
-var APP_INFO, TIME, TIME_LIST = "appInfo", "time", "listList"
+var APP_INFO = "appInfo"
+var TIME = "time"
+var TIME_LIST = "timeList"
 
 func openDatabase(dir string) (*bbolt.DB, error) {
 	return bbolt.Open(filepath.Join(dir, "data.db"), 0666, nil)
@@ -39,6 +42,7 @@ func itob(v int) []byte {
 type Time struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
+	// total int
 }
 
 func insertTime(db *bbolt.DB, name string) error {
@@ -69,8 +73,26 @@ func selectAllTime(db *bbolt.DB) []Time {
 	return result
 }
 
+func deleteTime(db *bbolt.DB, id int) error {
+	return db.Update(func(tx *bbolt.Tx) error {
+		timeBucket := tx.Bucket([]byte(TIME))
+		return timeBucket.Delete(itob(id))
+	})
+}
+
+func updateTime(db *bbolt.DB, id int, name string) error {
+	return db.Update(func(tx *bbolt.Tx) error {
+		timeBucket := tx.Bucket([]byte(TIME))
+		data := timeBucket.Get(itob(id))
+		var newInstance Time
+		json.Unmarshal(data, &newInstance)
+		newInstance.Name = name
+		data, _ = json.Marshal(newInstance)
+		return timeBucket.Put(itob(id), data)
+	})
+}
+
 type TimeItem struct {
-	timeId     int
 	Id         int   `json:"id"`
 	Collection []int `json:"collection"`
 }
@@ -78,15 +100,14 @@ type TimeItem struct {
 func insertTimeItem(db *bbolt.DB, timeId int, collection []int) error {
 	return db.Update(func(tx *bbolt.Tx) error {
 		timeBucket := tx.Bucket([]byte(TIME))
-		timeListBucket, _ := timeBucket.CreateBucketIfNotExists([]byte(TIME_LIST))
+		timeListBucket, _ := timeBucket.CreateBucketIfNotExists([]byte(fmt.Sprintf("%s%d", TIME_LIST, timeId)))
 		id, _ := timeListBucket.NextSequence()
 		instance := TimeItem{
-			timeId:     timeId,
 			Id:         int(id),
 			Collection: collection,
 		}
 		data, _ := json.Marshal(instance)
-		return timeBucket.Put(itob(instance.Id), data)
+		return timeListBucket.Put(itob(instance.Id), data)
 	})
 }
 
@@ -94,16 +115,22 @@ func selectAllTimeItem(db *bbolt.DB, timeId int) []TimeItem {
 	var result = make([]TimeItem, 0)
 	db.View(func(tx *bbolt.Tx) error {
 		timeBucket := tx.Bucket([]byte(TIME))
-		timeListBucket, _ := timeBucket.CreateBucketIfNotExists([]byte(TIME_LIST))
+		timeListBucket := timeBucket.Bucket([]byte(fmt.Sprintf("%s%d", TIME_LIST, timeId)))
 		timeListBucket.ForEach(func(k, v []byte) error {
 			var instance TimeItem
 			json.Unmarshal(v, &instance)
-			if instance.timeId == timeId {
-				result = append(result, instance)
-			}
+			result = append(result, instance)
 			return nil
 		})
 		return nil
 	})
 	return result
+}
+
+func deleteTimeItem(db *bbolt.DB, timeId int, id int) error {
+	return db.Update(func(tx *bbolt.Tx) error {
+		timeBucket := tx.Bucket([]byte(TIME))
+		timeListBucket := timeBucket.Bucket([]byte(fmt.Sprintf("%s%d", TIME_LIST, timeId)))
+		return timeListBucket.Delete(itob(id))
+	})
 }

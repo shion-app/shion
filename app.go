@@ -33,10 +33,21 @@ func (a *App) SelectAllTime() []Time {
 	return selectAllTime(&a.db)
 }
 
-// func (a *App) InsertTimeItem(timeId int, collection []int) {
-// 	insertTimeItem(&a.db, timeId, collection)
-// }
+func (a *App) DeleteTime(id int) {
+	deleteTime(&a.db, id)
+}
+func (a *App) UpdateTime(id int, name string) {
+	updateTime(&a.db, id, name)
+}
 
-// func (a *App) SelectAllTimeItem(timeId int) []TimeItem {
-// 	return selectAllTimeItem(&a.db, timeId)
-// }
+func (a *App) InsertTimeItem(timeId int, collection []int) {
+	insertTimeItem(&a.db, timeId, collection)
+}
+
+func (a *App) SelectAllTimeItem(timeId int) []TimeItem {
+	return selectAllTimeItem(&a.db, timeId)
+}
+
+func (a *App) DeleteTimeItem(timeId int, id int) {
+	deleteTimeItem(&a.db, timeId, id)
+}

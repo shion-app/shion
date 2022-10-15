@@ -21,6 +21,9 @@ function addTime() {
 </script>
 
 <template>
+    <v-btn>
+  Button
+</v-btn>
     <button @click="addTime">+</button>
     <div v-for="{ id, name } in list" @click="jump(id)">{{ name }}</div>
 </template>

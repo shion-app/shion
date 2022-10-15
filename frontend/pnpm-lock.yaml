@@ -6,22 +6,26 @@ specifiers:
   typescript: ^4.6.4
   unocss: ^0.45.29
   unplugin-auto-import: ^0.11.2
+  unplugin-vue-components: ^0.22.8
   vite: ^3.0.7
   vite-plugin-pages: ^0.26.0
   vue: ^3.2.37
   vue-router: ^4.1.5
   vue-tsc: ^1.0.3
+  vuetify: 3.0.0-beta.13
 
 dependencies:
   '@unocss/reset': 0.45.29
   vue: 3.2.40
   vue-router: 4.1.5_vue@3.2.40
+  vuetify: 3.0.0-beta.13_vue@3.2.40
 
 devDependencies:
   '@vitejs/plugin-vue': 3.1.2_vite@3.1.6+vue@3.2.40
   typescript: 4.8.4
   unocss: 0.45.29_vite@3.1.6
   unplugin-auto-import: 0.11.2
+  unplugin-vue-components: 0.22.8_vue@3.2.40
   vite: 3.1.6
   vite-plugin-pages: 0.26.0_vite@3.1.6
   vue-tsc: 1.0.3_typescript@4.8.4
@@ -1686,6 +1690,31 @@ packages:
       unplugin: 0.9.6
     dev: true
 
+  /unplugin-vue-components/0.22.8_vue@3.2.40:
+    resolution: {integrity: sha512-Musnwdtr6uj9Zopo4oeh4lp9+fJ2ArXVDzSiZxF4YC9v+pLnasKVKEEAjdXuQQ3u3KtntVw6PCscyAt52eS75g==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@babel/parser': ^7.15.8
+      vue: 2 || 3
+    peerDependenciesMeta:
+      '@babel/parser':
+        optional: true
+    dependencies:
+      '@antfu/utils': 0.5.2
+      '@rollup/pluginutils': 4.2.1
+      chokidar: 3.5.3
+      debug: 4.3.4
+      fast-glob: 3.2.12
+      local-pkg: 0.4.2
+      magic-string: 0.26.7
+      minimatch: 5.1.0
+      resolve: 1.22.1
+      unplugin: 0.9.6
+      vue: 3.2.40
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /unplugin/0.9.6:
     resolution: {integrity: sha512-YYLtfoNiie/lxswy1GOsKXgnLJTE27la/PeCGznSItk+8METYZErO+zzV9KQ/hXhPwzIJsfJ4s0m1Rl7ZCWZ4Q==}
     dependencies:
@@ -1780,6 +1809,28 @@ packages:
       '@vue/runtime-dom': 3.2.40
       '@vue/server-renderer': 3.2.40_vue@3.2.40
       '@vue/shared': 3.2.40
+    dev: false
+
+  /vuetify/3.0.0-beta.13_vue@3.2.40:
+    resolution: {integrity: sha512-CgDyKCIBZ0ogKUxRw3gNswx9GA6eSSp7otZcJapWJCVuon/RooQPQjf3bDuRb5ZpJ55NkX13ugjl2nq+b0U8SA==}
+    engines: {node: ^12.20 || >=14.13}
+    peerDependencies:
+      '@formatjs/intl': ^1.0.0 || ^2.0.0
+      vite-plugin-vuetify: ^1.0.0-alpha.12
+      vue: ^3.2.0
+      vue-i18n: ^9.0.0
+      webpack-plugin-vuetify: ^2.0.0-alpha.11
+    peerDependenciesMeta:
+      '@formatjs/intl':
+        optional: true
+      vite-plugin-vuetify:
+        optional: true
+      vue-i18n:
+        optional: true
+      webpack-plugin-vuetify:
+        optional: true
+    dependencies:
+      vue: 3.2.40
     dev: false
 
   /webpack-sources/3.2.3:

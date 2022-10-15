@@ -1,8 +1,9 @@
 import "uno.css";
 import "@unocss/reset/tailwind.css";
+import "vuetify/styles";
 
-import { createApp } from "vue";
 import { createRouter, createWebHashHistory } from "vue-router";
+import { createVuetify } from "vuetify";
 
 import routes from "~pages";
 import App from "./App.vue";
@@ -12,4 +13,6 @@ const router = createRouter({
   routes,
 });
 
-createApp(App).use(router).mount("#app");
+const vuetify = createVuetify();
+
+createApp(App).use(router).use(vuetify).mount("#app");

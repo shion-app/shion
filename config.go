@@ -6,7 +6,10 @@ import (
 )
 
 // inject
-var mode, version, appName, author = "development", "", "", ""
+var mode = "development"
+var version = ""
+var appName = ""
+var author = ""
 
 func isDev() bool {
 	return mode == "development"

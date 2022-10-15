@@ -4,6 +4,8 @@ import AutoImport from "unplugin-auto-import/vite";
 import Unocss from "unocss/vite";
 import { presetAttributify, presetUno } from "unocss";
 import Pages from "vite-plugin-pages";
+import Components from "unplugin-vue-components/vite";
+import { Vuetify3Resolver } from "unplugin-vue-components/resolvers";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -24,5 +26,9 @@ export default defineConfig({
       },
     }),
     Pages(),
+    Components({
+      resolvers: [Vuetify3Resolver()],
+      dts: "src/components.d.d.ts",
+    }),
   ],
 });

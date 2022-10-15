@@ -3,12 +3,9 @@ const { id } = defineProps<{ id: string }>()
 
 let list = $ref<any>()
 
-// InsertTimeItem(Number(id), [1,2])
-
-// SelectAllTimeItem(Number(id)).then(data => {
-//     data = list
-//     console.log(data);
-// })
+SelectAllTimeItem(Number(id)).then(data => {
+    list = data
+})
 
 </script>
 
