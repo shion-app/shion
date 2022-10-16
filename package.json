@@ -11,6 +11,7 @@
     "build:nsis": "node scripts/wails build -n"
   },
   "devDependencies": {
-    "commander": "^9.4.1"
+    "commander": "^9.4.1",
+    "vue-i18n": "^9.2.2"
   }
 }

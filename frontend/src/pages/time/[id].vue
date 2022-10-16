@@ -1,12 +1,92 @@
 <script lang="ts" setup>
-const { id } = defineProps<{ id: string }>()
+import { main } from "../../../wailsjs/go/models";
 
-let list = $ref<any>()
+const { id } = defineProps<{ id: string }>();
 
-SelectAllTimeItem(Number(id)).then(data => {
-    list = data
-})
+let list = $ref<main.TimeItem[]>();
 
+async function getList() {
+    list = await SelectAllTimeItem(Number(id))
+}
+
+getList()
+
+let isStart = $ref(false);
+let isPause = $ref(false);
+
+let base = 0,
+  now = 0,
+  sum = 0,
+  collection: number[] = [];
+let clock = $ref(format(0));
+
+let frame: number;
+
+function start() {
+  isStart = true;
+  base = Date.now();
+  count();
+}
+
+function pause() {
+  isPause = true;
+  cancelAnimationFrame(frame);
+  collection.push(base, now);
+  sum += now - base;
+}
+
+function resume() {
+  isPause = false;
+  start();
+}
+
+async function finish() {
+  isStart = false;
+  isPause = false;
+  cancelAnimationFrame(frame);
+  collection.push(base, now);
+  await InsertTimeItem(Number(id), collection);
+  base = now = sum = 0;
+  collection = [];
+  clock = format(0);
+  await getList()
+}
+
+function complement(num: number) {
+  return num < 10 ? `0${num}` : num;
+}
+
+function format(time: number) {
+  const milli = complement(~~((time % 1000) / 10));
+  time = ~~(time / 1000);
+  const second = complement(time % 60);
+  time = ~~(time / 60);
+  const minute = complement(time % 60);
+  const hour = ~~(time / 60);
+  const result = `${minute}:${second}.${milli}`;
+  return hour ? `${complement(hour)}:${result}` : result;
+}
+
+function count() {
+  frame = requestAnimationFrame(() => {
+    now = Date.now();
+    clock = format(now - base + sum);
+    count();
+  });
+}
 </script>
 
-<template>{{id}}</template>
+<template>
+  <div>{{ clock }}</div>
+  <button v-show="!isStart" @click="start" btn bg-green>开始</button>
+  <button
+    v-show="isStart"
+    @click="isPause ? resume() : pause()"
+    btn
+    :class="isPause ? 'bg-orange' : 'bg-gray'"
+  >
+    {{ isPause ? "继续" : "暂停" }}
+  </button>
+  <button v-show="isStart" btn bg-red @click="finish">结束</button>
+  <div v-for="{ id, collection } in list">{{ id }}:{{ collection }}</div>
+</template>

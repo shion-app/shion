@@ -4,7 +4,7 @@
     "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "Node",
-    "strict": true,
+    "strictNullChecks": true,
     "jsx": "preserve",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -15,6 +15,7 @@
       "vite/client",
       "vue/ref-macros",
       "vite-plugin-pages/client",
+      "@intlify/vite-plugin-vue-i18n/client"
     ]
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
@@ -47,14 +48,15 @@ type Time struct {
 
 func insertTime(db *bbolt.DB, name string) error {
 	return db.Update(func(tx *bbolt.Tx) error {
-		bucket := tx.Bucket([]byte(TIME))
-		id, _ := bucket.NextSequence()
+		timeBucket := tx.Bucket([]byte(TIME))
+		id, _ := timeBucket.NextSequence()
+		timeBucket.CreateBucket([]byte(fmt.Sprintf("%s%d", TIME_LIST, id)))
 		instance := Time{
 			Id:   int(id),
 			Name: name,
 		}
 		data, _ := json.Marshal(instance)
-		return bucket.Put(itob(instance.Id), data)
+		return timeBucket.Put(itob(instance.Id), data)
 	})
 }
 
@@ -63,9 +65,11 @@ func selectAllTime(db *bbolt.DB) []Time {
 	db.View(func(tx *bbolt.Tx) error {
 		bucket := tx.Bucket([]byte(TIME))
 		bucket.ForEach(func(k, v []byte) error {
-			var instance Time
-			json.Unmarshal(v, &instance)
-			result = append(result, instance)
+			if !bytes.HasPrefix(k, []byte(TIME_LIST)) {
+				var instance Time
+				json.Unmarshal(v, &instance)
+				result = append(result, instance)
+			}
 			return nil
 		})
 		return nil
@@ -100,7 +104,7 @@ type TimeItem struct {
 func insertTimeItem(db *bbolt.DB, timeId int, collection []int) error {
 	return db.Update(func(tx *bbolt.Tx) error {
 		timeBucket := tx.Bucket([]byte(TIME))
-		timeListBucket, _ := timeBucket.CreateBucketIfNotExists([]byte(fmt.Sprintf("%s%d", TIME_LIST, timeId)))
+		timeListBucket := timeBucket.Bucket([]byte(fmt.Sprintf("%s%d", TIME_LIST, timeId)))
 		id, _ := timeListBucket.NextSequence()
 		instance := TimeItem{
 			Id:         int(id),
