@@ -25,7 +25,7 @@ const getLdflags = (isProd = false) => {
     formatProp("author", author.name)
   );
   if (isProd) {
-    formatProp("mode", "production");
+    propList.push(formatProp("mode", "production"));
   }
   return "-ldflags=" + propList.join(' ');
 }
