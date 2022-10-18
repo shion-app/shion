@@ -36,7 +36,7 @@ export default defineConfig({
     Pages(),
     Components({
       resolvers: [Vuetify3Resolver()],
-      dts: "src/components.d.d.ts",
+      dts: "src/components.d.ts",
     }),
     VueI18n({
       include: [join(__dirname, "src/locales/**")],
