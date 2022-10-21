@@ -41,9 +41,9 @@ func itob(v int) []byte {
 }
 
 type Time struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-	// total int
+	Id    int    `json:"id"`
+	Name  string `json:"name"`
+	Total int    `json:"total"`
 }
 
 func insertTime(db *bbolt.DB, name string) error {
@@ -68,6 +68,12 @@ func selectAllTime(db *bbolt.DB) []Time {
 			if !bytes.HasPrefix(k, []byte(TIME_LIST)) {
 				var instance Time
 				json.Unmarshal(v, &instance)
+				total := 0
+				list := selectAllTimeItem(db, instance.Id)
+				for _, v := range list {
+					total += v.countTotal()
+				}
+				instance.Total = total
 				result = append(result, instance)
 			}
 			return nil
@@ -137,4 +143,12 @@ func deleteTimeItem(db *bbolt.DB, timeId int, id int) error {
 		timeListBucket := timeBucket.Bucket([]byte(fmt.Sprintf("%s%d", TIME_LIST, timeId)))
 		return timeListBucket.Delete(itob(id))
 	})
+}
+
+func (t *TimeItem) countTotal() int {
+	total := 0
+	for i := 0; i < len(t.Collection); i += 2 {
+		total += t.Collection[i+1] - t.Collection[i]
+	}
+	return total
 }

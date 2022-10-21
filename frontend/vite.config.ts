@@ -18,17 +18,28 @@ export default defineConfig({
       reactivityTransform: true,
     }),
     AutoImport({
-      imports: ["vue", "vue-router", "@vueuse/core", "vue-i18n"],
+      imports: [
+        "vue",
+        "vue-router",
+        "@vueuse/core",
+        "vue-i18n",
+        {
+          "date-fns": [
+            "getDay",
+            "subDays",
+            "format",
+            "differenceInCalendarDays",
+            "addDays",
+            "startOfDay",
+          ],
+        },
+      ],
       vueTemplate: true,
       dts: "src/auto-imports.d.ts",
       dirs: ["./wailsjs/**"],
     }),
     Unocss({
-      presets: [
-        presetUno(),
-        presetAttributify(),
-        presetIcons(),
-      ],
+      presets: [presetUno(), presetAttributify(), presetIcons()],
       shortcuts: {
         btn: "w-20 h-20 rounded-full",
       },

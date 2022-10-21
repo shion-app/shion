@@ -42,7 +42,7 @@ async function confirm() {
           <v-text-field
             v-model="name"
             :rules="nameRules"
-            label="name"
+            :label="$t('name')"
             required
           ></v-text-field>
         </v-form>

@@ -41,10 +41,12 @@ function resume() {
 }
 
 async function finish() {
+  if (!isPause) {
+    collection.push(base, now);
+  }
   isStart = false;
   isPause = false;
   cancelAnimationFrame(frame);
-  collection.push(base, now);
   await InsertTimeItem(Number(id), collection);
   base = now = sum = 0;
   collection = [];
@@ -77,16 +79,16 @@ function count() {
 </script>
 
 <template>
+  <calendar-graph :list="list" />
   <div>{{ clock }}</div>
-  <button v-show="!isStart" @click="start" btn bg-green>开始</button>
+  <button v-show="!isStart" @click="start" btn bg-green>{{$t('start')}}</button>
   <button
     v-show="isStart"
     @click="isPause ? resume() : pause()"
     btn
     :class="isPause ? 'bg-orange' : 'bg-gray'"
   >
-    {{ isPause ? "继续" : "暂停" }}
+    {{ isPause ? $t('resume') : $t('pause') }}
   </button>
-  <button v-show="isStart" btn bg-red @click="finish">结束</button>
-  <div v-for="{ id, collection } in list">{{ id }}:{{ collection }}</div>
+  <button v-show="isStart" btn bg-red @click="finish">{{$t('finish')}}</button>
 </template>

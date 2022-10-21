@@ -3,4 +3,11 @@ add: 新增
 delete: 删除
 confirm: 确定
 cancel: 取消
+name: 名称
 inputRequired: 输入不能为空
+hour: 小时
+minute: 分钟
+start: 开始
+pause: 暂停
+resume: 继续
+finish: 结束

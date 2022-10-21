@@ -20,6 +20,11 @@ async function deleteTime(id: number) {
   await getList()
 }
 
+function calculate(time: number) {
+  const hour = (time / (1000 * 60 * 60)).toFixed(1)
+  return hour
+}
+
 </script>
 
 <template>
@@ -36,17 +41,18 @@ async function deleteTime(id: number) {
         m-4
         p-4
         class="group"
-        v-for="{ id, name } in list"
+        v-for="{ id, name, total } in list"
         :key="id"
         @click="jump(id)"
       >
         <div>{{ name }}</div>
         <div flex>
+          <div>{{calculate(total)}}{{$t('hour')}}</div>
           <v-spacer />
           <div flex op-0 group-hover-op-100 transition-opacity-200>
             <v-tooltip location="bottom">
               <template v-slot:activator="{ props  }">
-                <div i-mdi:file-edit text-6 cursor-pointer v-bind="props"></div>
+                <div i-mdi:file-edit text-6 cursor-pointer v-bind="props" @click.stop></div>
               </template>
               <span>{{ $t("edit") }}</span>
             </v-tooltip>
