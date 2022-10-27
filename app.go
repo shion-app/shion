@@ -2,20 +2,19 @@ package main
 
 import (
 	"context"
-
-	"go.etcd.io/bbolt"
+	"encoding/json"
 )
 
 // App struct
 type App struct {
-	ctx context.Context
-	db  bbolt.DB
+	ctx   context.Context
+	store Store
 }
 
 // NewApp creates a new App application struct
-func NewApp(db *bbolt.DB) *App {
+func NewApp(store Store) *App {
 	return &App{
-		db: *db,
+		store: store,
 	}
 }
 
@@ -25,29 +24,26 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-func (a *App) InsertTime(name string) {
-	insertTime(&a.db, name)
+func (a *App) InsertRecord(name string, recordType int, exe string) {
+	a.store.insertRecord(name, recordType, exe)
 }
 
-func (a *App) SelectAllTime() []Time {
-	return selectAllTime(&a.db)
+func (a *App) DeleteRecord(id int) {
+	a.store.deleteRecord(id)
 }
 
-func (a *App) DeleteTime(id int) {
-	deleteTime(&a.db, id)
-}
-func (a *App) UpdateTime(id int, name string) {
-	updateTime(&a.db, id, name)
+func (a *App) UpdateRecord(id int, raw json.RawMessage) {
+	a.store.updateRecord(id, raw)
 }
 
-func (a *App) InsertTimeItem(timeId int, collection []int) {
-	insertTimeItem(&a.db, timeId, collection)
+func (a *App) QueryRecord() []Record {
+	return a.store.queryRecord()
 }
 
-func (a *App) SelectAllTimeItem(timeId int) []TimeItem {
-	return selectAllTimeItem(&a.db, timeId)
+func (a *App) InsertTime(recordId int, start int, end int) {
+	a.store.insertTime(recordId, start, end)
 }
 
-func (a *App) DeleteTimeItem(timeId int, id int) {
-	deleteTimeItem(&a.db, timeId, id)
+func (a *App) QueryTime(recordId int) []Time {
+	return a.store.queryTime(recordId)
 }

@@ -18,7 +18,7 @@ function toggle() {
 async function confirm() {
   const { valid } = await form.validate();
   if (valid) {
-    await InsertTime(name);
+    await InsertRecord(name, 0, "");
     form.reset()
     toggle()
     emit('refresh')
@@ -27,7 +27,7 @@ async function confirm() {
 </script>
 
 <template>
-  <v-dialog v-model:modelValue="show" width="500">
+  <v-dialog v-model="show" width="500">
     <template v-slot:activator>
       <v-btn color="green" prepend-icon="i-mdi:plus" @click="toggle">
         {{ $t("add") }}

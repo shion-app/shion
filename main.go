@@ -12,14 +12,15 @@ var assets embed.FS
 
 func main() {
 	dir := getAppConfigDir()
-	db, err := openDatabase(dir)
-	initDatabase(db)
+	store := initStore(dir)
+
+	go watch()
 
 	// Create an instance of the app structure
-	app := NewApp(db)
+	app := NewApp(store)
 
 	// Create application with options
-	err = wails.Run(&options.App{
+	err := wails.Run(&options.App{
 		Title:     appName,
 		Width:     960,
 		Height:    540,
@@ -34,5 +35,5 @@ func main() {
 		println("Error:", err.Error())
 	}
 
-	defer db.Close()
+	defer store.db.Close()
 }

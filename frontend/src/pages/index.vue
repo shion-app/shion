@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { main } from "../../wailsjs/go/models";
 
-let list = $ref<main.Time[]>();
+let list = $ref<main.Record[]>();
 
 const router = useRouter();
 
 async function getList() {
-  list = await SelectAllTime();
+  list = await QueryRecord();
 }
 
 getList();
@@ -15,9 +15,10 @@ function jump(id: number) {
   router.push(`/time/${id}`);
 }
 
-async function deleteTime(id: number) {
-  await DeleteTime(id)
-  await getList()
+async function deleteRecord(id: number) {
+  await DeleteRecord(id)
+  const index = list.findIndex(item => item.id === id)
+  list.splice(index, 1)
 }
 
 function calculate(time: number) {
@@ -41,13 +42,13 @@ function calculate(time: number) {
         m-4
         p-4
         class="group"
-        v-for="{ id, name, total } in list"
+        v-for="{ id, name, totalTime } in list"
         :key="id"
         @click="jump(id)"
       >
         <div>{{ name }}</div>
         <div flex>
-          <div>{{calculate(total)}}{{$t('hour')}}</div>
+          <div>{{calculate(totalTime)}}{{$t('hour')}}</div>
           <v-spacer />
           <div flex op-0 group-hover-op-100 transition-opacity-200>
             <v-tooltip location="bottom">
@@ -58,7 +59,7 @@ function calculate(time: number) {
             </v-tooltip>
             <v-tooltip location="bottom">
               <template v-slot:activator="{ props  }">
-                <div i-mdi:delete text-6 cursor-pointer v-bind="props" @click.stop="deleteTime(id)"></div>
+                <div i-mdi:delete text-6 cursor-pointer v-bind="props" @click.stop="deleteRecord(id)"></div>
               </template>
               <span>{{ $t("delete") }}</span>
             </v-tooltip>

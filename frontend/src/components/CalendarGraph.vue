@@ -2,7 +2,7 @@
 import { main } from "../../wailsjs/go/models";
 
 const { list = [] } = defineProps<{
-  list: main.TimeItem[];
+  list: main.Time[];
 }>();
 
 const { t } = useI18n();
@@ -19,10 +19,7 @@ const dateToActivityMap = $computed(() => {
       total: number;
     }
   >();
-  for (const { collection } of list) {
-    for (let i = 0; i < collection.length; i += 2) {
-      let start = collection[i],
-        end = collection[i + 1];
+  for (let { start, end } of list) {
       let temp = 0;
       const diff = differenceInCalendarDays(end, start);
       for (let i = 0; i <= diff; i++) {
@@ -47,7 +44,6 @@ const dateToActivityMap = $computed(() => {
         match.total += end - start;
         map.set(time, match);
       }
-    }
   }
   return map;
 });
