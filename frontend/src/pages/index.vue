@@ -12,7 +12,7 @@ async function getList() {
 getList();
 
 function jump(id: number) {
-  router.push(`/time/${id}`);
+  router.push(`/record/${id}`);
 }
 
 async function deleteRecord(id: number) {
@@ -32,7 +32,7 @@ function calculate(time: number) {
   <div flex flex-col h-full>
     <div flex>
       <v-spacer />
-      <add-time @refresh="getList" />
+      <insert-record @refresh="getList" />
     </div>
     <v-divider my />
     <div  flex-1 overflow-y-auto>
