@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"encoding/json"
+
+	"github.com/samber/lo"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
@@ -22,6 +25,24 @@ func NewApp(store Store) *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+}
+
+func (a *App) GetExecutablePath() (string, error) {
+	return runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		Filters: []runtime.FileFilter{
+			{
+				DisplayName: "Executable file",
+				Pattern:     "*.exe",
+			},
+		},
+	})
+}
+
+func (a *App) CheckExecutablePath(exe string) bool {
+	recordList := a.QueryRecord()
+	return !lo.ContainsBy(recordList, func(record Record) bool {
+		return record.Exe == exe
+	})
 }
 
 func (a *App) InsertRecord(name string, recordType int, exe string) {

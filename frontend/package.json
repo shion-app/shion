@@ -19,6 +19,7 @@
   "devDependencies": {
     "@iconify-json/mdi": "^1.1.33",
     "@intlify/vite-plugin-vue-i18n": "^6.0.3",
+    "@mdi/js": "^7.0.96",
     "@types/node": "^18.11.0",
     "@unocss/preset-icons": "^0.45.29",
     "@vitejs/plugin-vue": "^3.0.3",

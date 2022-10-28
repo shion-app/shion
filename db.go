@@ -101,13 +101,13 @@ func (store *Store) updateRecord(id int, raw json.RawMessage) {
 		json.Unmarshal(data, &instance)
 		var params map[string]any
 		json.Unmarshal(raw, &params)
-		setPartialProp(&instance, params)
+		assign(&instance, params)
 		data, _ = json.Marshal(instance)
 		return recordBucket.Put(itob(instance.Id), data)
 	})
 }
 
-func setPartialProp(target any, value map[string]any) {
+func assign(target any, value map[string]any) {
 	targetReflect := reflect.ValueOf(target).Elem()
 	targetType := targetReflect.Type()
 

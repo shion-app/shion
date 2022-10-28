@@ -33,6 +33,9 @@ export default defineConfig({
             "startOfDay",
           ],
         },
+        {
+          "@mdi/js": ["mdiPlus"],
+        },
       ],
       vueTemplate: true,
       dts: "src/auto-imports.d.ts",

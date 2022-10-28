@@ -6,6 +6,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import { createVuetify } from "vuetify";
 import { createI18n } from "vue-i18n";
 import messages from "@intlify/vite-plugin-vue-i18n/messages";
+import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
 
 import routes from "~pages";
 import App from "./App.vue";
@@ -15,7 +16,15 @@ const router = createRouter({
   routes,
 });
 
-const vuetify = createVuetify();
+const vuetify = createVuetify({
+  icons: {
+    defaultSet: "mdi",
+    aliases,
+    sets: {
+      mdi,
+    },
+  },
+});
 
 const i18n = createI18n({
   locale: "zh",

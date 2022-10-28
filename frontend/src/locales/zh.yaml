@@ -1,13 +1,21 @@
-edit: 编辑
-add: 新增
-delete: 删除
-confirm: 确定
-cancel: 取消
-name: 名称
-inputRequired: 输入不能为空
 hour: 小时
 minute: 分钟
 start: 开始
-pause: 暂停
-resume: 继续
 finish: 结束
+record:
+  prop:
+    name: 名称
+    type: 记录方式
+    exe: 程序路径
+    manual: 手动
+    auto: 自动
+  tip:
+    invalidExe: 已存在此应用程序的记录
+input:
+  required: 输入不能为空
+  delete: 删除
+  edit: 编辑
+  add: 新增
+dialog:
+  confirm: 确定
+  cancel: 取消

@@ -1,64 +1,31 @@
 <script lang="ts" setup>
-let show = $ref(false);
-let form = $ref<any>();
-let name = $ref("");
+import type { RawRecord } from '../interfaces';
 
 const emit = defineEmits<{
-  (event: 'refresh'): void
+  (event: "refresh"): void;
 }>()
 
-const { t } = useI18n();
+let isShow = $ref(false)
 
-const nameRules = [(v) => !!v || t("inputRequired")];
-
-function toggle() {
-  show = !show;
+function close() {
+  isShow = false
 }
 
-async function confirm() {
-  const { valid } = await form.validate();
-  if (valid) {
-    await InsertRecord(name, 0, "");
-    form.reset()
-    toggle()
-    emit('refresh')
-  }
+async function confirm(data: RawRecord) {
+  const { name, type, exe } = data
+  await InsertRecord(name, type, exe)
+  close()
+  emit('refresh')
 }
 </script>
 
 <template>
-  <v-dialog v-model="show" width="500">
-    <template v-slot:activator>
-      <v-btn color="green" prepend-icon="i-mdi:plus" @click="toggle">
-        {{ $t("add") }}
+  <v-dialog v-model="isShow" width="500">
+    <template v-slot:activator="{ props }">
+      <v-btn color="green" :prepend-icon="mdiPlus" v-bind="props">
+        {{ $t("input.add") }}
       </v-btn>
     </template>
-
-    <v-card>
-      <v-card-title> {{ $t("add") }} </v-card-title>
-
-      <v-card-text>
-        <v-form ref="form">
-          <v-text-field
-            v-model="name"
-            :rules="nameRules"
-            :label="$t('name')"
-            required
-          ></v-text-field>
-        </v-form>
-      </v-card-text>
-
-      <v-divider></v-divider>
-
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="confirm">
-          {{ $t("confirm") }}
-        </v-btn>
-        <v-btn color="error" text @click="toggle">
-          {{ $t("cancel") }}
-        </v-btn>
-      </v-card-actions>
-    </v-card>
+    <record :title="$t('input.add')"  @close="close" @confirm="confirm" />
   </v-dialog>
 </template>

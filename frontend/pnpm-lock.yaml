@@ -3,6 +3,7 @@ lockfileVersion: 5.3
 specifiers:
   '@iconify-json/mdi': ^1.1.33
   '@intlify/vite-plugin-vue-i18n': ^6.0.3
+  '@mdi/js': ^7.0.96
   '@types/node': ^18.11.0
   '@unocss/preset-icons': ^0.45.29
   '@unocss/reset': ^0.45.29
@@ -34,6 +35,7 @@ dependencies:
 devDependencies:
   '@iconify-json/mdi': 1.1.33
   '@intlify/vite-plugin-vue-i18n': 6.0.3_vite@3.1.8+vue-i18n@9.2.2
+  '@mdi/js': 7.0.96
   '@types/node': 18.11.2
   '@unocss/preset-icons': 0.45.30
   '@vitejs/plugin-vue': 3.1.2_vite@3.1.8+vue@3.2.41
@@ -238,6 +240,10 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
+    dev: true
+
+  /@mdi/js/7.0.96:
+    resolution: {integrity: sha512-lNqhkV3cpPfYb/Avh+vXLFukUTbHbyHoFo4Jdc7Oc9UvURGVhamFIpgOVvEf2bNA78zvjXTZeVWExUTR+DLBfQ==}
     dev: true
 
   /@nodelib/fs.scandir/2.1.5:

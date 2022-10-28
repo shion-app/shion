@@ -42,7 +42,7 @@ function calculate(time: number) {
         m-4
         p-4
         class="group"
-        v-for="{ id, name, totalTime } in list"
+        v-for="{ id, name, type, exe, totalTime } in list"
         :key="id"
         @click="jump(id)"
       >
@@ -51,17 +51,12 @@ function calculate(time: number) {
           <div>{{calculate(totalTime)}}{{$t('hour')}}</div>
           <v-spacer />
           <div flex op-0 group-hover-op-100 transition-opacity-200>
-            <v-tooltip location="bottom">
-              <template v-slot:activator="{ props  }">
-                <div i-mdi:file-edit text-6 cursor-pointer v-bind="props" @click.stop></div>
-              </template>
-              <span>{{ $t("edit") }}</span>
-            </v-tooltip>
+            <update-record :id="id" :data="{ name, type, exe }" @refresh="getList" />
             <v-tooltip location="bottom">
               <template v-slot:activator="{ props  }">
                 <div i-mdi:delete text-6 cursor-pointer v-bind="props" @click.stop="deleteRecord(id)"></div>
               </template>
-              <span>{{ $t("delete") }}</span>
+              <span>{{ $t("input.delete") }}</span>
             </v-tooltip>
           </div>
         </div>

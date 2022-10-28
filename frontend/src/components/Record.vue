@@ -1,0 +1,163 @@
+<script lang="ts" setup>
+import { RecordType } from "../constants/";
+import { RawRecord } from "../interfaces";
+
+const {
+  title,
+  data = {
+    name: "",
+    type: RecordType.MANUAL,
+    exe: "",
+  },
+} = defineProps<{
+  title: string;
+  data?: RawRecord;
+}>();
+
+interface Select {
+  key: string;
+  value: number;
+}
+
+const { t } = useI18n();
+
+const selectList: Select[] = [
+  {
+    key: t("record.prop.manual"),
+    value: RecordType.MANUAL,
+  },
+  {
+    key: t("record.prop.auto"),
+    value: RecordType.AUTO,
+  },
+];
+
+let form = $ref<any>();
+let name = $ref(data.name);
+let type = $ref(selectList.find((item) => item.value === data.type));
+let exe = $ref(data.exe);
+let isValidExe = $ref(true);
+let isLoading = $ref(false);
+
+const emit = defineEmits<{
+  (event: "close"): void;
+  (event: "confirm", data: RawRecord): void;
+}>();
+
+const required = (v) => !!v || t("input.required");
+const nameRules = [required];
+const invalidExe = () => isValidExe || t("record.tip.invalidExe");
+const exeRules = [required, invalidExe];
+
+function close() {
+  emit("close");
+}
+
+async function confirm() {
+  const { valid } = await form.validate();
+  if (valid) {
+    emit("confirm", {
+      name,
+      type: type.value,
+      exe,
+    });
+  }
+}
+
+function wait(timeout: number) {
+  return new Promise((reslove) => setTimeout(reslove, timeout));
+}
+
+async function openFileDialog() {
+  const path = await GetExecutablePath();
+  if (path) {
+    isLoading = true;
+    if (data.exe !== path) {
+      isValidExe = await CheckExecutablePath(path);
+    }
+    await wait(200);
+    isLoading = false;
+    await wait(200);
+    exe = path;
+  }
+}
+
+watch(
+  () => type.value,
+  (newVal) => {
+    if (newVal === RecordType.MANUAL) {
+      exe = "";
+      isValidExe = false;
+    }
+  }
+);
+</script>
+
+<template>
+  <v-card>
+    <v-card-title> {{ title }} </v-card-title>
+    <v-card-text>
+      <v-form ref="form">
+        <v-text-field
+          v-model="name"
+          variant="solo"
+          :label="$t('record.prop.name')"
+          :rules="nameRules"
+        ></v-text-field>
+        <v-select
+          v-model="type"
+          return-object
+          variant="solo"
+          :items="selectList"
+          item-title="key"
+          item-value="value"
+          :label="t('record.prop.type')"
+        ></v-select>
+        <v-text-field
+          v-if="type.value === RecordType.AUTO"
+          v-model="exe"
+          variant="solo"
+          :rules="exeRules"
+          :label="$t('record.prop.exe')"
+          readonly
+          @click="openFileDialog"
+        >
+          <template v-slot:append-inner>
+            <v-fade-transition leave-absolute>
+              <v-progress-circular
+                v-if="isLoading"
+                color="info"
+                indeterminate
+                size="24"
+              ></v-progress-circular>
+              <template v-else>
+                <template v-if="exe">
+                  <div
+                    v-if="isValidExe"
+                    i-mdi:check-circle
+                    c-green
+                    text-6
+                  ></div>
+                  <div v-else i-mdi:close-circle c-red text-6></div>
+                </template>
+                <div v-else w-6 h-6></div>
+              </template>
+            </v-fade-transition>
+          </template>
+        </v-text-field>
+      </v-form>
+    </v-card-text>
+
+    <v-divider></v-divider>
+
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn color="primary" text @click="confirm">
+        {{ $t("dialog.confirm") }}
+      </v-btn>
+      <v-btn color="error" text @click="close">
+        {{ $t("dialog.cancel") }}
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+</template>
