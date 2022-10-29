@@ -6,6 +6,7 @@
     "name": "hanaTsuk1"
   },
   "scripts": {
+    "postinstall": "cd frontend && pnpm i && pnpm run build",
     "dev": "node scripts/wails dev",
     "build": "node scripts/wails build",
     "build:nsis": "node scripts/wails build -n"

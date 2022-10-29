@@ -2,6 +2,4 @@ build/bin
 node_modules
 frontend/dist
 frontend/wailsjs
-frontend/src/auto-imports.d.ts
-frontend/src/components.d.ts
 tmp
