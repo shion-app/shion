@@ -1,84 +1,84 @@
 <script lang="ts" setup>
-import { RecordType } from "../constants/";
-import { RawRecord } from "../interfaces";
+import { RecordType } from '../constants/'
+import type { RawRecord } from '../interfaces'
 
 const {
   title,
   data = {
-    name: "",
+    name: '',
     type: RecordType.MANUAL,
-    exe: "",
+    exe: '',
   },
 } = defineProps<{
-  title: string;
-  data?: RawRecord;
-}>();
+  title: string
+  data?: RawRecord
+}>()
+
+const emit = defineEmits<{
+  (event: 'close'): void
+  (event: 'confirm', data: RawRecord): void
+}>()
 
 interface Select {
-  key: string;
-  value: number;
+  key: string
+  value: number
 }
 
-const { t } = useI18n();
+const { t } = useI18n()
 
 const selectList: Select[] = [
   {
-    key: t("record.prop.manual"),
+    key: t('record.prop.manual'),
     value: RecordType.MANUAL,
   },
   {
-    key: t("record.prop.auto"),
+    key: t('record.prop.auto'),
     value: RecordType.AUTO,
   },
-];
+]
 
-let form = $ref<any>();
-let name = $ref(data.name);
-let type = $ref(selectList.find((item) => item.value === data.type));
-let exe = $ref(data.exe);
-let isValidExe = $ref(true);
-let isLoading = $ref(false);
+const form = $ref<any>()
+const name = $ref(data.name)
+const type = $ref(selectList.find(item => item.value === data.type))
+let exe = $ref(data.exe)
+let isValidExe = $ref(true)
+let isLoading = $ref(false)
 
-const emit = defineEmits<{
-  (event: "close"): void;
-  (event: "confirm", data: RawRecord): void;
-}>();
-
-const required = (v) => !!v || t("input.required");
-const nameRules = [required];
-const invalidExe = () => isValidExe || t("record.tip.invalidExe");
-const exeRules = [required, invalidExe];
+const required = v => !!v || t('input.required')
+const nameRules = [required]
+const invalidExe = () => isValidExe || t('record.tip.invalidExe')
+const exeRules = [required, invalidExe]
 
 function close() {
-  emit("close");
+  emit('close')
 }
 
 async function confirm() {
-  const { valid } = await form.validate();
+  const { valid } = await form.validate()
   if (valid) {
-    emit("confirm", {
+    emit('confirm', {
       name,
       type: type.value,
       exe,
-    });
+    })
   }
 }
 
 function wait(timeout: number) {
-  return new Promise((reslove) => setTimeout(reslove, timeout));
+  return new Promise(resolve => setTimeout(resolve, timeout))
 }
 
 async function openFileDialog() {
-  const path = await GetExecutablePath();
+  const path = await GetExecutablePath()
   if (path) {
-    isLoading = true;
-    if (data.exe !== path) {
-      isValidExe = await CheckExecutablePath(path);
-    }
-    await wait(200);
-    isLoading = false;
-    await wait(200);
-    exe = path;
+    isLoading = true
+    if (data.exe !== path)
+      isValidExe = await CheckExecutablePath(path)
+
+    await wait(200)
+    isLoading = false
+    await wait(200)
+    exe = path
   }
 }
 
@@ -86,11 +86,11 @@ watch(
   () => type.value,
   (newVal) => {
     if (newVal === RecordType.MANUAL) {
-      exe = "";
-      isValidExe = false;
+      exe = ''
+      isValidExe = false
     }
-  }
-);
+  },
+)
 </script>
 
 <template>
@@ -103,7 +103,7 @@ watch(
           variant="solo"
           :label="$t('record.prop.name')"
           :rules="nameRules"
-        ></v-text-field>
+        />
         <v-select
           v-model="type"
           return-object
@@ -112,7 +112,7 @@ watch(
           item-title="key"
           item-value="value"
           :label="t('record.prop.type')"
-        ></v-select>
+        />
         <v-text-field
           v-if="type.value === RecordType.AUTO"
           v-model="exe"
@@ -122,14 +122,14 @@ watch(
           readonly
           @click="openFileDialog"
         >
-          <template v-slot:append-inner>
+          <template #append-inner>
             <v-fade-transition leave-absolute>
               <v-progress-circular
                 v-if="isLoading"
                 color="info"
                 indeterminate
                 size="24"
-              ></v-progress-circular>
+              />
               <template v-else>
                 <template v-if="exe">
                   <div
@@ -137,10 +137,10 @@ watch(
                     i-mdi:check-circle
                     c-green
                     text-6
-                  ></div>
-                  <div v-else i-mdi:close-circle c-red text-6></div>
+                  />
+                  <div v-else i-mdi:close-circle c-red text-6 />
                 </template>
-                <div v-else w-6 h-6></div>
+                <div v-else w-6 h-6 />
               </template>
             </v-fade-transition>
           </template>
@@ -148,10 +148,10 @@ watch(
       </v-form>
     </v-card-text>
 
-    <v-divider></v-divider>
+    <v-divider />
 
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn color="primary" text @click="confirm">
         {{ $t("dialog.confirm") }}
       </v-btn>

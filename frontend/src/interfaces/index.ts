@@ -1,3 +1,3 @@
-import { main } from "../../wailsjs/go/models";
+import type { main } from '../../wailsjs/go/models'
 
-export type RawRecord = Pick<main.Record, 'name' | 'type' | 'exe'>;
+export type RawRecord = Pick<main.Record, 'name' | 'type' | 'exe'>

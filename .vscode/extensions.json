@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "dbaeumer.vscode-eslint",
+        "lokalise.i18n-ally",
+        "antfu.iconify",
+        "antfu.unocss",
+        "vue.volar"
+    ]
+}

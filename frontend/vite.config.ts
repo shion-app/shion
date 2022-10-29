@@ -1,15 +1,15 @@
-import { join } from "node:path";
+import { join } from 'node:path'
 
-import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import AutoImport from "unplugin-auto-import/vite";
-import Unocss from "unocss/vite";
-import { presetAttributify, presetUno } from "unocss";
-import Pages from "vite-plugin-pages";
-import Components from "unplugin-vue-components/vite";
-import { Vuetify3Resolver } from "unplugin-vue-components/resolvers";
-import presetIcons from "@unocss/preset-icons";
-import VueI18n from "@intlify/vite-plugin-vue-i18n";
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import AutoImport from 'unplugin-auto-import/vite'
+import Unocss from 'unocss/vite'
+import { presetAttributify, presetUno } from 'unocss'
+import Pages from 'vite-plugin-pages'
+import Components from 'unplugin-vue-components/vite'
+import { Vuetify3Resolver } from 'unplugin-vue-components/resolvers'
+import presetIcons from '@unocss/preset-icons'
+import VueI18n from '@intlify/vite-plugin-vue-i18n'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -19,41 +19,41 @@ export default defineConfig({
     }),
     AutoImport({
       imports: [
-        "vue",
-        "vue-router",
-        "@vueuse/core",
-        "vue-i18n",
+        'vue',
+        'vue-router',
+        '@vueuse/core',
+        'vue-i18n',
         {
-          "date-fns": [
-            "getDay",
-            "subDays",
-            "format",
-            "differenceInCalendarDays",
-            "addDays",
-            "startOfDay",
+          'date-fns': [
+            'getDay',
+            'subDays',
+            'format',
+            'differenceInCalendarDays',
+            'addDays',
+            'startOfDay',
           ],
         },
         {
-          "@mdi/js": ["mdiPlus"],
+          '@mdi/js': ['mdiPlus'],
         },
       ],
       vueTemplate: true,
-      dts: "src/auto-imports.d.ts",
-      dirs: ["./wailsjs/**"],
+      dts: 'src/auto-imports.d.ts',
+      dirs: ['./wailsjs/**'],
     }),
     Unocss({
       presets: [presetUno(), presetAttributify(), presetIcons()],
       shortcuts: {
-        btn: "w-20 h-20 rounded-full",
+        btn: 'w-20 h-20 rounded-full',
       },
     }),
     Pages(),
     Components({
       resolvers: [Vuetify3Resolver()],
-      dts: "src/components.d.ts",
+      dts: 'src/components.d.ts',
     }),
     VueI18n({
-      include: [join(__dirname, "src/locales/**")],
+      include: [join(__dirname, 'src/locales/**')],
     }),
   ],
-});
+})

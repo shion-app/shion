@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { RawRecord } from '../interfaces';
+import type { RawRecord } from '../interfaces'
 
 const emit = defineEmits<{
-  (event: "refresh"): void;
+  (event: 'refresh'): void
 }>()
 
 let isShow = $ref(false)
@@ -21,11 +21,11 @@ async function confirm(data: RawRecord) {
 
 <template>
   <v-dialog v-model="isShow" width="500">
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-btn color="green" :prepend-icon="mdiPlus" v-bind="props">
         {{ $t("input.add") }}
       </v-btn>
     </template>
-    <record :title="$t('input.add')"  @close="close" @confirm="confirm" />
+    <record :title="$t('input.add')" @close="close" @confirm="confirm" />
   </v-dialog>
 </template>

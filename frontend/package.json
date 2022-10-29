@@ -1,11 +1,12 @@
 {
   "name": "shion",
-  "private": true,
   "type": "module",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@unocss/reset": "^0.45.29",
@@ -17,6 +18,7 @@
     "vuetify": "3.0.0-beta.13"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^0.27.0",
     "@iconify-json/mdi": "^1.1.33",
     "@intlify/vite-plugin-vue-i18n": "^6.0.3",
     "@mdi/js": "^7.0.96",
@@ -24,6 +26,7 @@
     "@unocss/preset-icons": "^0.45.29",
     "@vitejs/plugin-vue": "^3.0.3",
     "@vue/runtime-core": "^3.2.41",
+    "eslint": "^8.26.0",
     "typescript": "^4.6.4",
     "unocss": "^0.45.29",
     "unplugin-auto-import": "^0.11.2",
