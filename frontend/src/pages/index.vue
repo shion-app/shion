@@ -17,8 +17,7 @@ function jump(id: number) {
 
 async function deleteRecord(id: number) {
   await DeleteRecord(id)
-  const index = list.findIndex(item => item.id === id)
-  list.splice(index, 1)
+  remove(list, item => item.id === id)
 }
 
 function calculate(time: number) {

@@ -13,6 +13,7 @@ specifiers:
   '@vueuse/core': ^9.3.0
   date-fns: ^2.29.3
   eslint: ^8.26.0
+  is-promise: ^4.0.0
   typescript: ^4.6.4
   unocss: ^0.45.29
   unplugin-auto-import: ^0.11.2
@@ -29,6 +30,7 @@ dependencies:
   '@unocss/reset': 0.45.30
   '@vueuse/core': 9.3.1_vue@3.2.41
   date-fns: 2.29.3
+  is-promise: 4.0.0
   vue: 3.2.41
   vue-i18n: 9.2.2_vue@3.2.41
   vue-router: 4.1.5_vue@3.2.41
@@ -2391,6 +2393,10 @@ packages:
     resolution: {integrity: sha512-Fd4gABb+ycGAmKou8eMftCupSir5lRxqf4aD/vd0cD2qc4HL07OjCeuHMr8Ro4CoMaeCKDB0/ECBOVWjTwUvPQ==}
     engines: {node: '>=8'}
     dev: true
+
+  /is-promise/4.0.0:
+    resolution: {integrity: sha512-hvpoI6korhJMnej285dSg6nu1+e6uxs7zG3BYAm5byqDsgJNWwxzM6z6iZiAgQR4TJ30JmBTOwqZUw3WlyH3AQ==}
+    dev: false
 
   /is-regex/1.1.4:
     resolution: {integrity: sha512-kvRdxDsxZjhzUX07ZnLydzS1TU/TJlTUHHY4YLL87e37oUA49DfkLqgy+VjFocowy29cKvcSiu+kIv728jTTVg==}

@@ -72,12 +72,11 @@ async function openFileDialog() {
   const path = await GetExecutablePath()
   if (path) {
     isLoading = true
-    if (data.exe !== path)
-      isValidExe = await CheckExecutablePath(path)
-
-    await wait(200)
+    await waitProcess(async () => {
+      if (data.exe !== path)
+        isValidExe = await CheckExecutablePath(path)
+    }, 300)
     isLoading = false
-    await wait(200)
     exe = path
   }
 }
