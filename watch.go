@@ -42,8 +42,6 @@ const (
 	WINEVENT_INCONTEXT      = 0x0004
 )
 
-var whiteExeList = []string{}
-
 type WINEVENTPROC func(hWinEventHook HWINEVENTHOOK, event DWORD, hwnd HWND, idObject LONG, idChild LONG, idEventThread DWORD, dwmsEventTime DWORD) uintptr
 
 var (
@@ -60,23 +58,46 @@ var (
 		var pid uint32
 		windows.GetWindowThreadProcessId(windows.HWND(hwnd), &pid)
 		exe := getPathByPid(pid)
-		valid := lo.ContainsBy(whiteExeList, func(item string) bool {
+		valid := lo.ContainsBy(exeWhiteList, func(item string) bool {
 			return item == exe
 		})
 		if valid {
-			handle(int(event), exe)
+			handleEvent(int(event), exe)
 		}
 		return uintptr(0)
 	}
 )
 
+var exeWhiteList = []string{}
+
+func setExeWhiteList(recordList []Record) {
+	exeWhiteList = lo.Map(recordList, func(item Record, _ int) string {
+		return item.Exe
+	})
+}
+
 type Program struct {
-	path  string
-	start int64
+	start int
 	timer *time.Timer
 }
 
 var programMap = map[string]Program{}
+
+var timeout = time.Minute * 2
+
+func deleteProgramMap(exe string) {
+	if program, ok := programMap[exe]; ok {
+		program.timer.Stop()
+		delete(programMap, exe)
+	}
+}
+
+func updateProgramMap(exe string) {
+	if program, ok := programMap[exe]; ok {
+		program.timer.Stop()
+		finish(exe)
+	}
+}
 
 func getPathByPid(pid uint32) string {
 	handle, _ := windows.OpenProcess(windows.PROCESS_QUERY_INFORMATION|windows.PROCESS_VM_READ, false, pid)
@@ -87,31 +108,38 @@ func getPathByPid(pid uint32) string {
 	return windows.UTF16ToString(buf)
 }
 
-func handle(event int, path string) {
-	_, ok := programMap[path]
-	if !ok {
-		mill := time.Now().UnixMilli()
-		println(path)
-		programMap[path] = Program{
-			path:  path,
-			start: mill,
-			timer: time.AfterFunc(time.Second*5, func() {
-				println("end")
-				now := time.Now().UnixMilli()
-				program := programMap[path]
-				// total := now - program.start
-				// TODO: 传递给wails
-				delete(programMap, path)
-				println("start", program.start, "end", now)
-			}),
-		}
+func finish(exe string) {
+	now := int(time.Now().UnixMilli())
+	program := programMap[exe]
+	recordList := app.QueryRecord()
+	record, _ := lo.Find(recordList, func(item Record) bool {
+		return item.Exe == exe
+	})
+	app.InsertTime(record.Id, program.start, now)
+	delete(programMap, exe)
+	app.setActiveExeList()
+}
+
+func generateProgram(exe string, timeout time.Duration) Program {
+	mill := int(time.Now().UnixMilli())
+	return Program{
+		start: mill,
+		timer: time.AfterFunc(timeout, func() {
+			finish(exe)
+		}),
+	}
+}
+
+func handleEvent(event int, path string) {
+	if _, ok := programMap[path]; !ok {
+		programMap[path] = generateProgram(path, timeout)
 	}
 	switch event {
 	case EVENT_OBJECT_FOCUS:
 	case EVENT_OBJECT_LOCATIONCHANGE:
-		println("active")
 		program := programMap[path]
-		program.timer.Reset(time.Second * 5)
+		program.timer.Reset(timeout)
+		app.setActiveExeList()
 	}
 }
 

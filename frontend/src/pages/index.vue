@@ -2,6 +2,7 @@
 import type { main } from '../../wailsjs/go/models'
 
 let list = $ref<main.Record[]>()
+let activeExeList = $ref<Array<string>>([])
 
 const router = useRouter()
 
@@ -24,6 +25,16 @@ function calculate(time: number) {
   const hour = (time / (1000 * 60 * 60)).toFixed(1)
   return hour
 }
+
+EventsOn('active-exe', (list) => {
+  activeExeList = list
+})
+
+function programStatus(exe: string) {
+  const className = 'rounded-full w-2 h-2'
+  const color = activeExeList.includes(exe) ? 'bg-green' : 'bg-gray'
+  return `${className} ${color}`
+}
 </script>
 
 <template>
@@ -44,7 +55,10 @@ function calculate(time: number) {
         class="group"
         @click="jump(id)"
       >
-        <div>{{ name }}</div>
+        <div flex items-center>
+          <div>{{ name }}</div>
+          <div v-if="exe" :class="programStatus(exe)" ml-2 />
+        </div>
         <div flex>
           <div>{{ calculate(totalTime) }}{{ $t('hour') }}</div>
           <v-spacer />

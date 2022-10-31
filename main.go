@@ -9,6 +9,7 @@ import (
 
 //go:embed all:frontend/dist
 var assets embed.FS
+var app *App
 
 func main() {
 	dir := getAppConfigDir()
@@ -17,15 +18,17 @@ func main() {
 	go watch()
 
 	// Create an instance of the app structure
-	app := NewApp(store)
+	app = NewApp(store)
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:     appName,
-		Width:     960,
-		Height:    540,
-		Assets:    assets,
-		OnStartup: app.startup,
+		Title:         appName,
+		Width:         960,
+		Height:        540,
+		Assets:        assets,
+		OnStartup:     app.startup,
+		OnDomReady:    app.domReady,
+		OnBeforeClose: app.beforeClose,
 		Bind: []interface{}{
 			app,
 		},

@@ -67,4 +67,7 @@ function count() {
   <button v-show="isStart" btn bg-red @click="finish">
     {{ $t('finish') }}
   </button>
+  <div v-for="{ id, start, end } in list" :key="id">
+    {{ new Date(start) }} - {{ new Date(end) }}
+  </div>
 </template>

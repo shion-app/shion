@@ -27,6 +27,28 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
+func (a *App) domReady(ctx context.Context) {
+	a.setExeWhiteList()
+}
+
+func (a *App) beforeClose(ctx context.Context) bool {
+	activeExe := lo.Keys(programMap)
+	lo.ForEach(activeExe, func(item string, _ int) {
+		finish(item)
+	})
+	return false
+}
+
+func (a *App) setActiveExeList() {
+	activeExe := lo.Keys(programMap)
+	runtime.EventsEmit(a.ctx, "active-exe", activeExe)
+}
+
+func (a *App) setExeWhiteList() {
+	recordList := a.store.queryRecord()
+	setExeWhiteList(recordList)
+}
+
 func (a *App) GetExecutablePath() (string, error) {
 	return runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
 		Filters: []runtime.FileFilter{
@@ -47,14 +69,25 @@ func (a *App) CheckExecutablePath(exe string) bool {
 
 func (a *App) InsertRecord(name string, recordType int, exe string) {
 	a.store.insertRecord(name, recordType, exe)
+	a.setExeWhiteList()
 }
 
 func (a *App) DeleteRecord(id int) {
+	record := a.store.queryRecordById(id)
+	deleteProgramMap(record.Exe)
 	a.store.deleteRecord(id)
+	a.setExeWhiteList()
 }
 
 func (a *App) UpdateRecord(id int, raw json.RawMessage) {
-	a.store.updateRecord(id, raw)
+	var params map[string]any
+	json.Unmarshal(raw, &params)
+	if _, ok := params["exe"]; ok {
+		record := a.store.queryRecordById(id)
+		updateProgramMap(record.Exe)
+	}
+	a.store.updateRecord(id, params)
+	a.setExeWhiteList()
 }
 
 func (a *App) QueryRecord() []Record {

@@ -93,14 +93,12 @@ func (store *Store) deleteRecord(id int) {
 	})
 }
 
-func (store *Store) updateRecord(id int, raw json.RawMessage) {
+func (store *Store) updateRecord(id int, params map[string]any) {
 	store.db.Update(func(tx *bbolt.Tx) error {
 		recordBucket := tx.Bucket([]byte(RECORD))
 		data := recordBucket.Get(itob(id))
 		var instance Record
 		json.Unmarshal(data, &instance)
-		var params map[string]any
-		json.Unmarshal(raw, &params)
 		assign(&instance, params)
 		data, _ = json.Marshal(instance)
 		return recordBucket.Put(itob(instance.Id), data)
