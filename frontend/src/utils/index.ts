@@ -1,3 +1,4 @@
+import { enUS, zhCN } from 'date-fns/locale'
 import isPromise from 'is-promise'
 
 export function remove<T>(list: T[], predicate: (value: T, index: number, obj: T[]) => boolean) {
@@ -20,3 +21,11 @@ export async function waitProcess(process: () => void | Promise<unknown>, timeou
     await wait(rest)
 }
 
+export function getDateLocale(locale: string) {
+  switch (locale) {
+    case 'en':
+      return enUS
+    case 'zh':
+      return zhCN
+  }
+}

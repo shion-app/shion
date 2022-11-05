@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { mdiPlus } from '@mdi/js'
 import type { RawRecord } from '../interfaces'
 
 const emit = defineEmits<{

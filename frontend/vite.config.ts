@@ -23,19 +23,6 @@ export default defineConfig({
         'vue-router',
         '@vueuse/core',
         'vue-i18n',
-        {
-          'date-fns': [
-            'getDay',
-            'subDays',
-            'format',
-            'differenceInCalendarDays',
-            'addDays',
-            'startOfDay',
-          ],
-        },
-        {
-          '@mdi/js': ['mdiPlus'],
-        },
       ],
       vueTemplate: true,
       dts: 'src/auto-imports.d.ts',

@@ -11,6 +11,7 @@ declare global {
   const EventsOn: typeof import('../wailsjs/runtime/runtime.js')['EventsOn']
   const EventsOnMultiple: typeof import('../wailsjs/runtime/runtime.js')['EventsOnMultiple']
   const EventsOnce: typeof import('../wailsjs/runtime/runtime.js')['EventsOnce']
+  const GetActiveExeList: typeof import('../wailsjs/go/main/App.js')['GetActiveExeList']
   const GetExecutablePath: typeof import('../wailsjs/go/main/App.js')['GetExecutablePath']
   const Hide: typeof import('../wailsjs/runtime/runtime.js')['Hide']
   const InsertRecord: typeof import('../wailsjs/go/main/App.js')['InsertRecord']
@@ -57,7 +58,6 @@ declare global {
   const WindowUnfullscreen: typeof import('../wailsjs/runtime/runtime.js')['WindowUnfullscreen']
   const WindowUnmaximise: typeof import('../wailsjs/runtime/runtime.js')['WindowUnmaximise']
   const WindowUnminimise: typeof import('../wailsjs/runtime/runtime.js')['WindowUnminimise']
-  const addDays: typeof import('date-fns')['addDays']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const computed: typeof import('vue')['computed']
@@ -79,14 +79,12 @@ declare global {
   const debouncedWatch: typeof import('@vueuse/core')['debouncedWatch']
   const defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
   const defineComponent: typeof import('vue')['defineComponent']
-  const differenceInCalendarDays: typeof import('date-fns')['differenceInCalendarDays']
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const effectScope: typeof import('vue')['effectScope']
   const extendRef: typeof import('@vueuse/core')['extendRef']
-  const format: typeof import('date-fns')['format']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
-  const getDay: typeof import('date-fns')['getDay']
+  const getDateLocale: typeof import('./utils/index')['getDateLocale']
   const h: typeof import('vue')['h']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
   const inject: typeof import('vue')['inject']
@@ -97,7 +95,6 @@ declare global {
   const isRef: typeof import('vue')['isRef']
   const makeDestructurable: typeof import('@vueuse/core')['makeDestructurable']
   const markRaw: typeof import('vue')['markRaw']
-  const mdiPlus: typeof import('@mdi/js')['mdiPlus']
   const nextTick: typeof import('vue')['nextTick']
   const onActivated: typeof import('vue')['onActivated']
   const onBeforeMount: typeof import('vue')['onBeforeMount']
@@ -138,8 +135,6 @@ declare global {
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']
-  const startOfDay: typeof import('date-fns')['startOfDay']
-  const subDays: typeof import('date-fns')['subDays']
   const syncRef: typeof import('@vueuse/core')['syncRef']
   const syncRefs: typeof import('@vueuse/core')['syncRefs']
   const templateRef: typeof import('@vueuse/core')['templateRef']
@@ -340,6 +335,7 @@ declare module '@vue/runtime-core' {
     readonly EventsOn: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsOn']>
     readonly EventsOnMultiple: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsOnMultiple']>
     readonly EventsOnce: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsOnce']>
+    readonly GetActiveExeList: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['GetActiveExeList']>
     readonly GetExecutablePath: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['GetExecutablePath']>
     readonly Hide: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['Hide']>
     readonly InsertRecord: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['InsertRecord']>
@@ -386,7 +382,6 @@ declare module '@vue/runtime-core' {
     readonly WindowUnfullscreen: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowUnfullscreen']>
     readonly WindowUnmaximise: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowUnmaximise']>
     readonly WindowUnminimise: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowUnminimise']>
-    readonly addDays: UnwrapRef<typeof import('date-fns')['addDays']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
@@ -408,14 +403,12 @@ declare module '@vue/runtime-core' {
     readonly debouncedWatch: UnwrapRef<typeof import('@vueuse/core')['debouncedWatch']>
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
-    readonly differenceInCalendarDays: UnwrapRef<typeof import('date-fns')['differenceInCalendarDays']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
-    readonly format: UnwrapRef<typeof import('date-fns')['format']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
-    readonly getDay: UnwrapRef<typeof import('date-fns')['getDay']>
+    readonly getDateLocale: UnwrapRef<typeof import('./utils/index')['getDateLocale']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
@@ -426,7 +419,6 @@ declare module '@vue/runtime-core' {
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
-    readonly mdiPlus: UnwrapRef<typeof import('@mdi/js')['mdiPlus']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
     readonly onBeforeMount: UnwrapRef<typeof import('vue')['onBeforeMount']>
@@ -467,8 +459,6 @@ declare module '@vue/runtime-core' {
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
-    readonly startOfDay: UnwrapRef<typeof import('date-fns')['startOfDay']>
-    readonly subDays: UnwrapRef<typeof import('date-fns')['subDays']>
     readonly syncRef: UnwrapRef<typeof import('@vueuse/core')['syncRef']>
     readonly syncRefs: UnwrapRef<typeof import('@vueuse/core')['syncRefs']>
     readonly templateRef: UnwrapRef<typeof import('@vueuse/core')['templateRef']>

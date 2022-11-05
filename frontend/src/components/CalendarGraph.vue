@@ -1,11 +1,15 @@
 <script lang="ts" setup>
+import { addDays, differenceInCalendarDays, format, getDate, getDay, getMonth, startOfDay, subDays } from 'date-fns'
 import type { main } from '../../wailsjs/go/models'
 
 const { list = [] } = defineProps<{
   list: main.Time[]
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+
+const cellRef = $ref<HTMLElement>()
+const currentDate = $ref<Date>(new Date())
 
 function formatYYYYMMDD(date: number | Date) {
   return format(date, 'yyyy-MM-dd')
@@ -59,7 +63,6 @@ function getColorByTime(time: number) {
     return '#40c463'
   else if (time < 6)
     return '#30a14e'
-
   return '#216e39'
 }
 
@@ -83,31 +86,53 @@ const day = getDay(now)
 
 const week = 53
 const days = 7
-const cellTotal = (week - 1) * 7 + day
+const cellTotal = (week - 1) * 7 + day + 1
 
-const cellList: Array<{
+interface Cell {
   date: Date
   total: number
   x: number
   y: number
-}> = []
+}
 
-const padding = 0
+const cellList: Array<Cell> = []
+
+const padding = 24
 const offset = 3
 const width = 14
 
 const calendarWidth = padding * 2 + week * width + (week - 1) * offset
 const calendarHeight = padding * 2 + days * width + (days - 1) * offset
 
+const monthList: Array<{
+  date: Date
+  x: number
+}> = []
+
+let currentMonth = -1
+
 for (let i = 0; i < cellTotal; i++) {
   const x = ~~(i / 7)
   const y = i % 7
-  cellList.push({
+  const cell: Cell = {
     date: subDays(now, cellTotal - i - 1),
     total: 0,
     x: padding + x * (width + offset),
     y: padding + y * (width + offset),
-  })
+  }
+  cellList.push(cell)
+  if (i === 0 && getDate(cell.date) !== 1)
+    continue
+  if (y === 0) {
+    const month = getMonth(cell.date) + 1
+    if (currentMonth !== month) {
+      monthList.push({
+        date: cell.date,
+        x: cell.x,
+      })
+      currentMonth = month
+    }
+  }
 }
 </script>
 
@@ -119,9 +144,21 @@ for (let i = 0; i < cellTotal; i++) {
       height: `${calendarHeight}px`,
     }"
   >
-    <v-tooltip v-for="{ x, y, date } in cellList" :key="date.getTime()" location="bottom">
+    <div
+      v-for="{ date, x } in monthList"
+      :key="x" absolute :style="{
+        transform: `translate(${x}px, 0px)`,
+
+      }"
+    >
+      {{ format(date, 'MMM', { locale: getDateLocale(locale) }) }}
+    </div>
+    <v-tooltip location="bottom">
       <template #activator="{ props }">
         <div
+          v-for="{ x, y, date } in cellList" :key="date.getTime()"
+          v-bind="props"
+          ref="cellRef"
           :style="{
             transform: `translate(${x}px, ${y}px)`,
             width: `${width}px`,
@@ -131,12 +168,12 @@ for (let i = 0; i < cellTotal; i++) {
           absolute
           rounded
           cursor-pointer
-          v-bind="props"
+          @mouseenter="currentDate = date"
         />
       </template>
-      <div>{{ formatYYYYMMDD(date) }}</div>
+      <div>{{ formatYYYYMMDD(currentDate) }}</div>
       <div>
-        {{ formatHourMinute(getTotalByDate(date)) }}
+        {{ formatHourMinute(getTotalByDate(currentDate)) }}
       </div>
     </v-tooltip>
   </div>

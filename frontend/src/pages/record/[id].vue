@@ -15,7 +15,7 @@ let isStart = $ref(false)
 
 let startTime = 0
 let endTime = 0
-let clock = $ref(format(0))
+let clock = $ref(formatTime(0))
 
 let frame: number
 
@@ -30,7 +30,7 @@ async function finish() {
   cancelAnimationFrame(frame)
   await InsertTime(Number(id), startTime, endTime)
   startTime = endTime = 0
-  clock = format(0)
+  clock = formatTime(0)
   await getList()
 }
 
@@ -38,7 +38,7 @@ function complement(num: number) {
   return num < 10 ? `0${num}` : num
 }
 
-function format(time: number) {
+function formatTime(time: number) {
   const milli = complement(~~((time % 1000) / 10))
   time = ~~(time / 1000)
   const second = complement(time % 60)
@@ -52,7 +52,7 @@ function format(time: number) {
 function count() {
   frame = requestAnimationFrame(() => {
     endTime = Date.now()
-    clock = format(endTime - startTime)
+    clock = formatTime(endTime - startTime)
     count()
   })
 }
