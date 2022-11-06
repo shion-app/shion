@@ -31,17 +31,17 @@ func (a *App) domReady(ctx context.Context) {
 	a.setExeWhiteList()
 }
 
-func (a *App) beforeClose(ctx context.Context) bool {
-	activeExe := lo.Keys(programMap)
-	lo.ForEach(activeExe, func(item string, _ int) {
-		finish(item)
-	})
-	return false
+func (a *App) shutdown(ctx context.Context) {
+	closeWatch()
 }
 
 func (a *App) setActiveExeList() {
 	activeExe := lo.Keys(programMap)
 	runtime.EventsEmit(a.ctx, "active-exe", activeExe)
+}
+
+func (a *App) GetActiveExeList() []string {
+	return lo.Keys(programMap)
 }
 
 func (a *App) setExeWhiteList() {

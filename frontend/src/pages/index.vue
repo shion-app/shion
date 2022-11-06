@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { main } from '../../wailsjs/go/models'
+import { EventType } from '../constants'
 
 let list = $ref<main.Record[]>()
 let activeExeList = $ref<Array<string>>([])
@@ -11,6 +12,10 @@ async function getList() {
 }
 
 getList()
+
+GetActiveExeList().then((list) => {
+  activeExeList = list
+})
 
 function jump(id: number) {
   router.push(`/record/${id}`)
@@ -26,7 +31,7 @@ function calculate(time: number) {
   return hour
 }
 
-EventsOn('active-exe', (list) => {
+EventsOn(EventType.ACTIVE_EXE, (list) => {
   activeExeList = list
 })
 

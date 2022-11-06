@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { main } from '../../../wailsjs/go/models'
+import { EventType } from '../../constants'
 
 const { id } = defineProps<{ id: string }>()
 
@@ -56,6 +57,9 @@ function count() {
     count()
   })
 }
+
+// TODO:关闭应用自动保存
+EventsOn(EventType.CLOSE_WATCH, finish)
 </script>
 
 <template>

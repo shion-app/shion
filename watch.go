@@ -5,6 +5,7 @@ import (
 	"unsafe"
 
 	"github.com/samber/lo"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"golang.org/x/sys/windows"
 )
 
@@ -13,6 +14,9 @@ type (
 	HMODULE       HANDLE
 	HWINEVENTHOOK HANDLE
 	HWND          HANDLE
+	WPARAM        uintptr
+	LPARAM        uintptr
+	LRESULT       uintptr
 	DWORD         uint32
 	UINT          uint32
 	LONG          int32
@@ -43,6 +47,8 @@ const (
 )
 
 type WINEVENTPROC func(hWinEventHook HWINEVENTHOOK, event DWORD, hwnd HWND, idObject LONG, idChild LONG, idEventThread DWORD, dwmsEventTime DWORD) uintptr
+
+type WNDPROC func(hWnd HWND, uMsg UINT, wParam WPARAM, lParam LPARAM) LRESULT
 
 var (
 	user32 = windows.NewLazyDLL("user32.dll")
@@ -97,6 +103,15 @@ func updateProgramMap(exe string) {
 		program.timer.Stop()
 		finish(exe)
 	}
+}
+
+// TODO: 关机自动保存
+func closeWatch() {
+	activeExe := lo.Keys(programMap)
+	lo.ForEach(activeExe, func(item string, _ int) {
+		finish(item)
+	})
+	runtime.EventsEmit(app.ctx, "close-watch")
 }
 
 func getPathByPid(pid uint32) string {
@@ -167,6 +182,18 @@ func setWinEventHook(eventMin DWORD, eventMax DWORD, hmodWinEventProc HMODULE, p
 	)
 	return HWINEVENTHOOK(ret)
 }
+
+// func windowProc(hwnd syscall.Handle, msg uint32, wparam, lparam uintptr) (rc uintptr) {
+// 	switch msg {
+// 	case WM_SIZE:
+// 		if wparam == SIZE_MAXIMIZED || wparam == SIZE_RESTORED {
+// 			// HERE, I use a channel to notify to the Go application
+// 		}
+// 	default:
+// 		return DefWindowProc(hwnd, msg, wparam, lparam)
+// 	}
+// 	return 1
+// }
 
 // func unhookWinEvent(hWinEventHook HWINEVENTHOOK) bool {
 // 	ret, _, _ := procUnhookWinEvent.Call(
