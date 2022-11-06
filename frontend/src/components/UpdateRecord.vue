@@ -38,6 +38,6 @@ async function confirm(data: RawRecord) {
         <span>{{ $t("input.edit") }}</span>
       </v-tooltip>
     </template>
-    <record :title="$t('input.edit')" :data="data" @close="close" @confirm="confirm" />
+    <record-form :title="$t('input.edit')" :data="data" @close="close" @confirm="confirm" />
   </v-dialog>
 </template>

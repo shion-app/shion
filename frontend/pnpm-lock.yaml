@@ -24,7 +24,7 @@ specifiers:
   vue-i18n: ^9.2.2
   vue-router: ^4.1.5
   vue-tsc: ^1.0.3
-  vuetify: 3.0.0-beta.13
+  vuetify: ^3.0.0
 
 dependencies:
   '@mdi/js': 7.0.96
@@ -35,7 +35,7 @@ dependencies:
   vue: 3.2.41
   vue-i18n: 9.2.2_vue@3.2.41
   vue-router: 4.1.5_vue@3.2.41
-  vuetify: 3.0.0-beta.13_vue-i18n@9.2.2+vue@3.2.41
+  vuetify: 3.0.0_vue-i18n@9.2.2+vue@3.2.41
 
 devDependencies:
   '@antfu/eslint-config': 0.27.0_eslint@8.26.0+typescript@4.8.4
@@ -3578,18 +3578,15 @@ packages:
       '@vue/shared': 3.2.41
     dev: false
 
-  /vuetify/3.0.0-beta.13_vue-i18n@9.2.2+vue@3.2.41:
-    resolution: {integrity: sha512-CgDyKCIBZ0ogKUxRw3gNswx9GA6eSSp7otZcJapWJCVuon/RooQPQjf3bDuRb5ZpJ55NkX13ugjl2nq+b0U8SA==}
+  /vuetify/3.0.0_vue-i18n@9.2.2+vue@3.2.41:
+    resolution: {integrity: sha512-0olLmKWb+oTaebGTM02+1fWaAgnGDuIt86K3jDv2LnALQ2atSzhDS1SSASJsJCZ2PgFBdDAeJVLcNWWavRYAlQ==}
     engines: {node: ^12.20 || >=14.13}
     peerDependencies:
-      '@formatjs/intl': ^1.0.0 || ^2.0.0
       vite-plugin-vuetify: ^1.0.0-alpha.12
       vue: ^3.2.0
       vue-i18n: ^9.0.0
       webpack-plugin-vuetify: ^2.0.0-alpha.11
     peerDependenciesMeta:
-      '@formatjs/intl':
-        optional: true
       vite-plugin-vuetify:
         optional: true
       vue-i18n:

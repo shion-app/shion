@@ -27,6 +27,6 @@ async function confirm(data: RawRecord) {
         {{ $t("input.add") }}
       </v-btn>
     </template>
-    <record :title="$t('input.add')" @close="close" @confirm="confirm" />
+    <record-form :title="$t('input.add')" @close="close" @confirm="confirm" />
   </v-dialog>
 </template>
