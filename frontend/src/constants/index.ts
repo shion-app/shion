@@ -4,6 +4,5 @@ export const enum RecordType {
 }
 
 export const enum EventType {
-  CLOSE_WATCH = 'close-watch',
   ACTIVE_EXE = 'active-exe',
 }

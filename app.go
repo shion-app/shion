@@ -94,10 +94,16 @@ func (a *App) QueryRecord() []Record {
 	return a.store.queryRecord()
 }
 
-func (a *App) InsertTime(recordId int, start int, end int) {
-	a.store.insertTime(recordId, start, end)
+func (a *App) InsertTime(recordId int, start int, end int) int {
+	return a.store.insertTime(recordId, start, end)
 }
 
 func (a *App) QueryTime(recordId int) []Time {
 	return a.store.queryTime(recordId)
+}
+
+func (a *App) UpdateTime(recordId int, raw json.RawMessage) {
+	var params map[string]any
+	json.Unmarshal(raw, &params)
+	a.store.updateTime(recordId, params)
 }

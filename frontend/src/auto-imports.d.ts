@@ -31,6 +31,7 @@ declare global {
   const Show: typeof import('../wailsjs/runtime/runtime.js')['Show']
   const Time: typeof import('../wailsjs/go/models')['Time']
   const UpdateRecord: typeof import('../wailsjs/go/main/App.js')['UpdateRecord']
+  const UpdateTime: typeof import('../wailsjs/go/main/App.js')['UpdateTime']
   const WindowCenter: typeof import('../wailsjs/runtime/runtime.js')['WindowCenter']
   const WindowFullscreen: typeof import('../wailsjs/runtime/runtime.js')['WindowFullscreen']
   const WindowGetPosition: typeof import('../wailsjs/runtime/runtime.js')['WindowGetPosition']
@@ -82,6 +83,7 @@ declare global {
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const effectScope: typeof import('vue')['effectScope']
   const extendRef: typeof import('@vueuse/core')['extendRef']
+  const extractTime: typeof import('./utils/index')['extractTime']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const getDateLocale: typeof import('./utils/index')['getDateLocale']
@@ -355,6 +357,7 @@ declare module '@vue/runtime-core' {
     readonly Show: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['Show']>
     readonly Time: UnwrapRef<typeof import('../wailsjs/go/models')['Time']>
     readonly UpdateRecord: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['UpdateRecord']>
+    readonly UpdateTime: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['UpdateTime']>
     readonly WindowCenter: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowCenter']>
     readonly WindowFullscreen: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowFullscreen']>
     readonly WindowGetPosition: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowGetPosition']>
@@ -406,6 +409,7 @@ declare module '@vue/runtime-core' {
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
+    readonly extractTime: UnwrapRef<typeof import('./utils/index')['extractTime']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getDateLocale: UnwrapRef<typeof import('./utils/index')['getDateLocale']>

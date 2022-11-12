@@ -162,7 +162,8 @@ type Time struct {
 	End   int `json:"end"`
 }
 
-func (store *Store) insertTime(recordId int, start int, end int) {
+func (store *Store) insertTime(recordId int, start int, end int) int {
+	var id uint64
 	store.db.Update(func(tx *bbolt.Tx) error {
 		recordBucket := tx.Bucket([]byte(RECORD))
 		recordInstance := store.queryRecordById(recordId)
@@ -171,7 +172,7 @@ func (store *Store) insertTime(recordId int, start int, end int) {
 		recordBucket.Put(itob(recordInstance.Id), recordData)
 
 		timeBucket := recordBucket.Bucket([]byte(combineKeyAndId(TIME, recordId)))
-		id, _ := timeBucket.NextSequence()
+		id, _ = timeBucket.NextSequence()
 		timeInstance := Time{
 			Id:    int(id),
 			Start: start,
@@ -180,6 +181,7 @@ func (store *Store) insertTime(recordId int, start int, end int) {
 		timeData, _ := json.Marshal(timeInstance)
 		return timeBucket.Put(itob(timeInstance.Id), timeData)
 	})
+	return int(id)
 }
 
 func (store *Store) queryTime(recordId int) []Time {
@@ -196,4 +198,17 @@ func (store *Store) queryTime(recordId int) []Time {
 		return nil
 	})
 	return result
+}
+
+func (store *Store) updateTime(recordId int, params map[string]any) {
+	store.db.Update(func(tx *bbolt.Tx) error {
+		recordBucket := tx.Bucket([]byte(RECORD))
+		timeBucket := recordBucket.Bucket([]byte(combineKeyAndId(TIME, recordId)))
+		data := timeBucket.Get(itob(int(params["id"].(float64))))
+		var instance Time
+		json.Unmarshal(data, &instance)
+		assign(&instance, params)
+		data, _ = json.Marshal(instance)
+		return timeBucket.Put(itob(instance.Id), data)
+	})
 }

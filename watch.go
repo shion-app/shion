@@ -5,7 +5,6 @@ import (
 	"unsafe"
 
 	"github.com/samber/lo"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"golang.org/x/sys/windows"
 )
 
@@ -105,13 +104,11 @@ func updateProgramMap(exe string) {
 	}
 }
 
-// TODO: 关机自动保存
 func closeWatch() {
 	activeExe := lo.Keys(programMap)
 	lo.ForEach(activeExe, func(item string, _ int) {
 		finish(item)
 	})
-	runtime.EventsEmit(app.ctx, "close-watch")
 }
 
 func getPathByPid(pid uint32) string {

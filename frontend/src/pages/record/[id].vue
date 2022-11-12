@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { main } from '../../../wailsjs/go/models'
-import { EventType } from '../../constants'
+import { extractTime } from '../../utils'
 
 const { id } = defineProps<{ id: string }>()
 
@@ -20,19 +20,36 @@ let clock = $ref(formatTime(0))
 
 let frame: number
 
+let timeId: number
+let currentTime = 0
+
 function start() {
   isStart = true
   startTime = Date.now()
+  insert()
   count()
+}
+
+async function insert() {
+  endTime = startTime
+  timeId = await InsertTime(Number(id), startTime, endTime)
 }
 
 async function finish() {
   isStart = false
   cancelAnimationFrame(frame)
-  await InsertTime(Number(id), startTime, endTime)
+  await UpdateTime(Number(id), {
+    id: timeId,
+    end: endTime,
+  })
+  reset()
+  await getList()
+}
+
+function reset() {
   startTime = endTime = 0
   clock = formatTime(0)
-  await getList()
+  currentTime = 0
 }
 
 function complement(num: number) {
@@ -40,26 +57,30 @@ function complement(num: number) {
 }
 
 function formatTime(time: number) {
-  const milli = complement(~~((time % 1000) / 10))
-  time = ~~(time / 1000)
-  const second = complement(time % 60)
-  time = ~~(time / 60)
-  const minute = complement(time % 60)
-  const hour = ~~(time / 60)
-  const result = `${minute}:${second}.${milli}`
+  const { milli, second, minute, hour } = extractTime(time)
+  const _milli = complement(~~(milli / 10))
+  const _second = complement(second)
+  const _minute = complement(minute)
+  const result = `${_minute}:${_second}.${_milli}`
   return hour ? `${complement(hour)}:${result}` : result
 }
 
 function count() {
   frame = requestAnimationFrame(() => {
     endTime = Date.now()
+    if (endTime - currentTime > 1000 * 60) {
+      currentTime = endTime
+      if (typeof timeId === 'number') {
+        UpdateTime(Number(id), {
+          id: timeId,
+          end: endTime,
+        })
+      }
+    }
     clock = formatTime(endTime - startTime)
     count()
   })
 }
-
-// TODO:关闭应用自动保存
-EventsOn(EventType.CLOSE_WATCH, finish)
 </script>
 
 <template>
