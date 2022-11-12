@@ -102,8 +102,8 @@ func (a *App) QueryTime(recordId int) []Time {
 	return a.store.queryTime(recordId)
 }
 
-func (a *App) UpdateTime(recordId int, raw json.RawMessage) {
+func (a *App) UpdateTime(recordId int, id int, raw json.RawMessage) {
 	var params map[string]any
 	json.Unmarshal(raw, &params)
-	a.store.updateTime(recordId, params)
+	a.store.updateTime(recordId, id, params)
 }

@@ -38,8 +38,7 @@ async function insert() {
 async function finish() {
   isStart = false
   cancelAnimationFrame(frame)
-  await UpdateTime(Number(id), {
-    id: timeId,
+  await UpdateTime(Number(id), timeId, {
     end: endTime,
   })
   reset()
@@ -71,8 +70,7 @@ function count() {
     if (endTime - currentTime > 1000 * 60) {
       currentTime = endTime
       if (typeof timeId === 'number') {
-        UpdateTime(Number(id), {
-          id: timeId,
+        UpdateTime(Number(id), timeId, {
           end: endTime,
         })
       }

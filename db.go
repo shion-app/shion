@@ -200,11 +200,11 @@ func (store *Store) queryTime(recordId int) []Time {
 	return result
 }
 
-func (store *Store) updateTime(recordId int, params map[string]any) {
+func (store *Store) updateTime(recordId int, id int, params map[string]any) {
 	store.db.Update(func(tx *bbolt.Tx) error {
 		recordBucket := tx.Bucket([]byte(RECORD))
 		timeBucket := recordBucket.Bucket([]byte(combineKeyAndId(TIME, recordId)))
-		data := timeBucket.Get(itob(int(params["id"].(float64))))
+		data := timeBucket.Get(itob(id))
 		var instance Time
 		json.Unmarshal(data, &instance)
 		assign(&instance, params)

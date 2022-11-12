@@ -82,8 +82,9 @@ func setExeWhiteList(recordList []Record) {
 }
 
 type Program struct {
-	start int
-	timer *time.Timer
+	recordId int
+	timeId   int
+	timer    *time.Timer
 }
 
 var programMap = map[string]Program{}
@@ -120,22 +121,24 @@ func getPathByPid(pid uint32) string {
 	return windows.UTF16ToString(buf)
 }
 
-func finish(exe string) {
+func update(exe string) {
 	now := int(time.Now().UnixMilli())
 	program := programMap[exe]
-	recordList := app.QueryRecord()
-	record, _ := lo.Find(recordList, func(item Record) bool {
-		return item.Exe == exe
+	app.store.updateTime(program.recordId, program.timeId, map[string]any{
+		"end": now,
 	})
-	app.InsertTime(record.Id, program.start, now)
+}
+
+func finish(exe string) {
+	update(exe)
 	delete(programMap, exe)
 	app.setActiveExeList()
 }
 
-func generateProgram(exe string, timeout time.Duration) Program {
-	mill := int(time.Now().UnixMilli())
+func generateProgram(recordId int, timeId int, exe string, timeout time.Duration) Program {
 	return Program{
-		start: mill,
+		recordId: recordId,
+		timeId:   timeId,
 		timer: time.AfterFunc(timeout, func() {
 			finish(exe)
 		}),
@@ -144,7 +147,13 @@ func generateProgram(exe string, timeout time.Duration) Program {
 
 func handleEvent(event int, path string) {
 	if _, ok := programMap[path]; !ok {
-		programMap[path] = generateProgram(path, timeout)
+		recordList := app.QueryRecord()
+		record, _ := lo.Find(recordList, func(item Record) bool {
+			return item.Exe == path
+		})
+		milli := int(time.Now().UnixMilli())
+		timeId := app.InsertTime(record.Id, milli, milli)
+		programMap[path] = generateProgram(record.Id, timeId, path, timeout)
 	}
 	switch event {
 	case EVENT_OBJECT_FOCUS:
@@ -155,7 +164,21 @@ func handleEvent(event int, path string) {
 	}
 }
 
+func tickUpdate() {
+	ticker := time.NewTicker(time.Minute)
+	go func() {
+		for {
+			<-ticker.C
+			activeExe := lo.Keys(programMap)
+			lo.ForEach(activeExe, func(item string, _ int) {
+				update(item)
+			})
+		}
+	}()
+}
+
 func watch() {
+	tickUpdate()
 	setWinEventHook(EVENT_OBJECT_FOCUS, EVENT_OBJECT_LOCATIONCHANGE, 0, activeWinEventHook, 0, 0, WINEVENT_OUTOFCONTEXT|WINEVENT_SKIPOWNPROCESS)
 
 	var msg MSG
@@ -179,25 +202,6 @@ func setWinEventHook(eventMin DWORD, eventMax DWORD, hmodWinEventProc HMODULE, p
 	)
 	return HWINEVENTHOOK(ret)
 }
-
-// func windowProc(hwnd syscall.Handle, msg uint32, wparam, lparam uintptr) (rc uintptr) {
-// 	switch msg {
-// 	case WM_SIZE:
-// 		if wparam == SIZE_MAXIMIZED || wparam == SIZE_RESTORED {
-// 			// HERE, I use a channel to notify to the Go application
-// 		}
-// 	default:
-// 		return DefWindowProc(hwnd, msg, wparam, lparam)
-// 	}
-// 	return 1
-// }
-
-// func unhookWinEvent(hWinEventHook HWINEVENTHOOK) bool {
-// 	ret, _, _ := procUnhookWinEvent.Call(
-// 		uintptr(hWinEventHook),
-// 	)
-// 	return ret != 0
-// }
 
 func getMessage(msg *MSG, hwnd HWND, msgFilterMin UINT, msgFilterMax UINT) int {
 	ret, _, _ := procGetMessage.Call(
