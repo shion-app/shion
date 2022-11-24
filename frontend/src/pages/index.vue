@@ -2,7 +2,7 @@
 import type { main } from '../../wailsjs/go/models'
 import { EventType } from '../constants'
 
-let list = $ref<main.Record[]>()
+let list = $ref<main.Record[]>([])
 let activeExeList = $ref<Array<string>>([])
 
 const router = useRouter()

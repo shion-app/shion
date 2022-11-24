@@ -39,7 +39,7 @@ const selectList: Select[] = [
 
 const form = $ref<any>()
 const name = $ref(data.name)
-const type = $ref(selectList.find(item => item.value === data.type))
+const type = $ref(selectList.find(item => item.value === data.type)!)
 let exe = $ref(data.exe)
 let isValidExe = $ref(true)
 let isLoading = $ref(false)

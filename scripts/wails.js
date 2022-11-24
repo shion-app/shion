@@ -32,7 +32,7 @@ const getLdflags = (isProd = false) => {
 
 const program = new Command();
 program.command("dev").action(() => {
-  const args = ["dev", getLdflags()];
+  const args = ["dev", "-s", getLdflags()];
   run(args);
 });
 

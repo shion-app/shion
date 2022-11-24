@@ -4,7 +4,7 @@ import { extractTime } from '../../utils'
 
 const { id } = defineProps<{ id: string }>()
 
-let list = $ref<main.Time[]>()
+let list = $ref<main.Time[]>([])
 
 async function getList() {
   list = await QueryTime(Number(id))
