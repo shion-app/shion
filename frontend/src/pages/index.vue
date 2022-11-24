@@ -2,6 +2,8 @@
 import type { main } from '../../wailsjs/go/models'
 import { EventType } from '../constants'
 
+const { toggle } = useDialog()
+
 let list = $ref<main.Record[]>([])
 let activeExeList = $ref<Array<string>>([])
 
@@ -23,7 +25,7 @@ function jump(id: number) {
 
 async function deleteRecord(id: number) {
   await DeleteRecord(id)
-  remove(list, item => item.id === id)
+  removeBy(list, item => item.id === id)
 }
 
 function calculate(time: number) {
@@ -43,6 +45,9 @@ function programStatus(exe: string) {
 </script>
 
 <template>
+  <button @click="toggle">
+    toggle
+  </button>
   <div flex flex-col h-full>
     <div flex>
       <v-spacer />

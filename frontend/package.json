@@ -15,10 +15,12 @@
     "@vueuse/core": "^9.5.0",
     "date-fns": "^2.29.3",
     "is-promise": "^4.0.0",
+    "nanoid": "^4.0.0",
+    "pinia": "^2.0.26",
     "vue": "^3.2.45",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.1.6",
-    "vuetify": "^3.0.0"
+    "vuetify": "^3.0.2"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.31.0",

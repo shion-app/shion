@@ -1,12 +1,6 @@
 import { enUS, zhCN } from 'date-fns/locale'
 import isPromise from 'is-promise'
 
-export function remove<T>(list: T[], predicate: (value: T, index: number, obj: T[]) => boolean) {
-  const index = list.findIndex(predicate)
-  if (index !== -1)
-    list.splice(index, 1)
-}
-
 export function wait(timeout: number) {
   return new Promise(resolve => setTimeout(resolve, timeout))
 }

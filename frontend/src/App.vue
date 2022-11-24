@@ -1,5 +1,6 @@
 <template>
   <router-view />
+  <dialog-provider />
 </template>
 
 <style>

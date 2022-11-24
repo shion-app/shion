@@ -7,6 +7,7 @@ import { createVuetify } from 'vuetify'
 import { createI18n } from 'vue-i18n'
 import messages from '@intlify/vite-plugin-vue-i18n/messages'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
+import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import routes from '~pages'
@@ -31,4 +32,6 @@ const i18n = createI18n({
   messages,
 })
 
-createApp(App).use(router).use(vuetify).use(i18n).mount('#app')
+const pinia = createPinia()
+
+createApp(App).use(router).use(vuetify).use(i18n).use(pinia).mount('#app')
