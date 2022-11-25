@@ -64,10 +64,6 @@ async function confirm() {
   }
 }
 
-function wait(timeout: number) {
-  return new Promise(resolve => setTimeout(resolve, timeout))
-}
-
 async function openFileDialog() {
   const path = await GetExecutablePath()
   if (path) {

@@ -2,8 +2,6 @@
 import type { main } from '../../wailsjs/go/models'
 import { EventType } from '../constants'
 
-const { toggle } = useDialog()
-
 let list = $ref<main.Record[]>([])
 let activeExeList = $ref<Array<string>>([])
 
@@ -45,9 +43,6 @@ function programStatus(exe: string) {
 </script>
 
 <template>
-  <button @click="toggle">
-    toggle
-  </button>
   <div flex flex-col h-full>
     <div flex>
       <v-spacer />
