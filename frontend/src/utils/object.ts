@@ -1,4 +1,4 @@
-export function pick(obj: Record<string, unknown>, list: string[]) {
+export function pick(obj: object, list: string[]) {
   const result = {}
   for (const key of list)
     result[key] = obj[key]

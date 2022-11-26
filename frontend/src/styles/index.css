@@ -1,0 +1,21 @@
+/* https://cn.vuejs.org/guide/built-ins/transition-group.html#move-transitions */
+
+.message-move, /* 对移动中的元素应用的过渡 */
+.message-enter-active,
+.message-leave-active {
+  transition: all 0.3s ease;
+}
+
+.message-enter-from,
+.message-leave-to {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+/* 确保将离开的元素从布局流中删除
+  以便能够正确地计算移动的动画。 */
+.message-leave-active {
+  position: absolute;
+  /* left: 50%; */
+  /* transform: translateX(-50%); */
+}

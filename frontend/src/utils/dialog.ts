@@ -14,21 +14,31 @@ interface DimensionProps {
 export const dimensionKey = ['height', 'maxHeight', 'maxWidth', 'minHeight', 'minWidth', 'width']
 
 interface DialogOptions extends DimensionProps {
-  type: 'confirm'
-  title?: string
+  type: 'confirm' | 'message'
   content: string
   resolve: (ok: boolean) => void
 }
 
-type InputDialogOptions = Pick<DialogOptions, 'title' | 'content' | keyof DimensionProps>
+export interface ConfirmOptions extends DialogOptions {
+  type: 'confirm'
+  title?: string
+}
 
-type WithResolveInputDialogOptions = InputDialogOptions & Pick<DialogOptions, 'resolve'>
+type InputConfirmOptions = Omit<ConfirmOptions, 'resolve' | 'type'>
 
-export interface DialogProps extends DialogOptions {
+export interface MessageOptions extends DialogOptions {
+  type: 'message'
+  closed: boolean
+  timeout?: number
+}
+
+type InputMessageOptions = Omit<MessageOptions, 'resolve' | 'type' | 'closed'>
+
+export type DialogProps<T extends DialogOptions = DialogOptions> = {
   id: string
   modelValue: boolean
   ok: boolean
-}
+} & T
 
 export const useDialogStore = defineStore('dialog', () => {
   const list = ref<Array<DialogProps>>([])
@@ -36,10 +46,10 @@ export const useDialogStore = defineStore('dialog', () => {
   function add(options: DialogOptions) {
     const id = nanoid()
     const props: DialogProps = {
-      ...options,
       id,
       modelValue: true,
       ok: true,
+      ...options,
     }
     list.value.push(props)
     return id
@@ -49,14 +59,22 @@ export const useDialogStore = defineStore('dialog', () => {
     removeBy(list.value, item => item.id === id)
   }
 
-  function confirm(options: WithResolveInputDialogOptions) {
-    return add({
-      ...options,
-      type: 'confirm',
-    })
+  function confirm(options: ConfirmOptions) {
+    return add(options)
   }
 
-  return { list, confirm, remove }
+  function message(options: MessageOptions) {
+    return add(options)
+  }
+
+  function update(id: string, value) {
+    const dialog = list.value.find(item => item.id === id)
+    if (!dialog)
+      return
+    Object.assign(dialog, value)
+  }
+
+  return { list, confirm, remove, message, update }
 })
 
 export function useDialog() {
@@ -68,17 +86,38 @@ export function useDialog() {
     list.forEach(id => store.remove(id))
   })
 
-  const confirm = (options: InputDialogOptions) => {
+  const confirm = (options: InputConfirmOptions) => {
     return new Promise((resolve) => {
       const id = store.confirm({
-        ...options,
+        type: 'confirm',
         resolve,
+        ...options,
       })
       list.push(id)
     })
   }
 
+  const message = (options: InputMessageOptions) => {
+    return new Promise((resolve) => {
+      const id = store.message({
+        type: 'message',
+        width: 'fit-content',
+        closed: false,
+        resolve,
+        ...options,
+      })
+      const timeout = options.timeout || 4000
+      list.push(id)
+      setTimeout(() => {
+        store.update(id, {
+          closed: true,
+        })
+      }, timeout)
+    })
+  }
+
   return {
     confirm,
+    message,
   }
 }

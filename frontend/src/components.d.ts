@@ -8,8 +8,10 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     CalendarGraph: typeof import('./components/CalendarGraph.vue')['default']
+    Confirm: typeof import('./components/Confirm.vue')['default']
     DialogProvider: typeof import('./components/DialogProvider.vue')['default']
     InsertRecord: typeof import('./components/InsertRecord.vue')['default']
+    Message: typeof import('./components/Message.vue')['default']
     RecordForm: typeof import('./components/RecordForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
