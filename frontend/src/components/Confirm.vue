@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Transition } from 'vue'
+import { VDialogTransition } from 'vuetify/components'
 
 import type { ConfirmOptions, DialogProps } from '../utils/dialog'
 
@@ -11,8 +11,7 @@ const DialogTransition = defineComponent({
   name: 'DialogTransition',
   props: ['handleAfterLeave'],
   setup(props, { slots }) {
-    return () => h(Transition, {
-      name: 'dialog-transition',
+    return () => h(VDialogTransition, {
       onAfterLeave() {
         props.handleAfterLeave()
       },

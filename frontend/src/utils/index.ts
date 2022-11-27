@@ -5,7 +5,7 @@ export function wait(timeout: number) {
   return new Promise(resolve => setTimeout(resolve, timeout))
 }
 
-export async function waitProcess(process: () => void | Promise<unknown>, timeout: number) {
+export async function waitProcess(process: () => unknown | Promise<unknown>, timeout: number) {
   const start = Date.now()
   const result = process()
   if (isPromise(result))

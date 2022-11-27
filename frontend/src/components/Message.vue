@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { Transition } from 'vue'
+
 import type { DialogProps, MessageOptions } from '../utils/dialog'
 
 const { list, remove } = $(useDialogStore())
@@ -19,10 +21,11 @@ function handleAfterLeave(el: HTMLElement) {
 
 <template>
   <teleport to="body">
-    <TransitionGroup name="message" tag="div" fixed top-0 left-0 right-0 pointer-events-none @after-leave="handleAfterLeave">
+    <TransitionGroup name="message-transition" tag="div" fixed top-0 left-0 right-0 pointer-events-none @after-leave="handleAfterLeave">
       <div
         v-for="dialog, index in activeMessageList"
         :key="dialog.id"
+        :data-index="index"
         flex
         justify-center
         w-full
@@ -30,18 +33,35 @@ function handleAfterLeave(el: HTMLElement) {
         <div
           :style="{
             ...pick(dialog, dimensionKey),
-            zIndex: -index,
           }"
-          :data-index="index"
           relative
           p-2
           border-rounded
-          shadow-lg
+          shadow-xl
           bg-white
           mt-4
-          mx-a
+          pointer-events-auto
+          flex
+          items-center
         >
-          {{ dialog.content }}
+          <v-fade-transition mode="out-in">
+            <div
+              v-if="dialog.status === 'success'"
+              i-mdi:check-circle
+              c-green
+              text-6
+            />
+            <v-progress-circular
+              v-else-if="dialog.status === 'loading'"
+              color="info"
+              indeterminate
+              size="24"
+              width="3"
+            />
+          </v-fade-transition>
+          <div mx-2>
+            {{ dialog.content }}
+          </div>
         </div>
       </div>
     </TransitionGroup>

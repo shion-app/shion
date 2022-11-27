@@ -30,9 +30,15 @@ export interface MessageOptions extends DialogOptions {
   type: 'message'
   closed: boolean
   timeout?: number
+  status: 'success' | 'loading'
+  process?: Promise<unknown>
 }
 
 type InputMessageOptions = Omit<MessageOptions, 'resolve' | 'type' | 'closed'>
+
+type InputSuccessMessageOptions = Omit<InputMessageOptions, 'status' | 'process'>
+
+type InputLoadingMessageOptions = Omit<InputMessageOptions, 'status'>
 
 export type DialogProps<T extends DialogOptions = DialogOptions> = {
   id: string
@@ -86,8 +92,8 @@ export function useDialog() {
     list.forEach(id => store.remove(id))
   })
 
-  const confirm = (options: InputConfirmOptions) => {
-    return new Promise((resolve) => {
+  function confirm(options: InputConfirmOptions) {
+    return new Promise<boolean>((resolve) => {
       const id = store.confirm({
         type: 'confirm',
         resolve,
@@ -97,8 +103,8 @@ export function useDialog() {
     })
   }
 
-  const message = (options: InputMessageOptions) => {
-    return new Promise((resolve) => {
+  function message(options: InputMessageOptions) {
+    return new Promise<boolean>((resolve) => {
       const id = store.message({
         type: 'message',
         width: 'fit-content',
@@ -106,13 +112,36 @@ export function useDialog() {
         resolve,
         ...options,
       })
-      const timeout = options.timeout || 4000
       list.push(id)
-      setTimeout(() => {
+
+      function close() {
+        const timeout = options.timeout || 2000
+        setTimeout(() => {
+          store.update(id, {
+            closed: true,
+          })
+        }, timeout)
+      }
+
+      waitProcess(() => options.process?.then(() => {
         store.update(id, {
-          closed: true,
+          status: 'success',
         })
-      }, timeout)
+      }), 0).then(close)
+    })
+  }
+
+  message.success = function (options: InputSuccessMessageOptions) {
+    return message({
+      status: 'success',
+      ...options,
+    })
+  }
+
+  message.loading = function (options: InputLoadingMessageOptions) {
+    return message({
+      status: 'loading',
+      ...options,
     })
   }
 

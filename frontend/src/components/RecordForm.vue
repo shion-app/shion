@@ -71,7 +71,7 @@ async function openFileDialog() {
     await waitProcess(async () => {
       if (data.exe !== path)
         isValidExe = await CheckExecutablePath(path)
-    }, 300)
+    }, 1000)
     isLoading = false
     exe = path
   }
@@ -118,12 +118,13 @@ watch(
           @click="openFileDialog"
         >
           <template #append-inner>
-            <v-fade-transition leave-absolute>
+            <v-fade-transition mode="out-in">
               <v-progress-circular
                 v-if="isLoading"
                 color="info"
                 indeterminate
                 size="24"
+                width="3"
               />
               <template v-else>
                 <template v-if="exe">
