@@ -19,28 +19,28 @@ const DialogTransition = defineComponent({
   },
 })
 
-function handleAfterLeave(dialog: DialogProps) {
+function handleAfterLeave(dialog: DialogProps<ConfirmOptions>) {
   dialog.resolve(dialog.ok)
   remove(dialog.id)
 }
 
-function confirm(dialog: DialogProps) {
+function confirm(dialog: DialogProps<ConfirmOptions>) {
   close(dialog)
 }
-function cancel(dialog: DialogProps) {
+function cancel(dialog: DialogProps<ConfirmOptions>) {
   dialog.ok = false
   close(dialog)
 }
 
-function close(dialog: DialogProps) {
-  dialog.modelValue = false
+function close(dialog: DialogProps<ConfirmOptions>) {
+  dialog.active = false
 }
 </script>
 
 <template>
   <v-dialog
     v-for="dialog in confirmList"
-    :key="dialog.id" v-model="dialog.modelValue" :transition="{
+    :key="dialog.id" v-model="dialog.active" :transition="{
       // @ts-ignore
       component: DialogTransition,
       handleAfterLeave() {

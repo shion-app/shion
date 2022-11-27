@@ -22,9 +22,11 @@ interface DialogOptions extends DimensionProps {
 export interface ConfirmOptions extends DialogOptions {
   type: 'confirm'
   title?: string
+  active: boolean
+  ok: boolean
 }
 
-type InputConfirmOptions = Omit<ConfirmOptions, 'resolve' | 'type'>
+type InputConfirmOptions = Omit<ConfirmOptions, 'resolve' | 'type' | 'active' | 'ok'>
 
 export interface MessageOptions extends DialogOptions {
   type: 'message'
@@ -42,8 +44,6 @@ type InputLoadingMessageOptions = Omit<InputMessageOptions, 'status'>
 
 export type DialogProps<T extends DialogOptions = DialogOptions> = {
   id: string
-  modelValue: boolean
-  ok: boolean
 } & T
 
 export const useDialogStore = defineStore('dialog', () => {
@@ -53,8 +53,6 @@ export const useDialogStore = defineStore('dialog', () => {
     const id = nanoid()
     const props: DialogProps = {
       id,
-      modelValue: true,
-      ok: true,
       ...options,
     }
     list.value.push(props)
@@ -96,6 +94,8 @@ export function useDialog() {
     return new Promise<boolean>((resolve) => {
       const id = store.confirm({
         type: 'confirm',
+        active: true,
+        ok: true,
         resolve,
         ...options,
       })

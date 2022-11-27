@@ -14,7 +14,7 @@ function handleAfterLeave(el: HTMLElement) {
   const dialog: DialogProps<MessageOptions> = messageList[index!]
   if (!dialog)
     return
-  dialog.resolve(dialog.ok)
+  dialog.resolve(true)
   remove(dialog.id)
 }
 </script>
