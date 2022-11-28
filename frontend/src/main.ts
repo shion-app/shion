@@ -1,7 +1,6 @@
 import 'uno.css'
 import '@unocss/reset/tailwind.css'
-import 'vuetify/styles'
-import './styles/index.css'
+import './styles/index.scss'
 
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { createVuetify } from 'vuetify'

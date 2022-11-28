@@ -57,7 +57,7 @@ function close(dialog: DialogProps<ConfirmOptions>) {
         {{ dialog.content }}
       </v-card-text>
       <v-card-actions>
-        <v-spacer />
+        <div flex-grow />
         <v-btn color="primary" text @click="confirm(dialog)">
           {{ $t("dialog.confirm") }}
         </v-btn>

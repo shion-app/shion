@@ -147,7 +147,7 @@ watch(
     <v-divider />
 
     <v-card-actions>
-      <v-spacer />
+      <div flex-grow />
       <v-btn color="primary" text @click="confirm">
         {{ $t("dialog.confirm") }}
       </v-btn>

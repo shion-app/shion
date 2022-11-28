@@ -45,7 +45,7 @@ function programStatus(exe: string) {
 <template>
   <div flex flex-col h-full>
     <div flex>
-      <v-spacer />
+      <div flex-grow />
       <insert-record @refresh="getList" />
     </div>
     <v-divider my />
@@ -66,7 +66,7 @@ function programStatus(exe: string) {
         </div>
         <div flex>
           <div>{{ calculate(totalTime) }}{{ $t('hour') }}</div>
-          <v-spacer />
+          <div flex-grow />
           <div flex op-0 group-hover-op-100 transition-opacity-200>
             <update-record :id="id" :data="{ name, type, exe }" @refresh="getList" />
             <v-tooltip location="bottom">
