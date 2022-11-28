@@ -207,6 +207,12 @@ func (store *Store) updateTime(recordId int, id int, params map[string]any) {
 		data := timeBucket.Get(itob(id))
 		var instance Time
 		json.Unmarshal(data, &instance)
+		if end, ok := params["end"]; ok {
+			recordInstance := store.queryRecordById(recordId)
+			recordInstance.TotalTime += end.(int) - instance.End
+			recordData, _ := json.Marshal(recordInstance)
+			recordBucket.Put(itob(recordInstance.Id), recordData)
+		}
 		assign(&instance, params)
 		data, _ = json.Marshal(instance)
 		return timeBucket.Put(itob(instance.Id), data)
