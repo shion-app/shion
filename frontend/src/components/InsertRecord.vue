@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { mdiPlus } from '@mdi/js'
 import type { RawRecord } from '../interfaces'
 
 const emit = defineEmits<{
@@ -21,12 +20,7 @@ async function confirm(data: RawRecord) {
 </script>
 
 <template>
-  <v-dialog v-model="isShow" width="500">
-    <template #activator="{ props }">
-      <v-btn color="green" :prepend-icon="mdiPlus" v-bind="props">
-        {{ $t("input.add") }}
-      </v-btn>
-    </template>
+  <v-dialog v-model="isShow" width="500" activator="parent">
     <record-form :title="$t('input.add')" @close="close" @confirm="confirm" />
   </v-dialog>
 </template>

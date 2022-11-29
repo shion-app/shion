@@ -4,6 +4,9 @@ import { extractTime } from '../../utils'
 import type { main } from '../../../wailsjs/go/models'
 
 let list = $ref<main.Record[]>([])
+let activeId = $ref<number>()
+
+const selected = $computed(() => list.find(item => item.id === activeId))
 
 async function getList() {
   list = (await QueryRecord()).filter(({ exe }) => !exe)
@@ -11,11 +14,8 @@ async function getList() {
 
 getList()
 
-// const { id } = defineProps<{ id: string }>()
-
-let id: number
-
 let isStart = $ref(false)
+const startDisabled = $computed(() => typeof activeId !== 'number')
 
 let startTime = 0
 let endTime = 0
@@ -28,29 +28,30 @@ let currentTime = 0
 
 function start() {
   isStart = true
-  // startTime = Date.now()
-  // insert()
-  // count()
+  startTime = Date.now()
+  insert()
+  count()
 }
 
 async function insert() {
   endTime = startTime
-  timeId = await InsertTime(id, startTime, endTime)
+  timeId = await InsertTime(activeId!, startTime, endTime)
 }
 
 async function finish() {
   isStart = false
-  // cancelAnimationFrame(frame)
-  // await UpdateTime(id, timeId, {
-  //   end: endTime,
-  // })
-  // reset()
+  cancelAnimationFrame(frame)
+  await UpdateTime(activeId!, timeId, {
+    end: endTime,
+  })
+  reset()
 }
 
 function reset() {
   startTime = endTime = 0
   clock = formatTime(0)
   currentTime = 0
+  activeId = undefined
 }
 
 function complement(num: number) {
@@ -72,7 +73,7 @@ function count() {
     if (endTime - currentTime > 1000 * 60) {
       currentTime = endTime
       if (typeof timeId === 'number') {
-        UpdateTime(Number(id), timeId, {
+        UpdateTime(activeId!, timeId, {
           end: endTime,
         })
       }
@@ -80,6 +81,10 @@ function count() {
     clock = formatTime(endTime - startTime)
     count()
   })
+}
+
+function select(id: number) {
+  activeId = id
 }
 </script>
 
@@ -91,8 +96,27 @@ function count() {
     <v-btn v-if="isStart" icon size="80" @click="finish">
       <div i-mdi:stop text-16 />
     </v-btn>
-    <v-btn v-else icon size="80" @click="start">
+    <v-btn v-else icon size="80" :disabled="startDisabled" @click="start">
       <div i-mdi:play text-16 />
     </v-btn>
   </div>
+  <v-menu location="end" transition="slide-x-transition" activator="#extra-menu" min-width="100" offset="20">
+    <v-list>
+      <v-list-item v-if="!isStart" :disabled="isStart" value="select">
+        {{ $t('clock.select') }}
+        <v-menu location="end" transition="slide-x-transition" activator="parent" min-width="100" max-height="200" offset="20">
+          <v-list>
+            <v-list-item v-for="{ id, name } in list" :key="id" :value="id" :active="activeId === id" @click="select(id)">
+              {{ name }}
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-list-item>
+      <v-list-item v-else-if="selected" disabled value="progress">
+        {{ $t('clock.progress', {
+          name: selected?.name,
+        }) }}
+      </v-list-item>
+    </v-list>
+  </v-menu>
 </template>

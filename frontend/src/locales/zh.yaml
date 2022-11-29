@@ -22,3 +22,6 @@ dialog:
 nav:
   record: 记录
   clock: 计时
+clock:
+  select: 选择记录对象
+  progress: 正在计时中({name})

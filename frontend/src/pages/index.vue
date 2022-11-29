@@ -48,7 +48,6 @@ function clock(id: number) {
 
 <template>
   <div flex flex-col h-full>
-    <!-- <insert-record @refresh="getList" /> -->
     <div flex-1 overflow-y-auto>
       <div
         grid
@@ -71,14 +70,6 @@ function clock(id: number) {
             <div>{{ calculate(totalTime) }}{{ $t('hour') }}</div>
             <div flex-grow />
             <div flex op-0 group-hover-op-100 transition-opacity-400>
-              <!-- <div v-if="!exe" i-mdi:clock text-6 cursor-pointer @click.stop="clock(id)">
-                <v-tooltip
-                  activator="parent"
-                  location="bottom"
-                >
-                  {{ $t('nav.clock') }}
-                </v-tooltip>
-              </div> -->
               <update-record :id="id" :data="{ name, type, exe }" @refresh="getList" />
               <v-tooltip location="bottom">
                 <template #activator="{ props }">
@@ -92,6 +83,14 @@ function clock(id: number) {
       </div>
     </div>
   </div>
+  <v-menu location="end" transition="slide-x-transition" activator="#extra-menu" min-width="100" offset="20">
+    <v-list>
+      <v-list-item value="add">
+        {{ $t("input.add") }}
+        <insert-record @refresh="getList" />
+      </v-list-item>
+    </v-list>
+  </v-menu>
 </template>
 
 <style lang="scss" scoped>

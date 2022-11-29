@@ -38,7 +38,7 @@ const list = $ref([{
           </v-list-item>
         </v-list>
         <div flex-grow />
-        <v-btn icon mb-4>
+        <v-btn id="extra-menu" icon mb-4>
           <div i-mdi:dots-vertical text-6 />
         </v-btn>
       </div>
