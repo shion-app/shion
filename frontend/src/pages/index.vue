@@ -17,7 +17,7 @@ GetActiveExeList().then((list) => {
   activeExeList = list
 })
 
-function jump(id: number) {
+function viewRecord(id: number) {
   router.push(`/record/${id}`)
 }
 
@@ -40,44 +40,62 @@ function programStatus(exe: string) {
   const color = activeExeList.includes(exe) ? 'bg-green' : 'bg-gray'
   return `${className} ${color}`
 }
+
+function clock(id: number) {
+  router.push(`/clock/${id}`)
+}
 </script>
 
 <template>
   <div flex flex-col h-full>
-    <div flex>
-      <div flex-grow />
-      <insert-record @refresh="getList" />
-    </div>
-    <v-divider my />
+    <!-- <insert-record @refresh="getList" /> -->
     <div flex-1 overflow-y-auto>
       <div
-        v-for="{ id, name, type, exe, totalTime } in list"
-        :key="id"
-        rounded-2
-        border
-        m-4
-        p-4
-        class="group"
-        @click="jump(id)"
+        grid
+        class="grid-col"
       >
-        <div flex items-center>
-          <div>{{ name }}</div>
-          <div v-if="exe" :class="programStatus(exe)" ml-2 />
-        </div>
-        <div flex>
-          <div>{{ calculate(totalTime) }}{{ $t('hour') }}</div>
-          <div flex-grow />
-          <div flex op-0 group-hover-op-100 transition-opacity-200>
-            <update-record :id="id" :data="{ name, type, exe }" @refresh="getList" />
-            <v-tooltip location="bottom">
-              <template #activator="{ props }">
-                <div i-mdi:delete text-6 cursor-pointer v-bind="props" @click.stop="deleteRecord(id)" />
-              </template>
-              <span>{{ $t("input.delete") }}</span>
-            </v-tooltip>
+        <div
+          v-for="{ id, name, type, exe, totalTime } in list"
+          :key="id"
+          rounded-2
+          m-4
+          p-4
+          class="group elevation-2"
+          @click="viewRecord(id)"
+        >
+          <div flex items-center mb-2>
+            <div>{{ name }}</div>
+            <div v-if="exe" :class="programStatus(exe)" ml-2 />
+          </div>
+          <div flex>
+            <div>{{ calculate(totalTime) }}{{ $t('hour') }}</div>
+            <div flex-grow />
+            <div flex op-0 group-hover-op-100 transition-opacity-400>
+              <!-- <div v-if="!exe" i-mdi:clock text-6 cursor-pointer @click.stop="clock(id)">
+                <v-tooltip
+                  activator="parent"
+                  location="bottom"
+                >
+                  {{ $t('nav.clock') }}
+                </v-tooltip>
+              </div> -->
+              <update-record :id="id" :data="{ name, type, exe }" @refresh="getList" />
+              <v-tooltip location="bottom">
+                <template #activator="{ props }">
+                  <div i-mdi:delete text-6 cursor-pointer v-bind="props" @click.stop="deleteRecord(id)" />
+                </template>
+                <span>{{ $t("input.delete") }}</span>
+              </v-tooltip>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.grid-col {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+</style>

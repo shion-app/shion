@@ -19,3 +19,6 @@ input:
 dialog:
   confirm: 确定
   cancel: 取消
+nav:
+  record: 记录
+  clock: 计时

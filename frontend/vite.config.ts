@@ -30,9 +30,7 @@ export default defineConfig({
     }),
     Unocss({
       presets: [presetUno(), presetAttributify(), presetIcons()],
-      shortcuts: {
-        btn: 'w-20 h-20 rounded-full',
-      },
+      shortcuts: {},
     }),
     Pages(),
     Components({

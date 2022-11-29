@@ -1,5 +1,11 @@
 <template>
-  <router-view />
+  <nav-drawer>
+    <router-view v-slot="{ Component }">
+      <keep-alive :include="['clock']">
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
+  </nav-drawer>
   <dialog-provider />
 </template>
 
@@ -9,8 +15,5 @@ html, body, #app {
 }
 html {
   overflow: hidden;
-}
-#app {
-  padding: 20px;
 }
 </style>
