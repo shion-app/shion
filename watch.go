@@ -76,8 +76,8 @@ var (
 var exeWhiteList = []string{}
 
 func setExeWhiteList(recordList []Record) {
-	exeWhiteList = lo.Map(recordList, func(item Record, _ int) string {
-		return item.Exe
+	exeWhiteList = lo.FilterMap(recordList, func(item Record, _ int) (string, bool) {
+		return item.Exe, len(item.Exe) > 0
 	})
 }
 
