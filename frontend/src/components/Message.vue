@@ -1,29 +1,16 @@
 <script lang="ts" setup>
-import { Transition } from 'vue'
-
 import type { DialogProps, MessageOptions } from '../utils/dialog'
 
-const { list, remove } = $(useDialogStore())
+const { list } = $(useDialogStore())
 
 const messageList = $computed(() => (list as Array<DialogProps<MessageOptions>>).filter(dialog => dialog.type === 'message'))
-
-const activeMessageList = $computed(() => messageList.filter(dialog => !dialog.closed))
-
-function handleAfterLeave(el: HTMLElement) {
-  const { index } = el.dataset
-  const dialog: DialogProps<MessageOptions> = messageList[index!]
-  if (!dialog)
-    return
-  dialog.resolve(true)
-  remove(dialog.id)
-}
 </script>
 
 <template>
   <teleport to="body">
-    <TransitionGroup name="message-transition" tag="div" fixed top-0 left-0 right-0 pointer-events-none @after-leave="handleAfterLeave">
+    <TransitionGroup name="message-transition" tag="div" fixed top-0 left-0 right-0 pointer-events-none>
       <div
-        v-for="dialog, index in activeMessageList"
+        v-for="dialog, index in messageList"
         :key="dialog.id"
         :data-index="index"
         flex
@@ -45,23 +32,30 @@ function handleAfterLeave(el: HTMLElement) {
           items-center
         >
           <v-fade-transition mode="out-in">
-            <div
-              v-if="dialog.status === 'success'"
-              i-mdi:check-circle
-              c-green
-              text-6
-            />
-            <v-progress-circular
-              v-else-if="dialog.status === 'loading'"
-              color="info"
-              indeterminate
-              size="24"
-              width="3"
-            />
+            <div v-if="dialog.status === 'success'" flex>
+              <div
+
+                i-mdi:check-circle
+                c-green
+                text-6
+              />
+              <div mx-2>
+                {{ dialog.successText }}
+              </div>
+            </div>
+            <div v-else-if="dialog.status === 'loading'" flex>
+              <v-progress-circular
+
+                color="info"
+                indeterminate
+                size="24"
+                width="3"
+              />
+              <div mx-2>
+                {{ dialog.loadingText }}
+              </div>
+            </div>
           </v-fade-transition>
-          <div mx-2>
-            {{ dialog.content }}
-          </div>
         </div>
       </div>
     </TransitionGroup>

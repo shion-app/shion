@@ -5,22 +5,27 @@ const emit = defineEmits<{
   (event: 'refresh'): void
 }>()
 
+const { message } = useDialog()
+
 let isShow = $ref(false)
 
 function close() {
   isShow = false
 }
 
-async function confirm(data: RawRecord) {
+async function submit(data: RawRecord) {
   const { name, type, exe } = data
-  await InsertRecord(name, type, exe)
+  const process = InsertRecord(name, type, exe)
   close()
+  await message.loading({
+    process,
+  })
   emit('refresh')
 }
 </script>
 
 <template>
   <v-dialog v-model="isShow" width="500" activator="parent">
-    <record-form :title="$t('input.add')" @close="close" @confirm="confirm" />
+    <record-form :title="$t('input.add')" @close="close" @submit="submit" />
   </v-dialog>
 </template>

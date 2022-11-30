@@ -10,15 +10,20 @@ const emit = defineEmits<{
   (event: 'refresh'): void
 }>()
 
+const { message } = useDialog()
+
 let isShow = $ref(false)
 
 function close() {
   isShow = false
 }
 
-async function confirm(data: RawRecord) {
-  await UpdateRecord(id, data)
+async function submit(data: RawRecord) {
+  const process = UpdateRecord(id, data)
   close()
+  await message.loading({
+    process,
+  })
   emit('refresh')
 }
 </script>
@@ -38,6 +43,6 @@ async function confirm(data: RawRecord) {
         <span>{{ $t("input.edit") }}</span>
       </v-tooltip>
     </template>
-    <record-form :title="$t('input.edit')" :data="data" @close="close" @confirm="confirm" />
+    <record-form :title="$t('input.edit')" :data="data" @close="close" @submit="submit" />
   </v-dialog>
 </template>

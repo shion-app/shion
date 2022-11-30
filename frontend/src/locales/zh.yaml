@@ -19,6 +19,10 @@ input:
 dialog:
   confirm: 确定
   cancel: 取消
+  tip: 提示
+  confirmDelete: 确认删除?
+  loading: 加载中
+  success: 操作完成
 nav:
   record: 记录
   clock: 计时

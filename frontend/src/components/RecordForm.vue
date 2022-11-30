@@ -16,7 +16,7 @@ const {
 
 const emit = defineEmits<{
   (event: 'close'): void
-  (event: 'confirm', data: RawRecord): void
+  (event: 'submit', data: RawRecord): void
 }>()
 
 interface Select {
@@ -56,7 +56,7 @@ function close() {
 async function confirm() {
   const { valid } = await form.validate()
   if (valid) {
-    emit('confirm', {
+    emit('submit', {
       name,
       type: type.value,
       exe,

@@ -12,6 +12,8 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import routes from '~pages'
 
+import './prevent'
+
 const router = createRouter({
   history: createWebHashHistory(),
   routes,

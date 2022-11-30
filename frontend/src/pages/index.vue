@@ -2,10 +2,12 @@
 import type { main } from '../../wailsjs/go/models'
 import { EventType } from '../constants'
 
+const router = useRouter()
+const { confirm, message } = useDialog()
+const { t } = useI18n()
+
 let list = $ref<main.Record[]>([])
 let activeExeList = $ref<Array<string>>([])
-
-const router = useRouter()
 
 async function getList() {
   list = await QueryRecord()
@@ -22,8 +24,18 @@ function viewRecord(id: number) {
 }
 
 async function deleteRecord(id: number) {
-  await DeleteRecord(id)
-  removeBy(list, item => item.id === id)
+  const ok = await confirm({
+    title: t('dialog.tip'),
+    content: t('dialog.confirmDelete'),
+    width: 300,
+  })
+  if (ok) {
+    const process = DeleteRecord(id)
+    await message.loading({
+      process,
+    })
+    removeBy(list, item => item.id === id)
+  }
 }
 
 function calculate(time: number) {
@@ -39,10 +51,6 @@ function programStatus(exe: string) {
   const className = 'rounded-full w-2 h-2'
   const color = activeExeList.includes(exe) ? 'bg-green' : 'bg-gray'
   return `${className} ${color}`
-}
-
-function clock(id: number) {
-  router.push(`/clock/${id}`)
 }
 </script>
 

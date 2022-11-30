@@ -2,6 +2,7 @@
 const drawer = $ref(true)
 
 const { t } = useI18n()
+const route = useRoute()
 
 const list = $ref([{
   icon: 'i-mdi:view-grid',
@@ -14,6 +15,8 @@ const list = $ref([{
   tip: t('nav.clock'),
   to: '/clock',
 }])
+
+const isShowMenu = $computed(() => list.map(({ to }) => to).includes(route.path))
 </script>
 
 <template>
@@ -38,7 +41,7 @@ const list = $ref([{
           </v-list-item>
         </v-list>
         <div flex-grow />
-        <v-btn id="extra-menu" icon mb-4>
+        <v-btn v-if="isShowMenu" id="extra-menu" icon mb-4>
           <div i-mdi:dots-vertical text-6 />
         </v-btn>
       </div>

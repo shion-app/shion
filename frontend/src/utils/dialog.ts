@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { nanoid } from 'nanoid'
 
+import type { DeepPartial } from '../interfaces'
+
 // vuetify\src\composables\dimensions.ts
 interface DimensionProps {
   height?: number | string
@@ -15,8 +17,6 @@ export const dimensionKey = ['height', 'maxHeight', 'maxWidth', 'minHeight', 'mi
 
 interface DialogOptions extends DimensionProps {
   type: 'confirm' | 'message'
-  content: string
-  resolve: (ok: boolean) => void
 }
 
 export interface ConfirmOptions extends DialogOptions {
@@ -24,21 +24,24 @@ export interface ConfirmOptions extends DialogOptions {
   title?: string
   active: boolean
   ok: boolean
+  resolve: (ok: boolean) => void
+  content: string
 }
 
 type InputConfirmOptions = Omit<ConfirmOptions, 'resolve' | 'type' | 'active' | 'ok'>
 
 export interface MessageOptions extends DialogOptions {
   type: 'message'
-  closed: boolean
   timeout?: number
   status: 'success' | 'loading'
   process?: Promise<unknown>
+  loadingText?: string
+  successText?: string
 }
 
-type InputMessageOptions = Omit<MessageOptions, 'resolve' | 'type' | 'closed'>
+type InputMessageOptions = Omit<MessageOptions, 'type'>
 
-type InputSuccessMessageOptions = Omit<InputMessageOptions, 'status' | 'process'>
+type InputSuccessMessageOptions = Omit<InputMessageOptions, 'status' | 'process' | 'loadingText'>
 
 type InputLoadingMessageOptions = Omit<InputMessageOptions, 'status'>
 
@@ -71,7 +74,7 @@ export const useDialogStore = defineStore('dialog', () => {
     return add(options)
   }
 
-  function update(id: string, value) {
+  function update<T>(id: string, value: DeepPartial<T>) {
     const dialog = list.value.find(item => item.id === id)
     if (!dialog)
       return
@@ -83,6 +86,7 @@ export const useDialogStore = defineStore('dialog', () => {
 
 export function useDialog() {
   const store = useDialogStore()
+  const { t } = useI18n()
 
   const list: string[] = []
 
@@ -104,45 +108,50 @@ export function useDialog() {
   }
 
   function message(options: InputMessageOptions) {
-    return new Promise<boolean>((resolve) => {
-      const id = store.message({
-        type: 'message',
-        width: 'fit-content',
-        closed: false,
-        resolve,
-        ...options,
-      })
-      list.push(id)
-
-      function close() {
-        const timeout = options.timeout || 2000
-        setTimeout(() => {
-          store.update(id, {
-            closed: true,
-          })
-        }, timeout)
-      }
-
-      waitProcess(() => options.process?.then(() => {
-        store.update(id, {
-          status: 'success',
-        })
-      }), 0).then(close)
-    })
-  }
-
-  message.success = function (options: InputSuccessMessageOptions) {
-    return message({
-      status: 'success',
+    const id = store.message({
+      type: 'message',
+      width: 'fit-content',
       ...options,
     })
+    list.push(id)
+
+    function close() {
+      const timeout = options.timeout || 2000
+      setTimeout(() => {
+        store.remove(id)
+      }, timeout)
+    }
+
+    if (options.process) {
+      const loading = waitProcess(() => options.process, 500)
+      loading.then(() => {
+        store.update<MessageOptions>(id, {
+          status: 'success',
+        })
+        close()
+      })
+      return loading
+    }
+    else {
+      close()
+    }
+  }
+
+  message.success = function (options?: InputSuccessMessageOptions) {
+    return message({
+      status: 'success',
+      successText: t('dialog.success'),
+      ...options,
+    }) as undefined
   }
 
   message.loading = function (options: InputLoadingMessageOptions) {
     return message({
       status: 'loading',
+      loadingText: t('dialog.loading'),
+      successText: t('dialog.success'),
       ...options,
-    })
+    }) as Promise<void>
   }
 
   return {
