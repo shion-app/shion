@@ -1,5 +1,8 @@
 <script lang="ts" setup>
 import { addDays, differenceInCalendarDays, format, getDate, getDay, getMonth, startOfDay, subDays } from 'date-fns'
+import { vElementSize } from '@vueuse/components'
+import { debounce } from 'lodash-es'
+
 import type { main } from '../../wailsjs/go/models'
 
 const { list = [] } = defineProps<{
@@ -8,12 +11,24 @@ const { list = [] } = defineProps<{
 
 const { t, locale } = useI18n()
 
+interface Cell {
+  date: Date
+  total: number
+  x: number
+  y: number
+}
+
 const cellRef = $ref<HTMLElement>()
 const currentDate = $ref<Date>(new Date())
+let cellList = $ref<Array<Cell>>([])
 
-function formatYYYYMMDD(date: number | Date) {
-  return format(date, 'yyyy-MM-dd')
-}
+let calendarWidth = $ref(0)
+let calendarHeight = $ref(200)
+let cellWidth = $ref(0)
+let monthList = $ref<Array<{
+  date: Date
+  x: number
+}>>([])
 
 const dateToActivityMap = $computed(() => {
   const map = new Map<
@@ -54,6 +69,12 @@ const dateToActivityMap = $computed(() => {
   return map
 })
 
+const debounceResize = debounce(onResize, 300)
+
+function formatYYYYMMDD(date: number | Date) {
+  return format(date, 'yyyy-MM-dd')
+}
+
 function getColorByTime(time: number) {
   if (time === 0)
     return '#ebedf0'
@@ -81,62 +102,61 @@ function getTotalByDate(date: Date) {
   return dateToActivityMap.get(formatYYYYMMDD(date))?.total || 0
 }
 
-const now = Date.now()
-const day = getDay(now)
+function calcCellList() {
+  const now = Date.now()
+  const day = getDay(now)
 
-const week = 53
-const days = 7
-const cellTotal = (week - 1) * 7 + day + 1
+  const week = 53
+  const days = 7
+  const cellTotal = (week - 1) * 7 + day + 1
 
-interface Cell {
-  date: Date
-  total: number
-  x: number
-  y: number
-}
+  const offsetToWidthRatio = 0.2
 
-const cellList: Array<Cell> = []
+  const padding = 24
+  const width = (((calendarWidth - 2 * padding) / week) / (1 + offsetToWidthRatio))
+  cellWidth = width
+  const offset = (offsetToWidthRatio * width)
+  calendarHeight = padding * 2 + days * width + (days - 1) * offset
 
-const padding = 24
-const offset = 3
-const width = 14
+  let currentMonth = -1
 
-const calendarWidth = padding * 2 + week * width + (week - 1) * offset
-const calendarHeight = padding * 2 + days * width + (days - 1) * offset
-
-const monthList: Array<{
-  date: Date
-  x: number
-}> = []
-
-let currentMonth = -1
-
-for (let i = 0; i < cellTotal; i++) {
-  const x = ~~(i / 7)
-  const y = i % 7
-  const cell: Cell = {
-    date: subDays(now, cellTotal - i - 1),
-    total: 0,
-    x: padding + x * (width + offset),
-    y: padding + y * (width + offset),
-  }
-  cellList.push(cell)
-  if (i === 0 && getDate(cell.date) !== 1)
-    continue
-  if (y === 0) {
-    const month = getMonth(cell.date) + 1
-    if (currentMonth !== month) {
-      monthList.push({
-        date: cell.date,
-        x: cell.x,
-      })
-      currentMonth = month
+  for (let i = 0; i < cellTotal; i++) {
+    const x = ~~(i / 7)
+    const y = i % 7
+    const cell: Cell = {
+      date: subDays(now, cellTotal - i - 1),
+      total: 0,
+      x: padding + x * (width + offset),
+      y: padding + y * (width + offset),
+    }
+    cellList.push(cell)
+    if (i === 0 && getDate(cell.date) !== 1)
+      continue
+    if (y === 0) {
+      const month = getMonth(cell.date) + 1
+      if (currentMonth !== month) {
+        monthList.push({
+          date: cell.date,
+          x: cell.x,
+        })
+        currentMonth = month
+      }
     }
   }
 }
+
+function onResize({ width }: { width: number }) {
+  monthList = []
+  cellList = []
+  calendarWidth = width
+  calcCellList()
+}
+
+onBeforeUnmount(debounceResize.cancel)
 </script>
 
 <template>
+  <div v-element-size="debounceResize" />
   <div
     relative
     :style="{
@@ -161,8 +181,8 @@ for (let i = 0; i < cellTotal; i++) {
           ref="cellRef"
           :style="{
             transform: `translate(${x}px, ${y}px)`,
-            width: `${width}px`,
-            height: `${width}px`,
+            width: `${cellWidth}px`,
+            height: `${cellWidth}px`,
             backgroundColor: getColorByTime(calculate(getTotalByDate(date))),
           }"
           absolute
@@ -179,4 +199,3 @@ for (let i = 0; i < cellTotal; i++) {
   </div>
 </template>
 
-<style></style>
