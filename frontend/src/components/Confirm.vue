@@ -25,10 +25,10 @@ function handleAfterLeave(dialog: DialogProps<ConfirmOptions>) {
 }
 
 function confirm(dialog: DialogProps<ConfirmOptions>) {
+  dialog.ok = true
   close(dialog)
 }
 function cancel(dialog: DialogProps<ConfirmOptions>) {
-  dialog.ok = false
   close(dialog)
 }
 

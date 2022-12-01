@@ -99,7 +99,7 @@ export function useDialog() {
       const id = store.confirm({
         type: 'confirm',
         active: true,
-        ok: true,
+        ok: false,
         resolve,
         ...options,
       })

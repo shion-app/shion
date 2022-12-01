@@ -26,10 +26,11 @@ const messageList = $computed(() => (list as Array<DialogProps<MessageOptions>>)
           border-rounded
           shadow-xl
           bg-white
-          mt-4
+          mt-6
           pointer-events-auto
           flex
           items-center
+          class="elevation-8"
         >
           <v-fade-transition mode="out-in">
             <div v-if="dialog.status === 'success'" flex>
