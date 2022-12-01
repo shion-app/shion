@@ -1,13 +1,16 @@
 <script lang="ts" setup>
-import { addDays, differenceInCalendarDays, format, getDate, getDay, getMonth, startOfDay, subDays } from 'date-fns'
+import { addDays, differenceInCalendarDays, format, getDate, getDay, getMonth, isSameDay, startOfDay, subDays } from 'date-fns'
 import { vElementSize } from '@vueuse/components'
-import { debounce } from 'lodash-es'
 
 import type { main } from '../../wailsjs/go/models'
 
-const { list = [] } = defineProps<{
+const props = defineProps<{
   list: main.Time[]
+  date: Date
 }>()
+
+const { list } = $(props)
+let { date: dateVModel } = $(useVModels(props))
 
 const { t, locale } = useI18n()
 
@@ -19,7 +22,8 @@ interface Cell {
 }
 
 const cellRef = $ref<HTMLElement>()
-const currentDate = $ref<Date>(new Date())
+
+let hoverDate = $ref<Date>(new Date())
 let cellList = $ref<Array<Cell>>([])
 
 let calendarWidth = $ref(0)
@@ -29,6 +33,10 @@ let monthList = $ref<Array<{
   date: Date
   x: number
 }>>([])
+
+const maxFontSize = 20
+const fontSize = $computed(() => ~~(Math.min(calendarWidth / 50, maxFontSize)))
+const lineHeight = 1.5
 
 const dateToActivityMap = $computed(() => {
   const map = new Map<
@@ -69,33 +77,35 @@ const dateToActivityMap = $computed(() => {
   return map
 })
 
-const debounceResize = debounce(onResize, 300)
+const debounceResize = useDebounceFn(onResize, 100)
 
 function formatYYYYMMDD(date: number | Date) {
   return format(date, 'yyyy-MM-dd')
 }
 
-function getColorByTime(time: number) {
-  if (time === 0)
+function getColorByDate(date: Date) {
+  if (isSameDay(date, dateVModel))
+    return '#2193f3'
+  const hour = getHour(getTotalByDate(date))
+  if (hour === 0)
     return '#ebedf0'
-  else if (time < 1)
+  else if (hour < 1)
     return '#9be9a8'
-  else if (time < 3)
+  else if (hour < 3)
     return '#40c463'
-  else if (time < 6)
+  else if (hour < 6)
     return '#30a14e'
   return '#216e39'
 }
 
 function formatHourMinute(time: number) {
-  let minute = ~~(time / (1000 * 60))
-  const hour = ~~(minute / 60)
-  minute %= 60
+  const { hour, minute } = extractTime(time)
   return `${hour}${t('hour')}${minute}${t('minute')}`
 }
 
-function calculate(time: number) {
-  return time / (1000 * 60 * 60)
+function getHour(time: number) {
+  const { hour } = extractTime(time)
+  return hour
 }
 
 function getTotalByDate(date: Date) {
@@ -111,8 +121,7 @@ function calcCellList() {
   const cellTotal = (week - 1) * 7 + day + 1
 
   const offsetToWidthRatio = 0.2
-
-  const padding = 24
+  const padding = fontSize * lineHeight
   const width = (((calendarWidth - 2 * padding) / week) / (1 + offsetToWidthRatio))
   cellWidth = width
   const offset = (offsetToWidthRatio * width)
@@ -152,16 +161,25 @@ function onResize({ width }: { width: number }) {
   calcCellList()
 }
 
-onBeforeUnmount(debounceResize.cancel)
+function handleEnterCell(date: Date) {
+  hoverDate = date
+}
+
+function handleClickCell(date: Date) {
+  dateVModel = date
+}
 </script>
 
 <template>
   <div v-element-size="debounceResize" />
   <div
     relative
+    flex-shrink-0
     :style="{
       width: `${calendarWidth}px`,
       height: `${calendarHeight}px`,
+      fontSize: `${fontSize}px`,
+      lineHeight,
     }"
   >
     <div
@@ -183,17 +201,18 @@ onBeforeUnmount(debounceResize.cancel)
             transform: `translate(${x}px, ${y}px)`,
             width: `${cellWidth}px`,
             height: `${cellWidth}px`,
-            backgroundColor: getColorByTime(calculate(getTotalByDate(date))),
+            backgroundColor: getColorByDate(date),
           }"
           absolute
           rounded
           cursor-pointer
-          @mouseenter="currentDate = date"
+          @mouseenter="handleEnterCell(date)"
+          @click="handleClickCell(date)"
         />
       </template>
-      <div>{{ formatYYYYMMDD(currentDate) }}</div>
+      <div>{{ formatYYYYMMDD(hoverDate) }}</div>
       <div>
-        {{ formatHourMinute(getTotalByDate(currentDate)) }}
+        {{ formatHourMinute(getTotalByDate(hoverDate)) }}
       </div>
     </v-tooltip>
   </div>
