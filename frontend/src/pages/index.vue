@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { main } from '../../wailsjs/go/models'
+
 import { EventType } from '../constants'
+import svg from '../assets/void.svg'
 
 const router = useRouter()
 const { confirm, message } = useDialog()
@@ -57,7 +59,11 @@ function programStatus(exe: string) {
 <template>
   <div flex flex-col h-full>
     <div flex-1 overflow-y-auto>
+      <empty v-if="!list.length">
+        <img :src="svg" alt="void">
+      </empty>
       <div
+        v-else
         grid
         class="grid-col"
       >
@@ -103,6 +109,12 @@ function programStatus(exe: string) {
 
 <style lang="scss" scoped>
 .grid-col {
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
+  @media(min-width: 1000px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media(min-width: 1500px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 </style>

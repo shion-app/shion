@@ -93,10 +93,10 @@ function select(id: number) {
     <div font-mono text-20>
       {{ clock }}
     </div>
-    <v-btn v-if="isStart" icon size="80" @click="finish">
+    <v-btn v-if="isStart" elevation="8" icon size="80" @click="finish">
       <div i-mdi:stop text-16 />
     </v-btn>
-    <v-btn v-else icon size="80" :disabled="startDisabled" @click="start">
+    <v-btn v-else elevation="8" icon size="80" :disabled="startDisabled" @click="start">
       <div i-mdi:play text-16 />
     </v-btn>
   </div>

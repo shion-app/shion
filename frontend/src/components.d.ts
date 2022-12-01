@@ -10,6 +10,7 @@ declare module '@vue/runtime-core' {
     CalendarGraph: typeof import('./components/CalendarGraph.vue')['default']
     Confirm: typeof import('./components/Confirm.vue')['default']
     DialogProvider: typeof import('./components/DialogProvider.vue')['default']
+    Empty: typeof import('./components/Empty.vue')['default']
     InsertRecord: typeof import('./components/InsertRecord.vue')['default']
     Message: typeof import('./components/Message.vue')['default']
     NavDrawer: typeof import('./components/NavDrawer.vue')['default']

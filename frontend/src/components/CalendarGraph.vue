@@ -104,8 +104,7 @@ function formatHourMinute(time: number) {
 }
 
 function getHour(time: number) {
-  const { hour } = extractTime(time)
-  return hour
+  return time / (1000 * 60 * 60)
 }
 
 function getTotalByDate(date: Date) {
