@@ -2,21 +2,34 @@ package main
 
 import (
 	"bytes"
-	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"os"
 	"path/filepath"
 	"reflect"
+	"strconv"
+	"strings"
 
+	"github.com/samber/lo"
 	"go.etcd.io/bbolt"
 )
 
-func itob(v int) []byte {
-	b := make([]byte, 8)
-	binary.BigEndian.PutUint64(b, uint64(v))
-	return b
+func byteToIntOrString(b []byte) (any, bool) {
+	s := string(b)
+	i, err := stringToInt(s)
+	if err != nil {
+		return s, false
+	}
+	return i, true
 }
 
+func stringToInt(s string) (int, error) {
+	return strconv.Atoi(s)
+}
+
+func intToByte(v int) []byte {
+	return []byte(strconv.Itoa(v))
+}
 func combineKeyAndId(key string, id int) string {
 	return fmt.Sprintf("%s%d", key, id)
 }
@@ -31,6 +44,8 @@ type Store struct {
 	db *bbolt.DB
 }
 
+type Map = map[string]any
+
 func initStore(dir string) Store {
 	db, _ := bbolt.Open(filepath.Join(dir, "data.db"), 0666, nil)
 	store := Store{db: db}
@@ -43,8 +58,113 @@ func (store *Store) initDatabase() {
 		tx.CreateBucketIfNotExists([]byte(APP_INFO))
 		tx.CreateBucketIfNotExists([]byte(RECORD))
 		updateDatabase(tx)
+		// serialize(tx)
+		// deserialize(tx)
 		return nil
 	})
+}
+
+func traverseBucket(tx *bbolt.Tx, bucket *bbolt.Bucket, data Map, parentName string) {
+	parent := data[parentName].(Map)
+	bucket.ForEach(func(k, v []byte) error {
+		key := string(k)
+		value := string(v)
+		nested := bucket.Bucket(k)
+		if nested != nil {
+			parent[key] = Map{}
+			traverseBucket(tx, nested, parent, key)
+		} else {
+			isStruct := strings.HasPrefix(value, "{")
+			if isStruct {
+				var obj any
+				json.Unmarshal(v, &obj)
+				_, isInt := byteToIntOrString(k)
+				isBucketStruct := isInt
+				if isBucketStruct {
+					if _, ok := parent["_data"]; !ok {
+						parent["_data"] = []any{}
+					}
+					parent["_data"] = append(parent["_data"].([]any), obj)
+				} else {
+					parent[key] = obj
+				}
+			} else {
+				parent[key] = value
+			}
+		}
+		return nil
+	})
+}
+
+func serialize(tx *bbolt.Tx) {
+	data := Map{}
+	tx.ForEach(func(name []byte, b *bbolt.Bucket) error {
+		bucket := tx.Bucket(name)
+		data[string(name)] = Map{}
+		if bucket != nil {
+			traverseBucket(tx, bucket, data, string(name))
+		}
+		return nil
+	})
+	str, _ := json.MarshalIndent(data, "", "  ")
+	dir := getAppConfigDir()
+	jsonPath := filepath.Join(dir, "data.json")
+	os.WriteFile(jsonPath, str, 0644)
+}
+
+func deserialize(tx *bbolt.Tx) {
+	bucketNameList := [][]byte{}
+	tx.ForEach(func(name []byte, b *bbolt.Bucket) error {
+		bucketNameList = append(bucketNameList, name)
+		return nil
+	})
+	lo.ForEach(bucketNameList, func(name []byte, _ int) {
+		tx.DeleteBucket(name)
+	})
+	dir := getAppConfigDir()
+	jsonPath := filepath.Join(dir, "data.json")
+
+	b, _ := os.ReadFile(jsonPath)
+	var data Map
+	json.Unmarshal(b, &data)
+
+	for k, v := range data {
+		bucket, _ := tx.CreateBucket([]byte(k))
+		traverseMap(tx, bucket, v.(Map))
+	}
+}
+
+func traverseMap(tx *bbolt.Tx, bucket *bbolt.Bucket, data Map) {
+	for k, v := range data {
+		if k == "_data" {
+			lo.ForEach(v.([]any), func(item any, _ int) {
+				b, _ := json.Marshal(item)
+				uid, _ := bucket.NextSequence()
+				id := int(item.(Map)["id"].(float64))
+				for int(uid) != id {
+					uid, _ = bucket.NextSequence()
+				}
+				bucket.Put(intToByte(id), b)
+			})
+		} else {
+			switch reflect.TypeOf(v).Kind() {
+			case reflect.Map:
+				_, ok := v.(Map)["_data"]
+				isBucketStruct := ok
+				if isBucketStruct {
+					nested, _ := bucket.CreateBucket([]byte(k))
+					traverseMap(tx, nested, v.(Map))
+				} else {
+					b, _ := json.Marshal(v.(Map))
+					bucket.Put([]byte(k), b)
+				}
+			case reflect.Float64:
+				bucket.Put([]byte(k), intToByte(int(v.(float64))))
+			case reflect.String:
+				bucket.Put([]byte(k), []byte(v.(string)))
+			}
+		}
+	}
 }
 
 func updateDatabase(tx *bbolt.Tx) {
@@ -80,32 +200,32 @@ func (store *Store) insertRecord(name string, recordType int, exe string) {
 			TotalTime: 0,
 		}
 		data, _ := json.Marshal(instance)
-		return recordBucket.Put(itob(instance.Id), data)
+		return recordBucket.Put(intToByte(instance.Id), data)
 	})
 }
 
 func (store *Store) deleteRecord(id int) {
 	store.db.Update(func(tx *bbolt.Tx) error {
 		recordBucket := tx.Bucket([]byte(RECORD))
-		recordBucket.Delete(itob(id))
-		recordBucket.Delete([]byte(combineKeyAndId(TIME, id)))
+		recordBucket.Delete(intToByte(id))
+		recordBucket.DeleteBucket([]byte(combineKeyAndId(TIME, id)))
 		return nil
 	})
 }
 
-func (store *Store) updateRecord(id int, params map[string]any) {
+func (store *Store) updateRecord(id int, params Map) {
 	store.db.Update(func(tx *bbolt.Tx) error {
 		recordBucket := tx.Bucket([]byte(RECORD))
-		data := recordBucket.Get(itob(id))
+		data := recordBucket.Get(intToByte(id))
 		var instance Record
 		json.Unmarshal(data, &instance)
 		assign(&instance, params)
 		data, _ = json.Marshal(instance)
-		return recordBucket.Put(itob(instance.Id), data)
+		return recordBucket.Put(intToByte(instance.Id), data)
 	})
 }
 
-func assign(target any, value map[string]any) {
+func assign(target any, value Map) {
 	targetReflect := reflect.ValueOf(target).Elem()
 	targetType := targetReflect.Type()
 
@@ -149,7 +269,7 @@ func (store *Store) queryRecordById(id int) Record {
 	var instance Record
 	store.db.View(func(tx *bbolt.Tx) error {
 		recordBucket := tx.Bucket([]byte(RECORD))
-		data := recordBucket.Get(itob(id))
+		data := recordBucket.Get(intToByte(id))
 		json.Unmarshal(data, &instance)
 		return nil
 	})
@@ -169,7 +289,7 @@ func (store *Store) insertTime(recordId int, start int, end int) int {
 		recordInstance := store.queryRecordById(recordId)
 		recordInstance.TotalTime += end - start
 		recordData, _ := json.Marshal(recordInstance)
-		recordBucket.Put(itob(recordInstance.Id), recordData)
+		recordBucket.Put(intToByte(recordInstance.Id), recordData)
 
 		timeBucket := recordBucket.Bucket([]byte(combineKeyAndId(TIME, recordId)))
 		id, _ = timeBucket.NextSequence()
@@ -179,7 +299,7 @@ func (store *Store) insertTime(recordId int, start int, end int) int {
 			End:   end,
 		}
 		timeData, _ := json.Marshal(timeInstance)
-		return timeBucket.Put(itob(timeInstance.Id), timeData)
+		return timeBucket.Put(intToByte(timeInstance.Id), timeData)
 	})
 	return int(id)
 }
@@ -200,11 +320,11 @@ func (store *Store) queryTime(recordId int) []Time {
 	return result
 }
 
-func (store *Store) updateTime(recordId int, id int, params map[string]any) {
+func (store *Store) updateTime(recordId int, id int, params Map) {
 	store.db.Update(func(tx *bbolt.Tx) error {
 		recordBucket := tx.Bucket([]byte(RECORD))
 		timeBucket := recordBucket.Bucket([]byte(combineKeyAndId(TIME, recordId)))
-		data := timeBucket.Get(itob(id))
+		data := timeBucket.Get(intToByte(id))
 		var instance Time
 		json.Unmarshal(data, &instance)
 		oldEnd := instance.End
@@ -214,8 +334,8 @@ func (store *Store) updateTime(recordId int, id int, params map[string]any) {
 			recordInstance := store.queryRecordById(recordId)
 			recordInstance.TotalTime += instance.End - oldEnd
 			recordData, _ := json.Marshal(recordInstance)
-			recordBucket.Put(itob(recordInstance.Id), recordData)
+			recordBucket.Put(intToByte(recordInstance.Id), recordData)
 		}
-		return timeBucket.Put(itob(instance.Id), data)
+		return timeBucket.Put(intToByte(instance.Id), data)
 	})
 }
