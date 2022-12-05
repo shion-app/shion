@@ -3,9 +3,11 @@ export {}
 declare global {
   const BrowserOpenURL: typeof import('../wailsjs/runtime/runtime.js')['BrowserOpenURL']
   const CheckExecutablePath: typeof import('../wailsjs/go/main/App.js')['CheckExecutablePath']
+  const Color: typeof import('./constants/index')['Color']
   const DeleteRecord: typeof import('../wailsjs/go/main/App.js')['DeleteRecord']
   const EffectScope: typeof import('vue')['EffectScope']
   const Environment: typeof import('../wailsjs/runtime/runtime.js')['Environment']
+  const EventType: typeof import('./constants/index')['EventType']
   const EventsEmit: typeof import('../wailsjs/runtime/runtime.js')['EventsEmit']
   const EventsOff: typeof import('../wailsjs/runtime/runtime.js')['EventsOff']
   const EventsOn: typeof import('../wailsjs/runtime/runtime.js')['EventsOn']
@@ -27,6 +29,7 @@ declare global {
   const QueryTime: typeof import('../wailsjs/go/main/App.js')['QueryTime']
   const Quit: typeof import('../wailsjs/runtime/runtime.js')['Quit']
   const Record: typeof import('../wailsjs/go/models')['Record']
+  const RecordType: typeof import('./constants/index')['RecordType']
   const ScreenGetAll: typeof import('../wailsjs/runtime/runtime.js')['ScreenGetAll']
   const Show: typeof import('../wailsjs/runtime/runtime.js')['Show']
   const Time: typeof import('../wailsjs/go/models')['Time']
@@ -337,9 +340,11 @@ declare module 'vue' {
   interface ComponentCustomProperties {
     readonly BrowserOpenURL: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['BrowserOpenURL']>
     readonly CheckExecutablePath: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['CheckExecutablePath']>
+    readonly Color: UnwrapRef<typeof import('./constants/index')['Color']>
     readonly DeleteRecord: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['DeleteRecord']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly Environment: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['Environment']>
+    readonly EventType: UnwrapRef<typeof import('./constants/index')['EventType']>
     readonly EventsEmit: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsEmit']>
     readonly EventsOff: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsOff']>
     readonly EventsOn: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsOn']>
@@ -361,6 +366,7 @@ declare module 'vue' {
     readonly QueryTime: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['QueryTime']>
     readonly Quit: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['Quit']>
     readonly Record: UnwrapRef<typeof import('../wailsjs/go/models')['Record']>
+    readonly RecordType: UnwrapRef<typeof import('./constants/index')['RecordType']>
     readonly ScreenGetAll: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['ScreenGetAll']>
     readonly Show: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['Show']>
     readonly Time: UnwrapRef<typeof import('../wailsjs/go/models')['Time']>

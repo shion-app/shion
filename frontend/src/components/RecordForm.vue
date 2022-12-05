@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RecordType } from '../constants'
 import type { RawRecord } from '../interfaces'
 
 const {

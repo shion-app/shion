@@ -27,6 +27,16 @@ const vuetify = createVuetify({
       mdi,
     },
   },
+  theme: {
+    themes: {
+      light: {
+        dark: false,
+        colors: {
+          primary: Color.PRIMARY,
+        },
+      },
+    },
+  },
 })
 
 const i18n = createI18n({

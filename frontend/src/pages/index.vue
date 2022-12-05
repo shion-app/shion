@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { main } from '../../wailsjs/go/models'
 
-import { EventType } from '../constants'
 import svg from '../assets/void.svg'
 
 const router = useRouter()

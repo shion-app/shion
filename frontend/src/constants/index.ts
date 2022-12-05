@@ -6,3 +6,7 @@ export const enum RecordType {
 export const enum EventType {
   ACTIVE_EXE = 'active-exe',
 }
+
+export const enum Color {
+  PRIMARY = '#1867C0',
+}

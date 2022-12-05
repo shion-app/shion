@@ -85,7 +85,7 @@ function formatYYYYMMDD(date: number | Date) {
 
 function getColorByDate(date: Date) {
   if (isSameDay(date, dateVModel))
-    return '#2193f3'
+    return Color.PRIMARY
   const hour = getHour(getTotalByDate(date))
   if (hour === 0)
     return '#ebedf0'
