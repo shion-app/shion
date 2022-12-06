@@ -22,16 +22,13 @@ jobs:
 
       - run: pnpm install
 
-      - name: makensis
-        uses: joncloud/makensis-action@v3
-
-      - name: upx
-        uses: crazy-max/ghaction-upx@v2
-        with:
-          version: latest
-          files: |
-            ./bin/*.exe
-          args: -fq
+      - name: Install nsis And upx
+        run: |
+          iwr -useb get.scoop.sh | iex
+          scoop update
+          scoop bucket add extras
+          scoop install nsis
+          scoop install upx
 
       - run: pnpm run build:nsis
 
