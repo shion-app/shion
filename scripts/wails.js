@@ -1,19 +1,10 @@
-const { spawn } = require("child_process");
+const execa = require("execa");
 const { Command } = require("commander");
 
 const { version, author, name: appName } = require("../package.json");
 
-const run = (args) => {
-  const ls = spawn("wails", args);
-
-  ls.stdout.on("data", function (data) {
-    console.log(data.toString());
-  });
-
-  ls.stderr.on("data", function (data) {
-    console.log(data.toString());
-  });
-};
+const run = (args, opts = {}) =>
+  execa("wails", args, { stdio: 'inherit', ...opts })
 
 const formatProp = (key, value) => `-X 'main.${key}=${value}'`;
 

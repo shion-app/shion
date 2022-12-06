@@ -4,5 +4,12 @@
   "frontend:install": "pnpm install",
   "frontend:build": "pnpm run build",
   "frontend:dev:watcher": "pnpm run dev",
-  "frontend:dev:serverUrl": "auto"
+  "frontend:dev:serverUrl": "auto",
+  "info": {
+    "companyName": "hanaTsuk1",
+    "productName": "shion",
+    "productVersion": "0.1.0",
+    "copyright": "",
+    "comments": ""
+  }
 }

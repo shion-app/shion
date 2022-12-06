@@ -1,0 +1,42 @@
+name: 'release'
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Set node version to 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - run: pnpm install
+
+      - name: makensis
+        uses: joncloud/makensis-action@v3
+
+      - name: upx
+        uses: crazy-max/ghaction-upx@v2
+        with:
+          version: latest
+          files: |
+            ./bin/*.exe
+          args: -fq
+
+      - run: pnpm run build:nsis
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/bin/*.exe"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref }}
