@@ -6,7 +6,7 @@
     "name": "hanaTsuk1"
   },
   "scripts": {
-    "postinstall": "cd frontend && pnpm i && pnpm run build",
+    "postinstall": "node scripts/postinstall",
     "dev": "node scripts/wails dev",
     "build": "node scripts/wails build",
     "build:nsis": "node scripts/wails build -n",
@@ -15,6 +15,7 @@
   "devDependencies": {
     "commander": "^9.4.1",
     "execa": "^5.1.1",
+    "fs-extra": "^11.1.0",
     "semver": "^7.3.8",
     "vue-i18n": "^9.2.2"
   }

@@ -1,23 +1,25 @@
-const fs = require('fs')
+const fs = require('fs-extra')
 const path = require('path')
 
 const semver = require('semver')
 const { Command, Option } = require("commander");
-const execa = require("execa");
+
+const { run } = require('./run')
 
 const packagePath = path.join(__dirname, '../package.json')
 const wailsPath = path.join(__dirname, '../wails.json')
 const package = require(packagePath)
 const wails = require(wailsPath)
 
-const run = (bin, args, opts = {}) =>
-  execa(bin, args, { stdio: 'inherit', ...opts })
-
 const repleaceVersion = (version) => {
   package.version = version
-  fs.writeFileSync(packagePath, JSON.stringify(package, null, 2))
+  fs.writeJSONSync(packagePath, package, {
+    spaces: 2
+  })
   wails.info.productVersion = version
-  fs.writeFileSync(wailsPath, JSON.stringify(wails, null, 2))
+  fs.writeJSONSync(wailsPath, wails, {
+    spaces: 2
+  })
 }
 
 const program = new Command();

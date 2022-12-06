@@ -1,10 +1,10 @@
-const execa = require("execa");
+const path = require('path')
+
 const { Command } = require("commander");
 
-const { version, author, name: appName } = require("../package.json");
+const { run } = require('./run')
 
-const run = (args, opts = {}) =>
-  execa("wails", args, { stdio: 'inherit', ...opts })
+const { version, author, name: appName } = require("../package.json");
 
 const formatProp = (key, value) => `-X 'main.${key}=${value}'`;
 
@@ -22,10 +22,14 @@ const getLdflags = (isProd = false) => {
 }
 
 const program = new Command();
-program.command("dev").action(() => {
-  const args = ["dev", "-s", getLdflags()];
-  run(args);
-});
+program
+  .command("dev")
+  .action(async () => {
+    const htmlPath = path.join(__dirname, '../frontend/dist/index.html')
+    const exists = await fs.pathExists(htmlPath)
+    const args = ["dev", exists ? "-s" : "", getLdflags()];
+    run("wails", args);
+  });
 
 program
   .command("build")
@@ -35,7 +39,7 @@ program
     if (nsis) {
       args.push("-nsis");
     }
-    run(args);
+    run("wails", args);
   });
 
 program.parse(process.argv);
