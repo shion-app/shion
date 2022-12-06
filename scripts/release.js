@@ -32,7 +32,7 @@ program
     await run('git', ['add', '.'])
     await run('git', ['commit', '-m', `release: ${targetVersion}`])
     await run('git', ['tag', targetVersion])
-    await run('git', ['push', 'origin', `refs/tags/${targetVersion}`])
+    await run('git', ['push', 'origin', targetVersion])
     await run('git', ['push'])
   });
 
