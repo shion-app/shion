@@ -21,6 +21,8 @@ func main() {
 	// Create an instance of the app structure
 	app = NewApp(store)
 
+	logger := NewLogger(isDev)
+
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:      appName,
@@ -32,6 +34,7 @@ func main() {
 		OnStartup:  app.startup,
 		OnDomReady: app.domReady,
 		OnShutdown: app.shutdown,
+		Logger:     logger,
 		Bind: []interface{}{
 			app,
 		},
@@ -43,6 +46,8 @@ func main() {
 	if err != nil {
 		println("Error:", err.Error())
 	}
+
+	defer logger.Sync()
 
 	defer store.db.Close()
 }

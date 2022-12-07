@@ -13,12 +13,10 @@ var (
 	author  = ""
 )
 
-func isDev() bool {
-	return mode == "development"
-}
+var isDev = mode == "development"
 
 func getConfigDir() string {
-	if isDev() {
+	if isDev {
 		ex, _ := os.Executable()
 		return filepath.Dir(ex)
 	}

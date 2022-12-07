@@ -5,9 +5,14 @@ go 1.18
 require (
 	github.com/wailsapp/wails/v2 v2.0.0
 	go.etcd.io/bbolt v1.3.6
+	go.uber.org/zap v1.24.0
 )
 
-require golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
+require (
+	go.uber.org/atomic v1.10.0 // indirect
+	go.uber.org/multierr v1.8.0 // indirect
+	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
+)
 
 require (
 	github.com/bep/debounce v1.2.1 // indirect
