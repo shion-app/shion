@@ -1,5 +1,6 @@
-const fs = require('fs-extra')
 const path = require('path')
+
+const fs = require('fs-extra')
 
 const distPath = path.join(__dirname, '../frontend/dist')
 const tempPath = path.join(distPath, '.temp')

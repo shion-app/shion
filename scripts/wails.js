@@ -1,6 +1,7 @@
 const path = require('path')
 
 const { Command } = require("commander");
+const fs = require('fs-extra')
 
 const { run } = require('./run')
 
