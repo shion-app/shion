@@ -2,7 +2,7 @@ const fs = require('fs-extra')
 const path = require('path')
 
 const semver = require('semver')
-const { Command, Option } = require("commander");
+const { Command, Argument } = require("commander");
 
 const { run } = require('./run')
 
@@ -24,8 +24,8 @@ const repleaceVersion = (version) => {
 
 const program = new Command();
 program
-  .addOption(new Option('-r, --release <type>').choices(['major', 'minor', 'patch']))
-  .action(async ({ release }) => {
+  .addArgument(new Argument('<release>').choices(['major', 'minor', 'patch']))
+  .action(async (release) => {
     const newVersion = semver.inc(package.version, release)
     repleaceVersion(newVersion)
     const targetVersion = `v${newVersion}`

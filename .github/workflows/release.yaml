@@ -42,4 +42,3 @@ jobs:
         with:
           artifacts: "**/build/bin/*.exe"
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref }}
