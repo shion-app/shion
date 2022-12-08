@@ -9,10 +9,6 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-type Logger struct {
-	zap *zap.Logger
-}
-
 func newProduction(options ...zap.Option) (*zap.Logger, error) {
 	config := zap.NewProductionConfig()
 	config.Level = zap.NewAtomicLevelAt(zap.ErrorLevel)
@@ -33,46 +29,12 @@ func newProduction(options ...zap.Option) (*zap.Logger, error) {
 	return config.Build(options...)
 }
 
-func NewLogger(isDev bool) *Logger {
+func NewLogger(isDev bool) *zap.Logger {
 	var z *zap.Logger
 	if isDev {
 		z, _ = zap.NewDevelopment()
 	} else {
 		z, _ = newProduction()
 	}
-	return &Logger{
-		zap: z,
-	}
-}
-
-func (l *Logger) Print(message string) {
-	l.zap.Debug(message)
-}
-
-func (l *Logger) Trace(message string) {
-	l.zap.Debug(message)
-}
-
-func (l *Logger) Debug(message string) {
-	l.zap.Debug(message)
-}
-
-func (l *Logger) Info(message string) {
-	l.zap.Info(message)
-}
-
-func (l *Logger) Warning(message string) {
-	l.zap.Warn(message)
-}
-
-func (l *Logger) Error(message string) {
-	l.zap.Error(message)
-}
-
-func (l *Logger) Fatal(message string) {
-	l.zap.Fatal(message)
-}
-
-func (l *Logger) Sync() {
-	l.zap.Sync()
+	return z
 }

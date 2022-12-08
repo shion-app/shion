@@ -6,13 +6,14 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
+	"go.uber.org/zap"
 )
 
 //go:embed all:frontend/dist
 var assets embed.FS
 
 var app *App
-var logger *Logger
+var logger *zap.Logger
 
 func main() {
 	logger = NewLogger(isDev)
@@ -35,7 +36,7 @@ func main() {
 		OnStartup:  app.startup,
 		OnDomReady: app.domReady,
 		OnShutdown: app.shutdown,
-		Logger:     logger,
+		// Logger:     logger,
 		Bind: []interface{}{
 			app,
 		},
