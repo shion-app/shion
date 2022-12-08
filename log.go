@@ -15,6 +15,7 @@ type Logger struct {
 
 func NewProduction(options ...zap.Option) (*zap.Logger, error) {
 	config := zap.NewProductionConfig()
+	config.Level = zap.NewAtomicLevelAt(zap.ErrorLevel)
 	config.EncoderConfig.TimeKey = "timestamp"
 	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 

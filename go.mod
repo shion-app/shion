@@ -3,12 +3,14 @@ module shion
 go 1.18
 
 require (
+	github.com/nicksnyder/go-i18n/v2 v2.2.1
 	github.com/wailsapp/wails/v2 v2.0.0
 	go.etcd.io/bbolt v1.3.6
 	go.uber.org/zap v1.24.0
 )
 
 require (
+	github.com/BurntSushi/toml v1.2.1 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
@@ -35,9 +37,10 @@ require (
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	github.com/wailsapp/mimetype v1.4.1 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
-	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect
-	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
+	golang.org/x/sys v0.3.0
+	golang.org/x/text v0.4.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 // replace github.com/wailsapp/wails/v2 v2.0.0 => D:\workspace\go\pkg\mod

@@ -11,6 +11,7 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 var app *App
+var logger *Logger
 
 func main() {
 	dir := getAppConfigDir()
@@ -21,7 +22,7 @@ func main() {
 	// Create an instance of the app structure
 	app = NewApp(store)
 
-	logger := NewLogger(isDev)
+	logger = NewLogger(isDev)
 
 	// Create application with options
 	err := wails.Run(&options.App{

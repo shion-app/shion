@@ -1,4 +1,4 @@
-import { enUS, zhCN } from 'date-fns/locale'
+import { zhCN } from 'date-fns/locale'
 import isPromise from 'is-promise'
 
 export function wait(timeout: number) {
@@ -17,9 +17,7 @@ export async function waitProcess(process: () => unknown | Promise<unknown>, tim
 
 export function getDateLocale(locale: string) {
   switch (locale) {
-    case 'en':
-      return enUS
-    case 'zh':
+    case 'zh-CN':
       return zhCN
   }
 }
