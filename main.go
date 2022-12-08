@@ -10,21 +10,21 @@ import (
 
 //go:embed all:frontend/dist
 var assets embed.FS
+
 var app *App
 var logger *Logger
 
 func main() {
-	dir := getAppConfigDir()
-	store := initStore(dir)
-
-	go watch()
-
-	// Create an instance of the app structure
-	app = NewApp(store)
-
 	logger = NewLogger(isDev)
 
-	// Create application with options
+	dir := GetAppConfigDir()
+
+	store := InitStore(dir)
+
+	Watch()
+
+	app = NewApp(store)
+
 	err := wails.Run(&options.App{
 		Title:      appName,
 		MinWidth:   960,
@@ -40,12 +40,12 @@ func main() {
 			app,
 		},
 		Windows: &windows.Options{
-			OnSuspend: closeWatch,
+			OnSuspend: CloseWatch,
 		},
 	})
 
 	if err != nil {
-		println("Error:", err.Error())
+		logger.Error(err.Error())
 	}
 
 	defer logger.Sync()

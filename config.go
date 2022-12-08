@@ -24,7 +24,7 @@ func getConfigDir() string {
 	return dir
 }
 
-func getAppConfigDir() string {
+func GetAppConfigDir() string {
 	config := getConfigDir()
 	dir := filepath.Join(config, author+"/"+appName)
 	if err := os.MkdirAll(dir, os.ModePerm); err != nil {

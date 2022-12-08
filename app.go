@@ -8,21 +8,17 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-// App struct
 type App struct {
 	ctx   context.Context
 	store Store
 }
 
-// NewApp creates a new App application struct
 func NewApp(store Store) *App {
 	return &App{
 		store: store,
 	}
 }
 
-// startup is called when the app starts. The context is saved
-// so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
@@ -32,7 +28,7 @@ func (a *App) domReady(ctx context.Context) {
 }
 
 func (a *App) shutdown(ctx context.Context) {
-	closeWatch()
+	CloseWatch()
 }
 
 func (a *App) setActiveExeList() {
@@ -41,13 +37,15 @@ func (a *App) setActiveExeList() {
 	runtime.EventsEmit(a.ctx, "active-exe", activeExe)
 }
 
-func (a *App) GetActiveExeList() []string {
-	return lo.Keys(programMap)
+func (a *App) setExeWhiteList() {
+	recordList := a.store.QueryRecord()
+	SetExeWhiteList(recordList)
 }
 
-func (a *App) setExeWhiteList() {
-	recordList := a.store.queryRecord()
-	setExeWhiteList(recordList)
+// expose
+
+func (a *App) GetActiveExeList() []string {
+	return lo.Keys(programMap)
 }
 
 func (a *App) GetExecutablePath() (string, error) {
@@ -69,14 +67,14 @@ func (a *App) CheckExecutablePath(exe string) bool {
 }
 
 func (a *App) InsertRecord(name string, recordType int, exe string) {
-	a.store.insertRecord(name, recordType, exe)
+	a.store.InsertRecord(name, recordType, exe)
 	a.setExeWhiteList()
 }
 
 func (a *App) DeleteRecord(id int) {
-	record := a.store.queryRecordById(id)
-	deleteProgramMap(record.Exe)
-	a.store.deleteRecord(id)
+	record := a.store.QueryRecordById(id)
+	DeleteProgramMap(record.Exe)
+	a.store.DeleteRecord(id)
 	a.setExeWhiteList()
 }
 
@@ -84,27 +82,27 @@ func (a *App) UpdateRecord(id int, raw json.RawMessage) {
 	var params map[string]any
 	json.Unmarshal(raw, &params)
 	if _, ok := params["exe"]; ok {
-		record := a.store.queryRecordById(id)
-		updateProgramMap(record.Exe)
+		record := a.store.QueryRecordById(id)
+		UpdateProgramMap(record.Exe)
 	}
-	a.store.updateRecord(id, params)
+	a.store.UpdateRecord(id, params)
 	a.setExeWhiteList()
 }
 
 func (a *App) QueryRecord() []Record {
-	return a.store.queryRecord()
+	return a.store.QueryRecord()
 }
 
 func (a *App) InsertTime(recordId int, start int, end int) int {
-	return a.store.insertTime(recordId, start, end)
+	return a.store.InsertTime(recordId, start, end)
 }
 
 func (a *App) QueryTime(recordId int) []Time {
-	return a.store.queryTime(recordId)
+	return a.store.QueryTime(recordId)
 }
 
 func (a *App) UpdateTime(recordId int, id int, raw json.RawMessage) {
 	var params map[string]any
 	json.Unmarshal(raw, &params)
-	a.store.updateTime(recordId, id, params)
+	a.store.UpdateTime(recordId, id, params)
 }

@@ -13,14 +13,14 @@ type Logger struct {
 	zap *zap.Logger
 }
 
-func NewProduction(options ...zap.Option) (*zap.Logger, error) {
+func newProduction(options ...zap.Option) (*zap.Logger, error) {
 	config := zap.NewProductionConfig()
 	config.Level = zap.NewAtomicLevelAt(zap.ErrorLevel)
 	config.EncoderConfig.TimeKey = "timestamp"
 	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 
 	date := time.Now().Format("2006-01-02")
-	logPath := filepath.Join(getAppConfigDir(), "log")
+	logPath := filepath.Join(GetAppConfigDir(), "log")
 	if _, err := os.Stat(logPath); os.IsNotExist(err) {
 		os.Mkdir(logPath, os.ModePerm)
 	}
@@ -38,7 +38,7 @@ func NewLogger(isDev bool) *Logger {
 	if isDev {
 		z, _ = zap.NewDevelopment()
 	} else {
-		z, _ = NewProduction()
+		z, _ = newProduction()
 	}
 	return &Logger{
 		zap: z,

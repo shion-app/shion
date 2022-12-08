@@ -28,7 +28,7 @@ func getLocalizer(locale string) *i18n.Localizer {
 	}
 }
 
-func translate(locale string, id string, data Map) string {
+func Translate(locale string, id string, data Map) string {
 	l := getLocalizer(locale)
 	str, err := l.Localize(&i18n.LocalizeConfig{
 		MessageID:    id,

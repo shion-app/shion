@@ -35,6 +35,16 @@ type MSG struct {
 	Pt      POINT
 }
 
+type WINEVENTPROC func(hWinEventHook HWINEVENTHOOK, event DWORD, hwnd HWND, idObject LONG, idChild LONG, idEventThread DWORD, dwmsEventTime DWORD) uintptr
+
+type WNDPROC func(hWnd HWND, uMsg UINT, wParam WPARAM, lParam LPARAM) LRESULT
+
+type Program struct {
+	recordId int
+	timeId   int
+	timer    *time.Timer
+}
+
 const (
 	EVENT_OBJECT_FOCUS          = 0x8005
 	EVENT_OBJECT_LOCATIONCHANGE = 0x800B
@@ -44,10 +54,6 @@ const (
 	WINEVENT_SKIPOWNPROCESS = 0x0002
 	WINEVENT_INCONTEXT      = 0x0004
 )
-
-type WINEVENTPROC func(hWinEventHook HWINEVENTHOOK, event DWORD, hwnd HWND, idObject LONG, idChild LONG, idEventThread DWORD, dwmsEventTime DWORD) uintptr
-
-type WNDPROC func(hWnd HWND, uMsg UINT, wParam WPARAM, lParam LPARAM) LRESULT
 
 var (
 	user32 = windows.NewLazyDLL("user32.dll")
@@ -73,39 +79,33 @@ var (
 	}
 )
 
-var exeWhiteList = []string{}
+var (
+	exeWhiteList = []string{}
+	programMap   = map[string]Program{}
+	timeout      = time.Minute * 2
+)
 
-func setExeWhiteList(recordList []Record) {
+func SetExeWhiteList(recordList []Record) {
 	exeWhiteList = lo.FilterMap(recordList, func(item Record, _ int) (string, bool) {
 		return item.Exe, len(item.Exe) > 0
 	})
 }
 
-type Program struct {
-	recordId int
-	timeId   int
-	timer    *time.Timer
-}
-
-var programMap = map[string]Program{}
-
-var timeout = time.Minute * 2
-
-func deleteProgramMap(exe string) {
+func DeleteProgramMap(exe string) {
 	if program, ok := programMap[exe]; ok {
 		program.timer.Stop()
 		delete(programMap, exe)
 	}
 }
 
-func updateProgramMap(exe string) {
+func UpdateProgramMap(exe string) {
 	if program, ok := programMap[exe]; ok {
 		program.timer.Stop()
 		finish(exe)
 	}
 }
 
-func closeWatch() {
+func CloseWatch() {
 	activeExe := lo.Keys(programMap)
 	lo.ForEach(activeExe, func(item string, _ int) {
 		finish(item)
@@ -124,7 +124,7 @@ func getPathByPid(pid uint32) string {
 func update(exe string) {
 	now := int(time.Now().UnixMilli())
 	program := programMap[exe]
-	app.store.updateTime(program.recordId, program.timeId, map[string]any{
+	app.store.UpdateTime(program.recordId, program.timeId, map[string]any{
 		"end": now,
 	})
 }
@@ -177,16 +177,18 @@ func tickUpdate() {
 	}()
 }
 
-func watch() {
-	tickUpdate()
-	setWinEventHook(EVENT_OBJECT_FOCUS, EVENT_OBJECT_LOCATIONCHANGE, 0, activeWinEventHook, 0, 0, WINEVENT_OUTOFCONTEXT|WINEVENT_SKIPOWNPROCESS)
+func Watch() {
+	go (func() {
+		tickUpdate()
+		setWinEventHook(EVENT_OBJECT_FOCUS, EVENT_OBJECT_LOCATIONCHANGE, 0, activeWinEventHook, 0, 0, WINEVENT_OUTOFCONTEXT|WINEVENT_SKIPOWNPROCESS)
 
-	var msg MSG
-	for m := getMessage(&msg, 0, 0, 0); m != 0; {
-		translateMessage(&msg)
-		dispatchMessage(&msg)
-	}
-	// unhookWinEvent(winEvHook)
+		var msg MSG
+		for m := getMessage(&msg, 0, 0, 0); m != 0; {
+			translateMessage(&msg)
+			dispatchMessage(&msg)
+		}
+		// unhookWinEvent(winEvHook)
+	})()
 }
 
 func setWinEventHook(eventMin DWORD, eventMax DWORD, hmodWinEventProc HMODULE, pfnWinEventProc WINEVENTPROC, idProcess DWORD, idThread DWORD, dwFlags DWORD) HWINEVENTHOOK {

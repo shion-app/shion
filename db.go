@@ -14,6 +14,37 @@ import (
 	"go.etcd.io/bbolt"
 )
 
+type Store struct {
+	db *bbolt.DB
+}
+
+type Map = map[string]any
+
+type Record struct {
+	Id        int    `json:"id"`
+	Name      string `json:"name"`
+	Type      int    `json:"type"`
+	Exe       string `json:"exe"`
+	TotalTime int    `json:"totalTime"`
+}
+
+type Time struct {
+	Id    int `json:"id"`
+	Start int `json:"start"`
+	End   int `json:"end"`
+}
+
+const (
+	APP_INFO = "appInfo"
+	TIME     = "time"
+	RECORD   = "record"
+)
+
+const (
+	RECORD_TYPE_MANUAL = 0
+	RECORD_TYPE_AUTO   = 1
+)
+
 func byteToIntOrString(b []byte) (any, bool) {
 	s := string(b)
 	i, err := stringToInt(s)
@@ -30,23 +61,12 @@ func stringToInt(s string) (int, error) {
 func intToByte(v int) []byte {
 	return []byte(strconv.Itoa(v))
 }
+
 func combineKeyAndId(key string, id int) string {
 	return fmt.Sprintf("%s%d", key, id)
 }
 
-var (
-	APP_INFO = "appInfo"
-	TIME     = "time"
-	RECORD   = "record"
-)
-
-type Store struct {
-	db *bbolt.DB
-}
-
-type Map = map[string]any
-
-func initStore(dir string) Store {
+func InitStore(dir string) Store {
 	db, _ := bbolt.Open(filepath.Join(dir, "data.db"), 0666, nil)
 	store := Store{db: db}
 	store.initDatabase()
@@ -107,7 +127,7 @@ func serialize(tx *bbolt.Tx) {
 		return nil
 	})
 	str, _ := json.MarshalIndent(data, "", "  ")
-	dir := getAppConfigDir()
+	dir := GetAppConfigDir()
 	jsonPath := filepath.Join(dir, "data.json")
 	os.WriteFile(jsonPath, str, 0644)
 }
@@ -121,7 +141,7 @@ func deserialize(tx *bbolt.Tx) {
 	lo.ForEach(bucketNameList, func(name []byte, _ int) {
 		tx.DeleteBucket(name)
 	})
-	dir := getAppConfigDir()
+	dir := GetAppConfigDir()
 	jsonPath := filepath.Join(dir, "data.json")
 
 	b, _ := os.ReadFile(jsonPath)
@@ -174,20 +194,7 @@ func updateDatabase(tx *bbolt.Tx) {
 	info.Put([]byte("version"), []byte(version))
 }
 
-const (
-	RECORD_TYPE_MANUAL = 0
-	RECORD_TYPE_AUTO   = 1
-)
-
-type Record struct {
-	Id        int    `json:"id"`
-	Name      string `json:"name"`
-	Type      int    `json:"type"`
-	Exe       string `json:"exe"`
-	TotalTime int    `json:"totalTime"`
-}
-
-func (store *Store) insertRecord(name string, recordType int, exe string) {
+func (store *Store) InsertRecord(name string, recordType int, exe string) {
 	store.db.Update(func(tx *bbolt.Tx) error {
 		recordBucket := tx.Bucket([]byte(RECORD))
 		id, _ := recordBucket.NextSequence()
@@ -204,7 +211,7 @@ func (store *Store) insertRecord(name string, recordType int, exe string) {
 	})
 }
 
-func (store *Store) deleteRecord(id int) {
+func (store *Store) DeleteRecord(id int) {
 	store.db.Update(func(tx *bbolt.Tx) error {
 		recordBucket := tx.Bucket([]byte(RECORD))
 		recordBucket.Delete(intToByte(id))
@@ -213,7 +220,7 @@ func (store *Store) deleteRecord(id int) {
 	})
 }
 
-func (store *Store) updateRecord(id int, params Map) {
+func (store *Store) UpdateRecord(id int, params Map) {
 	store.db.Update(func(tx *bbolt.Tx) error {
 		recordBucket := tx.Bucket([]byte(RECORD))
 		data := recordBucket.Get(intToByte(id))
@@ -248,7 +255,7 @@ func assign(target any, value Map) {
 	}
 }
 
-func (store *Store) queryRecord() []Record {
+func (store *Store) QueryRecord() []Record {
 	result := []Record{}
 	store.db.View(func(tx *bbolt.Tx) error {
 		recordBucket := tx.Bucket([]byte(RECORD))
@@ -265,7 +272,7 @@ func (store *Store) queryRecord() []Record {
 	return result
 }
 
-func (store *Store) queryRecordById(id int) Record {
+func (store *Store) QueryRecordById(id int) Record {
 	var instance Record
 	store.db.View(func(tx *bbolt.Tx) error {
 		recordBucket := tx.Bucket([]byte(RECORD))
@@ -276,17 +283,11 @@ func (store *Store) queryRecordById(id int) Record {
 	return instance
 }
 
-type Time struct {
-	Id    int `json:"id"`
-	Start int `json:"start"`
-	End   int `json:"end"`
-}
-
-func (store *Store) insertTime(recordId int, start int, end int) int {
+func (store *Store) InsertTime(recordId int, start int, end int) int {
 	var id uint64
 	store.db.Update(func(tx *bbolt.Tx) error {
 		recordBucket := tx.Bucket([]byte(RECORD))
-		recordInstance := store.queryRecordById(recordId)
+		recordInstance := store.QueryRecordById(recordId)
 		recordInstance.TotalTime += end - start
 		recordData, _ := json.Marshal(recordInstance)
 		recordBucket.Put(intToByte(recordInstance.Id), recordData)
@@ -304,7 +305,7 @@ func (store *Store) insertTime(recordId int, start int, end int) int {
 	return int(id)
 }
 
-func (store *Store) queryTime(recordId int) []Time {
+func (store *Store) QueryTime(recordId int) []Time {
 	result := []Time{}
 	store.db.View(func(tx *bbolt.Tx) error {
 		recordBucket := tx.Bucket([]byte(RECORD))
@@ -320,7 +321,7 @@ func (store *Store) queryTime(recordId int) []Time {
 	return result
 }
 
-func (store *Store) updateTime(recordId int, id int, params Map) {
+func (store *Store) UpdateTime(recordId int, id int, params Map) {
 	store.db.Update(func(tx *bbolt.Tx) error {
 		recordBucket := tx.Bucket([]byte(RECORD))
 		timeBucket := recordBucket.Bucket([]byte(combineKeyAndId(TIME, recordId)))
@@ -331,7 +332,7 @@ func (store *Store) updateTime(recordId int, id int, params Map) {
 		assign(&instance, params)
 		data, _ = json.Marshal(instance)
 		if _, ok := params["end"]; ok {
-			recordInstance := store.queryRecordById(recordId)
+			recordInstance := store.QueryRecordById(recordId)
 			recordInstance.TotalTime += instance.End - oldEnd
 			recordData, _ := json.Marshal(recordInstance)
 			recordBucket.Put(intToByte(recordInstance.Id), recordData)
