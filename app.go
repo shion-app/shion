@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/samber/lo"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -78,9 +77,7 @@ func (a *App) DeleteRecord(id int) {
 	a.setExeWhiteList()
 }
 
-func (a *App) UpdateRecord(id int, raw json.RawMessage) {
-	var params map[string]any
-	json.Unmarshal(raw, &params)
+func (a *App) UpdateRecord(id int, params Map) {
 	if _, ok := params["exe"]; ok {
 		record := a.store.QueryRecordById(id)
 		UpdateProgramMap(record.Exe)
@@ -101,8 +98,6 @@ func (a *App) QueryTime(recordId int) []Time {
 	return a.store.QueryTime(recordId)
 }
 
-func (a *App) UpdateTime(recordId int, id int, raw json.RawMessage) {
-	var params map[string]any
-	json.Unmarshal(raw, &params)
+func (a *App) UpdateTime(recordId int, id int, params Map) {
 	a.store.UpdateTime(recordId, id, params)
 }

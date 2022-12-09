@@ -6,12 +6,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// TODO: en-US补充
+const (
+	defaultLocale = "zh-CN"
+	zhCN          = "zh-CN"
+)
+
 func newLocalizer(locale string) *i18n.Localizer {
-	var bundle *i18n.Bundle
-	switch locale {
-	case "zh-CN":
-		bundle = i18n.NewBundle(language.SimplifiedChinese)
-	}
+	bundle := i18n.NewBundle(language.SimplifiedChinese)
 	bundle.RegisterUnmarshalFunc("yaml", yaml.Unmarshal)
 	bundle.LoadMessageFile("locales/" + locale + ".yaml")
 	return i18n.NewLocalizer(bundle, locale)
@@ -28,14 +30,22 @@ func getLocalizer(locale string) *i18n.Localizer {
 	}
 }
 
-func Translate(locale string, id string, data Map) string {
+func translate(locale string, id string, data ...Map) string {
 	l := getLocalizer(locale)
+	var templateData = Map{}
+	if len(data) > 0 {
+		templateData = data[0]
+	}
 	str, err := l.Localize(&i18n.LocalizeConfig{
 		MessageID:    id,
-		TemplateData: data,
+		TemplateData: templateData,
 	})
 	if err != nil {
 		logger.Error(err.Error())
 	}
 	return str
+}
+
+func T(id string, data ...Map) string {
+	return translate(locale, id, data...)
 }

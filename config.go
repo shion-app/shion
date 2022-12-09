@@ -13,7 +13,10 @@ var (
 	author  = ""
 )
 
-var isDev = mode == "development"
+var (
+	isDev  = mode == "development"
+	locale = defaultLocale
+)
 
 func getConfigDir() string {
 	if isDev {
