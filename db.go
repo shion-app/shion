@@ -13,6 +13,8 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/samber/lo"
 	"go.etcd.io/bbolt"
+	"go.uber.org/multierr"
+	"go.uber.org/zap/zapcore"
 )
 
 type Store struct {
@@ -23,7 +25,7 @@ type Map = map[string]any
 
 type Entity interface {
 	transform(key string, value any) any
-	getSearchBucket(args ...int) []SearchBucket
+	getSearchBucket(args ...int) SearchBucketList
 }
 
 type Record struct {
@@ -45,6 +47,14 @@ type SearchBucket struct {
 	id   int
 }
 
+type SearchBucketList []SearchBucket
+
+type QueryParam struct {
+	value any
+	field string
+	op    Operator
+}
+
 const (
 	APP_INFO = "appInfo"
 	TIME     = "time"
@@ -63,8 +73,8 @@ func (r Record) transform(key string, value any) any {
 	return value
 }
 
-func (r Record) getSearchBucket(args ...int) []SearchBucket {
-	return []SearchBucket{{
+func (r Record) getSearchBucket(args ...int) SearchBucketList {
+	return SearchBucketList{{
 		name: RECORD,
 	}}
 }
@@ -76,13 +86,34 @@ func (t Time) transform(key string, value any) any {
 	return value
 }
 
-func (t Time) getSearchBucket(args ...int) []SearchBucket {
-	return []SearchBucket{{
+func (t Time) getSearchBucket(args ...int) SearchBucketList {
+	return SearchBucketList{{
 		name: RECORD,
 		id:   args[0],
 	}, {
 		name: TIME,
 	}}
+}
+
+func (q QueryParam) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	enc.AddReflected("value", q.value)
+	enc.AddString("field", q.field)
+	enc.AddString("op", q.op)
+	return nil
+}
+
+func (s SearchBucket) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	enc.AddString("name", s.name)
+	enc.AddInt("id", s.id)
+	return nil
+}
+
+func (s SearchBucketList) MarshalLogArray(arr zapcore.ArrayEncoder) error {
+	var err error
+	for i := range s {
+		err = multierr.Append(err, arr.AppendObject(s[i]))
+	}
+	return err
 }
 
 func byteToIntOrString(b []byte) (any, bool) {
@@ -410,7 +441,7 @@ func fromMapList[T any](data []Map) ([]T, error) {
 	return result, nil
 }
 
-func getBucket(tx *bbolt.Tx, nested []SearchBucket) (*bbolt.Bucket, error) {
+func getBucket(tx *bbolt.Tx, nested SearchBucketList) (*bbolt.Bucket, error) {
 	length := len(nested)
 	var bucket *bbolt.Bucket
 	for i := 0; i < length; i++ {
@@ -432,7 +463,7 @@ func getBucket(tx *bbolt.Tx, nested []SearchBucket) (*bbolt.Bucket, error) {
 	return bucket, nil
 }
 
-func (s *Store) insert(entity Entity, data Map, nested []SearchBucket) (int, error) {
+func (s *Store) insert(entity Entity, data Map, nested SearchBucketList) (int, error) {
 	var id uint64
 	err := s.db.Update(func(tx *bbolt.Tx) error {
 		bucket, err := getBucket(tx, nested)
@@ -468,34 +499,62 @@ func (s *Store) InsertTimeN(recordId int, data Map) (int, error) {
 	return s.insert(t, data, t.getSearchBucket(recordId))
 }
 
-func (store *Store) query(entity Entity, data Map, nested []SearchBucket) ([]Map, error) {
+func (store *Store) query(entity Entity, nested SearchBucketList, param QueryParam) ([]Map, error) {
 	result := []Map{}
 	err := store.db.View(func(tx *bbolt.Tx) error {
 		bucket, err := getBucket(tx, nested)
 		if err != nil {
 			return err
 		}
-		bucket.ForEach(func(k, v []byte) error {
+		return bucket.ForEach(func(k, v []byte) error {
+			if _, isInt := byteToIntOrString(k); !isInt {
+				return nil
+			}
 			var instance Map
 			err := json.Unmarshal(v, &instance)
 			if err != nil {
 				return err
 			}
-			result = append(result, instance)
+			vaild := true
+			value, target := entity.transform(param.field, param.value), entity.transform(param.field, instance[param.field])
+			if a, ok := target.(int); ok {
+				if b, ok := value.(int); ok {
+					vaild, err = Compare(CompareOption[int]{
+						a:  a,
+						b:  b,
+						op: param.op,
+					})
+				}
+			} else if a, ok := target.(string); ok {
+				if b, ok := value.(string); ok {
+					vaild, err = Compare(CompareOption[string]{
+						a:  a,
+						b:  b,
+						op: param.op,
+					})
+				}
+			} else {
+				return needAddQueryCompare
+			}
+			if err != nil {
+				return err
+			}
+			if vaild {
+				result = append(result, instance)
+			}
 			return nil
 		})
-		return nil
 	})
 	if err != nil {
-		logger.Sugar().Errorw(err.Error(), "data", data, "nested", nested)
+		logger.Sugar().Errorw(err.Error(), "entity", entity, "nested", nested, "param", param)
 		return nil, err
 	}
 	return result, nil
 }
 
-func (s *Store) QueryRecordN(data Map) ([]Record, error) {
+func (s *Store) QueryRecordN(param QueryParam) ([]Record, error) {
 	r := Record{}
-	ml, err := s.query(r, data, r.getSearchBucket())
+	ml, err := s.query(r, r.getSearchBucket(), param)
 	if err != nil {
 		return nil, err
 	}
@@ -503,9 +562,9 @@ func (s *Store) QueryRecordN(data Map) ([]Record, error) {
 	return rl, err
 }
 
-func (s *Store) QueryTimeN(recordId int, data Map) ([]Time, error) {
+func (s *Store) QueryTimeN(recordId int, param QueryParam) ([]Time, error) {
 	t := Time{}
-	ml, err := s.query(t, data, t.getSearchBucket(recordId))
+	ml, err := s.query(t, t.getSearchBucket(recordId), param)
 	if err != nil {
 		return nil, err
 	}
