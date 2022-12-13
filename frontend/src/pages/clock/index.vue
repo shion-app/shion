@@ -9,7 +9,7 @@ let activeId = $ref<number>()
 const selected = $computed(() => list.find(item => item.id === activeId))
 
 async function getList() {
-  list = (await QueryRecord()).filter(({ exe }) => !exe)
+  list = (await QueryRecord({})).filter(({ exe }) => !exe)
 }
 
 getList()

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -73,6 +72,10 @@ func (r Record) transform(key string, value any) any {
 	return value
 }
 
+func (r Record) isVaild() bool {
+	return r.Id != 0
+}
+
 func (r Record) getSearchBucket(args ...int) SearchBucketList {
 	return SearchBucketList{{
 		name: RECORD,
@@ -93,6 +96,10 @@ func (t Time) getSearchBucket(args ...int) SearchBucketList {
 	}, {
 		name: TIME,
 	}}
+}
+
+func (q QueryParam) isVaild() bool {
+	return q.value != nil && q.field != "" && q.op != ""
 }
 
 func (q QueryParam) MarshalLogObject(enc zapcore.ObjectEncoder) error {
@@ -144,12 +151,14 @@ func InitStore(dir string) Store {
 	return store
 }
 
-func (store *Store) initDatabase() {
-	store.db.Update(func(tx *bbolt.Tx) error {
+func (s *Store) initDatabase() {
+	s.db.Update(func(tx *bbolt.Tx) error {
 		tx.CreateBucketIfNotExists([]byte(APP_INFO))
 		tx.CreateBucketIfNotExists([]byte(RECORD))
 		updateDatabase(tx)
-		serialize(tx)
+		if isDev {
+			serialize(tx)
+		}
 		// deserialize(tx)
 		return nil
 	})
@@ -265,153 +274,6 @@ func updateDatabase(tx *bbolt.Tx) {
 	info.Put([]byte("version"), []byte(version))
 }
 
-func (store *Store) InsertRecord(name string, recordType int, exe string) {
-	store.db.Update(func(tx *bbolt.Tx) error {
-		recordBucket := tx.Bucket([]byte(RECORD))
-		id, _ := recordBucket.NextSequence()
-		recordBucket.CreateBucket([]byte(combineKeyAndId(TIME, int(id))))
-		instance := Record{
-			Id:        int(id),
-			Name:      name,
-			Type:      recordType,
-			Exe:       exe,
-			TotalTime: 0,
-		}
-		data, _ := json.Marshal(instance)
-		return recordBucket.Put(intToByte(instance.Id), data)
-	})
-}
-
-func (store *Store) DeleteRecord(id int) {
-	store.db.Update(func(tx *bbolt.Tx) error {
-		recordBucket := tx.Bucket([]byte(RECORD))
-		recordBucket.Delete(intToByte(id))
-		recordBucket.DeleteBucket([]byte(combineKeyAndId(TIME, id)))
-		return nil
-	})
-}
-
-func (store *Store) UpdateRecord(id int, params Map) {
-	store.db.Update(func(tx *bbolt.Tx) error {
-		recordBucket := tx.Bucket([]byte(RECORD))
-		data := recordBucket.Get(intToByte(id))
-		var instance Record
-		json.Unmarshal(data, &instance)
-		assign(&instance, params)
-		data, _ = json.Marshal(instance)
-		return recordBucket.Put(intToByte(instance.Id), data)
-	})
-}
-
-func assign(target any, value Map) {
-	targetReflect := reflect.ValueOf(target).Elem()
-	targetType := targetReflect.Type()
-
-	for i := 0; i < targetType.NumField(); i++ {
-		field := targetType.Field(i)
-		if !targetReflect.Field(i).CanSet() {
-			continue
-		}
-		if val, ok := value[field.Tag.Get("json")]; ok {
-			v := reflect.ValueOf(val)
-			targetKind := targetReflect.Field(i).Kind()
-			if targetKind == v.Kind() {
-				targetReflect.Field(i).Set(v)
-			} else if v.Kind() == reflect.Float64 {
-				if targetKind == reflect.Int {
-					targetReflect.Field(i).Set(reflect.ValueOf(int(v.Float())))
-				}
-			}
-		}
-	}
-}
-
-func (store *Store) QueryRecord() []Record {
-	result := []Record{}
-	store.db.View(func(tx *bbolt.Tx) error {
-		recordBucket := tx.Bucket([]byte(RECORD))
-		recordBucket.ForEach(func(k, v []byte) error {
-			if !bytes.HasPrefix(k, []byte(TIME)) {
-				var instance Record
-				json.Unmarshal(v, &instance)
-				result = append(result, instance)
-			}
-			return nil
-		})
-		return nil
-	})
-	return result
-}
-
-func (store *Store) QueryRecordById(id int) Record {
-	var instance Record
-	store.db.View(func(tx *bbolt.Tx) error {
-		recordBucket := tx.Bucket([]byte(RECORD))
-		data := recordBucket.Get(intToByte(id))
-		json.Unmarshal(data, &instance)
-		return nil
-	})
-	return instance
-}
-
-func (store *Store) InsertTime(recordId int, start int, end int) int {
-	var id uint64
-	store.db.Update(func(tx *bbolt.Tx) error {
-		recordBucket := tx.Bucket([]byte(RECORD))
-		recordInstance := store.QueryRecordById(recordId)
-		recordInstance.TotalTime += end - start
-		recordData, _ := json.Marshal(recordInstance)
-		recordBucket.Put(intToByte(recordInstance.Id), recordData)
-
-		timeBucket := recordBucket.Bucket([]byte(combineKeyAndId(TIME, recordId)))
-		id, _ = timeBucket.NextSequence()
-		timeInstance := Time{
-			Id:    int(id),
-			Start: start,
-			End:   end,
-		}
-		timeData, _ := json.Marshal(timeInstance)
-		return timeBucket.Put(intToByte(timeInstance.Id), timeData)
-	})
-	return int(id)
-}
-
-func (store *Store) QueryTime(recordId int) []Time {
-	result := []Time{}
-	store.db.View(func(tx *bbolt.Tx) error {
-		recordBucket := tx.Bucket([]byte(RECORD))
-		timeBucket := recordBucket.Bucket([]byte(combineKeyAndId(TIME, recordId)))
-		timeBucket.ForEach(func(k, v []byte) error {
-			var instance Time
-			json.Unmarshal(v, &instance)
-			result = append(result, instance)
-			return nil
-		})
-		return nil
-	})
-	return result
-}
-
-func (store *Store) UpdateTime(recordId int, id int, params Map) {
-	store.db.Update(func(tx *bbolt.Tx) error {
-		recordBucket := tx.Bucket([]byte(RECORD))
-		timeBucket := recordBucket.Bucket([]byte(combineKeyAndId(TIME, recordId)))
-		data := timeBucket.Get(intToByte(id))
-		var instance Time
-		json.Unmarshal(data, &instance)
-		oldEnd := instance.End
-		assign(&instance, params)
-		data, _ = json.Marshal(instance)
-		if _, ok := params["end"]; ok {
-			recordInstance := store.QueryRecordById(recordId)
-			recordInstance.TotalTime += instance.End - oldEnd
-			recordData, _ := json.Marshal(recordInstance)
-			recordBucket.Put(intToByte(recordInstance.Id), recordData)
-		}
-		return timeBucket.Put(intToByte(instance.Id), data)
-	})
-}
-
 func toMap(in Entity, data Map) Map {
 	out := Map{}
 	v := reflect.ValueOf(in)
@@ -480,7 +342,11 @@ func (s *Store) insert(entity Entity, data Map, nested SearchBucketList) (int, e
 		if err != nil {
 			return err
 		}
-		return bucket.Put(intToByte(int(id)), b)
+		err = bucket.Put(intToByte(int(id)), b)
+		if isDev {
+			serialize(tx)
+		}
+		return err
 	})
 	if err != nil {
 		logger.Sugar().Errorw(err.Error(), "data", data, "nested", nested)
@@ -489,19 +355,49 @@ func (s *Store) insert(entity Entity, data Map, nested SearchBucketList) (int, e
 	return int(id), nil
 }
 
-func (s *Store) InsertRecordN(data Map) (int, error) {
+func (s *Store) InsertRecord(data Map) (int, error) {
 	r := Record{}
-	return s.insert(r, data, r.getSearchBucket())
+	id, err := s.insert(r, data, r.getSearchBucket())
+	if err != nil {
+		return 0, err
+	}
+	err = s.db.Update(func(tx *bbolt.Tx) error {
+		bucket := tx.Bucket([]byte(RECORD))
+		name := combineKeyAndId(TIME, id)
+		_, err = bucket.CreateBucket([]byte(name))
+		return err
+	})
+	if err != nil {
+		return 0, err
+	}
+	return id, err
 }
 
-func (s *Store) InsertTimeN(recordId int, data Map) (int, error) {
+func (s *Store) InsertTime(recordId int, data Map) (int, error) {
 	t := Time{}
-	return s.insert(t, data, t.getSearchBucket(recordId))
+	id, err := s.insert(t, data, t.getSearchBucket(recordId))
+	if err != nil {
+		return 0, err
+	}
+	record, err := s.QueryRecordById(recordId)
+	if err != nil {
+		return 0, err
+	}
+	if record.isVaild() {
+		totalTime := record.TotalTime + data["end"].(int) - data["start"].(int)
+		err = s.UpdateRecord(recordId, Map{
+			"totalTime": totalTime,
+		})
+	}
+	if err != nil {
+		return 0, err
+	}
+	return id, err
 }
 
-func (store *Store) query(entity Entity, nested SearchBucketList, param QueryParam) ([]Map, error) {
+func (s *Store) query(entity Entity, nested SearchBucketList, param QueryParam) ([]Map, error) {
 	result := []Map{}
-	err := store.db.View(func(tx *bbolt.Tx) error {
+	err := s.db.View(func(tx *bbolt.Tx) error {
 		bucket, err := getBucket(tx, nested)
 		if err != nil {
 			return err
@@ -516,25 +412,27 @@ func (store *Store) query(entity Entity, nested SearchBucketList, param QueryPar
 				return err
 			}
 			vaild := true
-			value, target := entity.transform(param.field, param.value), entity.transform(param.field, instance[param.field])
-			if a, ok := target.(int); ok {
-				if b, ok := value.(int); ok {
-					vaild, err = Compare(CompareOption[int]{
-						a:  a,
-						b:  b,
-						op: param.op,
-					})
+			if param.isVaild() {
+				value, target := entity.transform(param.field, param.value), entity.transform(param.field, instance[param.field])
+				if a, ok := target.(int); ok {
+					if b, ok := value.(int); ok {
+						vaild, err = Compare(CompareOption[int]{
+							a:  a,
+							b:  b,
+							op: param.op,
+						})
+					}
+				} else if a, ok := target.(string); ok {
+					if b, ok := value.(string); ok {
+						vaild, err = Compare(CompareOption[string]{
+							a:  a,
+							b:  b,
+							op: param.op,
+						})
+					}
+				} else {
+					return needAddQueryCompare
 				}
-			} else if a, ok := target.(string); ok {
-				if b, ok := value.(string); ok {
-					vaild, err = Compare(CompareOption[string]{
-						a:  a,
-						b:  b,
-						op: param.op,
-					})
-				}
-			} else {
-				return needAddQueryCompare
 			}
 			if err != nil {
 				return err
@@ -552,7 +450,7 @@ func (store *Store) query(entity Entity, nested SearchBucketList, param QueryPar
 	return result, nil
 }
 
-func (s *Store) QueryRecordN(param QueryParam) ([]Record, error) {
+func (s *Store) QueryRecord(param QueryParam) ([]Record, error) {
 	r := Record{}
 	ml, err := s.query(r, r.getSearchBucket(), param)
 	if err != nil {
@@ -562,7 +460,22 @@ func (s *Store) QueryRecordN(param QueryParam) ([]Record, error) {
 	return rl, err
 }
 
-func (s *Store) QueryTimeN(recordId int, param QueryParam) ([]Time, error) {
+func (s *Store) QueryRecordById(id int) (Record, error) {
+	list, err := s.QueryRecord(QueryParam{
+		value: id,
+		field: "id",
+		op:    eq,
+	})
+	if err != nil {
+		return Record{}, err
+	}
+	if len(list) > 0 {
+		return list[0], nil
+	}
+	return Record{}, nil
+}
+
+func (s *Store) QueryTime(recordId int, param QueryParam) ([]Time, error) {
 	t := Time{}
 	ml, err := s.query(t, t.getSearchBucket(recordId), param)
 	if err != nil {
@@ -570,4 +483,81 @@ func (s *Store) QueryTimeN(recordId int, param QueryParam) ([]Time, error) {
 	}
 	tl, err := fromMapList[Time](ml)
 	return tl, err
+}
+
+func (s *Store) delete(id int, nested SearchBucketList) error {
+	err := s.db.Update(func(tx *bbolt.Tx) error {
+		bucket, err := getBucket(tx, nested)
+		if err != nil {
+			return err
+		}
+		err = bucket.Delete(intToByte(id))
+		if isDev {
+			serialize(tx)
+		}
+		return err
+	})
+	if err != nil {
+		logger.Sugar().Errorw(err.Error(), "id", id, "nested", nested)
+	}
+	return err
+}
+
+func (s *Store) DeleteRecord(id int) error {
+	r := Record{}
+	err := s.delete(id, r.getSearchBucket())
+	if err != nil {
+		return err
+	}
+	err = s.db.Update(func(tx *bbolt.Tx) error {
+		bucket := tx.Bucket([]byte(RECORD))
+		name := combineKeyAndId(TIME, id)
+		return bucket.DeleteBucket([]byte(name))
+	})
+	return err
+}
+
+func (s *Store) DeleteTimeN(recordId, id int) error {
+	t := Time{}
+	return s.delete(id, t.getSearchBucket(recordId))
+}
+
+func (s *Store) update(id int, data Map, nested SearchBucketList) error {
+	err := s.db.Update(func(tx *bbolt.Tx) error {
+		bucket, err := getBucket(tx, nested)
+		if err != nil {
+			return err
+		}
+		b := bucket.Get(intToByte(id))
+		var instance Map
+		err = json.Unmarshal(b, &instance)
+		if err != nil {
+			return err
+		}
+		for k := range instance {
+			if v, ok := data[k]; ok && k != "id" {
+				instance[k] = v
+			}
+		}
+		b, _ = json.Marshal(instance)
+		err = bucket.Put(intToByte(id), b)
+		if isDev {
+			serialize(tx)
+		}
+		return err
+	})
+	if err != nil {
+		logger.Sugar().Errorw(err.Error(), "id", id, "data", data, "nested", nested)
+	}
+	return err
+}
+
+func (s *Store) UpdateRecord(id int, data Map) error {
+	r := Record{}
+	return s.update(id, data, r.getSearchBucket())
+}
+
+func (s *Store) UpdateTime(recordId, id int, data Map) error {
+	t := Time{}
+	return s.update(id, data, t.getSearchBucket(recordId))
 }

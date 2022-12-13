@@ -37,8 +37,10 @@ func (a *App) setActiveExeList() {
 }
 
 func (a *App) setExeWhiteList() {
-	recordList := a.store.QueryRecord()
-	SetExeWhiteList(recordList)
+	recordList, err := a.QueryRecord(QueryParam{})
+	if err == nil {
+		SetExeWhiteList(recordList)
+	}
 }
 
 // expose
@@ -58,46 +60,73 @@ func (a *App) GetExecutablePath() (string, error) {
 	})
 }
 
-func (a *App) CheckExecutablePath(exe string) bool {
-	recordList := a.QueryRecord()
+func (a *App) CheckExecutablePath(exe string) (bool, error) {
+	recordList, err := a.QueryRecord(QueryParam{})
+	if err != nil {
+		return false, err
+	}
 	return !lo.ContainsBy(recordList, func(record Record) bool {
 		return record.Exe == exe
+	}), nil
+}
+
+func (a *App) InsertRecord(name string, recordType int, exe string) (int, error) {
+	id, err := a.store.InsertRecord(Map{
+		"name": name,
+		"type": recordType,
+		"exe":  exe,
+	})
+	a.setExeWhiteList()
+	return id, err
+}
+
+func (a *App) DeleteRecord(id int) error {
+	record, err := a.store.QueryRecordById(id)
+	if err != nil {
+		return err
+	}
+	if record.isVaild() {
+		DeleteProgramMap(record.Exe)
+	}
+	err = a.store.DeleteRecord(id)
+	if err != nil {
+		return err
+	}
+	a.setExeWhiteList()
+	return nil
+}
+
+func (a *App) UpdateRecord(id int, params Map) error {
+	if _, ok := params["exe"]; ok {
+		record, err := a.store.QueryRecordById(id)
+		if err != nil {
+			return err
+		}
+		UpdateProgramMap(record.Exe)
+	}
+	err := a.store.UpdateRecord(id, params)
+	if err != nil {
+		return err
+	}
+	a.setExeWhiteList()
+	return nil
+}
+
+func (a *App) QueryRecord(param QueryParam) ([]Record, error) {
+	return a.store.QueryRecord(param)
+}
+
+func (a *App) InsertTime(recordId int, start int, end int) (int, error) {
+	return a.store.InsertTime(recordId, Map{
+		"start": start,
+		"end":   end,
 	})
 }
 
-func (a *App) InsertRecord(name string, recordType int, exe string) {
-	a.store.InsertRecord(name, recordType, exe)
-	a.setExeWhiteList()
+func (a *App) QueryTime(recordId int, param QueryParam) ([]Time, error) {
+	return a.store.QueryTime(recordId, param)
 }
 
-func (a *App) DeleteRecord(id int) {
-	record := a.store.QueryRecordById(id)
-	DeleteProgramMap(record.Exe)
-	a.store.DeleteRecord(id)
-	a.setExeWhiteList()
-}
-
-func (a *App) UpdateRecord(id int, params Map) {
-	if _, ok := params["exe"]; ok {
-		record := a.store.QueryRecordById(id)
-		UpdateProgramMap(record.Exe)
-	}
-	a.store.UpdateRecord(id, params)
-	a.setExeWhiteList()
-}
-
-func (a *App) QueryRecord() []Record {
-	return a.store.QueryRecord()
-}
-
-func (a *App) InsertTime(recordId int, start int, end int) int {
-	return a.store.InsertTime(recordId, start, end)
-}
-
-func (a *App) QueryTime(recordId int) []Time {
-	return a.store.QueryTime(recordId)
-}
-
-func (a *App) UpdateTime(recordId int, id int, params Map) {
-	a.store.UpdateTime(recordId, id, params)
+func (a *App) UpdateTime(recordId int, id int, params Map) error {
+	return a.store.UpdateTime(recordId, id, params)
 }

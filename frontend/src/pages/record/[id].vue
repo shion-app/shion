@@ -13,7 +13,7 @@ let list = $ref<main.Time[]>([])
 const date = $ref(new Date())
 
 async function getList() {
-  list = await QueryTime(Number(id))
+  list = await QueryTime(Number(id), {})
 }
 
 const activeList = $computed(() => list.filter(item => isSameDay(item.start, date)))

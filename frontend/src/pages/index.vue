@@ -11,7 +11,7 @@ let list = $ref<main.Record[]>([])
 let activeExeList = $ref<Array<string>>([])
 
 async function getList() {
-  list = await QueryRecord()
+  list = await QueryRecord({})
 }
 
 getList()

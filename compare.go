@@ -17,6 +17,7 @@ const (
 	gt  Operator = "gt"
 	lte Operator = "lte"
 	lt  Operator = "lt"
+	eq  Operator = "eq"
 )
 
 func Compare[T constraints.Ordered](c CompareOption[T]) (bool, error) {
@@ -30,6 +31,8 @@ func Compare[T constraints.Ordered](c CompareOption[T]) (bool, error) {
 		return a <= b, nil
 	case lt:
 		return a < b, nil
+	case eq:
+		return a == b, nil
 	default:
 		return false, illegalOperator
 	}

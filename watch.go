@@ -124,7 +124,7 @@ func getPathByPid(pid uint32) string {
 func update(exe string) {
 	now := int(time.Now().UnixMilli())
 	program := programMap[exe]
-	app.store.UpdateTime(program.recordId, program.timeId, map[string]any{
+	app.UpdateTime(program.recordId, program.timeId, map[string]any{
 		"end": now,
 	})
 }
@@ -147,12 +147,18 @@ func generateProgram(recordId int, timeId int, exe string, timeout time.Duration
 
 func handleEvent(event int, path string) {
 	if _, ok := programMap[path]; !ok {
-		recordList := app.QueryRecord()
+		recordList, err := app.QueryRecord(QueryParam{})
+		if err != nil {
+			return
+		}
 		record, _ := lo.Find(recordList, func(item Record) bool {
 			return item.Exe == path
 		})
 		milli := int(time.Now().UnixMilli())
-		timeId := app.InsertTime(record.Id, milli, milli)
+		timeId, err := app.InsertTime(record.Id, milli, milli)
+		if err != nil {
+			return
+		}
 		programMap[path] = generateProgram(record.Id, timeId, path, timeout)
 	}
 	switch event {
