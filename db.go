@@ -89,6 +89,10 @@ func (t Time) transform(key string, value any) any {
 	return value
 }
 
+func (t Time) isVaild() bool {
+	return t.Id != 0
+}
+
 func (t Time) getSearchBucket(args ...int) SearchBucketList {
 	return SearchBucketList{{
 		name: RECORD,
@@ -375,24 +379,7 @@ func (s *Store) InsertRecord(data Map) (int, error) {
 
 func (s *Store) InsertTime(recordId int, data Map) (int, error) {
 	t := Time{}
-	id, err := s.insert(t, data, t.getSearchBucket(recordId))
-	if err != nil {
-		return 0, err
-	}
-	record, err := s.QueryRecordById(recordId)
-	if err != nil {
-		return 0, err
-	}
-	if record.isVaild() {
-		totalTime := record.TotalTime + data["end"].(int) - data["start"].(int)
-		err = s.UpdateRecord(recordId, Map{
-			"totalTime": totalTime,
-		})
-	}
-	if err != nil {
-		return 0, err
-	}
-	return id, err
+	return s.insert(t, data, t.getSearchBucket(recordId))
 }
 
 func (s *Store) query(entity Entity, nested SearchBucketList, param QueryParam) ([]Map, error) {
@@ -473,6 +460,20 @@ func (s *Store) QueryRecordById(id int) (Record, error) {
 		return list[0], nil
 	}
 	return Record{}, nil
+}
+func (s *Store) QueryTimeById(recordId, id int) (Time, error) {
+	list, err := s.QueryTime(recordId, QueryParam{
+		value: id,
+		field: "id",
+		op:    eq,
+	})
+	if err != nil {
+		return Time{}, err
+	}
+	if len(list) > 0 {
+		return list[0], nil
+	}
+	return Time{}, nil
 }
 
 func (s *Store) QueryTime(recordId int, param QueryParam) ([]Time, error) {
@@ -559,5 +560,22 @@ func (s *Store) UpdateRecord(id int, data Map) error {
 
 func (s *Store) UpdateTime(recordId, id int, data Map) error {
 	t := Time{}
+	time, err := s.QueryTimeById(recordId, id)
+	if err != nil {
+		return err
+	}
+	record, err := s.QueryRecordById(recordId)
+	if err != nil {
+		return err
+	}
+	if time.isVaild() && record.isVaild() {
+		totalTime := record.TotalTime + t.transform("end", data["end"]).(int) - time.End
+		err = s.UpdateRecord(recordId, Map{
+			"totalTime": totalTime,
+		})
+		if err != nil {
+			return err
+		}
+	}
 	return s.update(id, data, t.getSearchBucket(recordId))
 }
