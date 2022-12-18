@@ -1,7 +1,7 @@
 <template>
   <nav-drawer>
     <router-view v-slot="{ Component }">
-      <keep-alive :include="['clock']">
+      <keep-alive :include="['Clock']">
         <component :is="Component" />
       </keep-alive>
     </router-view>

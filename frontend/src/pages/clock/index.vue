@@ -104,6 +104,12 @@ function selectLabel(id: number) {
 }
 </script>
 
+<script lang="ts">
+export default defineComponent({
+  name: 'Clock',
+})
+</script>
+
 <template>
   <div flex flex-col items-center justify-evenly m-a h-full relative>
     <div font-mono text-20>

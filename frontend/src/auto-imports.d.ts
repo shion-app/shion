@@ -28,7 +28,6 @@ declare global {
   const LogTrace: typeof import('../wailsjs/runtime/runtime.js')['LogTrace']
   const LogWarning: typeof import('../wailsjs/runtime/runtime.js')['LogWarning']
   const QueryLabel: typeof import('../wailsjs/go/main/App.js')['QueryLabel']
-  const QueryLabelById: typeof import('../wailsjs/go/main/App.js')['QueryLabelById']
   const QueryRecord: typeof import('../wailsjs/go/main/App.js')['QueryRecord']
   const QueryTime: typeof import('../wailsjs/go/main/App.js')['QueryTime']
   const Quit: typeof import('../wailsjs/runtime/runtime.js')['Quit']
@@ -369,7 +368,6 @@ declare module 'vue' {
     readonly LogTrace: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['LogTrace']>
     readonly LogWarning: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['LogWarning']>
     readonly QueryLabel: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['QueryLabel']>
-    readonly QueryLabelById: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['QueryLabelById']>
     readonly QueryRecord: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['QueryRecord']>
     readonly QueryTime: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['QueryTime']>
     readonly Quit: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['Quit']>
