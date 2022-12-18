@@ -8,17 +8,23 @@ import svg from '../../assets/time.svg'
 const { id } = defineProps<{ id: string }>()
 
 const { t, locale } = $(useI18n())
-let list = $ref<main.Time[]>([])
+let timeList = $ref<main.Time[]>([])
+let labelList = $ref<main.Label[]>([])
 
 const date = $ref(new Date())
 
-async function getList() {
-  list = await QueryTime(Number(id), {})
+async function getTimeList() {
+  timeList = await QueryTime(Number(id), {})
 }
 
-const activeList = $computed(() => list.filter(item => isSameDay(item.start, date)))
+async function getLabelList() {
+  labelList = await QueryLabel(Number(id), {})
+}
 
-getList()
+getTimeList()
+getLabelList()
+
+const activeList = $computed(() => timeList.filter(item => isSameDay(item.start, date)))
 
 function getColor(index: number) {
   return index % 2 === 0 ? '#ccc' : '#fff'
@@ -32,22 +38,34 @@ function formatHourMinute(time: number) {
   const { hour, minute, second } = extractTime(time)
   return minute > 0 ? `${hour}${t('hour')}${minute}${t('minute')}` : `${second}${t('second')}`
 }
+
+function formatLabel(labelId: number) {
+  const label = labelList.find(item => item.id === labelId)
+  if (label)
+    return `${label.name} ${formatHourMinute(label.totalTime)}`
+
+  return ''
+}
 </script>
 
 <template>
   <div flex flex-col h-full>
-    <calendar-graph v-model:date="date" :list="list" />
+    <calendar-graph v-model:date="date" :list="timeList" />
     <div overflow-y-auto flex-grow>
       <empty v-if="!activeList.length">
         <img :src="svg" alt="time">
       </empty>
       <v-timeline v-else line-inset="6">
         <v-timeline-item
-          v-for="{ id, start, end }, index in activeList" :key="id" :dot-color="getColor(index)"
+          v-for="{ id, start, end, label }, index in activeList" :key="id" :dot-color="getColor(index)"
           size="small"
         >
           <div>{{ formatTime(start) }} - {{ formatTime(end) }}</div>
           <div>{{ formatHourMinute(end - start) }}</div>
+          <div v-if="label" flex items-center>
+            <div i-mdi:label text-4 />
+            <div>{{ formatLabel(label) }}</div>
+          </div>
         </v-timeline-item>
       </v-timeline>
     </div>

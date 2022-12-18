@@ -12,6 +12,10 @@ record:
     auto: 自动
   tip:
     invalidExe: 已存在此应用程序的记录
+time:
+  prop:
+    name: 名称
+    record: 记录
 input:
   required: 输入不能为空
   delete: 删除
@@ -28,5 +32,6 @@ nav:
   record: 记录
   clock: 计时
 clock:
-  select: 选择记录对象
-  progress: 正在计时中({name})
+  selectRecord: 选择记录
+  createLabel: 创建标签
+  selectLabel: 选择标签

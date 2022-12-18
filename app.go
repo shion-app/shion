@@ -116,8 +116,9 @@ func (a *App) QueryRecord(param QueryParam) ([]Record, error) {
 	return a.store.QueryRecord(param)
 }
 
-func (a *App) InsertTime(recordId int, start int, end int) (int, error) {
+func (a *App) InsertTime(recordId int, labelId int, start int, end int) (int, error) {
 	return a.store.InsertTime(recordId, Map{
+		"label": labelId,
 		"start": start,
 		"end":   end,
 	})
@@ -129,4 +130,14 @@ func (a *App) QueryTime(recordId int, param QueryParam) ([]Time, error) {
 
 func (a *App) UpdateTime(recordId int, id int, params Map) error {
 	return a.store.UpdateTime(recordId, id, params)
+}
+
+func (a *App) InsertLabel(recordId int, name string) (int, error) {
+	return a.store.InsertLabel(recordId, Map{
+		"name": name,
+	})
+}
+
+func (a *App) QueryLabel(recordId int, param QueryParam) ([]Label, error) {
+	return a.store.QueryLabel(recordId, param)
 }

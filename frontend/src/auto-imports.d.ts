@@ -10,15 +10,16 @@ declare global {
   const EventType: typeof import('./constants/index')['EventType']
   const EventsEmit: typeof import('../wailsjs/runtime/runtime.js')['EventsEmit']
   const EventsOff: typeof import('../wailsjs/runtime/runtime.js')['EventsOff']
-  const EventsOffAll: typeof import('../wailsjs/runtime/runtime.d')['EventsOffAll']
   const EventsOn: typeof import('../wailsjs/runtime/runtime.js')['EventsOn']
   const EventsOnMultiple: typeof import('../wailsjs/runtime/runtime.js')['EventsOnMultiple']
   const EventsOnce: typeof import('../wailsjs/runtime/runtime.js')['EventsOnce']
   const GetActiveExeList: typeof import('../wailsjs/go/main/App.js')['GetActiveExeList']
   const GetExecutablePath: typeof import('../wailsjs/go/main/App.js')['GetExecutablePath']
   const Hide: typeof import('../wailsjs/runtime/runtime.js')['Hide']
+  const InsertLabel: typeof import('../wailsjs/go/main/App.js')['InsertLabel']
   const InsertRecord: typeof import('../wailsjs/go/main/App.js')['InsertRecord']
   const InsertTime: typeof import('../wailsjs/go/main/App.js')['InsertTime']
+  const Label: typeof import('../wailsjs/go/models')['Label']
   const LogDebug: typeof import('../wailsjs/runtime/runtime.js')['LogDebug']
   const LogError: typeof import('../wailsjs/runtime/runtime.js')['LogError']
   const LogFatal: typeof import('../wailsjs/runtime/runtime.js')['LogFatal']
@@ -26,6 +27,8 @@ declare global {
   const LogPrint: typeof import('../wailsjs/runtime/runtime.js')['LogPrint']
   const LogTrace: typeof import('../wailsjs/runtime/runtime.js')['LogTrace']
   const LogWarning: typeof import('../wailsjs/runtime/runtime.js')['LogWarning']
+  const QueryLabel: typeof import('../wailsjs/go/main/App.js')['QueryLabel']
+  const QueryLabelById: typeof import('../wailsjs/go/main/App.js')['QueryLabelById']
   const QueryRecord: typeof import('../wailsjs/go/main/App.js')['QueryRecord']
   const QueryTime: typeof import('../wailsjs/go/main/App.js')['QueryTime']
   const Quit: typeof import('../wailsjs/runtime/runtime.js')['Quit']
@@ -348,15 +351,16 @@ declare module 'vue' {
     readonly EventType: UnwrapRef<typeof import('./constants/index')['EventType']>
     readonly EventsEmit: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsEmit']>
     readonly EventsOff: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsOff']>
-    readonly EventsOffAll: UnwrapRef<typeof import('../wailsjs/runtime/runtime.d')['EventsOffAll']>
     readonly EventsOn: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsOn']>
     readonly EventsOnMultiple: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsOnMultiple']>
     readonly EventsOnce: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsOnce']>
     readonly GetActiveExeList: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['GetActiveExeList']>
     readonly GetExecutablePath: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['GetExecutablePath']>
     readonly Hide: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['Hide']>
+    readonly InsertLabel: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['InsertLabel']>
     readonly InsertRecord: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['InsertRecord']>
     readonly InsertTime: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['InsertTime']>
+    readonly Label: UnwrapRef<typeof import('../wailsjs/go/models')['Label']>
     readonly LogDebug: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['LogDebug']>
     readonly LogError: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['LogError']>
     readonly LogFatal: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['LogFatal']>
@@ -364,6 +368,8 @@ declare module 'vue' {
     readonly LogPrint: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['LogPrint']>
     readonly LogTrace: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['LogTrace']>
     readonly LogWarning: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['LogWarning']>
+    readonly QueryLabel: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['QueryLabel']>
+    readonly QueryLabelById: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['QueryLabelById']>
     readonly QueryRecord: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['QueryRecord']>
     readonly QueryTime: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['QueryTime']>
     readonly Quit: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['Quit']>

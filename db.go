@@ -39,6 +39,13 @@ type Time struct {
 	Id    int `json:"id"`
 	Start int `json:"start"`
 	End   int `json:"end"`
+	Label int `json:"label"`
+}
+
+type Label struct {
+	Id        int    `json:"id"`
+	Name      string `json:"name"`
+	TotalTime int    `json:"totalTime"`
 }
 
 type SearchBucket struct {
@@ -56,8 +63,9 @@ type QueryParam struct {
 
 const (
 	APP_INFO = "appInfo"
-	TIME     = "time"
 	RECORD   = "record"
+	TIME     = "time"
+	LABEL    = "label"
 )
 
 const (
@@ -83,7 +91,7 @@ func (r Record) getSearchBucket(args ...int) SearchBucketList {
 }
 
 func (t Time) transform(key string, value any) any {
-	if v, ok := value.(float64); ok && lo.Contains([]string{"id", "start", "end"}, key) {
+	if v, ok := value.(float64); ok && lo.Contains([]string{"id", "start", "end", "label"}, key) {
 		return int(v)
 	}
 	return value
@@ -100,6 +108,26 @@ func (t Time) getSearchBucket(args ...int) SearchBucketList {
 	}, {
 		name: TIME,
 	}}
+}
+
+func (l Label) transform(key string, value any) any {
+	if v, ok := value.(float64); ok && lo.Contains([]string{"id", "totalTime"}, key) {
+		return int(v)
+	}
+	return value
+}
+
+func (l Label) getSearchBucket(args ...int) SearchBucketList {
+	return SearchBucketList{{
+		name: RECORD,
+		id:   args[0],
+	}, {
+		name: LABEL,
+	}}
+}
+
+func (l Label) isVaild() bool {
+	return l.Id != 0
 }
 
 func (q QueryParam) isVaild() bool {
@@ -369,6 +397,11 @@ func (s *Store) InsertRecord(data Map) (int, error) {
 		bucket := tx.Bucket([]byte(RECORD))
 		name := combineKeyAndId(TIME, id)
 		_, err = bucket.CreateBucket([]byte(name))
+		if err != nil {
+			return err
+		}
+		name = combineKeyAndId(LABEL, id)
+		_, err = bucket.CreateBucket([]byte(name))
 		return err
 	})
 	if err != nil {
@@ -380,6 +413,11 @@ func (s *Store) InsertRecord(data Map) (int, error) {
 func (s *Store) InsertTime(recordId int, data Map) (int, error) {
 	t := Time{}
 	return s.insert(t, data, t.getSearchBucket(recordId))
+}
+
+func (s *Store) InsertLabel(recordId int, data Map) (int, error) {
+	l := Label{}
+	return s.insert(l, data, l.getSearchBucket(recordId))
 }
 
 func (s *Store) query(entity Entity, nested SearchBucketList, param QueryParam) ([]Map, error) {
@@ -461,6 +499,7 @@ func (s *Store) QueryRecordById(id int) (Record, error) {
 	}
 	return Record{}, nil
 }
+
 func (s *Store) QueryTimeById(recordId, id int) (Time, error) {
 	list, err := s.QueryTime(recordId, QueryParam{
 		value: id,
@@ -476,14 +515,39 @@ func (s *Store) QueryTimeById(recordId, id int) (Time, error) {
 	return Time{}, nil
 }
 
+func (s *Store) QueryLabelById(recordId, id int) (Label, error) {
+	list, err := s.QueryLabel(recordId, QueryParam{
+		value: id,
+		field: "id",
+		op:    eq,
+	})
+	if err != nil {
+		return Label{}, err
+	}
+	if len(list) > 0 {
+		return list[0], nil
+	}
+	return Label{}, nil
+}
+
 func (s *Store) QueryTime(recordId int, param QueryParam) ([]Time, error) {
 	t := Time{}
-	ml, err := s.query(t, t.getSearchBucket(recordId), param)
+	mapList, err := s.query(t, t.getSearchBucket(recordId), param)
 	if err != nil {
 		return nil, err
 	}
-	tl, err := fromMapList[Time](ml)
-	return tl, err
+	timeList, err := fromMapList[Time](mapList)
+	return timeList, err
+}
+
+func (s *Store) QueryLabel(recordId int, param QueryParam) ([]Label, error) {
+	l := Label{}
+	mapList, err := s.query(l, l.getSearchBucket(recordId), param)
+	if err != nil {
+		return nil, err
+	}
+	labelList, err := fromMapList[Label](mapList)
+	return labelList, err
 }
 
 func (s *Store) delete(id int, nested SearchBucketList) error {
@@ -513,15 +577,25 @@ func (s *Store) DeleteRecord(id int) error {
 	err = s.db.Update(func(tx *bbolt.Tx) error {
 		bucket := tx.Bucket([]byte(RECORD))
 		name := combineKeyAndId(TIME, id)
+		err := bucket.DeleteBucket([]byte(name))
+		if err != nil {
+			return err
+		}
+		name = combineKeyAndId(LABEL, id)
 		return bucket.DeleteBucket([]byte(name))
 	})
 	return err
 }
 
-func (s *Store) DeleteTimeN(recordId, id int) error {
-	t := Time{}
-	return s.delete(id, t.getSearchBucket(recordId))
-}
+// func (s *Store) DeleteTime(recordId, id int) error {
+// 	t := Time{}
+// 	return s.delete(id, t.getSearchBucket(recordId))
+// }
+
+// func (s *Store) DeleteLabel(recordId, id int) error {
+// 	l := Label{}
+// 	return s.delete(id, l.getSearchBucket(recordId))
+// }
 
 func (s *Store) update(id int, data Map, nested SearchBucketList) error {
 	err := s.db.Update(func(tx *bbolt.Tx) error {
@@ -568,14 +642,35 @@ func (s *Store) UpdateTime(recordId, id int, data Map) error {
 	if err != nil {
 		return err
 	}
-	if time.isVaild() && record.isVaild() {
-		totalTime := record.TotalTime + t.transform("end", data["end"]).(int) - time.End
-		err = s.UpdateRecord(recordId, Map{
-			"totalTime": totalTime,
-		})
-		if err != nil {
-			return err
+	label, err := s.QueryLabelById(recordId, time.Label)
+	if err != nil {
+		return err
+	}
+	increment := t.transform("end", data["end"]).(int) - time.End
+	if time.isVaild() {
+		if record.isVaild() {
+			totalTime := record.TotalTime + increment
+			err = s.UpdateRecord(recordId, Map{
+				"totalTime": totalTime,
+			})
+			if err != nil {
+				return err
+			}
+		}
+		if label.isVaild() {
+			totalTime := label.TotalTime + increment
+			err = s.UpdateLabel(recordId, time.Label, Map{
+				"totalTime": totalTime,
+			})
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return s.update(id, data, t.getSearchBucket(recordId))
+}
+
+func (s *Store) UpdateLabel(recordId, id int, data Map) error {
+	l := Label{}
+	return s.update(id, data, l.getSearchBucket(recordId))
 }
