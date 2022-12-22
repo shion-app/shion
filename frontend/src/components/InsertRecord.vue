@@ -16,7 +16,6 @@ function close() {
 async function submit(data: RawRecord) {
   const { name, type, exe } = data
   const process = InsertRecord(name, type, exe)
-  close()
   await message.loading({
     process,
   })

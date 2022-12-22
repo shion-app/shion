@@ -55,6 +55,7 @@ function close() {
 async function confirm() {
   const { valid } = await form.validate()
   if (valid) {
+    close()
     emit('submit', {
       name,
       type: type.value,

@@ -20,7 +20,6 @@ function close() {
 
 async function submit(data: RawRecord) {
   const process = UpdateRecord(id, data)
-  close()
   await message.loading({
     process,
   })
