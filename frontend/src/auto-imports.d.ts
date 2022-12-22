@@ -10,6 +10,7 @@ declare global {
   const EventType: typeof import('./constants/index')['EventType']
   const EventsEmit: typeof import('../wailsjs/runtime/runtime.js')['EventsEmit']
   const EventsOff: typeof import('../wailsjs/runtime/runtime.js')['EventsOff']
+  const EventsOffAll: typeof import('../wailsjs/runtime/runtime.d')['EventsOffAll']
   const EventsOn: typeof import('../wailsjs/runtime/runtime.js')['EventsOn']
   const EventsOnMultiple: typeof import('../wailsjs/runtime/runtime.js')['EventsOnMultiple']
   const EventsOnce: typeof import('../wailsjs/runtime/runtime.js')['EventsOnce']
@@ -350,6 +351,7 @@ declare module 'vue' {
     readonly EventType: UnwrapRef<typeof import('./constants/index')['EventType']>
     readonly EventsEmit: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsEmit']>
     readonly EventsOff: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsOff']>
+    readonly EventsOffAll: UnwrapRef<typeof import('../wailsjs/runtime/runtime.d')['EventsOffAll']>
     readonly EventsOn: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsOn']>
     readonly EventsOnMultiple: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsOnMultiple']>
     readonly EventsOnce: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsOnce']>

@@ -3,6 +3,10 @@ import { extractTime } from '../../utils'
 
 import type { main } from '../../../wailsjs/go/models'
 
+const route = useRoute()
+
+const routeMatched = $computed(() => route.name === 'clock')
+
 let recordList = $ref<main.Record[]>([])
 let labelList = $ref<main.Label[]>([])
 let activeRecordId = $ref(0)
@@ -134,7 +138,7 @@ export default defineComponent({
       </div>
     </div>
   </div>
-  <v-menu location="end" transition="slide-x-transition" activator="#extra-menu" min-width="100" offset="20">
+  <v-menu v-if="routeMatched" location="end" transition="slide-x-transition" activator="#extra-menu" min-width="100" offset="20">
     <v-list>
       <v-list-item v-if="!isStart" value="selectRecord">
         {{ $t('clock.selectRecord') }}
