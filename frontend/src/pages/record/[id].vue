@@ -14,11 +14,11 @@ let labelList = $ref<main.Label[]>([])
 const date = $ref(new Date())
 
 async function getTimeList() {
-  timeList = await QueryTime(Number(id), {})
+  timeList = await QueryTime(Number(id))
 }
 
 async function getLabelList() {
-  labelList = await QueryLabel(Number(id), {})
+  labelList = await QueryLabel(Number(id))
 }
 
 getTimeList()
@@ -39,10 +39,10 @@ function formatHourMinute(time: number) {
   return minute > 0 ? `${hour}${t('hour')}${minute}${t('minute')}` : `${second}${t('second')}`
 }
 
-function formatLabel(labelId: number) {
-  const label = labelList.find(item => item.id === labelId)
-  if (label)
-    return `${label.name} ${formatHourMinute(label.totalTime)}`
+function formatLabel(recordID: number) {
+  const list = labelList.filter(item => item.recordID === recordID)
+  if (list.length)
+    return list.map(label => `${label.name} ${formatHourMinute(label.totalTime)}`).join(' | ')
 
   return ''
 }
@@ -57,14 +57,14 @@ function formatLabel(labelId: number) {
       </empty>
       <v-timeline v-else line-inset="6">
         <v-timeline-item
-          v-for="{ id, start, end, label }, index in activeList" :key="id" :dot-color="getColor(index)"
+          v-for="{ id, start, end, recordID }, index in activeList" :key="id" :dot-color="getColor(index)"
           size="small"
         >
           <div>{{ formatTime(start) }} - {{ formatTime(end) }}</div>
           <div>{{ formatHourMinute(end - start) }}</div>
-          <div v-if="label" flex items-center>
+          <div v-if="recordID" flex items-center>
             <div i-mdi:label text-4 />
-            <div>{{ formatLabel(label) }}</div>
+            <div>{{ formatLabel(recordID) }}</div>
           </div>
         </v-timeline-item>
       </v-timeline>

@@ -40,9 +40,8 @@ type WINEVENTPROC func(hWinEventHook HWINEVENTHOOK, event DWORD, hwnd HWND, idOb
 type WNDPROC func(hWnd HWND, uMsg UINT, wParam WPARAM, lParam LPARAM) LRESULT
 
 type Program struct {
-	recordId int
-	timeId   int
-	timer    *time.Timer
+	timeId uint
+	timer  *time.Timer
 }
 
 const (
@@ -124,7 +123,7 @@ func getPathByPid(pid uint32) string {
 func update(exe string) {
 	now := int(time.Now().UnixMilli())
 	program := programMap[exe]
-	app.UpdateTime(program.recordId, program.timeId, map[string]any{
+	app.UpdateTime(program.timeId, map[string]any{
 		"end": now,
 	})
 }
@@ -135,10 +134,9 @@ func finish(exe string) {
 	app.setActiveExeList()
 }
 
-func generateProgram(recordId int, timeId int, exe string, timeout time.Duration) Program {
+func generateProgram(timeId uint, exe string, timeout time.Duration) Program {
 	return Program{
-		recordId: recordId,
-		timeId:   timeId,
+		timeId: timeId,
 		timer: time.AfterFunc(timeout, func() {
 			finish(exe)
 		}),
@@ -147,7 +145,7 @@ func generateProgram(recordId int, timeId int, exe string, timeout time.Duration
 
 func handleEvent(event int, path string) {
 	if _, ok := programMap[path]; !ok {
-		recordList, err := app.QueryRecord(QueryParam{})
+		recordList, err := app.QueryRecord()
 		if err != nil {
 			return
 		}
@@ -155,11 +153,11 @@ func handleEvent(event int, path string) {
 			return item.Exe == path
 		})
 		milli := int(time.Now().UnixMilli())
-		timeId, err := app.InsertTime(record.Id, 0, milli, milli)
+		timeId, err := app.InsertTime(record.ID, 0, milli, milli)
 		if err != nil {
 			return
 		}
-		programMap[path] = generateProgram(record.Id, timeId, path, timeout)
+		programMap[path] = generateProgram(timeId, path, timeout)
 	}
 	switch event {
 	case EVENT_OBJECT_FOCUS:

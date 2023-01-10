@@ -2,20 +2,18 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/samber/lo"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type App struct {
-	ctx   context.Context
-	store Store
+	ctx context.Context
 }
 
-func NewApp(store Store) *App {
-	return &App{
-		store: store,
-	}
+func NewApp() *App {
+	return &App{}
 }
 
 func (a *App) startup(ctx context.Context) {
@@ -37,7 +35,7 @@ func (a *App) setActiveExeList() {
 }
 
 func (a *App) setExeWhiteList() {
-	recordList, err := a.QueryRecord(QueryParam{})
+	recordList, err := a.QueryRecord()
 	if err == nil {
 		SetExeWhiteList(recordList)
 	}
@@ -61,7 +59,7 @@ func (a *App) GetExecutablePath() (string, error) {
 }
 
 func (a *App) CheckExecutablePath(exe string) (bool, error) {
-	recordList, err := a.QueryRecord(QueryParam{})
+	recordList, err := a.QueryRecord()
 	if err != nil {
 		return false, err
 	}
@@ -70,25 +68,23 @@ func (a *App) CheckExecutablePath(exe string) (bool, error) {
 	}), nil
 }
 
-func (a *App) InsertRecord(name string, recordType int, exe string) (int, error) {
-	id, err := a.store.InsertRecord(Map{
-		"name": name,
-		"type": recordType,
-		"exe":  exe,
+func (a *App) InsertRecord(name string, recordType int, exe string) (uint, error) {
+	id, err := Create(Record{
+		Name: name,
+		Type: recordType,
+		Exe:  exe,
 	})
 	a.setExeWhiteList()
 	return id, err
 }
 
-func (a *App) DeleteRecord(id int) error {
-	record, err := a.store.QueryRecordById(id)
+func (a *App) DeleteRecord(id uint) error {
+	record, err := FindByID[Record](id)
 	if err != nil {
 		return err
 	}
-	if record.isVaild() {
-		DeleteProgramMap(record.Exe)
-	}
-	err = a.store.DeleteRecord(id)
+	DeleteProgramMap(record.Exe)
+	err = Delete[Record](id)
 	if err != nil {
 		return err
 	}
@@ -96,15 +92,18 @@ func (a *App) DeleteRecord(id int) error {
 	return nil
 }
 
-func (a *App) UpdateRecord(id int, params Map) error {
-	if _, ok := params["exe"]; ok {
-		record, err := a.store.QueryRecordById(id)
+func (a *App) UpdateRecord(id uint, data Map) error {
+	delete(data, "type")
+	if _, ok := data["exe"]; ok {
+		record, err := FindByID[Record](id)
 		if err != nil {
 			return err
 		}
 		UpdateProgramMap(record.Exe)
 	}
-	err := a.store.UpdateRecord(id, params)
+	r := Record{}
+	r.ID = id
+	err := Update(r, data)
 	if err != nil {
 		return err
 	}
@@ -112,32 +111,57 @@ func (a *App) UpdateRecord(id int, params Map) error {
 	return nil
 }
 
-func (a *App) QueryRecord(param QueryParam) ([]Record, error) {
-	return a.store.QueryRecord(param)
+func (a *App) QueryRecord() (list []Record, err error) {
+	err = db.Select("records.*", "IFNULL(SUM(times.[end] - times.start), 0) total_time").Joins("LEFT JOIN times ON records.id = times.record_id").Group("records.id").Find(&list).Error
+	return
 }
 
-func (a *App) InsertTime(recordId int, labelId int, start int, end int) (int, error) {
-	return a.store.InsertTime(recordId, Map{
-		"label": labelId,
-		"start": start,
-		"end":   end,
+func (a *App) InsertTime(recordId uint, labelId uint, start int, end int) (uint, error) {
+	time := Time{
+		Start:    start,
+		End:      end,
+		RecordID: recordId,
+	}
+	id, err := Create(time)
+	time.ID = id
+	if err != nil {
+		return id, err
+	}
+	if labelId != 0 {
+		label, err := FindByID[Label](labelId)
+		if err != nil {
+			return id, err
+		}
+		err = db.Model(&time).Association("Labels").Append(&label)
+		return id, err
+	}
+	return id, err
+}
+
+func (a *App) QueryTime(recordId uint) ([]Time, error) {
+	return FindAll[Time](lo.T3("record_id", "=", fmt.Sprint(recordId)))
+}
+
+func (a *App) UpdateTime(id uint, data Map) error {
+	t := Time{}
+	t.ID = id
+	return Update(t, data)
+}
+
+func (a *App) InsertLabel(recordId uint, name string) (uint, error) {
+	return Create(Label{
+		Name:     name,
+		RecordID: recordId,
 	})
 }
 
-func (a *App) QueryTime(recordId int, param QueryParam) ([]Time, error) {
-	return a.store.QueryTime(recordId, param)
+func (a *App) QueryLabel(recordId uint) (list []Label, err error) {
+	err = db.Select("labels.*", "IFNULL(SUM(times.[end] - times.start), 0) total_time").Joins("LEFT JOIN times ON labels.record_id = times.record_id").Group("labels.id").Find(&list).Error
+	return
 }
 
-func (a *App) UpdateTime(recordId int, id int, params Map) error {
-	return a.store.UpdateTime(recordId, id, params)
-}
-
-func (a *App) InsertLabel(recordId int, name string) (int, error) {
-	return a.store.InsertLabel(recordId, Map{
-		"name": name,
-	})
-}
-
-func (a *App) QueryLabel(recordId int, param QueryParam) ([]Label, error) {
-	return a.store.QueryLabel(recordId, param)
+func (a *App) UpdateLabel(id uint, data Map) error {
+	l := Label{}
+	l.ID = id
+	return Update(l, data)
 }

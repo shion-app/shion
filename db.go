@@ -1,676 +1,116 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"os"
 	"path/filepath"
-	"reflect"
-	"strconv"
-	"strings"
+	"time"
 
-	"github.com/mitchellh/mapstructure"
 	"github.com/samber/lo"
-	"go.etcd.io/bbolt"
-	"go.uber.org/multierr"
-	"go.uber.org/zap/zapcore"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
-
-type Store struct {
-	db *bbolt.DB
-}
 
 type Map = map[string]any
 
-type Entity interface {
-	transform(key string, value any) any
-	getSearchBucket(args ...int) SearchBucketList
+type OrmModel struct {
+	ID        uint `gorm:"primarykey" json:"id"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
+}
+
+type Model interface {
+	GetID() uint
 }
 
 type Record struct {
-	Id        int    `json:"id"`
+	OrmModel
 	Name      string `json:"name"`
 	Type      int    `json:"type"`
 	Exe       string `json:"exe"`
 	TotalTime int    `json:"totalTime"`
 }
 
+func (r Record) GetID() uint {
+	return r.ID
+}
+
 type Time struct {
-	Id    int `json:"id"`
-	Start int `json:"start"`
-	End   int `json:"end"`
-	Label int `json:"label"`
+	OrmModel
+	Start    int     `json:"start"`
+	End      int     `json:"end"`
+	RecordID uint    `json:"recordID"`
+	Labels   []Label `gorm:"many2many:time_labels;"`
+}
+
+func (t Time) GetID() uint {
+	return t.ID
 }
 
 type Label struct {
-	Id        int    `json:"id"`
+	OrmModel
 	Name      string `json:"name"`
+	RecordID  uint   `json:"recordID"`
 	TotalTime int    `json:"totalTime"`
 }
 
-type SearchBucket struct {
-	name string
-	id   int
+func (l Label) GetID() uint {
+	return l.ID
 }
 
-type SearchBucketList []SearchBucket
-
-type QueryParam struct {
-	value any
-	field string
-	op    Operator
-}
-
-const (
-	APP_INFO = "appInfo"
-	RECORD   = "record"
-	TIME     = "time"
-	LABEL    = "label"
-)
-
-const (
-	RECORD_TYPE_MANUAL = 0
-	RECORD_TYPE_AUTO   = 1
-)
-
-func (r Record) transform(key string, value any) any {
-	if v, ok := value.(float64); ok && lo.Contains([]string{"id", "type", "totalTime"}, key) {
-		return int(v)
-	}
-	return value
-}
-
-func (r Record) isVaild() bool {
-	return r.Id != 0
-}
-
-func (r Record) getSearchBucket(args ...int) SearchBucketList {
-	return SearchBucketList{{
-		name: RECORD,
-	}}
-}
-
-func (t Time) transform(key string, value any) any {
-	if v, ok := value.(float64); ok && lo.Contains([]string{"id", "start", "end", "label"}, key) {
-		return int(v)
-	}
-	return value
-}
-
-func (t Time) isVaild() bool {
-	return t.Id != 0
-}
-
-func (t Time) getSearchBucket(args ...int) SearchBucketList {
-	return SearchBucketList{{
-		name: RECORD,
-		id:   args[0],
-	}, {
-		name: TIME,
-	}}
-}
-
-func (l Label) transform(key string, value any) any {
-	if v, ok := value.(float64); ok && lo.Contains([]string{"id", "totalTime"}, key) {
-		return int(v)
-	}
-	return value
-}
-
-func (l Label) getSearchBucket(args ...int) SearchBucketList {
-	return SearchBucketList{{
-		name: RECORD,
-		id:   args[0],
-	}, {
-		name: LABEL,
-	}}
-}
-
-func (l Label) isVaild() bool {
-	return l.Id != 0
-}
-
-func (q QueryParam) isVaild() bool {
-	return q.value != nil && q.field != "" && q.op != ""
-}
-
-func (q QueryParam) MarshalLogObject(enc zapcore.ObjectEncoder) error {
-	enc.AddReflected("value", q.value)
-	enc.AddString("field", q.field)
-	enc.AddString("op", q.op)
-	return nil
-}
-
-func (s SearchBucket) MarshalLogObject(enc zapcore.ObjectEncoder) error {
-	enc.AddString("name", s.name)
-	enc.AddInt("id", s.id)
-	return nil
-}
-
-func (s SearchBucketList) MarshalLogArray(arr zapcore.ArrayEncoder) error {
-	var err error
-	for i := range s {
-		err = multierr.Append(err, arr.AppendObject(s[i]))
-	}
-	return err
-}
-
-func byteToIntOrString(b []byte) (any, bool) {
-	s := string(b)
-	i, err := stringToInt(s)
-	if err != nil {
-		return s, false
-	}
-	return i, true
-}
-
-func stringToInt(s string) (int, error) {
-	return strconv.Atoi(s)
-}
-
-func intToByte(v int) []byte {
-	return []byte(strconv.Itoa(v))
-}
-
-func combineKeyAndId(key string, id int) string {
-	return fmt.Sprintf("%s%d", key, id)
-}
-
-func InitStore(dir string) Store {
-	db, _ := bbolt.Open(filepath.Join(dir, "data.db"), 0666, nil)
-	store := Store{db: db}
-	store.initDatabase()
-	return store
-}
-
-func (s *Store) initDatabase() {
-	s.db.Update(func(tx *bbolt.Tx) error {
-		tx.CreateBucketIfNotExists([]byte(APP_INFO))
-		tx.CreateBucketIfNotExists([]byte(RECORD))
-		updateDatabase(tx)
-		if isDev {
-			serialize(tx)
-		}
-		// deserialize(tx)
-		return nil
-	})
-}
-
-func traverseBucket(tx *bbolt.Tx, bucket *bbolt.Bucket, data Map, parentName string) {
-	parent := data[parentName].(Map)
-	bucket.ForEach(func(k, v []byte) error {
-		key := string(k)
-		value := string(v)
-		nested := bucket.Bucket(k)
-		if nested != nil {
-			parent[key] = Map{}
-			traverseBucket(tx, nested, parent, key)
-		} else {
-			isStruct := strings.HasPrefix(value, "{")
-			if isStruct {
-				var obj any
-				json.Unmarshal(v, &obj)
-				_, isInt := byteToIntOrString(k)
-				isBucketStruct := isInt
-				if isBucketStruct {
-					if _, ok := parent["_data"]; !ok {
-						parent["_data"] = []any{}
-					}
-					parent["_data"] = append(parent["_data"].([]any), obj)
-				} else {
-					parent[key] = obj
-				}
-			} else {
-				parent[key] = value
-			}
-		}
-		return nil
-	})
-}
-
-func serialize(tx *bbolt.Tx) {
-	data := Map{}
-	tx.ForEach(func(name []byte, b *bbolt.Bucket) error {
-		bucket := tx.Bucket(name)
-		data[string(name)] = Map{}
-		if bucket != nil {
-			traverseBucket(tx, bucket, data, string(name))
-		}
-		return nil
-	})
-	str, _ := json.MarshalIndent(data, "", "  ")
+func InitDatabase() *gorm.DB {
 	dir := GetAppConfigDir()
-	jsonPath := filepath.Join(dir, "data.json")
-	os.WriteFile(jsonPath, str, 0644)
-}
-
-func deserialize(tx *bbolt.Tx) {
-	bucketNameList := [][]byte{}
-	tx.ForEach(func(name []byte, b *bbolt.Bucket) error {
-		bucketNameList = append(bucketNameList, name)
-		return nil
-	})
-	lo.ForEach(bucketNameList, func(name []byte, _ int) {
-		tx.DeleteBucket(name)
-	})
-	dir := GetAppConfigDir()
-	jsonPath := filepath.Join(dir, "data.json")
-
-	b, _ := os.ReadFile(jsonPath)
-	var data Map
-	json.Unmarshal(b, &data)
-
-	for k, v := range data {
-		bucket, _ := tx.CreateBucket([]byte(k))
-		traverseMap(tx, bucket, v.(Map))
-	}
-}
-
-func traverseMap(tx *bbolt.Tx, bucket *bbolt.Bucket, data Map) {
-	for k, v := range data {
-		if k == "_data" {
-			lo.ForEach(v.([]any), func(item any, _ int) {
-				b, _ := json.Marshal(item)
-				uid, _ := bucket.NextSequence()
-				id := int(item.(Map)["id"].(float64))
-				for int(uid) != id {
-					uid, _ = bucket.NextSequence()
-				}
-				bucket.Put(intToByte(id), b)
-			})
-		} else {
-			switch reflect.TypeOf(v).Kind() {
-			case reflect.Map:
-				_, ok := v.(Map)["_data"]
-				isBucketStruct := ok
-				if isBucketStruct {
-					nested, _ := bucket.CreateBucket([]byte(k))
-					traverseMap(tx, nested, v.(Map))
-				} else {
-					b, _ := json.Marshal(v.(Map))
-					bucket.Put([]byte(k), b)
-				}
-			case reflect.Float64:
-				bucket.Put([]byte(k), intToByte(int(v.(float64))))
-			case reflect.String:
-				bucket.Put([]byte(k), []byte(v.(string)))
-			}
-		}
-	}
-}
-
-func updateDatabase(tx *bbolt.Tx) {
-	info := tx.Bucket([]byte(APP_INFO))
-	// oldVersion := info.Get([]byte("version"))
-	// update
-	info.Put([]byte("version"), []byte(version))
-}
-
-func toMap(in Entity, data Map) Map {
-	out := Map{}
-	v := reflect.ValueOf(in)
-	t := v.Type()
-	for i := 0; i < v.NumField(); i++ {
-		field := t.Field(i)
-		if tag := field.Tag.Get("json"); tag != "" {
-			out[tag] = v.Field(i).Interface()
-			if v, ok := data[tag]; ok {
-				out[tag] = in.transform(tag, v)
-			}
-		}
-	}
-	return out
-}
-
-func fromMapList[T any](data []Map) ([]T, error) {
-	result := []T{}
-	for _, v := range data {
-		var i T
-		err := mapstructure.Decode(v, &i)
-		if err != nil {
-			return nil, err
-		}
-		result = append(result, i)
-	}
-	return result, nil
-}
-
-func getBucket(tx *bbolt.Tx, nested SearchBucketList) (*bbolt.Bucket, error) {
-	length := len(nested)
-	var bucket *bbolt.Bucket
-	for i := 0; i < length; i++ {
-		curr := nested[i]
-		name := curr.name
-		hasBefore := i != 0
-		if hasBefore {
-			name = combineKeyAndId(name, nested[i-1].id)
-		}
-		if bucket == nil {
-			bucket = tx.Bucket([]byte(name))
-		} else {
-			bucket = bucket.Bucket([]byte(name))
-		}
-		if bucket == nil {
-			return nil, bucketNotFound
-		}
-	}
-	return bucket, nil
-}
-
-func (s *Store) insert(entity Entity, data Map, nested SearchBucketList) (int, error) {
-	var id uint64
-	err := s.db.Update(func(tx *bbolt.Tx) error {
-		bucket, err := getBucket(tx, nested)
-		if err != nil {
-			return err
-		}
-		id, err = bucket.NextSequence()
-		if err != nil {
-			return err
-		}
-		data["id"] = int(id)
-		dataMap := toMap(entity, data)
-		b, err := json.Marshal(dataMap)
-		if err != nil {
-			return err
-		}
-		err = bucket.Put(intToByte(int(id)), b)
-		if isDev {
-			serialize(tx)
-		}
-		return err
-	})
+	dbPath := filepath.Join(dir, "data.db")
+	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
 	if err != nil {
-		logger.Sugar().Errorw(err.Error(), "data", data, "nested", nested)
-		return 0, err
+		logger.Error(err.Error())
 	}
-	return int(id), nil
+	db.AutoMigrate(&Record{}, &Time{}, &Label{})
+	return db
 }
 
-func (s *Store) InsertRecord(data Map) (int, error) {
-	r := Record{}
-	id, err := s.insert(r, data, r.getSearchBucket())
-	if err != nil {
-		return 0, err
-	}
-	err = s.db.Update(func(tx *bbolt.Tx) error {
-		bucket := tx.Bucket([]byte(RECORD))
-		name := combineKeyAndId(TIME, id)
-		_, err = bucket.CreateBucket([]byte(name))
-		if err != nil {
-			return err
-		}
-		name = combineKeyAndId(LABEL, id)
-		_, err = bucket.CreateBucket([]byte(name))
-		return err
-	})
-	if err != nil {
-		return 0, err
-	}
-	return id, err
+func Create[M Model](m M) (uint, error) {
+	err := db.Create(&m).Error
+	return m.GetID(), err
 }
 
-func (s *Store) InsertTime(recordId int, data Map) (int, error) {
-	t := Time{}
-	return s.insert(t, data, t.getSearchBucket(recordId))
+func FindAll[M Model](params ...lo.Tuple3[string, string, string]) ([]M, error) {
+	var list []M
+	err := db.Where(composite(params...)).Find(&list).Error
+	return list, err
 }
 
-func (s *Store) InsertLabel(recordId int, data Map) (int, error) {
-	l := Label{}
-	return s.insert(l, data, l.getSearchBucket(recordId))
+func Find[M Model](params ...lo.Tuple3[string, string, string]) (M, error) {
+	var m M
+	err := db.Where(composite(params...)).First(&m).Error
+	return m, err
 }
 
-func (s *Store) query(entity Entity, nested SearchBucketList, param QueryParam) ([]Map, error) {
-	result := []Map{}
-	err := s.db.View(func(tx *bbolt.Tx) error {
-		bucket, err := getBucket(tx, nested)
-		if err != nil {
-			return err
-		}
-		return bucket.ForEach(func(k, v []byte) error {
-			if _, isInt := byteToIntOrString(k); !isInt {
-				return nil
-			}
-			var instance Map
-			err := json.Unmarshal(v, &instance)
-			if err != nil {
-				return err
-			}
-			vaild := true
-			if param.isVaild() {
-				value, target := entity.transform(param.field, param.value), entity.transform(param.field, instance[param.field])
-				if a, ok := target.(int); ok {
-					if b, ok := value.(int); ok {
-						vaild, err = Compare(CompareOption[int]{
-							a:  a,
-							b:  b,
-							op: param.op,
-						})
-					}
-				} else if a, ok := target.(string); ok {
-					if b, ok := value.(string); ok {
-						vaild, err = Compare(CompareOption[string]{
-							a:  a,
-							b:  b,
-							op: param.op,
-						})
-					}
-				} else {
-					return needAddQueryCompare
-				}
-			}
-			if err != nil {
-				return err
-			}
-			if vaild {
-				result = append(result, instance)
-			}
-			return nil
-		})
-	})
-	if err != nil {
-		logger.Sugar().Errorw(err.Error(), "entity", entity, "nested", nested, "param", param)
-		return nil, err
-	}
-	return result, nil
+func FindByID[M Model](id uint) (M, error) {
+	var m M
+	err := db.First(&m, id).Error
+	return m, err
 }
 
-func (s *Store) QueryRecord(param QueryParam) ([]Record, error) {
-	r := Record{}
-	ml, err := s.query(r, r.getSearchBucket(), param)
-	if err != nil {
-		return nil, err
-	}
-	rl, err := fromMapList[Record](ml)
-	return rl, err
-}
-
-func (s *Store) QueryRecordById(id int) (Record, error) {
-	list, err := s.QueryRecord(QueryParam{
-		value: id,
-		field: "id",
-		op:    eq,
-	})
-	if err != nil {
-		return Record{}, err
-	}
-	if len(list) > 0 {
-		return list[0], nil
-	}
-	return Record{}, nil
-}
-
-func (s *Store) QueryTimeById(recordId, id int) (Time, error) {
-	list, err := s.QueryTime(recordId, QueryParam{
-		value: id,
-		field: "id",
-		op:    eq,
-	})
-	if err != nil {
-		return Time{}, err
-	}
-	if len(list) > 0 {
-		return list[0], nil
-	}
-	return Time{}, nil
-}
-
-func (s *Store) QueryLabelById(recordId, id int) (Label, error) {
-	list, err := s.QueryLabel(recordId, QueryParam{
-		value: id,
-		field: "id",
-		op:    eq,
-	})
-	if err != nil {
-		return Label{}, err
-	}
-	if len(list) > 0 {
-		return list[0], nil
-	}
-	return Label{}, nil
-}
-
-func (s *Store) QueryTime(recordId int, param QueryParam) ([]Time, error) {
-	t := Time{}
-	mapList, err := s.query(t, t.getSearchBucket(recordId), param)
-	if err != nil {
-		return nil, err
-	}
-	timeList, err := fromMapList[Time](mapList)
-	return timeList, err
-}
-
-func (s *Store) QueryLabel(recordId int, param QueryParam) ([]Label, error) {
-	l := Label{}
-	mapList, err := s.query(l, l.getSearchBucket(recordId), param)
-	if err != nil {
-		return nil, err
-	}
-	labelList, err := fromMapList[Label](mapList)
-	return labelList, err
-}
-
-func (s *Store) delete(id int, nested SearchBucketList) error {
-	err := s.db.Update(func(tx *bbolt.Tx) error {
-		bucket, err := getBucket(tx, nested)
-		if err != nil {
-			return err
-		}
-		err = bucket.Delete(intToByte(id))
-		if isDev {
-			serialize(tx)
-		}
-		return err
-	})
-	if err != nil {
-		logger.Sugar().Errorw(err.Error(), "id", id, "nested", nested)
-	}
+func Delete[M Model](id uint) error {
+	var m M
+	err := db.Delete(&m, id).Error
 	return err
 }
 
-func (s *Store) DeleteRecord(id int) error {
-	r := Record{}
-	err := s.delete(id, r.getSearchBucket())
-	if err != nil {
-		return err
-	}
-	err = s.db.Update(func(tx *bbolt.Tx) error {
-		bucket := tx.Bucket([]byte(RECORD))
-		name := combineKeyAndId(TIME, id)
-		err := bucket.DeleteBucket([]byte(name))
-		if err != nil {
-			return err
-		}
-		name = combineKeyAndId(LABEL, id)
-		return bucket.DeleteBucket([]byte(name))
-	})
+func Update[M Model](m M, data Map) error {
+	err := db.Model(&m).Updates(data).Error
 	return err
 }
 
-// func (s *Store) DeleteTime(recordId, id int) error {
-// 	t := Time{}
-// 	return s.delete(id, t.getSearchBucket(recordId))
-// }
-
-// func (s *Store) DeleteLabel(recordId, id int) error {
-// 	l := Label{}
-// 	return s.delete(id, l.getSearchBucket(recordId))
-// }
-
-func (s *Store) update(id int, data Map, nested SearchBucketList) error {
-	err := s.db.Update(func(tx *bbolt.Tx) error {
-		bucket, err := getBucket(tx, nested)
-		if err != nil {
-			return err
+func composite(values ...lo.Tuple3[string, string, string]) string {
+	str := ""
+	for _, v := range values {
+		name, condition, value := v.A, v.B, v.C
+		exp := name + condition + value
+		if len(str) > 0 {
+			exp = "AND" + exp
 		}
-		b := bucket.Get(intToByte(id))
-		var instance Map
-		err = json.Unmarshal(b, &instance)
-		if err != nil {
-			return err
-		}
-		for k := range instance {
-			if v, ok := data[k]; ok && k != "id" {
-				instance[k] = v
-			}
-		}
-		b, _ = json.Marshal(instance)
-		err = bucket.Put(intToByte(id), b)
-		if isDev {
-			serialize(tx)
-		}
-		return err
-	})
-	if err != nil {
-		logger.Sugar().Errorw(err.Error(), "id", id, "data", data, "nested", nested)
+		str += exp
 	}
-	return err
-}
-
-func (s *Store) UpdateRecord(id int, data Map) error {
-	r := Record{}
-	return s.update(id, data, r.getSearchBucket())
-}
-
-func (s *Store) UpdateTime(recordId, id int, data Map) error {
-	t := Time{}
-	time, err := s.QueryTimeById(recordId, id)
-	if err != nil {
-		return err
-	}
-	record, err := s.QueryRecordById(recordId)
-	if err != nil {
-		return err
-	}
-	label, err := s.QueryLabelById(recordId, time.Label)
-	if err != nil {
-		return err
-	}
-	increment := t.transform("end", data["end"]).(int) - time.End
-	if time.isVaild() {
-		if record.isVaild() {
-			totalTime := record.TotalTime + increment
-			err = s.UpdateRecord(recordId, Map{
-				"totalTime": totalTime,
-			})
-			if err != nil {
-				return err
-			}
-		}
-		if label.isVaild() {
-			totalTime := label.TotalTime + increment
-			err = s.UpdateLabel(recordId, time.Label, Map{
-				"totalTime": totalTime,
-			})
-			if err != nil {
-				return err
-			}
-		}
-	}
-	return s.update(id, data, t.getSearchBucket(recordId))
-}
-
-func (s *Store) UpdateLabel(recordId, id int, data Map) error {
-	l := Label{}
-	return s.update(id, data, l.getSearchBucket(recordId))
+	return str
 }

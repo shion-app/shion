@@ -28,13 +28,14 @@ jobs:
 
       - run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
-      - name: Install nsis And upx
+      - name: Install Scoop Dependencies
         run: |
           iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
           scoop update
           scoop bucket add extras
           scoop install nsis
           scoop install upx
+          scoop install gcc
 
       - run: pnpm run build:nsis
 

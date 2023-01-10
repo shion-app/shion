@@ -20,8 +20,8 @@ var (
 
 func getConfigDir() string {
 	if isDev {
-		ex, _ := os.Executable()
-		return filepath.Dir(ex)
+		pwd, _ := os.Getwd()
+		return filepath.Join(pwd, "build", "bin")
 	}
 	dir, _ := os.UserConfigDir()
 	return dir

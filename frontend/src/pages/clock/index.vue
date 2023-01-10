@@ -16,14 +16,14 @@ const selectedRecord = $computed(() => recordList.find(item => item.id === activ
 const selectedLabel = $computed(() => labelList.find(item => item.id === activeLabelId))
 
 async function getRecordList() {
-  recordList = (await QueryRecord({})).filter(({ exe }) => !exe)
+  recordList = (await QueryRecord()).filter(({ exe }) => !exe)
 }
 
 async function getLabelList() {
-  labelList = (await QueryLabel(activeRecordId, {}))
+  labelList = (await QueryLabel(activeRecordId))
 }
 
-getRecordList()
+onActivated(getRecordList)
 
 let isStart = $ref(false)
 const startDisabled = $computed(() => activeRecordId === 0)
@@ -53,7 +53,7 @@ async function finish() {
   isStart = false
   cancelAnimationFrame(frame)
   if (timeId !== 0) {
-    await UpdateTime(activeRecordId, timeId, {
+    await UpdateTime(timeId, {
       end: endTime,
     })
   }
@@ -88,7 +88,7 @@ function count() {
     if (endTime - currentTime > 1000 * 60) {
       currentTime = endTime
       if (timeId !== 0) {
-        UpdateTime(activeRecordId, timeId, {
+        UpdateTime(timeId, {
           end: endTime,
         })
       }

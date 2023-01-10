@@ -37,6 +37,7 @@ declare global {
   const ScreenGetAll: typeof import('../wailsjs/runtime/runtime.js')['ScreenGetAll']
   const Show: typeof import('../wailsjs/runtime/runtime.js')['Show']
   const Time: typeof import('../wailsjs/go/models')['Time']
+  const UpdateLabel: typeof import('../wailsjs/go/main/App.js')['UpdateLabel']
   const UpdateRecord: typeof import('../wailsjs/go/main/App.js')['UpdateRecord']
   const UpdateTime: typeof import('../wailsjs/go/main/App.js')['UpdateTime']
   const WindowCenter: typeof import('../wailsjs/runtime/runtime.js')['WindowCenter']
@@ -52,6 +53,7 @@ declare global {
   const WindowMinimise: typeof import('../wailsjs/runtime/runtime.js')['WindowMinimise']
   const WindowReload: typeof import('../wailsjs/runtime/runtime.js')['WindowReload']
   const WindowReloadApp: typeof import('../wailsjs/runtime/runtime.js')['WindowReloadApp']
+  const WindowSetAlwaysOnTop: typeof import('../wailsjs/runtime/runtime.js')['WindowSetAlwaysOnTop']
   const WindowSetBackgroundColour: typeof import('../wailsjs/runtime/runtime.js')['WindowSetBackgroundColour']
   const WindowSetDarkTheme: typeof import('../wailsjs/runtime/runtime.js')['WindowSetDarkTheme']
   const WindowSetLightTheme: typeof import('../wailsjs/runtime/runtime.js')['WindowSetLightTheme']
@@ -378,6 +380,7 @@ declare module 'vue' {
     readonly ScreenGetAll: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['ScreenGetAll']>
     readonly Show: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['Show']>
     readonly Time: UnwrapRef<typeof import('../wailsjs/go/models')['Time']>
+    readonly UpdateLabel: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['UpdateLabel']>
     readonly UpdateRecord: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['UpdateRecord']>
     readonly UpdateTime: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['UpdateTime']>
     readonly WindowCenter: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowCenter']>
@@ -393,6 +396,7 @@ declare module 'vue' {
     readonly WindowMinimise: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowMinimise']>
     readonly WindowReload: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowReload']>
     readonly WindowReloadApp: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowReloadApp']>
+    readonly WindowSetAlwaysOnTop: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowSetAlwaysOnTop']>
     readonly WindowSetBackgroundColour: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowSetBackgroundColour']>
     readonly WindowSetDarkTheme: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowSetDarkTheme']>
     readonly WindowSetLightTheme: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowSetLightTheme']>

@@ -18,7 +18,7 @@ const record = $ref({ id: 0, name: '' })
 const recordRules = [v => !!v.name || t('input.required')]
 
 async function getList() {
-  list = await QueryRecord({})
+  list = await QueryRecord()
 }
 
 getList()

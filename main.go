@@ -7,24 +7,22 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 //go:embed all:frontend/dist
 var assets embed.FS
 
-var app *App
 var logger *zap.Logger
+var db *gorm.DB
+var app *App
 
 func main() {
-	logger = NewLogger(isDev)
-
-	dir := GetAppConfigDir()
-
-	store := InitStore(dir)
+	logger = NewLogger()
+	db = InitDatabase()
+	app = NewApp()
 
 	Watch()
-
-	app = NewApp(store)
 
 	err := wails.Run(&options.App{
 		Title:      appName,
@@ -50,6 +48,4 @@ func main() {
 	}
 
 	defer logger.Sync()
-
-	defer store.db.Close()
 }

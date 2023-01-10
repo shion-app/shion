@@ -29,7 +29,7 @@ func newProduction(options ...zap.Option) (*zap.Logger, error) {
 	return config.Build(options...)
 }
 
-func NewLogger(isDev bool) *zap.Logger {
+func NewLogger() *zap.Logger {
 	var z *zap.Logger
 	if isDev {
 		z, _ = zap.NewDevelopment()
