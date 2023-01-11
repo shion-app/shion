@@ -35,3 +35,4 @@ clock:
   selectRecord: 选择记录
   createLabel: 创建标签
   selectLabel: 选择标签
+  updateLabel: 更新标签

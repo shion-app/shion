@@ -19,6 +19,7 @@ declare module '@vue/runtime-core' {
     RecordForm: typeof import('./components/RecordForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    UpdateLabel: typeof import('./components/UpdateLabel.vue')['default']
     UpdateRecord: typeof import('./components/UpdateRecord.vue')['default']
     VBtn: typeof import('vuetify/components')['VBtn']
     VCard: typeof import('vuetify/components')['VCard']

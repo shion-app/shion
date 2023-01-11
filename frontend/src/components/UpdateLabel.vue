@@ -1,6 +1,11 @@
 <script  lang="ts" setup>
 import type { RawLabel } from '../interfaces'
 
+const { id, data } = defineProps<{
+  id: number
+  data: RawLabel
+}>()
+
 const { message } = useDialog()
 
 let isShow = $ref(false)
@@ -10,8 +15,7 @@ function close() {
 }
 
 async function submit(data: RawLabel) {
-  const { recordID, name } = data
-  const process = InsertLabel(recordID, name)
+  const process = UpdateLabel(id, data)
   await message.loading({
     process,
   })
@@ -20,6 +24,6 @@ async function submit(data: RawLabel) {
 
 <template>
   <v-dialog v-model="isShow" width="500" activator="parent">
-    <label-form :title="$t('input.add')" @close="close" @submit="submit" />
+    <label-form :title="$t('input.edit')" :data="data" @close="close" @submit="submit" />
   </v-dialog>
 </template>

@@ -2,6 +2,17 @@
 import type { main } from '../../wailsjs/go/models'
 import type { RawLabel } from '../interfaces'
 
+const {
+  title,
+  data = {
+    recordID: 0,
+    name: '',
+  },
+} = defineProps<{
+  title: string
+  data?: RawLabel
+}>()
+
 const emit = defineEmits<{
   (event: 'close'): void
   (event: 'submit', data: RawLabel): void
@@ -12,9 +23,9 @@ const { t } = useI18n()
 const form = $ref<any>()
 let list = $ref<main.Record[]>([])
 
-const name = $ref('')
+const name = $ref(data.name)
 const nameRules = [v => !!v || t('input.required')]
-const record = $ref({ id: 0, name: '' })
+const record = $ref({ id: data.recordID, name: data.name })
 const recordRules = [v => !!v.name || t('input.required')]
 
 async function getList() {
@@ -33,7 +44,7 @@ async function confirm() {
     close()
     emit('submit', {
       name,
-      recordId: record.id,
+      recordID: record.id,
     })
   }
 }
@@ -41,7 +52,7 @@ async function confirm() {
 
 <template>
   <v-card>
-    <v-card-title> {{ $t('clock.createLabel') }} </v-card-title>
+    <v-card-title> {{ title }} </v-card-title>
     <v-card-text>
       <v-form ref="form">
         <v-text-field

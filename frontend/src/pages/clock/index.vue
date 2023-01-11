@@ -20,7 +20,7 @@ async function getRecordList() {
 }
 
 async function getLabelList() {
-  labelList = (await QueryAllLabelByRecordID(activeRecordId))
+  labelList = await QueryAllLabelByRecordID(activeRecordId)
 }
 
 onActivated(getRecordList)
@@ -100,7 +100,6 @@ function count() {
 
 function selectRecord(id: number) {
   activeRecordId = id
-  getLabelList()
 }
 
 function selectLabel(id: number) {
@@ -158,7 +157,11 @@ export default defineComponent({
         <!-- TODO: 单独点击dialog menu不会关闭 -->
         <insert-label />
       </v-list-item>
-      <v-list-item v-if="selectedRecord" value="selectLabel" :active="false">
+      <!-- <v-list-item value="updateLabel" :active="false">
+        {{ $t('clock.updateLabel') }}
+        <update-label />
+      </v-list-item> -->
+      <v-list-item v-if="selectedRecord" value="selectLabel" :active="false" @click="getLabelList">
         {{ $t('clock.selectLabel') }}
         <v-menu location="end" transition="slide-x-transition" activator="parent" min-width="100" max-height="200" offset="20">
           <v-list>
