@@ -68,4 +68,3 @@ function close(dialog: DialogProps<ConfirmOptions>) {
     </v-card>
   </v-dialog>
 </template>
-

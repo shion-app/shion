@@ -106,7 +106,6 @@ function selectRecord(id: number) {
 function selectLabel(id: number) {
   if (activeLabelIdList.includes(id))
     remove(activeLabelIdList, id)
-
   else
     activeLabelIdList.push(id)
 }
@@ -142,9 +141,9 @@ export default defineComponent({
       </div>
     </div>
   </div>
-  <v-menu v-if="routeMatched" location="end" transition="slide-x-transition" activator="#extra-menu" min-width="100" offset="20">
+  <v-menu v-if="routeMatched" location="end" transition="slide-x-transition" activator="#extra-menu" min-width="100" offset="20" eager>
     <v-list>
-      <v-list-item v-if="!isStart" value="selectRecord">
+      <v-list-item v-if="!isStart" value="selectRecord" :active="false">
         {{ $t('clock.selectRecord') }}
         <v-menu location="end" transition="slide-x-transition" activator="parent" min-width="100" max-height="200" offset="20">
           <v-list>
@@ -154,11 +153,12 @@ export default defineComponent({
           </v-list>
         </v-menu>
       </v-list-item>
-      <v-list-item value="createLabel">
+      <v-list-item value="createLabel" :active="false">
         {{ $t('clock.createLabel') }}
+        <!-- TODO: 单独点击dialog menu不会关闭 -->
         <insert-label />
       </v-list-item>
-      <v-list-item v-if="selectedRecord" value="selectLabel">
+      <v-list-item v-if="selectedRecord" value="selectLabel" :active="false">
         {{ $t('clock.selectLabel') }}
         <v-menu location="end" transition="slide-x-transition" activator="parent" min-width="100" max-height="200" offset="20">
           <v-list>

@@ -96,9 +96,9 @@ function programStatus(exe: string) {
       </div>
     </div>
   </div>
-  <v-menu location="end" transition="slide-x-transition" activator="#extra-menu" min-width="100" offset="20">
+  <v-menu location="end" transition="slide-x-transition" activator="#extra-menu" min-width="100" offset="20" eager>
     <v-list>
-      <v-list-item value="add">
+      <v-list-item value="add" :active="false">
         {{ $t("input.add") }}
         <insert-record @refresh="getList" />
       </v-list-item>

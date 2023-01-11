@@ -3,7 +3,6 @@ import type { RawLabel } from '../interfaces'
 
 const { message } = useDialog()
 
-
 let isShow = $ref(false)
 
 function close() {

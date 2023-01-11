@@ -2,4 +2,3 @@
   <confirm />
   <message />
 </template>
-
