@@ -41,6 +41,9 @@ func main() {
 		Windows: &windows.Options{
 			OnSuspend: CloseWatch,
 		},
+		Debug: options.Debug{
+			OpenInspectorOnStartup: true,
+		},
 	})
 
 	if err != nil {
