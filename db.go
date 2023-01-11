@@ -60,7 +60,9 @@ func (l Label) GetID() uint {
 func InitDatabase() *gorm.DB {
 	dir := GetAppConfigDir()
 	dbPath := filepath.Join(dir, "data.db")
-	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{
+		// Logger: gormLogger.Default.LogMode(gormLogger.Info),
+	})
 	if err != nil {
 		logger.Error(err.Error())
 	}
@@ -106,9 +108,9 @@ func composite(values ...lo.Tuple3[string, string, string]) string {
 	str := ""
 	for _, v := range values {
 		name, condition, value := v.A, v.B, v.C
-		exp := name + condition + value
+		exp := name + " " + condition + " " + value
 		if len(str) > 0 {
-			exp = "AND" + exp
+			exp = " AND " + exp
 		}
 		str += exp
 	}

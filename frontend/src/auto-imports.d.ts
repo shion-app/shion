@@ -2,6 +2,7 @@
 export {}
 declare global {
   const BrowserOpenURL: typeof import('../wailsjs/runtime/runtime.js')['BrowserOpenURL']
+  const Calendar: typeof import('./constants/index')['Calendar']
   const CheckExecutablePath: typeof import('../wailsjs/go/main/App.js')['CheckExecutablePath']
   const Color: typeof import('./constants/index')['Color']
   const DeleteRecord: typeof import('../wailsjs/go/main/App.js')['DeleteRecord']
@@ -28,9 +29,10 @@ declare global {
   const LogPrint: typeof import('../wailsjs/runtime/runtime.js')['LogPrint']
   const LogTrace: typeof import('../wailsjs/runtime/runtime.js')['LogTrace']
   const LogWarning: typeof import('../wailsjs/runtime/runtime.js')['LogWarning']
-  const QueryLabel: typeof import('../wailsjs/go/main/App.js')['QueryLabel']
-  const QueryRecord: typeof import('../wailsjs/go/main/App.js')['QueryRecord']
-  const QueryTime: typeof import('../wailsjs/go/main/App.js')['QueryTime']
+  const QueryAllLabelByRecordID: typeof import('../wailsjs/go/main/App.js')['QueryAllLabelByRecordID']
+  const QueryAllLabelByTimeIDList: typeof import('../wailsjs/go/main/App.js')['QueryAllLabelByTimeIDList']
+  const QueryAllRecord: typeof import('../wailsjs/go/main/App.js')['QueryAllRecord']
+  const QueryAllTime: typeof import('../wailsjs/go/main/App.js')['QueryAllTime']
   const Quit: typeof import('../wailsjs/runtime/runtime.js')['Quit']
   const Record: typeof import('../wailsjs/go/models')['Record']
   const RecordType: typeof import('./constants/index')['RecordType']
@@ -68,6 +70,7 @@ declare global {
   const WindowUnfullscreen: typeof import('../wailsjs/runtime/runtime.js')['WindowUnfullscreen']
   const WindowUnmaximise: typeof import('../wailsjs/runtime/runtime.js')['WindowUnmaximise']
   const WindowUnminimise: typeof import('../wailsjs/runtime/runtime.js')['WindowUnminimise']
+  const WithTimeIDLabel: typeof import('../wailsjs/go/models')['WithTimeIDLabel']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const computed: typeof import('vue')['computed']
@@ -345,6 +348,7 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface ComponentCustomProperties {
     readonly BrowserOpenURL: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['BrowserOpenURL']>
+    readonly Calendar: UnwrapRef<typeof import('./constants/index')['Calendar']>
     readonly CheckExecutablePath: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['CheckExecutablePath']>
     readonly Color: UnwrapRef<typeof import('./constants/index')['Color']>
     readonly DeleteRecord: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['DeleteRecord']>
@@ -371,9 +375,10 @@ declare module 'vue' {
     readonly LogPrint: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['LogPrint']>
     readonly LogTrace: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['LogTrace']>
     readonly LogWarning: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['LogWarning']>
-    readonly QueryLabel: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['QueryLabel']>
-    readonly QueryRecord: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['QueryRecord']>
-    readonly QueryTime: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['QueryTime']>
+    readonly QueryAllLabelByRecordID: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['QueryAllLabelByRecordID']>
+    readonly QueryAllLabelByTimeIDList: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['QueryAllLabelByTimeIDList']>
+    readonly QueryAllRecord: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['QueryAllRecord']>
+    readonly QueryAllTime: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['QueryAllTime']>
     readonly Quit: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['Quit']>
     readonly Record: UnwrapRef<typeof import('../wailsjs/go/models')['Record']>
     readonly RecordType: UnwrapRef<typeof import('./constants/index')['RecordType']>
@@ -411,6 +416,7 @@ declare module 'vue' {
     readonly WindowUnfullscreen: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowUnfullscreen']>
     readonly WindowUnmaximise: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowUnmaximise']>
     readonly WindowUnminimise: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowUnminimise']>
+    readonly WithTimeIDLabel: UnwrapRef<typeof import('../wailsjs/go/models')['WithTimeIDLabel']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>

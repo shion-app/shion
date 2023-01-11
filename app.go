@@ -35,7 +35,7 @@ func (a *App) setActiveExeList() {
 }
 
 func (a *App) setExeWhiteList() {
-	recordList, err := a.QueryRecord()
+	recordList, err := a.QueryAllRecord()
 	if err == nil {
 		SetExeWhiteList(recordList)
 	}
@@ -59,7 +59,7 @@ func (a *App) GetExecutablePath() (string, error) {
 }
 
 func (a *App) CheckExecutablePath(exe string) (bool, error) {
-	recordList, err := a.QueryRecord()
+	recordList, err := a.QueryAllRecord()
 	if err != nil {
 		return false, err
 	}
@@ -111,7 +111,7 @@ func (a *App) UpdateRecord(id uint, data Map) error {
 	return nil
 }
 
-func (a *App) QueryRecord() (list []Record, err error) {
+func (a *App) QueryAllRecord() (list []Record, err error) {
 	err = db.Select("records.*", "IFNULL(SUM(times.[end] - times.start), 0) total_time").Joins("LEFT JOIN times ON records.id = times.record_id").Group("records.id").Find(&list).Error
 	return
 }
@@ -138,8 +138,8 @@ func (a *App) InsertTime(recordId uint, labelId uint, start int, end int) (uint,
 	return id, err
 }
 
-func (a *App) QueryTime(recordId uint) ([]Time, error) {
-	return FindAll[Time](lo.T3("record_id", "=", fmt.Sprint(recordId)))
+func (a *App) QueryAllTime(recordId uint, start int, end int) ([]Time, error) {
+	return FindAll[Time](lo.T3("record_id", "=", fmt.Sprint(recordId)), lo.T3("start", ">=", fmt.Sprint(start)), lo.T3("end", "<=", fmt.Sprint(end)))
 }
 
 func (a *App) UpdateTime(id uint, data Map) error {
@@ -155,8 +155,29 @@ func (a *App) InsertLabel(recordId uint, name string) (uint, error) {
 	})
 }
 
-func (a *App) QueryLabel(recordId uint) (list []Label, err error) {
+func (a *App) QueryAllLabelByRecordID(recordId uint) (list []Label, err error) {
 	err = db.Select("labels.*", "IFNULL(SUM(times.[end] - times.start), 0) total_time").Joins("LEFT JOIN times ON labels.record_id = times.record_id").Group("labels.id").Find(&list).Error
+	return
+}
+
+type WithTimeIDLabel struct {
+	TimeID uint    `json:"timeID"`
+	Labels []Label `json:"labels"`
+}
+
+func (a *App) QueryAllLabelByTimeIDList(idList []uint) (list []WithTimeIDLabel, err error) {
+	list = []WithTimeIDLabel{}
+	for _, v := range idList {
+		labels := []Label{}
+		err = db.Table("time_labels").Select("labels.*", "IFNULL(SUM(times.[end] - times.start), 0) total_time").Joins("LEFT JOIN times ON time_labels.time_id = times.id").Joins("LEFT JOIN labels ON time_labels.label_id = labels.id").Where("times.id = ?", v).Group("labels.id").Scan(&labels).Error
+		if err != nil {
+			return []WithTimeIDLabel{}, err
+		}
+		list = append(list, WithTimeIDLabel{
+			TimeID: v,
+			Labels: labels,
+		})
+	}
 	return
 }
 

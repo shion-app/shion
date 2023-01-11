@@ -145,7 +145,7 @@ func generateProgram(timeId uint, exe string, timeout time.Duration) Program {
 
 func handleEvent(event int, path string) {
 	if _, ok := programMap[path]; !ok {
-		recordList, err := app.QueryRecord()
+		recordList, err := app.QueryAllRecord()
 		if err != nil {
 			return
 		}

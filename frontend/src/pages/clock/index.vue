@@ -16,11 +16,11 @@ const selectedRecord = $computed(() => recordList.find(item => item.id === activ
 const selectedLabel = $computed(() => labelList.find(item => item.id === activeLabelId))
 
 async function getRecordList() {
-  recordList = (await QueryRecord()).filter(({ exe }) => !exe)
+  recordList = (await QueryAllRecord()).filter(({ exe }) => !exe)
 }
 
 async function getLabelList() {
-  labelList = (await QueryLabel(activeRecordId))
+  labelList = (await QueryAllLabelByRecordID(activeRecordId))
 }
 
 onActivated(getRecordList)

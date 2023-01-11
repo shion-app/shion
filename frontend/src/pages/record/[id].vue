@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { format, isSameDay } from 'date-fns'
+import { addDays, format, getDay, getTime, isSameDay, subDays } from 'date-fns'
 
 import type { main } from '../../../wailsjs/go/models'
 
@@ -9,22 +9,32 @@ const { id } = defineProps<{ id: string }>()
 
 const { t, locale } = $(useI18n())
 let timeList = $ref<main.Time[]>([])
-let labelList = $ref<main.Label[]>([])
+let labelList = $ref<Array<{
+  timeID: number
+  labels: main.Label[]
+}>>([])
 
 const date = $ref(new Date())
-
-async function getTimeList() {
-  timeList = await QueryTime(Number(id))
-}
-
-async function getLabelList() {
-  labelList = await QueryLabel(Number(id))
-}
+const activeTimeList = $computed(() => timeList.filter(item => isSameDay(item.start, date)))
 
 getTimeList()
-getLabelList()
 
-const activeList = $computed(() => timeList.filter(item => isSameDay(item.start, date)))
+async function getTimeList() {
+  const now = Date.now()
+  const day = getDay(now)
+  const dayTotal = (Calendar.WEEK - 1) * Calendar.DAY + day
+  const start = getTime(subDays(now, dayTotal - 1))
+  const end = getTime(addDays(now, 1))
+  timeList = await QueryAllTime(Number(id), start, end)
+  await getLabelList()
+}
+
+watch(date, v => getLabelList(v))
+
+async function getLabelList(date: Date = new Date()) {
+  const idList = timeList.filter(time => isSameDay(date, time.start)).map(({ id }) => id)
+  labelList = await QueryAllLabelByTimeIDList(idList)
+}
 
 function getColor(index: number) {
   return index % 2 === 0 ? '#ccc' : '#fff'
@@ -39,11 +49,10 @@ function formatHourMinute(time: number) {
   return minute > 0 ? `${hour}${t('hour')}${minute}${t('minute')}` : `${second}${t('second')}`
 }
 
-function formatLabel(recordID: number) {
-  const list = labelList.filter(item => item.recordID === recordID)
-  if (list.length)
-    return list.map(label => `${label.name} ${formatHourMinute(label.totalTime)}`).join(' | ')
-
+function formatLabel(timeID: number) {
+  const time = labelList.find(i => i.timeID === timeID)
+  if (time?.labels.length)
+    return time.labels.map(label => `${label.name} ${formatHourMinute(label.totalTime)}`).join(' | ')
   return ''
 }
 </script>
@@ -52,19 +61,19 @@ function formatLabel(recordID: number) {
   <div flex flex-col h-full>
     <calendar-graph v-model:date="date" :list="timeList" />
     <div overflow-y-auto flex-grow>
-      <empty v-if="!activeList.length">
+      <empty v-if="!activeTimeList.length">
         <img :src="svg" alt="time">
       </empty>
       <v-timeline v-else line-inset="6">
         <v-timeline-item
-          v-for="{ id, start, end, recordID }, index in activeList" :key="id" :dot-color="getColor(index)"
+          v-for="{ id, start, end }, index in activeTimeList" :key="id" :dot-color="getColor(index)"
           size="small"
         >
           <div>{{ formatTime(start) }} - {{ formatTime(end) }}</div>
           <div>{{ formatHourMinute(end - start) }}</div>
-          <div v-if="recordID" flex items-center>
+          <div v-if="formatLabel(id)" flex items-center>
             <div i-mdi:label text-4 />
-            <div>{{ formatLabel(recordID) }}</div>
+            <div>{{ formatLabel(id) }}</div>
           </div>
         </v-timeline-item>
       </v-timeline>

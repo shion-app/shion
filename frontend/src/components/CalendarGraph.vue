@@ -3,6 +3,7 @@ import { addDays, differenceInCalendarDays, format, getDate, getDay, getMonth, i
 import { vElementSize } from '@vueuse/components'
 
 import type { main } from '../../wailsjs/go/models'
+import { Calendar } from '../constants'
 
 const props = defineProps<{
   list: main.Time[]
@@ -115,16 +116,14 @@ function calcCellList() {
   const now = Date.now()
   const day = getDay(now)
 
-  const week = 53
-  const days = 7
-  const cellTotal = (week - 1) * 7 + day + 1
+  const cellTotal = (Calendar.WEEK - 1) * Calendar.DAY + day
 
   const offsetToWidthRatio = 0.2
   const padding = fontSize * lineHeight
-  const width = (((calendarWidth - 2 * padding) / week) / (1 + offsetToWidthRatio))
+  const width = (((calendarWidth - 2 * padding) / Calendar.WEEK) / (1 + offsetToWidthRatio))
   cellWidth = width
   const offset = (offsetToWidthRatio * width)
-  calendarHeight = padding * 2 + days * width + (days - 1) * offset
+  calendarHeight = padding * 2 + Calendar.DAY * width + (Calendar.DAY - 1) * offset
 
   let currentMonth = -1
 
@@ -216,4 +215,3 @@ function handleClickCell(date: Date) {
     </v-tooltip>
   </div>
 </template>
-
