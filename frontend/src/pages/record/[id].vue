@@ -48,13 +48,6 @@ function formatHourMinute(time: number) {
   const { hour, minute, second } = extractTime(time)
   return minute > 0 ? `${hour}${t('hour')}${minute}${t('minute')}` : `${second}${t('second')}`
 }
-
-function formatLabel(timeID: number) {
-  const time = labelList.find(i => i.timeID === timeID)
-  if (time?.labels.length)
-    return time.labels.map(label => `${label.name} ${formatHourMinute(label.totalTime)}`).join(' | ')
-  return ''
-}
 </script>
 
 <template>
@@ -71,9 +64,9 @@ function formatLabel(timeID: number) {
         >
           <div>{{ formatTime(start) }} - {{ formatTime(end) }}</div>
           <div>{{ formatHourMinute(end - start) }}</div>
-          <div v-if="formatLabel(id)" flex items-center>
+          <div v-for="label in labelList.find(i => i.timeID === id)?.labels" :key="label.id" flex items-center>
             <div i-mdi:label text-4 />
-            <div>{{ formatLabel(id) }}</div>
+            <div>{{ label.name }} {{ formatHourMinute(label.totalTime) }}</div>
           </div>
         </v-timeline-item>
       </v-timeline>

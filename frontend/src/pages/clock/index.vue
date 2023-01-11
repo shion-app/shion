@@ -10,10 +10,10 @@ const routeMatched = $computed(() => route.name === 'clock')
 let recordList = $ref<main.Record[]>([])
 let labelList = $ref<main.Label[]>([])
 let activeRecordId = $ref(0)
-let activeLabelId = $ref(0)
+let activeLabelIdList = $ref<Array<number>>([])
 
 const selectedRecord = $computed(() => recordList.find(item => item.id === activeRecordId))
-const selectedLabel = $computed(() => labelList.find(item => item.id === activeLabelId))
+const selectedLabelList = $computed(() => labelList.filter(item => activeLabelIdList.includes(item.id)))
 
 async function getRecordList() {
   recordList = (await QueryAllRecord()).filter(({ exe }) => !exe)
@@ -46,7 +46,7 @@ function start() {
 
 async function insert() {
   endTime = startTime
-  timeId = await InsertTime(activeRecordId, activeLabelId, startTime, endTime)
+  timeId = await InsertTime(activeRecordId, activeLabelIdList, startTime, endTime)
 }
 
 async function finish() {
@@ -65,7 +65,7 @@ function reset() {
   clock = formatTime(0)
   currentTime = 0
   activeRecordId = 0
-  activeLabelId = 0
+  activeLabelIdList = []
   timeId = 0
 }
 
@@ -104,7 +104,11 @@ function selectRecord(id: number) {
 }
 
 function selectLabel(id: number) {
-  activeLabelId = id
+  if (activeLabelIdList.includes(id))
+    remove(activeLabelIdList, id)
+
+  else
+    activeLabelIdList.push(id)
 }
 </script>
 
@@ -125,15 +129,15 @@ export default defineComponent({
     <v-btn v-else elevation="8" icon size="80" :disabled="startDisabled" @click="start">
       <div i-mdi:play text-16 />
     </v-btn>
-    <div v-if="selectedRecord" absolute m-4 p-4 left-0 bottom-0 rounded-xl flex class="elevation-2">
-      <div flex items-center mr-4>
+    <div v-if="selectedRecord" absolute m-4 p-4 left-0 bottom-0 rounded-xl flex space-x-4 class="elevation-2">
+      <div flex items-center>
         <div i-mdi:clock text-4 mr-2 />
         <div>{{ selectedRecord.name }}</div>
       </div>
-      <div v-if="selectedLabel" flex items-center>
+      <div v-for="{ name, id } in selectedLabelList" :key="id" flex items-center>
         <div i-mdi:label text-4 mr-2 />
         <div>
-          {{ selectedLabel.name }}
+          {{ name }}
         </div>
       </div>
     </div>
@@ -158,7 +162,7 @@ export default defineComponent({
         {{ $t('clock.selectLabel') }}
         <v-menu location="end" transition="slide-x-transition" activator="parent" min-width="100" max-height="200" offset="20">
           <v-list>
-            <v-list-item v-for="{ id, name } in labelList" :key="id" :value="id" :active="activeLabelId === id" @click="selectLabel(id)">
+            <v-list-item v-for="{ id, name } in labelList" :key="id" :value="id" :active="activeLabelIdList.includes(id)" @click="selectLabel(id)">
               {{ name }}
             </v-list-item>
           </v-list>

@@ -153,7 +153,7 @@ func handleEvent(event int, path string) {
 			return item.Exe == path
 		})
 		milli := int(time.Now().UnixMilli())
-		timeId, err := app.InsertTime(record.ID, 0, milli, milli)
+		timeId, err := app.InsertTime(record.ID, []uint{}, milli, milli)
 		if err != nil {
 			return
 		}

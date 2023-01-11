@@ -116,7 +116,7 @@ func (a *App) QueryAllRecord() (list []Record, err error) {
 	return
 }
 
-func (a *App) InsertTime(recordId uint, labelId uint, start int, end int) (uint, error) {
+func (a *App) InsertTime(recordId uint, labelIdList []uint, start int, end int) (uint, error) {
 	time := Time{
 		Start:    start,
 		End:      end,
@@ -127,13 +127,15 @@ func (a *App) InsertTime(recordId uint, labelId uint, start int, end int) (uint,
 	if err != nil {
 		return id, err
 	}
-	if labelId != 0 {
-		label, err := FindByID[Label](labelId)
+	for _, v := range labelIdList {
+		label, err := FindByID[Label](v)
 		if err != nil {
 			return id, err
 		}
 		err = db.Model(&time).Association("Labels").Append(&label)
-		return id, err
+		if err != nil {
+			return id, err
+		}
 	}
 	return id, err
 }
