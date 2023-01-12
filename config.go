@@ -29,7 +29,16 @@ func getConfigDir() string {
 
 func GetAppConfigDir() string {
 	config := getConfigDir()
-	dir := filepath.Join(config, author+"/"+appName)
+	dir := filepath.Join(config, author, appName)
+	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+		println("Error:", err.Error())
+	}
+	return dir
+}
+
+func GetDownloadConfigDir() string {
+	appDir := GetAppConfigDir()
+	dir := filepath.Join(appDir, "download")
 	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
 		println("Error:", err.Error())
 	}

@@ -22,6 +22,17 @@ func (a *App) startup(ctx context.Context) {
 
 func (a *App) domReady(ctx context.Context) {
 	a.setExeWhiteList()
+	needUpgrade, tagName, asset, err := CheckUpgrade()
+	if err != nil {
+		logger.Error(err.Error())
+		return
+	}
+	if needUpgrade {
+		runtime.EventsEmit(a.ctx, "can-upgrade", tagName)
+		runtime.EventsOnce(a.ctx, "upgrade", func(optionalData ...interface{}) {
+			Upgrade(asset)
+		})
+	}
 }
 
 func (a *App) shutdown(ctx context.Context) {

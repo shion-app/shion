@@ -21,6 +21,7 @@ declare module '@vue/runtime-core' {
     RouterView: typeof import('vue-router')['RouterView']
     UpdateLabel: typeof import('./components/UpdateLabel.vue')['default']
     UpdateRecord: typeof import('./components/UpdateRecord.vue')['default']
+    Upgrade: typeof import('./components/Upgrade.vue')['default']
     VBtn: typeof import('vuetify/components')['VBtn']
     VCard: typeof import('vuetify/components')['VCard']
     VCardActions: typeof import('vuetify/components')['VCardActions']
@@ -37,10 +38,9 @@ declare module '@vue/runtime-core' {
     VMenu: typeof import('vuetify/components')['VMenu']
     VNavigationDrawer: typeof import('vuetify/components')['VNavigationDrawer']
     VProgressCircular: typeof import('vuetify/components')['VProgressCircular']
+    VProgressLinear: typeof import('vuetify/components')['VProgressLinear']
     VSelect: typeof import('vuetify/components')['VSelect']
     VTextField: typeof import('vuetify/components')['VTextField']
-    VTimeline: typeof import('vuetify/components')['VTimeline']
-    VTimelineItem: typeof import('vuetify/components')['VTimelineItem']
     VTooltip: typeof import('vuetify/components')['VTooltip']
   }
 }

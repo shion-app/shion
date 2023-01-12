@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"flag"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -17,7 +18,17 @@ var logger *zap.Logger
 var db *gorm.DB
 var app *App
 
+var oldVersion string
+
+func init() {
+	flag.StringVar(&oldVersion, "oldVersion", "0.1.0", "when upgrade get old version")
+}
+
 func main() {
+	if len(oldVersion) > 1 {
+		DeleteUpgradeTemp()
+	}
+
 	logger = NewLogger()
 	db = InitDatabase()
 	app = NewApp()

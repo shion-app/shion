@@ -36,3 +36,6 @@ clock:
   createLabel: 创建标签
   selectLabel: 选择标签
   updateLabel: 更新标签
+upgrade:
+  tip: 有新的版本({version}), 确认要更新吗?
+  upgrading: 更新中

@@ -39,6 +39,7 @@ require (
 )
 
 require (
+	github.com/coreos/go-semver v0.3.0
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/leaanthony/slicer v1.5.0 // indirect
 	github.com/samber/lo v1.33.0
