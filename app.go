@@ -27,7 +27,7 @@ func (a *App) domReady(ctx context.Context) {
 		logger.Error(err.Error())
 		return
 	}
-	if needUpgrade {
+	if needUpgrade && len(asset.Url) != 0 {
 		runtime.EventsEmit(a.ctx, "can-upgrade", tagName)
 		runtime.EventsOnce(a.ctx, "upgrade", func(optionalData ...interface{}) {
 			Upgrade(asset)
