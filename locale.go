@@ -52,5 +52,5 @@ func translate(locale string, id string, data ...Map) string {
 }
 
 func T(id string, data ...Map) string {
-	return translate(locale, id, data...)
+	return translate(config.Locale, id, data...)
 }

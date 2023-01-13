@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
+
+	"github.com/coreos/go-semver/semver"
 )
 
 // inject
@@ -13,10 +16,35 @@ var (
 	author  = ""
 )
 
+type Config struct {
+	Version string `json:"version"`
+	Locale  string `json:"locale"`
+}
+
+var config = Config{
+	Version: version,
+	Locale:  defaultLocale,
+}
+
 var (
-	isDev  = mode == "development"
-	locale = defaultLocale
+	isDev = mode == "development"
 )
+
+func init() {
+	err := readConfig()
+	if err != nil {
+		logger.Error(err.Error())
+	}
+	upgraded := semver.New(config.Version).LessThan(*semver.New(version))
+	if upgraded {
+		DeleteUpgradeTemp()
+		config.Version = version
+		err = writeConfig()
+		if err != nil {
+			logger.Error(err.Error())
+		}
+	}
+}
 
 func getConfigDir() string {
 	if isDev {
@@ -43,4 +71,34 @@ func GetDownloadConfigDir() string {
 		println("Error:", err.Error())
 	}
 	return dir
+}
+
+func readConfig() (err error) {
+	appDir := GetAppConfigDir()
+	file := filepath.Join(appDir, "config.json")
+	_, err = os.Stat(file)
+	if os.IsNotExist(err) {
+		err = writeConfig()
+		return
+	}
+	data, err := os.ReadFile(file)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(data, &config)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func writeConfig() (err error) {
+	appDir := GetAppConfigDir()
+	file := filepath.Join(appDir, "config.json")
+	data, err := json.MarshalIndent(config, "", "  ")
+	if err != nil {
+		return
+	}
+	err = os.WriteFile(file, data, 0666)
+	return
 }

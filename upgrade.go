@@ -72,8 +72,6 @@ func downloadProgress(done chan int64, path string, total int64) (err error) {
 				size = 1
 			}
 
-			println(size, total)
-
 			runtime.EventsEmit(app.ctx, "upgrading", size, total)
 		}
 
@@ -86,7 +84,6 @@ func downloadProgress(done chan int64, path string, total int64) (err error) {
 }
 
 func download(asset Asset) (path string, err error) {
-	logger.Sugar().Info("download...", "url", asset.Url)
 	dir := GetDownloadConfigDir()
 	path = filepath.Join(dir, asset.Name)
 
@@ -111,7 +108,6 @@ func download(asset Asset) (path string, err error) {
 	}
 	done <- written
 
-	logger.Info("download finish")
 	return
 }
 
@@ -176,6 +172,6 @@ func Upgrade(asset Asset) {
 		logger.Error(err.Error())
 		return
 	}
-	exec.Command(currentExe, "-oldVersion", version).Start()
+	exec.Command(currentExe).Start()
 	os.Exit(0)
 }
