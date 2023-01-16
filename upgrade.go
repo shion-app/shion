@@ -8,11 +8,15 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
+	"syscall"
 	"time"
 
 	"github.com/coreos/go-semver/semver"
 	"github.com/samber/lo"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"golang.org/x/sys/windows"
+	"golang.org/x/sys/windows/registry"
 )
 
 type Release struct {
@@ -24,6 +28,17 @@ type Asset struct {
 	Size int
 	Name string
 	Url  string `json:"browser_download_url"`
+}
+
+func checkExistInstaller() bool {
+	path := fmt.Sprintf(`Software\Microsoft\Windows\CurrentVersion\Uninstall\%s%s`, author, appName)
+	key, err := registry.OpenKey(registry.LOCAL_MACHINE, path, registry.QUERY_VALUE)
+	if err != nil {
+		return false
+	}
+	value, _, _ := key.GetStringValue("DisplayIcon")
+	exe, _ := os.Executable()
+	return value == exe
 }
 
 func CheckUpgrade() (needUpgrade bool, tagName string, asset Asset, err error) {
@@ -43,7 +58,11 @@ func CheckUpgrade() (needUpgrade bool, tagName string, asset Asset, err error) {
 		return
 	}
 	asset, _ = lo.Find(data.Assets, func(asset Asset) bool {
-		return asset.Name == "shion.exe"
+		if checkExistInstaller() {
+			return strings.Contains(asset.Name, "installer")
+		} else {
+			return asset.Name == "shion.exe"
+		}
 	})
 	newVersion := data.TagName[1:]
 	needUpgrade = semver.New(version).LessThan(*semver.New(newVersion))
@@ -167,11 +186,35 @@ func Upgrade(asset Asset) {
 		logger.Error(err.Error())
 		return
 	}
-	currentExe, err := replace(assetExe)
-	if err != nil {
-		logger.Error(err.Error())
-		return
+	if checkExistInstaller() {
+		err := runMeElevated(assetExe)
+		if err != nil {
+			logger.Error(err.Error())
+			return
+		}
+	} else {
+		currentExe, err := replace(assetExe)
+		if err != nil {
+			logger.Error(err.Error())
+			return
+		}
+		exec.Command(currentExe).Start()
 	}
-	exec.Command(currentExe).Start()
 	os.Exit(0)
+}
+
+func runMeElevated(exe string) error {
+	verb := "runas"
+	cwd, _ := os.Getwd()
+	args := strings.Join(os.Args[1:], " ")
+
+	verbPtr, _ := syscall.UTF16PtrFromString(verb)
+	exePtr, _ := syscall.UTF16PtrFromString(exe)
+	cwdPtr, _ := syscall.UTF16PtrFromString(cwd)
+	argPtr, _ := syscall.UTF16PtrFromString(args)
+
+	var showCmd int32 = 1 //SW_NORMAL
+
+	err := windows.ShellExecute(0, verbPtr, exePtr, argPtr, cwdPtr, showCmd)
+	return err
 }
