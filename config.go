@@ -31,6 +31,11 @@ var (
 )
 
 func init() {
+	// BUG: build时会运行semver报错
+	if len(version) == 0 {
+		return
+	}
+
 	err := readConfig()
 	if err != nil {
 		logger.Error(err.Error())

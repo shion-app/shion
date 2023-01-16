@@ -41,7 +41,7 @@ func (a *App) shutdown(ctx context.Context) {
 
 func (a *App) setActiveExeList() {
 	activeExe := lo.Keys(programMap)
-	// bug https://github.com/wailsapp/wails/issues/699
+	// BUG: https://github.com/wailsapp/wails/issues/699
 	runtime.EventsEmit(a.ctx, "active-exe", activeExe)
 }
 
