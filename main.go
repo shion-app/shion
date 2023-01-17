@@ -33,6 +33,7 @@ func main() {
 		OnDomReady: app.domReady,
 		OnShutdown: app.shutdown,
 		// Logger:     logger,
+		Frameless: true,
 		Bind: []interface{}{
 			app,
 		},

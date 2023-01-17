@@ -21,6 +21,7 @@ const isShowMenu = $computed(() => list.map(({ to }) => to).includes(route.path)
 
 <template>
   <v-layout h-full>
+    <system-bar />
     <v-navigation-drawer
       v-model="drawer"
       rail
