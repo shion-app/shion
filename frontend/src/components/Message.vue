@@ -8,7 +8,7 @@ const messageList = $computed(() => (list as Array<DialogProps<MessageOptions>>)
 
 <template>
   <teleport to="body">
-    <TransitionGroup name="message-transition" tag="div" fixed top-0 left-0 right-0 pointer-events-none>
+    <TransitionGroup name="message-transition" tag="div" fixed top-9 left-0 right-0 pointer-events-none>
       <div
         v-for="dialog, index in messageList"
         :key="dialog.id"
