@@ -33,10 +33,11 @@ type InputConfirmOptions = Omit<ConfirmOptions, 'resolve' | 'type' | 'active' | 
 export interface MessageOptions extends DialogOptions {
   type: 'message'
   timeout?: number
-  status: 'success' | 'loading'
+  status: 'success' | 'loading' | 'error'
   process?: Promise<unknown>
   loadingText?: string
   successText?: string
+  errorText?: string
 }
 
 type InputMessageOptions = Omit<MessageOptions, 'type'>
@@ -152,6 +153,14 @@ export function useDialog() {
       successText: t('dialog.success'),
       ...options,
     }) as Promise<void>
+  }
+
+  message.error = function (options?: InputSuccessMessageOptions) {
+    return message({
+      status: 'error',
+      errorText: t('dialog.error'),
+      ...options,
+    }) as undefined
   }
 
   return {

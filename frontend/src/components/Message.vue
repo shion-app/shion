@@ -35,7 +35,6 @@ const messageList = $computed(() => (list as Array<DialogProps<MessageOptions>>)
           <v-fade-transition mode="out-in">
             <div v-if="dialog.status === 'success'" flex>
               <div
-
                 i-mdi:check-circle
                 c-green
                 text-6
@@ -46,7 +45,6 @@ const messageList = $computed(() => (list as Array<DialogProps<MessageOptions>>)
             </div>
             <div v-else-if="dialog.status === 'loading'" flex>
               <v-progress-circular
-
                 color="info"
                 indeterminate
                 size="24"
@@ -54,6 +52,12 @@ const messageList = $computed(() => (list as Array<DialogProps<MessageOptions>>)
               />
               <div mx-2>
                 {{ dialog.loadingText }}
+              </div>
+            </div>
+            <div v-else-if="dialog.status === 'error'" flex>
+              <div i-mdi:close-circle c-red text-6 />
+              <div mx-2>
+                {{ dialog.errorText }}
               </div>
             </div>
           </v-fade-transition>

@@ -28,6 +28,7 @@ dialog:
   confirmDelete: 确认删除?
   loading: 加载中
   success: 操作完成
+  error: 发生错误
 nav:
   record: 记录
   clock: 计时
