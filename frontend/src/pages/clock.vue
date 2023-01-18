@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { extractTime } from '../../utils'
+import { extractTime } from '../utils'
 
-import type { main } from '../../../wailsjs/go/models'
+import type { main } from '../../wailsjs/go/models'
 
 const route = useRoute()
 

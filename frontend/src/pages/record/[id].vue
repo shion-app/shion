@@ -29,7 +29,7 @@ async function getTimeList() {
   await getLabelList()
 }
 
-watch($$(date), v => getLabelList(v))
+watch($$(date), getLabelList)
 
 async function getLabelList(date: Date = new Date()) {
   const idList = timeList.filter(time => isSameDay(date, time.start)).map(({ id }) => id)

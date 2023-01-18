@@ -14,6 +14,11 @@ const list = $ref([{
   key: 'clock',
   tip: t('nav.clock'),
   to: '/clock',
+}, {
+  icon: 'i-mdi:cog',
+  key: 'setting',
+  tip: t('nav.setting'),
+  to: '/setting',
 }])
 
 const isShowMenu = $computed(() => list.map(({ to }) => to).includes(route.path))

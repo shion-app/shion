@@ -1,10 +1,17 @@
 <script lang="ts" setup>
 const { confirm } = useDialog()
 const { t } = useI18n()
+const { read } = useConfig()
 
 let isShow = $ref(false)
 
+async function readConfig() {
+  const data = await GetConfig()
+  read(data)
+}
+
 async function upgradeConfirm() {
+  await readConfig()
   const version = await CheckUpgrade()
 
   if (version) {

@@ -87,6 +87,15 @@ func (a *App) Upgrade() (err error) {
 	return Upgrade(asset)
 }
 
+func (a *App) GetConfig() Config {
+	return config
+}
+
+func (a *App) WriteConfig(data Config) error {
+	config = data
+	return WriteConfig()
+}
+
 func (a *App) InsertRecord(name string, recordType int, exe string) (uint, error) {
 	id, err := Create(Record{
 		Name: name,

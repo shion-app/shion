@@ -6,6 +6,7 @@ declare global {
   const CheckExecutablePath: typeof import('../wailsjs/go/main/App.js')['CheckExecutablePath']
   const CheckUpgrade: typeof import('../wailsjs/go/main/App.js')['CheckUpgrade']
   const Color: typeof import('./constants/index')['Color']
+  const Config: typeof import('../wailsjs/go/models')['Config']
   const DeleteRecord: typeof import('../wailsjs/go/main/App.js')['DeleteRecord']
   const EffectScope: typeof import('vue')['EffectScope']
   const Environment: typeof import('../wailsjs/runtime/runtime.js')['Environment']
@@ -17,6 +18,7 @@ declare global {
   const EventsOnMultiple: typeof import('../wailsjs/runtime/runtime.js')['EventsOnMultiple']
   const EventsOnce: typeof import('../wailsjs/runtime/runtime.js')['EventsOnce']
   const GetActiveExeList: typeof import('../wailsjs/go/main/App.js')['GetActiveExeList']
+  const GetConfig: typeof import('../wailsjs/go/main/App.js')['GetConfig']
   const GetExecutablePath: typeof import('../wailsjs/go/main/App.js')['GetExecutablePath']
   const Hide: typeof import('../wailsjs/runtime/runtime.js')['Hide']
   const InsertLabel: typeof import('../wailsjs/go/main/App.js')['InsertLabel']
@@ -73,6 +75,7 @@ declare global {
   const WindowUnmaximise: typeof import('../wailsjs/runtime/runtime.js')['WindowUnmaximise']
   const WindowUnminimise: typeof import('../wailsjs/runtime/runtime.js')['WindowUnminimise']
   const WithTimeIDLabel: typeof import('../wailsjs/go/models')['WithTimeIDLabel']
+  const WriteConfig: typeof import('../wailsjs/go/main/App.js')['WriteConfig']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const computed: typeof import('vue')['computed']
@@ -357,6 +360,7 @@ declare module 'vue' {
     readonly CheckExecutablePath: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['CheckExecutablePath']>
     readonly CheckUpgrade: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['CheckUpgrade']>
     readonly Color: UnwrapRef<typeof import('./constants/index')['Color']>
+    readonly Config: UnwrapRef<typeof import('../wailsjs/go/models')['Config']>
     readonly DeleteRecord: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['DeleteRecord']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly Environment: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['Environment']>
@@ -368,6 +372,7 @@ declare module 'vue' {
     readonly EventsOnMultiple: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsOnMultiple']>
     readonly EventsOnce: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['EventsOnce']>
     readonly GetActiveExeList: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['GetActiveExeList']>
+    readonly GetConfig: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['GetConfig']>
     readonly GetExecutablePath: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['GetExecutablePath']>
     readonly Hide: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['Hide']>
     readonly InsertLabel: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['InsertLabel']>
@@ -424,6 +429,7 @@ declare module 'vue' {
     readonly WindowUnmaximise: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowUnmaximise']>
     readonly WindowUnminimise: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowUnminimise']>
     readonly WithTimeIDLabel: UnwrapRef<typeof import('../wailsjs/go/models')['WithTimeIDLabel']>
+    readonly WriteConfig: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['WriteConfig']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>

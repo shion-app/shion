@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 
+	"github.com/coreos/go-semver/semver"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
@@ -17,9 +18,31 @@ var logger *zap.Logger = NewLogger()
 var app *App = NewApp()
 var db *gorm.DB
 
-func main() {
+func init() {
+	// BUG: build时会运行semver报错
+	if len(version) == 0 {
+		return
+	}
+
+	err := readConfig()
+	if err != nil {
+		logger.Error(err.Error())
+	}
+
 	db = InitDatabase()
 
+	upgraded := semver.New(config.Version).LessThan(*semver.New(version))
+	if upgraded {
+		DeleteUpgradeTemp()
+		config.Version = version
+		err = WriteConfig()
+		if err != nil {
+			logger.Error(err.Error())
+		}
+	}
+}
+
+func main() {
 	Watch()
 
 	err := wails.Run(&options.App{
