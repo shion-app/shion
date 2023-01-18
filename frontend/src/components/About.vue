@@ -37,7 +37,7 @@ function upgradeVersion() {
       </div>
       <template v-else>
         <div>
-          {{ $t('about.lasest', {
+          {{ $t('about.latest', {
             version,
           }) }}
         </div>

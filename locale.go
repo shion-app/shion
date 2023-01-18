@@ -8,10 +8,9 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// TODO: en-US补充
 const (
-	defaultLocale = "zh-CN"
-	zhCN          = "zh-CN"
+	enUS = "en-US"
+	zhCN = "zh-CN"
 )
 
 //go:embed all:locales

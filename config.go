@@ -22,7 +22,7 @@ type Config struct {
 
 var config = Config{
 	Version:         version,
-	Locale:          defaultLocale,
+	Locale:          enUS,
 	AutoCheckUpdate: true,
 }
 

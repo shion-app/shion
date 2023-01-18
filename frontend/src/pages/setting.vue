@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const { config, write } = useConfig()
 
@@ -14,6 +14,8 @@ const localeList = [{
 const list = ['locale', 'autoCheckUpdate']
 
 watch(config, write)
+
+watch(() => config.locale, v => locale.value = v)
 </script>
 
 <template>

@@ -1,0 +1,58 @@
+hour: ' h '
+minute: ' min '
+second: ' s '
+start: start
+finish: finish
+record:
+  prop:
+    name: name
+    type: type
+    exe: executable path
+    manual: manual
+    auto: auto
+  tip:
+    invalidExe: A record for this application already exists
+time:
+  prop:
+    name: name
+    record: record
+input:
+  required: Input cannot be empty
+  delete: delete
+  edit: edit
+  add: add
+dialog:
+  confirm: confirm
+  cancel: cancel
+  tip: tip
+  confirmDelete: Are you sure to delete?
+  loading: loading
+  success: Operation completed
+  error: error occurred
+nav:
+  record: record
+  clock: clock
+  setting: setting
+clock:
+  selectRecord: select record
+  createLabel: create label
+  selectLabel: select label
+  updateLabel: update label
+upgrade:
+  tip: There is a new version ({version}). Are you sure you want to update it?
+  upgrading: upgrading
+systemMenu:
+  help: help
+  about: about
+config:
+  version: version
+  locale: locale
+  autoCheckUpdate: auto check update
+about:
+  upgrade: upgrade
+  latest: latest version ({version})
+  alreadyLasest: Updated to the latest version
+  current: current version ({version})
+locale:
+  simpChinese: 简体中文
+  english: English

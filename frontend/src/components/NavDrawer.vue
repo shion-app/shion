@@ -4,7 +4,7 @@ const drawer = $ref(true)
 const { t } = useI18n()
 const route = useRoute()
 
-const list = $ref([{
+const list = $computed(() => [{
   icon: 'i-mdi:view-grid',
   key: 'record',
   tip: t('nav.record'),

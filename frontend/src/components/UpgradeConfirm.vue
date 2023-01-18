@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 const { confirm } = useDialog()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { read } = useConfig()
 
 let isShow = $ref(false)
 
 async function readConfig() {
   const data = await GetConfig()
+  locale.value = data.locale
   read(data)
 }
 

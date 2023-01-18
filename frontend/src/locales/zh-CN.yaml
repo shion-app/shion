@@ -50,7 +50,7 @@ config:
   autoCheckUpdate: 自动检查版本
 about:
   upgrade: 更新
-  lasest: 最新版本({version})
+  latest: 最新版本({version})
   alreadyLasest: 已更新到最新版本
   current: 当前版本({version})
 locale:
