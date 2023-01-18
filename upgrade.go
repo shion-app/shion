@@ -53,18 +53,21 @@ func CheckUpgrade() (needUpgrade bool, tagName string, asset Asset, err error) {
 	}
 	var data Release
 	err = json.Unmarshal(body, &data)
-	tagName = data.TagName
 	if err != nil {
+		return
+	}
+	tagName = data.TagName
+	if len(tagName) == 0 {
 		return
 	}
 	asset, _ = lo.Find(data.Assets, func(asset Asset) bool {
 		if checkExistInstaller() {
 			return strings.Contains(asset.Name, "installer")
 		} else {
-			return asset.Name == "shion.exe"
+			return asset.Name == fmt.Sprintf("%s.exe", appName)
 		}
 	})
-	newVersion := data.TagName[1:]
+	newVersion := tagName[1:]
 	needUpgrade = semver.New(version).LessThan(*semver.New(newVersion))
 	return
 }
@@ -136,7 +139,7 @@ func replace(assetExe string) (currentExe string, err error) {
 		return
 	}
 	dir := filepath.Dir(currentExe)
-	oldExe := filepath.Join(dir, "shion-old.exe")
+	oldExe := filepath.Join(dir, "old.exe")
 	err = os.Rename(currentExe, oldExe)
 	if err != nil {
 		return
@@ -174,33 +177,31 @@ func DeleteUpgradeTemp() {
 		return
 	}
 	dir := filepath.Dir(currentExe)
-	oldExe := filepath.Join(dir, "shion-old.exe")
+	oldExe := filepath.Join(dir, "old.exe")
 	os.Remove(oldExe)
 	download := GetDownloadConfigDir()
 	os.Remove(download)
 }
 
-func Upgrade(asset Asset) {
+func Upgrade(asset Asset) (err error) {
 	assetExe, err := download(asset)
 	if err != nil {
-		logger.Error(err.Error())
 		return
 	}
 	if checkExistInstaller() {
-		err := runMeElevated(assetExe)
+		err = runMeElevated(assetExe)
 		if err != nil {
-			logger.Error(err.Error())
 			return
 		}
 	} else {
 		currentExe, err := replace(assetExe)
 		if err != nil {
-			logger.Error(err.Error())
-			return
+			return err
 		}
 		exec.Command(currentExe).Start()
 	}
 	os.Exit(0)
+	return nil
 }
 
 func runMeElevated(exe string) error {

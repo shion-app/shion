@@ -7,6 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    About: typeof import('./components/About.vue')['default']
     CalendarGraph: typeof import('./components/CalendarGraph.vue')['default']
     Confirm: typeof import('./components/Confirm.vue')['default']
     DialogProvider: typeof import('./components/DialogProvider.vue')['default']
@@ -20,9 +21,11 @@ declare module '@vue/runtime-core' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SystemBar: typeof import('./components/SystemBar.vue')['default']
+    SystemMenu: typeof import('./components/SystemMenu.vue')['default']
     UpdateLabel: typeof import('./components/UpdateLabel.vue')['default']
     UpdateRecord: typeof import('./components/UpdateRecord.vue')['default']
     Upgrade: typeof import('./components/Upgrade.vue')['default']
+    UpgradeConfirm: typeof import('./components/UpgradeConfirm.vue')['default']
     VBtn: typeof import('vuetify/components')['VBtn']
     VCard: typeof import('vuetify/components')['VCard']
     VCardActions: typeof import('vuetify/components')['VCardActions']
@@ -41,6 +44,7 @@ declare module '@vue/runtime-core' {
     VProgressCircular: typeof import('vuetify/components')['VProgressCircular']
     VProgressLinear: typeof import('vuetify/components')['VProgressLinear']
     VSelect: typeof import('vuetify/components')['VSelect']
+    VSheet: typeof import('vuetify/components')['VSheet']
     VSystemBar: typeof import('vuetify/components')['VSystemBar']
     VTextField: typeof import('vuetify/components')['VTextField']
     VTimeline: typeof import('vuetify/components')['VTimeline']

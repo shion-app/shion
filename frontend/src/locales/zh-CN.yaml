@@ -40,3 +40,14 @@ clock:
 upgrade:
   tip: 有新的版本({version}), 确认要更新吗?
   upgrading: 更新中
+systemMenu:
+  help: 帮助
+  about: 关于
+config:
+  version: 版本
+  locale: 语言
+about:
+  upgrade: 更新
+  lasest: 最新版本({version})
+  alreadyLasest: 已更新到最新版本
+  current: 当前版本({version})

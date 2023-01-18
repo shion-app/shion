@@ -4,6 +4,7 @@ declare global {
   const BrowserOpenURL: typeof import('../wailsjs/runtime/runtime.js')['BrowserOpenURL']
   const Calendar: typeof import('./constants/index')['Calendar']
   const CheckExecutablePath: typeof import('../wailsjs/go/main/App.js')['CheckExecutablePath']
+  const CheckUpgrade: typeof import('../wailsjs/go/main/App.js')['CheckUpgrade']
   const Color: typeof import('./constants/index')['Color']
   const DeleteRecord: typeof import('../wailsjs/go/main/App.js')['DeleteRecord']
   const EffectScope: typeof import('vue')['EffectScope']
@@ -42,6 +43,7 @@ declare global {
   const UpdateLabel: typeof import('../wailsjs/go/main/App.js')['UpdateLabel']
   const UpdateRecord: typeof import('../wailsjs/go/main/App.js')['UpdateRecord']
   const UpdateTime: typeof import('../wailsjs/go/main/App.js')['UpdateTime']
+  const Upgrade: typeof import('../wailsjs/go/main/App.js')['Upgrade']
   const WindowCenter: typeof import('../wailsjs/runtime/runtime.js')['WindowCenter']
   const WindowFullscreen: typeof import('../wailsjs/runtime/runtime.js')['WindowFullscreen']
   const WindowGetPosition: typeof import('../wailsjs/runtime/runtime.js')['WindowGetPosition']
@@ -196,6 +198,7 @@ declare global {
   const useClipboard: typeof import('@vueuse/core')['useClipboard']
   const useCloned: typeof import('@vueuse/core')['useCloned']
   const useColorMode: typeof import('@vueuse/core')['useColorMode']
+  const useConfig: typeof import('./stores/index')['useConfig']
   const useConfirmDialog: typeof import('@vueuse/core')['useConfirmDialog']
   const useCounter: typeof import('@vueuse/core')['useCounter']
   const useCssModule: typeof import('vue')['useCssModule']
@@ -352,6 +355,7 @@ declare module 'vue' {
     readonly BrowserOpenURL: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['BrowserOpenURL']>
     readonly Calendar: UnwrapRef<typeof import('./constants/index')['Calendar']>
     readonly CheckExecutablePath: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['CheckExecutablePath']>
+    readonly CheckUpgrade: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['CheckUpgrade']>
     readonly Color: UnwrapRef<typeof import('./constants/index')['Color']>
     readonly DeleteRecord: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['DeleteRecord']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
@@ -390,6 +394,7 @@ declare module 'vue' {
     readonly UpdateLabel: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['UpdateLabel']>
     readonly UpdateRecord: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['UpdateRecord']>
     readonly UpdateTime: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['UpdateTime']>
+    readonly Upgrade: UnwrapRef<typeof import('../wailsjs/go/main/App.js')['Upgrade']>
     readonly WindowCenter: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowCenter']>
     readonly WindowFullscreen: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowFullscreen']>
     readonly WindowGetPosition: UnwrapRef<typeof import('../wailsjs/runtime/runtime.js')['WindowGetPosition']>
@@ -544,6 +549,7 @@ declare module 'vue' {
     readonly useClipboard: UnwrapRef<typeof import('@vueuse/core')['useClipboard']>
     readonly useCloned: UnwrapRef<typeof import('@vueuse/core')['useCloned']>
     readonly useColorMode: UnwrapRef<typeof import('@vueuse/core')['useColorMode']>
+    readonly useConfig: UnwrapRef<typeof import('./stores/index')['useConfig']>
     readonly useConfirmDialog: UnwrapRef<typeof import('@vueuse/core')['useConfirmDialog']>
     readonly useCounter: UnwrapRef<typeof import('@vueuse/core')['useCounter']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>

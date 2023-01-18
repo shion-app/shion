@@ -1,24 +1,12 @@
 <script lang="ts" setup>
-const { confirm } = useDialog()
+const { show } = defineProps<{
+  show: boolean
+}>()
+
 const { t } = useI18n()
 
 let size = $ref(0)
 let total = $ref(0)
-let isShow = $ref(false)
-
-EventsOn(EventType.CAN_UPGRADE, async (version: string) => {
-  const ok = await confirm({
-    title: t('dialog.tip'),
-    content: t('upgrade.tip', {
-      version,
-    }),
-    width: 300,
-  })
-  if (ok) {
-    EventsEmit(EventType.UPGRADE)
-    isShow = true
-  }
-})
 
 EventsOn(EventType.UPGRADING, (s: number, t: number) => {
   size = s
@@ -45,7 +33,7 @@ function fileSize(size: number) {
 </script>
 
 <template>
-  <v-dialog v-model="isShow" width="400" persistent>
+  <v-dialog :model-value="show" width="400" persistent>
     <v-card>
       <v-card-title>
         {{ t('upgrade.upgrading') }}

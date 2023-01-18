@@ -26,7 +26,7 @@ export default defineConfig({
       ],
       vueTemplate: true,
       dts: 'src/auto-imports.d.ts',
-      dirs: ['./wailsjs/**', './src/utils/**', './src/constants/**'],
+      dirs: ['./wailsjs/**', './src/utils/**', './src/constants/**', './src/stores/**'],
     }),
     Unocss({
       presets: [presetUno(), presetAttributify(), presetIcons()],

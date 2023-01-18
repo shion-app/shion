@@ -11,7 +11,8 @@ function windowToggleMaximise() {
 
 <template>
   <v-system-bar height="36" window class="p-r-0!" style="--wails-draggable:drag">
-    <img :src="logo" alt="logo" h-8>
+    <img :src="logo" alt="logo" h-8 mr-2>
+    <system-menu />
     <div flex-1 h-full @dblclick="windowToggleMaximise" />
     <v-btn variant="text" class="rounded-0!" @click="WindowMinimise">
       <div i-mdi:minus text-4 />

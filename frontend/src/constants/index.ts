@@ -5,9 +5,8 @@ export const enum RecordType {
 
 export const enum EventType {
   ACTIVE_EXE = 'active-exe',
-  CAN_UPGRADE = 'can-upgrade',
-  UPGRADE = 'upgrade',
   UPGRADING = 'upgrading',
+  CONFIG = 'config',
 }
 
 export const enum Color {

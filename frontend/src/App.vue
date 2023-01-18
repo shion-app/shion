@@ -7,7 +7,7 @@
     </router-view>
   </nav-drawer>
   <dialog-provider />
-  <upgrade />
+  <upgrade-confirm />
 </template>
 
 <style>

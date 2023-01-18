@@ -22,17 +22,6 @@ func (a *App) startup(ctx context.Context) {
 
 func (a *App) domReady(ctx context.Context) {
 	a.setExeWhiteList()
-	needUpgrade, tagName, asset, err := CheckUpgrade()
-	if err != nil {
-		logger.Error(err.Error())
-		return
-	}
-	if needUpgrade && len(asset.Url) != 0 {
-		runtime.EventsEmit(a.ctx, "can-upgrade", tagName)
-		runtime.EventsOnce(a.ctx, "upgrade", func(optionalData ...interface{}) {
-			Upgrade(asset)
-		})
-	}
 }
 
 func (a *App) shutdown(ctx context.Context) {
@@ -77,6 +66,25 @@ func (a *App) CheckExecutablePath(exe string) (bool, error) {
 	return !lo.ContainsBy(recordList, func(record Record) bool {
 		return record.Exe == exe
 	}), nil
+}
+
+func (a *App) CheckUpgrade() (string, error) {
+	needUpgrade, tagName, asset, err := CheckUpgrade()
+	if err != nil {
+		return "", err
+	}
+	if needUpgrade && len(asset.Url) != 0 {
+		return tagName, err
+	}
+	return "", err
+}
+
+func (a *App) Upgrade() (err error) {
+	_, _, asset, err := CheckUpgrade()
+	if err != nil {
+		return
+	}
+	return Upgrade(asset)
 }
 
 func (a *App) InsertRecord(name string, recordType int, exe string) (uint, error) {
