@@ -29,7 +29,7 @@ function upgradeVersion() {
       </div>
       <div>
         {{ $t('about.current', {
-          version: config.version,
+          version: `v${config.version}`,
         }) }}
       </div>
       <div v-if="disabled">

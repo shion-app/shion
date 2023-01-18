@@ -10,8 +10,8 @@ function windowToggleMaximise() {
 </script>
 
 <template>
-  <v-system-bar height="36" window class="p-r-0!" style="--wails-draggable:drag">
-    <img :src="logo" alt="logo" h-8 mr-2>
+  <v-system-bar height="36" window class="p-0!" style="--wails-draggable:drag">
+    <img :src="logo" alt="logo" h-8 mx-2>
     <system-menu />
     <div flex-1 h-full @dblclick="windowToggleMaximise" />
     <v-btn variant="text" class="rounded-0!" @click="WindowMinimise">
