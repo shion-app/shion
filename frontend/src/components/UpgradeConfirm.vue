@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const { confirm } = useDialog()
 const { t, locale } = useI18n()
-const { read } = useConfig()
+const { config, read } = useConfig()
 
 let isShow = $ref(false)
 
@@ -13,6 +13,9 @@ async function readConfig() {
 
 async function upgradeConfirm() {
   await readConfig()
+  if (!config.autoCheckUpdate)
+    return
+
   const version = await CheckUpgrade()
 
   if (version) {
