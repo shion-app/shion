@@ -64,10 +64,14 @@ VIAddVersionKey "ProductName"     "${INFO_PRODUCTNAME}"
 !insertmacro MUI_PAGE_INSTFILES # Installing page.
 !insertmacro MUI_PAGE_FINISH # Finished installation page.
 
+UninstPage Custom un.enterUninstallConfirm un.leaveUninstallConfirm
 !insertmacro MUI_UNPAGE_INSTFILES # Uinstalling page
 
 !insertmacro MUI_LANGUAGE "English" # Set the Language of the installer
 !insertmacro MUI_LANGUAGE "SimpChinese"
+
+!include nsDialogs.nsh
+!include LogicLib.nsh
 
 ## The following two statements can be used to sign the installer and the uninstaller. The path to the binaries are provided in %1
 #!uninstfinalize 'signtool --file "%1"'
@@ -78,18 +82,13 @@ OutFile "..\..\bin\${INFO_PROJECTNAME}-${ARCH}-installer.exe" # Name of the inst
 InstallDir "$PROGRAMFILES64\${INFO_COMPANYNAME}\${INFO_PRODUCTNAME}" # Default installing folder ($PROGRAMFILES is Program Files folder).
 ShowInstDetails show # This will always show the installation details.
 
-Var LOCALE
+LangString LOCALE ${LANG_ENGLISH} "en-US"
+LangString LOCALE ${LANG_SIMPCHINESE} "zh-CN"
 
-!macro getLocale
-  ${Switch} $LANGUAGE
-    ${Case} 1033
-      StrCpy $LOCALE "en-US"
-      ${Break}
-    ${Case} 2052
-      StrCpy $LOCALE "zh-CN"
-      ${Break}
-  ${EndSwitch}
-!macroend
+LangString DELETE_CONFIG_TIP ${LANG_ENGLISH} "delete data file"
+LangString DELETE_CONFIG_TIP ${LANG_SIMPCHINESE} "删除数据文件"
+
+; install
 
 !macro createConfigFile
   IfFileExists ${APP_CONFIG_FILE} 0 file_not_found
@@ -98,49 +97,66 @@ Var LOCALE
       FileOpen $0 ${APP_CONFIG_FILE} w
       FileWrite $0 "{$\r$\n"
       FileWrite $0 '  "version": "${INFO_PRODUCTVERSION}",$\r$\n'
-      FileWrite $0 '  "locale": "$LOCALE"$\r$\n'
+      FileWrite $0 '  "locale": "$(LOCALE)"$\r$\n'
       FileWrite $0 "}$\r$\n"
       FileClose $0
 !macroend
 
-; !macro deleteConfigFile
-;   MessageBox MB_YESNO "delete config file?" IDYES true IDNO false
-;     true:
-;     false:
-; !macroend
-
 Function .onInit
-    !insertmacro MUI_LANGDLL_DISPLAY
-    !insertmacro getLocale
-    !insertmacro createConfigFile
-    !insertmacro wails.checkArchitecture
+  !insertmacro wails.checkArchitecture
+  !insertmacro MUI_LANGDLL_DISPLAY
+  !insertmacro createConfigFile
 FunctionEnd
 
 Function LaunchApplication
-    ExecShell "" "$INSTDIR\${PRODUCT_EXECUTABLE}"
+  ExecShell "" "$INSTDIR\${PRODUCT_EXECUTABLE}"
 FunctionEnd
 
 Section
-    !insertmacro wails.webview2runtime
+  !insertmacro wails.webview2runtime
 
-    SetOutPath $INSTDIR
+  SetOutPath $INSTDIR
 
-    !insertmacro wails.files
+  !insertmacro wails.files
 
-    CreateShortcut "$SMPROGRAMS\${INFO_PRODUCTNAME}.lnk" "$INSTDIR\${PRODUCT_EXECUTABLE}"
-    CreateShortCut "$DESKTOP\${INFO_PRODUCTNAME}.lnk" "$INSTDIR\${PRODUCT_EXECUTABLE}"
+  CreateShortcut "$SMPROGRAMS\${INFO_PRODUCTNAME}.lnk" "$INSTDIR\${PRODUCT_EXECUTABLE}"
+  CreateShortCut "$DESKTOP\${INFO_PRODUCTNAME}.lnk" "$INSTDIR\${PRODUCT_EXECUTABLE}"
 
-    !insertmacro wails.writeUninstaller
+  !insertmacro wails.writeUninstaller
 SectionEnd
 
+; uninstall
+
+var deleteConfigCheckbox
+var deleteConfigState
+
+Function un.enterUninstallConfirm
+  nsDialogs::Create 1018
+  Pop $0
+  ${NSD_CreateCheckbox} 0 30u 100% 10u $(DELETE_CONFIG_TIP)
+  Pop $deleteConfigCheckbox
+  ${NSD_SetState} $deleteConfigCheckbox $deleteConfigState
+  nsDialogs::Show
+FunctionEnd
+
+Function un.leaveUninstallConfirm
+  ${NSD_GetState} $deleteConfigCheckbox $deleteConfigState
+FunctionEnd
+
+Function un.onInit
+FunctionEnd
+
 Section "uninstall"
-    ; RMDir /r ${APP_CONFIG_DIR}
-    RMDir /r "$AppData\${PRODUCT_EXECUTABLE}" # Remove the WebView2 DataPath
+  ${If} $deleteConfigState == ${BST_CHECKED}
+    RMDir /r ${APP_CONFIG_DIR}
+  ${EndIf}
 
-    RMDir /r $INSTDIR
+  RMDir /r "$AppData\${PRODUCT_EXECUTABLE}" # Remove the WebView2 DataPath
 
-    Delete "$SMPROGRAMS\${INFO_PRODUCTNAME}.lnk"
-    Delete "$DESKTOP\${INFO_PRODUCTNAME}.lnk"
+  RMDir /r $INSTDIR
 
-    !insertmacro wails.deleteUninstaller
+  Delete "$SMPROGRAMS\${INFO_PRODUCTNAME}.lnk"
+  Delete "$DESKTOP\${INFO_PRODUCTNAME}.lnk"
+
+  !insertmacro wails.deleteUninstaller
 SectionEnd
