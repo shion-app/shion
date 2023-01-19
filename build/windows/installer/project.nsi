@@ -56,10 +56,12 @@ VIAddVersionKey "ProductName"     "${INFO_PRODUCTNAME}"
 !define MUI_FINISHPAGE_NOAUTOCLOSE # Wait on the INSTFILES page so the user can take a look into the details of the installation steps
 !define MUI_ABORTWARNING # This will warn the user if they exit from the installer.
 !define MUI_FINISHPAGE_RUN
-!define MUI_FINISHPAGE_RUN_FUNCTION LaunchApplication
+!define MUI_FINISHPAGE_RUN_FUNCTION launchApplication
 
+!define MUI_PAGE_CUSTOMFUNCTION_PRE skipPage
 !insertmacro MUI_PAGE_WELCOME # Welcome to the installer page.
 # !insertmacro MUI_PAGE_LICENSE "resources\eula.txt" # Adds a EULA page to the installer
+!define MUI_PAGE_CUSTOMFUNCTION_PRE skipPage
 !insertmacro MUI_PAGE_DIRECTORY # In which folder install page.
 !insertmacro MUI_PAGE_INSTFILES # Installing page.
 !insertmacro MUI_PAGE_FINISH # Finished installation page.
@@ -102,13 +104,29 @@ LangString DELETE_CONFIG_TIP ${LANG_SIMPCHINESE} "删除数据文件"
       FileClose $0
 !macroend
 
-Function .onInit
-  !insertmacro wails.checkArchitecture
-  !insertmacro MUI_LANGDLL_DISPLAY
-  !insertmacro createConfigFile
+var skip
+
+Function skipPage
+  ${If} $skip == "yes"
+    Abort
+  ${EndIf}
 FunctionEnd
 
-Function LaunchApplication
+Function .onInit
+  SetRegView 64
+  ReadRegStr $0 HKLM ${UNINST_KEY} "DisplayIcon"
+  ${If} $0 != ""
+    StrCpy $skip "yes"
+    ${GetParent} $0 $INSTDIR
+  ${else}
+    StrCpy $skip "no"
+    !insertmacro wails.checkArchitecture
+    !insertmacro MUI_LANGDLL_DISPLAY
+    !insertmacro createConfigFile
+  ${EndIf}
+FunctionEnd
+
+Function launchApplication
   ExecShell "" "$INSTDIR\${PRODUCT_EXECUTABLE}"
 FunctionEnd
 
