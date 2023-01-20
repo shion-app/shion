@@ -74,6 +74,7 @@ UninstPage Custom un.enterUninstallConfirm un.leaveUninstallConfirm
 
 !include nsDialogs.nsh
 !include LogicLib.nsh
+!include nsProcess.nsh
 
 ## The following two statements can be used to sign the installer and the uninstaller. The path to the binaries are provided in %1
 #!uninstfinalize 'signtool --file "%1"'
@@ -89,6 +90,22 @@ LangString LOCALE ${LANG_SIMPCHINESE} "zh-CN"
 
 LangString DELETE_CONFIG_TIP ${LANG_ENGLISH} "delete data file"
 LangString DELETE_CONFIG_TIP ${LANG_SIMPCHINESE} "删除数据文件"
+LangString PROGRAM_RUNNING_CONFIRM ${LANG_ENGLISH} "The program is running. Are you sure to close it?"
+LangString PROGRAM_RUNNING_CONFIRM ${LANG_SIMPCHINESE} "程序正在运行，确认关闭吗?"
+
+!macro checkProgramRunning
+  ${nsProcess::FindProcess} ${PRODUCT_EXECUTABLE} $R0
+  ${If} $R0 == 0
+    MessageBox MB_YESNO $(PROGRAM_RUNNING_CONFIRM) IDYES true IDNO false
+      true:
+        ${nsProcess::CloseProcess} ${PRODUCT_EXECUTABLE} $R0
+        Goto next
+      false:
+        Abort
+      next:
+        Sleep 500
+  ${EndIf}
+!macroend
 
 ; install
 
@@ -112,22 +129,23 @@ Function skipPage
   ${EndIf}
 FunctionEnd
 
+Function launchApplication
+  ExecShell "" "$INSTDIR\${PRODUCT_EXECUTABLE}"
+FunctionEnd
+
 Function .onInit
   SetRegView 64
   ReadRegStr $0 HKLM ${UNINST_KEY} "DisplayIcon"
   ${If} $0 != ""
     StrCpy $skip "yes"
     ${GetParent} $0 $INSTDIR
+    !insertmacro checkProgramRunning
   ${else}
     StrCpy $skip "no"
     !insertmacro wails.checkArchitecture
     !insertmacro MUI_LANGDLL_DISPLAY
     !insertmacro createConfigFile
   ${EndIf}
-FunctionEnd
-
-Function launchApplication
-  ExecShell "" "$INSTDIR\${PRODUCT_EXECUTABLE}"
 FunctionEnd
 
 Section
@@ -162,6 +180,7 @@ Function un.leaveUninstallConfirm
 FunctionEnd
 
 Function un.onInit
+  !insertmacro checkProgramRunning
 FunctionEnd
 
 Section "uninstall"
