@@ -37,6 +37,11 @@ jobs:
           scoop install upx
           scoop install gcc
 
+      - name: Install nsis plugin
+        uses: hanaTsuk1/nsis-plugin@v1
+        with:
+          list: nsProcess
+
       - run: pnpm run build:nsis
 
       - uses: ncipollo/release-action@v1
