@@ -28,14 +28,10 @@ jobs:
 
       - run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
-      - name: Install Scoop Dependencies
+      # https://github.com/actions/runner-images/blob/main/images/win/Windows2022-Readme.md
+      - name: Install Build Dependencies
         run: |
-          iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
-          scoop update
-          scoop bucket add extras
-          scoop install nsis
-          scoop install upx
-          scoop install gcc
+          choco install upx
 
       - name: Install nsis plugin
         uses: hanaTsuk1/nsis-plugin@v1
