@@ -186,7 +186,7 @@ func (a *App) InsertLabel(recordId uint, name string) (uint, error) {
 }
 
 func (a *App) QueryAllLabelByRecordID(recordId uint) (list []Label, err error) {
-	err = db.Select("labels.*", "IFNULL(SUM(times.[end] - times.start), 0) total_time").Joins("LEFT JOIN times ON labels.record_id = times.record_id").Group("labels.id").Find(&list).Error
+	err = db.Select("labels.*").Joins("LEFT JOIN times ON labels.record_id = times.record_id").Group("labels.id").Find(&list).Error
 	return
 }
 
@@ -199,7 +199,7 @@ func (a *App) QueryAllLabelByTimeIDList(idList []uint) (list []WithTimeIDLabel, 
 	list = []WithTimeIDLabel{}
 	for _, v := range idList {
 		labels := []Label{}
-		err = db.Table("time_labels").Select("labels.*", "IFNULL(SUM(times.[end] - times.start), 0) total_time").Joins("LEFT JOIN times ON time_labels.time_id = times.id").Joins("LEFT JOIN labels ON time_labels.label_id = labels.id").Where("times.id = ?", v).Group("labels.id").Scan(&labels).Error
+		err = db.Table("time_labels").Select("labels.*", "IFNULL(SUM(times.[end] - times.start), 0) total_time").Joins("LEFT JOIN times ON time_labels.time_id = times.id").Joins("LEFT JOIN labels ON time_labels.label_id = labels.id").Where("labels.id in (?)", db.Table("time_labels").Select("time_labels.label_id").Joins("LEFT JOIN times ON time_labels.time_id = times.id").Where("times.id = ?", v)).Scan(&labels).Error
 		if err != nil {
 			return []WithTimeIDLabel{}, err
 		}
