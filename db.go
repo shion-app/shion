@@ -7,6 +7,7 @@ import (
 	"github.com/samber/lo"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	gormLogger "gorm.io/gorm/logger"
 )
 
 type Map = map[string]any
@@ -61,7 +62,7 @@ func InitDatabase() *gorm.DB {
 	dir := GetAppConfigDir()
 	dbPath := filepath.Join(dir, "data.db")
 	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{
-		// Logger: gormLogger.Default.LogMode(gormLogger.Info),
+		Logger: gormLogger.Default.LogMode(gormLogger.Info),
 	})
 	if err != nil {
 		logger.Error(err.Error())
