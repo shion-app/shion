@@ -46,7 +46,11 @@ function formatTime(time: number) {
 
 function formatHourMinute(time: number) {
   const { hour, minute, second } = extractTime(time)
-  return minute > 0 ? `${hour}${t('hour')}${minute}${t('minute')}` : `${second}${t('second')}`
+  return hour > 0
+    ? `${hour}${t('hour')}${minute}${t('minute')}`
+    : minute > 0
+      ? `${minute}${t('minute')}`
+      : `${second}${t('second')}`
 }
 </script>
 
