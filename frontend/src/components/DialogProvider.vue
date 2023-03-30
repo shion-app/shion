@@ -1,4 +1,0 @@
-<template>
-  <confirm />
-  <message />
-</template>

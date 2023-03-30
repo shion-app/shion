@@ -1,10 +1,11 @@
 {
-  "i18n-ally.localesPaths": ["frontend/src/locales"],
+  "i18n-ally.localesPaths": [
+    "src/locales"
+  ],
   "i18n-ally.keystyle": "nested",
-  "unocss.root": "frontend",
   "prettier.enable": false,
   "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
-  },
+  }
 }

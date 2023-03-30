@@ -1,22 +1,29 @@
 {
+  // 关于 tasks.json 格式文档，请参阅：https://go.microsoft.com/fwlink/?LinkId=733558
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "build",
+      "label": "ui:dev",
       "type": "shell",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "command": "go",
+      // `dev` keeps running in the background
+      // ideally you should also configure a `problemMatcher`
+      // see https://code.visualstudio.com/docs/editor/tasks#_can-a-background-task-be-used-as-a-prelaunchtask-in-launchjson
+      "isBackground": true,
+      // change this to your `beforeDevCommand`:
+      "command": "pnpm",
       "args": [
-        "build",
-        "-ldflags=-X \"main.version=0.1.0\" -X \"main.appName=shion\" -X \"main.author=hanaTsuk1\"",
-        "-tags",
-        "dev",
-        "-gcflags",
-        "all=-N -l",
-        "-o",
-        "build/bin/shion-debug.exe"
+        "run",
+        "dev"
+      ]
+    },
+    {
+      "label": "ui:build",
+      "type": "shell",
+      // change this to your `beforeBuildCommand`:
+      "command": "pnpm",
+      "args": [
+        "run",
+        "build"
       ]
     }
   ]
