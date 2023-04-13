@@ -2,7 +2,7 @@
 name = "shion"
 version = "0.2.0"
 description = "A Tauri App"
-authors = ["you"]
+authors = ["hanaTsuk1"]
 license = ""
 repository = ""
 edition = "2021"
@@ -13,9 +13,14 @@ edition = "2021"
 tauri-build = { version = "1.2", features = [] }
 
 [dependencies]
-tauri = { version = "1.2", features = ["shell-open"] }
+tauri = { version = "1.2", features = ["app-all"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+log = "^0.4"
+tauri-plugin-sql = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev", features = ["sqlite"] }
+tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
+tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
+
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
