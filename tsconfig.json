@@ -5,6 +5,7 @@
     "strict": true,
     "moduleResolution": "node",
     "skipLibCheck": true,
+    "noImplicitAny": false,
     "types": [
       "@intlify/unplugin-vue-i18n/messages"
     ]

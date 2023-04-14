@@ -18,6 +18,9 @@ declare global {
   const createEventHook: typeof import('@vueuse/core')['createEventHook']
   const createGlobalState: typeof import('@vueuse/core')['createGlobalState']
   const createInjectionState: typeof import('@vueuse/core')['createInjectionState']
+  const createLabel: typeof import('./database/request')['createLabel']
+  const createNote: typeof import('./database/request')['createNote']
+  const createPlan: typeof import('./database/request')['createPlan']
   const createReactiveFn: typeof import('@vueuse/core')['createReactiveFn']
   const createSharedComposable: typeof import('@vueuse/core')['createSharedComposable']
   const createUnrefFn: typeof import('@vueuse/core')['createUnrefFn']
@@ -74,9 +77,15 @@ declare global {
   const refDefault: typeof import('@vueuse/core')['refDefault']
   const refThrottled: typeof import('@vueuse/core')['refThrottled']
   const refWithControl: typeof import('@vueuse/core')['refWithControl']
+  const removeLabel: typeof import('./database/request')['removeLabel']
+  const removeNote: typeof import('./database/request')['removeNote']
+  const removePlan: typeof import('./database/request')['removePlan']
   const resolveComponent: typeof import('vue')['resolveComponent']
   const resolveRef: typeof import('@vueuse/core')['resolveRef']
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
+  const selectLabel: typeof import('./database/request')['selectLabel']
+  const selectNoteByPlanId: typeof import('./database/request')['selectNoteByPlanId']
+  const selectPlan: typeof import('./database/request')['selectPlan']
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']
@@ -98,6 +107,9 @@ declare global {
   const unref: typeof import('vue')['unref']
   const unrefElement: typeof import('@vueuse/core')['unrefElement']
   const until: typeof import('@vueuse/core')['until']
+  const updateLabel: typeof import('./database/request')['updateLabel']
+  const updateNote: typeof import('./database/request')['updateNote']
+  const updatePlan: typeof import('./database/request')['updatePlan']
   const useActiveElement: typeof import('@vueuse/core')['useActiveElement']
   const useArrayEvery: typeof import('@vueuse/core')['useArrayEvery']
   const useArrayFilter: typeof import('@vueuse/core')['useArrayFilter']
@@ -290,6 +302,9 @@ declare module 'vue' {
     readonly createEventHook: UnwrapRef<typeof import('@vueuse/core')['createEventHook']>
     readonly createGlobalState: UnwrapRef<typeof import('@vueuse/core')['createGlobalState']>
     readonly createInjectionState: UnwrapRef<typeof import('@vueuse/core')['createInjectionState']>
+    readonly createLabel: UnwrapRef<typeof import('./database/request')['createLabel']>
+    readonly createNote: UnwrapRef<typeof import('./database/request')['createNote']>
+    readonly createPlan: UnwrapRef<typeof import('./database/request')['createPlan']>
     readonly createReactiveFn: UnwrapRef<typeof import('@vueuse/core')['createReactiveFn']>
     readonly createSharedComposable: UnwrapRef<typeof import('@vueuse/core')['createSharedComposable']>
     readonly createUnrefFn: UnwrapRef<typeof import('@vueuse/core')['createUnrefFn']>
@@ -346,9 +361,15 @@ declare module 'vue' {
     readonly refDefault: UnwrapRef<typeof import('@vueuse/core')['refDefault']>
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
+    readonly removeLabel: UnwrapRef<typeof import('./database/request')['removeLabel']>
+    readonly removeNote: UnwrapRef<typeof import('./database/request')['removeNote']>
+    readonly removePlan: UnwrapRef<typeof import('./database/request')['removePlan']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
+    readonly selectLabel: UnwrapRef<typeof import('./database/request')['selectLabel']>
+    readonly selectNoteByPlanId: UnwrapRef<typeof import('./database/request')['selectNoteByPlanId']>
+    readonly selectPlan: UnwrapRef<typeof import('./database/request')['selectPlan']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
@@ -370,6 +391,9 @@ declare module 'vue' {
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly unrefElement: UnwrapRef<typeof import('@vueuse/core')['unrefElement']>
     readonly until: UnwrapRef<typeof import('@vueuse/core')['until']>
+    readonly updateLabel: UnwrapRef<typeof import('./database/request')['updateLabel']>
+    readonly updateNote: UnwrapRef<typeof import('./database/request')['updateNote']>
+    readonly updatePlan: UnwrapRef<typeof import('./database/request')['updatePlan']>
     readonly useActiveElement: UnwrapRef<typeof import('@vueuse/core')['useActiveElement']>
     readonly useArrayEvery: UnwrapRef<typeof import('@vueuse/core')['useArrayEvery']>
     readonly useArrayFilter: UnwrapRef<typeof import('@vueuse/core')['useArrayFilter']>

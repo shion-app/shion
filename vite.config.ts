@@ -27,7 +27,7 @@ export default defineConfig(async () => ({
         '@vueuse/core',
         'vue-i18n',
       ],
-      dirs: ["./src/hooks/**"],
+      dirs: ["./src/hooks/**", "./src/database/**"],
       vueTemplate: true,
       dts: 'src/auto-imports.d.ts',
     }),

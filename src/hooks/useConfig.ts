@@ -6,7 +6,7 @@ interface Config {
   locale: "zh-CN" | "en-US"
 }
 
-const PATH = `config${import.meta.env.PROD ? '' : '-dev'}.json`
+const PATH = `config${import.meta.env.DEV? '-dev' : ''}.json`
 
 const store = new Store(PATH)
 const config = ref<Config>({} as Config)
