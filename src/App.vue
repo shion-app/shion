@@ -1,7 +1,7 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
-  <div />
+  <nav-drawer>
+    <router-view v-slot="{ Component }">
+      <component :is="Component" />
+    </router-view>
+  </nav-drawer>
 </template>

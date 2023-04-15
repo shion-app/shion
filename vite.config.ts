@@ -9,6 +9,7 @@ import { presetAttributify, presetUno } from 'unocss'
 import presetIcons from '@unocss/preset-icons'
 import Components from 'unplugin-vue-components/vite'
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
+import Pages from 'vite-plugin-pages'
 
 // const mobile =
 //   process.env.TAURI_PLATFORM === "android" ||
@@ -26,6 +27,7 @@ export default defineConfig(async () => ({
         'vue',
         '@vueuse/core',
         'vue-i18n',
+        'vue-router',
       ],
       dirs: ['./src/hooks/**', './src/database/**'],
       vueTemplate: true,
@@ -38,6 +40,7 @@ export default defineConfig(async () => ({
       resolvers: [AntDesignVueResolver()],
       dts: 'src/components.d.ts',
     }),
+    Pages(),
   ],
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   // prevent vite from obscuring rust errors
