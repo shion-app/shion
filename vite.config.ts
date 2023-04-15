@@ -8,7 +8,7 @@ import Unocss from 'unocss/vite'
 import { presetAttributify, presetUno } from 'unocss'
 import presetIcons from '@unocss/preset-icons'
 import Components from 'unplugin-vue-components/vite'
-import { Vuetify3Resolver } from 'unplugin-vue-components/resolvers'
+import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
 
 // const mobile =
 //   process.env.TAURI_PLATFORM === "android" ||
@@ -27,7 +27,7 @@ export default defineConfig(async () => ({
         '@vueuse/core',
         'vue-i18n',
       ],
-      dirs: ["./src/hooks/**", "./src/database/**"],
+      dirs: ['./src/hooks/**', './src/database/**'],
       vueTemplate: true,
       dts: 'src/auto-imports.d.ts',
     }),
@@ -35,7 +35,7 @@ export default defineConfig(async () => ({
       presets: [presetUno(), presetAttributify(), presetIcons()],
     }),
     Components({
-      resolvers: [Vuetify3Resolver()],
+      resolvers: [AntDesignVueResolver()],
       dts: 'src/components.d.ts',
     }),
   ],

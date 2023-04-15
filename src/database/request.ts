@@ -1,10 +1,10 @@
-import Database from "tauri-plugin-sql-api";
-import { snakeCase } from "snake-case";
-import { camelCase } from "camel-case";
+import Database from 'tauri-plugin-sql-api'
+import { snakeCase } from 'snake-case'
+import { camelCase } from 'camel-case'
 
 const PATH = `sqlite:data${import.meta.env.DEV ? '-dev' : ''}.db`
 
-const db = await Database.load(PATH);
+const db = await Database.load(PATH)
 
 interface Plan {
   id: number
@@ -24,7 +24,6 @@ interface Note {
 
 type CreateNote = Pick<Note, 'startTime' | 'endTime' | 'planId'> & Partial<Pick<Note, 'description'>>
 
-
 interface Label {
   id: number
   name: string
@@ -32,7 +31,6 @@ interface Label {
 }
 
 type CreateLabel = Pick<Label, 'name'>
-
 
 type TableName = 'plan' | 'note' | 'label'
 
@@ -57,12 +55,12 @@ function select<T>(query: string, bindValues?: unknown[]): Promise<T> {
 }
 
 function filterColumn(data) {
-  return data.map(i => {
+  return data.map((i) => {
     delete i.deleted_at
     const obj = {}
-    for (const key in i) {
+    for (const key in i)
       obj[camelCase(key)] = i[key]
-    }
+
     return obj
   })
 }
@@ -75,7 +73,7 @@ export function createPlan(data: CreatePlan) {
   return create('plan', data)
 }
 
-export function updatePlan(id:number, data: Partial<CreatePlan>) {
+export function updatePlan(id: number, data: Partial<CreatePlan>) {
   return update('plan', id, data)
 }
 
@@ -84,7 +82,7 @@ export function removePlan(id: number) {
 }
 
 export async function selectPlan() {
-  const data = await select<Array<Plan>>("SELECT * FROM plan WHERE deleted_at = 0")
+  const data = await select<Array<Plan>>('SELECT * FROM plan WHERE deleted_at = 0')
   const list = (await Promise.all(data.map(({ id }) => selectPlanTotalTime(id))))
   data.forEach((plan, index) => plan.totalTime = list[index].totalTime)
   return data
@@ -118,12 +116,12 @@ export function selectNoteByPlanId(id: number, start: number, end: number) {
     WHERE start_time > $1 AND
       start_time < $2 AND
       plan_id = ${id} AND
-      deleted_at = 0`, [start, end]).then(data => data.map(note => {
-        if (!note.description) {
-          note.description = ''
-        }
-        return note
-      }))
+      deleted_at = 0`, [start, end]).then(data => data.map((note) => {
+    if (!note.description)
+      note.description = ''
+
+    return note
+  }))
 }
 
 export function selectNoteByLabelId(id: number, start: number, end: number) {
@@ -135,12 +133,12 @@ export function selectNoteByLabelId(id: number, start: number, end: number) {
       note_label.note_id = note.id AND
       start_time > $1 AND
       start_time < $2 AND
-      note.deleted_at = 0;`, [start, end]).then(data => data.map(note => {
-        if (!note.description) {
-          note.description = ''
-        }
-        return note
-      }))
+      note.deleted_at = 0;`, [start, end]).then(data => data.map((note) => {
+    if (!note.description)
+      note.description = ''
+
+    return note
+  }))
 }
 
 export function createLabel(data: CreateLabel) {
@@ -156,7 +154,7 @@ export function removeLabel(id: number) {
 }
 
 export async function selectLabel() {
-  const data = await select<Array<Label>>("SELECT * FROM label WHERE deleted_at = 0")
+  const data = await select<Array<Label>>('SELECT * FROM label WHERE deleted_at = 0')
   const list = (await Promise.all(data.map(({ id }) => selectLabelTotalTime(id))))
   data.forEach((plan, index) => plan.totalTime = list[index].totalTime)
   return data

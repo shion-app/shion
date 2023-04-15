@@ -84,6 +84,7 @@ declare global {
   const resolveRef: typeof import('@vueuse/core')['resolveRef']
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
   const selectLabel: typeof import('./database/request')['selectLabel']
+  const selectNoteByLabelId: typeof import('./database/request')['selectNoteByLabelId']
   const selectNoteByPlanId: typeof import('./database/request')['selectNoteByPlanId']
   const selectPlan: typeof import('./database/request')['selectPlan']
   const shallowReactive: typeof import('vue')['shallowReactive']
@@ -368,6 +369,7 @@ declare module 'vue' {
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
     readonly selectLabel: UnwrapRef<typeof import('./database/request')['selectLabel']>
+    readonly selectNoteByLabelId: UnwrapRef<typeof import('./database/request')['selectNoteByLabelId']>
     readonly selectNoteByPlanId: UnwrapRef<typeof import('./database/request')['selectNoteByPlanId']>
     readonly selectPlan: UnwrapRef<typeof import('./database/request')['selectPlan']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
