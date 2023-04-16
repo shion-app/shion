@@ -1,13 +1,14 @@
-import type { Menu } from '../interfaces/'
+// @unocss-include
 
-export function useMore() {
+import type { Menu } from '../interfaces'
+
+export const useMore = defineStore('more', () => {
   const menu = ref<Menu>({
     key: 'more',
     title: 'more',
     icon: 'i-mdi:dots-vertical',
     children: [],
   })
-
   const map = new Map<string, Function>()
 
   function set(menu: Menu, path: string[] = []) {
@@ -25,16 +26,11 @@ export function useMore() {
     }
   }
 
-  const unwatch = watch(menu, (v) => {
+  watch(menu, (v) => {
     map.clear()
     set(v)
   }, {
     deep: true,
-  })
-
-  tryOnScopeDispose(() => {
-    unwatch()
-    menu.value.children = []
   })
 
   function handler(info) {
@@ -45,8 +41,13 @@ export function useMore() {
       click()
   }
 
+  function setMenu(children: Menu['children']) {
+    menu.value.children = children
+  }
+
   return {
     menu,
     handler,
+    setMenu,
   }
-}
+})

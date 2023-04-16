@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import type { SelectProps } from 'ant-design-vue'
 
-const { locale } = useI18n()
-const config = useConfig()
+const store = useConfig()
 
-watch(() => config.value.locale, v => locale.value = v)
+const { config } = storeToRefs(store)
 
 const localeOptions: SelectProps['options'] = [
   {

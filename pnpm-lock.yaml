@@ -17,6 +17,7 @@ specifiers:
   date-fns: ^2.29.3
   eslint: ^8.36.0
   lint-staged: ^13.2.1
+  pinia: ^2.0.34
   simple-git-hooks: ^2.8.1
   snake-case: ^3.0.4
   tauri-plugin-log-api: github:tauri-apps/tauri-plugin-log
@@ -40,6 +41,7 @@ dependencies:
   ant-design-vue: 3.2.17_vue@3.2.47
   camel-case: 4.1.2
   date-fns: 2.29.3
+  pinia: 2.0.34_hmuptsblhheur2tugfgucj7gc4
   snake-case: 3.0.4
   tauri-plugin-log-api: github.com/tauri-apps/tauri-plugin-log/05a9bfd9edb9b5f4ab95412bb607691708b65a25
   tauri-plugin-sql-api: github.com/tauri-apps/tauri-plugin-sql/3a8b9a6b244df7512bc5ef8692cebdedbab3ccce
@@ -3652,6 +3654,24 @@ packages:
     hasBin: true
     dev: true
 
+  /pinia/2.0.34_hmuptsblhheur2tugfgucj7gc4:
+    resolution: {integrity: sha512-cgOoGUiyqX0SSgX8XelK9+Ri4XA2/YyNtgjogwfzIx1g7iZTaZPxm7/bZYMCLU2qHRiHhxG7SuQO0eBacFNc2Q==}
+    peerDependencies:
+      '@vue/composition-api': ^1.4.0
+      typescript: '>=4.4.4'
+      vue: ^2.6.14 || ^3.2.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
+      '@vue/devtools-api': 6.5.0
+      typescript: 4.9.5
+      vue: 3.2.47
+      vue-demi: 0.14.0_vue@3.2.47
+    dev: false
+
   /pkg-types/1.0.2:
     resolution: {integrity: sha512-hM58GKXOcj8WTqUXnsQyJYXdeAPbythQgEF3nTcEo+nkD49chjQ9IKm/QJy9xf6JakXptz86h7ecP2024rrLaQ==}
     dependencies:
@@ -4192,7 +4212,6 @@ packages:
     resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
     engines: {node: '>=4.2.0'}
     hasBin: true
-    dev: true
 
   /ufo/1.1.1:
     resolution: {integrity: sha512-MvlCc4GHrmZdAllBc0iUDowff36Q9Ndw/UzqmEKyrfSzokTd9ZCy1i+IIk5hrYKkjoYVQyNbrw7/F8XJ2rEwTg==}

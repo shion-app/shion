@@ -5,3 +5,5 @@ nav:
   config: Config
 config:
   locale: Language
+plan:
+  create: Create plan

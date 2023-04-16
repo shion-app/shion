@@ -5,3 +5,5 @@ nav:
   config: 设置
 config:
   locale: 语言
+plan:
+  create: 创建计划

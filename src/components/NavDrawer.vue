@@ -1,7 +1,10 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const route = useRoute()
-const { menu: moreMenu, handler: handleMenuClick } = useMore()
+const store = useMore()
+
+const { menu: moreMenu } = storeToRefs(store)
+const { handler: handleMenuClick } = store
 
 const menu = computed(() => [{
   icon: 'i-mdi:view-grid',

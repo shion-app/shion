@@ -3,6 +3,7 @@ import 'uno.css'
 import { createApp } from 'vue'
 import { createI18n } from 'vue-i18n'
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { createPinia } from 'pinia'
 import messages from '@intlify/unplugin-vue-i18n/messages'
 import App from './App.vue'
 import routes from '~pages'
@@ -17,4 +18,6 @@ const router = createRouter({
   routes,
 })
 
-createApp(App).use(i18n).use(router).mount('#app')
+const pinia = createPinia()
+
+createApp(App).use(i18n).use(router).use(pinia).mount('#app')
