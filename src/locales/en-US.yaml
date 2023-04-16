@@ -1,4 +1,7 @@
 nav:
-  plan: plan
-  time: time
-  config: config
+  plan: Plan
+  time: Time
+  label: Label
+  config: Config
+config:
+  locale: Language

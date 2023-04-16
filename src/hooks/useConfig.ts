@@ -27,10 +27,9 @@ export function useConfig() {
 
 async function init() {
   const len = await store.length()
-  if (len != 0)
-    return
+  if (len == 0)
+    await create()
 
-  await create()
   await read()
 }
 

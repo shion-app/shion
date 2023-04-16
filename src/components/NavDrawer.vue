@@ -2,7 +2,7 @@
 const { t } = useI18n()
 const route = useRoute()
 
-const menu = [{
+const menu = computed(() => [{
   icon: 'i-mdi:view-grid',
   key: 'index',
   tip: t('nav.plan'),
@@ -13,11 +13,16 @@ const menu = [{
   tip: t('nav.time'),
   to: '/time',
 }, {
+  icon: 'i-mdi:label',
+  key: 'label',
+  tip: t('nav.label'),
+  to: '/label',
+}, {
   icon: 'i-mdi:cog',
   key: 'config',
   tip: t('nav.config'),
   to: '/config',
-}]
+}])
 
 const name = computed(() => route.name as string)
 </script>

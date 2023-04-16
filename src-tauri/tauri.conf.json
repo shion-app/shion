@@ -40,8 +40,8 @@
         "fullscreen": false,
         "resizable": true,
         "title": "shion",
-        "width": 800,
-        "height": 600
+        "width": 960,
+        "height": 540
       }
     ]
   }
