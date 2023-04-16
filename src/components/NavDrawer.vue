@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const route = useRoute()
+const { menu: moreMenu, handler: handleMenuClick } = useMore()
 
 const menu = computed(() => [{
   icon: 'i-mdi:view-grid',
@@ -30,7 +31,7 @@ const name = computed(() => route.name as string)
 <template>
   <a-layout style="min-height: 100vh">
     <a-layout-sider collapsed :trigger="null" theme="light">
-      <a-menu :selected-keys="[name]">
+      <a-menu :selected-keys="[name]" flex flex-col h-full @click="handleMenuClick">
         <a-menu-item v-for="{ key, icon, tip, to } in menu" :key="key">
           <template #icon>
             <div text-8 :class="icon" />
@@ -39,6 +40,8 @@ const name = computed(() => route.name as string)
             {{ tip }}
           </router-link>
         </a-menu-item>
+        <div flex-1 />
+        <sub-menu v-if="moreMenu.children?.length" :menu="moreMenu" />
       </a-menu>
     </a-layout-sider>
     <a-layout>

@@ -20,8 +20,10 @@ declare module '@vue/runtime-core' {
     AMenu: typeof import('ant-design-vue/es')['Menu']
     AMenuItem: typeof import('ant-design-vue/es')['MenuItem']
     ASelect: typeof import('ant-design-vue/es')['Select']
+    ASubMenu: typeof import('ant-design-vue/es')['SubMenu']
     NavDrawer: typeof import('./components/NavDrawer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SubMenu: typeof import('./components/SubMenu.vue')['default']
   }
 }
