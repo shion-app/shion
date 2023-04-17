@@ -9,7 +9,13 @@
     "types": [
       "@intlify/unplugin-vue-i18n/messages",
       "vite-plugin-pages/client"
-    ]
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "@database/*": ["src/database/*"],
+      "@locales/*": ["src/locales/*"],
+      "@interfaces/*": ["src/interfaces/*"]
+    }
   },
   "include": [
     "src/**/*.ts",

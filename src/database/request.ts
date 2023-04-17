@@ -1,8 +1,41 @@
 import Database from 'tauri-plugin-sql-api'
 import { snakeCase } from 'snake-case'
 import { camelCase } from 'camel-case'
+import { i18n } from '@locales/index'
 
 const PATH = `sqlite:data${import.meta.env.DEV ? '-dev' : ''}.db`
+
+const enum SqliteError {
+  UNHANDLED = -1,
+  SQLITE_CONSTRAINT_UNIQUE = 2067,
+}
+
+function parseError(error) {
+  const match = /\(code: (\d+)\)/.exec(error)!
+  const code = +match[1]
+  const msg = parseMessage(code, error)
+  return {
+    code,
+    msg,
+  }
+}
+
+function parseMessage(code: SqliteError, error) {
+  switch (code) {
+    case SqliteError.SQLITE_CONSTRAINT_UNIQUE: {
+      const match = /UNIQUE constraint failed:(.*)/.exec(error)!
+      const uniqueKeyList = match[1].split(',').map(i => i.trim().split('.')[1]).filter(i => i != 'deleted_at').map(i => camelCase(i))
+      // @ts-expect-error: Type instantiation is excessively deep and possibly infinite.ts(2589)
+      return i18n.global.t('error.unique', {
+        field: uniqueKeyList.join(', '),
+      })
+    }
+    default:
+      return i18n.global.t('error.unhandle', {
+        content: error,
+      })
+  }
+}
 
 const db = await Database.load(PATH)
 
@@ -12,7 +45,7 @@ interface Plan {
   totalTime: number
 }
 
-type CreatePlan = Pick<Plan, 'name'>
+export type CreatePlan = Pick<Plan, 'name'>
 
 interface Note {
   id: number
@@ -34,10 +67,15 @@ type CreateLabel = Pick<Label, 'name'>
 
 type TableName = 'plan' | 'note' | 'label'
 
-function create(table: TableName, data: Record<string, unknown>) {
+async function create(table: TableName, data: Record<string, unknown>) {
   const key = Object.keys(data).map(key => snakeCase(key)).join(', ')
   const value = Object.values(data).join(', ')
-  return db.execute(`INSERT INTO ${table} (${key}) VALUES ($1)`, [value])
+  try {
+    await db.execute(`INSERT INTO ${table} (${key}) VALUES ($1)`, [value])
+  }
+  catch (error) {
+    return parseError(error)
+  }
 }
 
 function update(table: TableName, id: number, data: Record<string, unknown>) {
@@ -64,10 +102,6 @@ function filterColumn(data) {
     return obj
   })
 }
-
-// export function selectAll(table: TableName) {
-//   return db.select(`SELECT * from ${table} WHERE deleted_at = 0`)
-// }
 
 export function createPlan(data: CreatePlan) {
   return create('plan', data)

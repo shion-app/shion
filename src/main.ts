@@ -1,17 +1,12 @@
 import 'uno.css'
+import 'ant-design-vue/es/message/style/css'
 
 import { createApp } from 'vue'
-import { createI18n } from 'vue-i18n'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { createPinia } from 'pinia'
-import messages from '@intlify/unplugin-vue-i18n/messages'
+import { i18n } from '@locales/index'
 import App from './App.vue'
 import routes from '~pages'
-
-const i18n = createI18n({
-  locale: 'en-US',
-  messages,
-})
 
 const router = createRouter({
   history: createWebHashHistory(),

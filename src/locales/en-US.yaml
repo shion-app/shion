@@ -7,3 +7,7 @@ config:
   locale: Language
 plan:
   create: Create plan
+  name: Name
+error:
+  unique: "{field} already exists"
+  unhandle: "Unhandled exception({content})"

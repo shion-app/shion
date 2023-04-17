@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Menu } from '../interfaces/'
+import type { Menu } from '@interfaces/index'
 
 defineProps<{
   menu: Menu

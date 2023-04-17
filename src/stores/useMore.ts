@@ -1,6 +1,6 @@
 // @unocss-include
 
-import type { Menu } from '../interfaces'
+import type { Menu } from '@interfaces/index'
 
 export const useMore = defineStore('more', () => {
   const menu = ref<Menu>({

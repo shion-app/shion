@@ -19,7 +19,6 @@ const localeOptions: SelectProps['options'] = [
 
 <template>
   <a-form
-    :model="config"
     layout="vertical"
   >
     <a-form-item

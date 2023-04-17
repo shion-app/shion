@@ -44,6 +44,7 @@
     "unplugin-vue-components": "^0.24.1",
     "vite": "^4.0.0",
     "vite-plugin-pages": "^0.29.0",
+    "vite-tsconfig-paths": "^4.2.0",
     "vue-tsc": "^1.0.11"
   },
   "simple-git-hooks": {
