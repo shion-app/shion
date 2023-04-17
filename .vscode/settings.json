@@ -3,6 +3,7 @@
     "src/locales"
   ],
   "i18n-ally.keystyle": "nested",
+  "i18n-ally.displayLanguage": "zh-CN",
   "prettier.enable": false,
   "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {

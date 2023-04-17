@@ -12,7 +12,7 @@ watchEffect(() => {
   ])
 })
 
-onScopeDispose(() => setMenu([]))
+onUnmounted(() => setMenu([]))
 </script>
 
 <template>
