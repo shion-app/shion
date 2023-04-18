@@ -1,7 +1,9 @@
 import Database from 'tauri-plugin-sql-api'
 import { snakeCase } from 'snake-case'
 import { camelCase } from 'camel-case'
+
 import { i18n } from '@locales/index'
+import type { CreatePlan, Plan } from '@interfaces/index'
 
 const PATH = `sqlite:data${import.meta.env.DEV ? '-dev' : ''}.db`
 
@@ -39,14 +41,6 @@ function parseMessage(code: SqliteError, error) {
 
 const db = await Database.load(PATH)
 
-interface Plan {
-  id: number
-  name: string
-  totalTime: number
-}
-
-export type CreatePlan = Pick<Plan, 'name'>
-
 interface Note {
   id: number
   startTime: number
@@ -69,19 +63,20 @@ type TableName = 'plan' | 'note' | 'label'
 
 async function create(table: TableName, data: Record<string, unknown>) {
   const key = Object.keys(data).map(key => snakeCase(key)).join(', ')
-  const value = Object.values(data).join(', ')
+  const placeholder = Object.keys(data).map((_, i) => `$${i + 1}`).join(', ')
+  const value = Object.values(data)
   try {
-    await db.execute(`INSERT INTO ${table} (${key}) VALUES ($1)`, [value])
+    return await db.execute(`INSERT INTO ${table} (${key}) VALUES (${placeholder})`, value)
   }
   catch (error) {
-    return parseError(error)
+    return Promise.reject(parseError(error))
   }
 }
 
 function update(table: TableName, id: number, data: Record<string, unknown>) {
-  const set = Object.entries(data).map(([k], i) => `${snakeCase(k)} = $${i + 1}`).join(', ')
+  const placeholder = Object.entries(data).map(([k], i) => `${snakeCase(k)} = $${i + 1}`).join(', ')
   const value = Object.values(data)
-  return db.execute(`UPDATE ${table} SET ${set} WHERE id = ${id}`, value)
+  return db.execute(`UPDATE ${table} SET ${placeholder} WHERE id = ${id}`, value)
 }
 
 function remove(table: TableName, id: number) {

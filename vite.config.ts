@@ -31,7 +31,7 @@ export default defineConfig(async () => ({
         'vue-router',
         'pinia',
       ],
-      dirs: ['./src/hooks/**', './src/database/**', './src/stores/**'],
+      dirs: ['./src/hooks/**', './src/database/**', './src/stores/**', './src/utils/**'],
       vueTemplate: true,
       dts: 'src/auto-imports.d.ts',
     }),
