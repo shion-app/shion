@@ -15,11 +15,7 @@ const enum SqliteError {
 function parseError(error) {
   const match = /\(code: (\d+)\)/.exec(error)!
   const code = +match[1]
-  const msg = parseMessage(code, error)
-  return {
-    code,
-    msg,
-  }
+  return parseMessage(code, error)
 }
 
 function parseMessage(code: SqliteError, error) {

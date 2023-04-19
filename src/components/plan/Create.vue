@@ -31,7 +31,7 @@ async function handleOk() {
     })
   }
   catch (error) {
-    message.error((error as ErrorMessage).msg)
+    message.error(error as string)
     return
   }
   visibleVModel.value = false
