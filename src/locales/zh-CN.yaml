@@ -7,10 +7,17 @@ config:
   locale: 语言
 plan:
   create: 创建计划
-  select: 选择计划
   name: 名称
 error:
   unique: "{field}已存在"
   unhandle: "未处理异常({content})"
 message:
   success: 操作成功
+note:
+  fill:
+    title: 填写信息
+    plan: 计划名称
+modal:
+  submit: 确认
+  cancel: 取消
+

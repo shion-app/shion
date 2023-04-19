@@ -1,13 +1,8 @@
 <script setup lang="ts">
-import type { FormInstance } from 'ant-design-vue'
-
-interface Plan {
-  id: number
-  name: string
-}
+import type { Plan } from '@interfaces/database'
 
 const props = withDefaults(defineProps<{
-  defaultValue?: Plan
+  defaultValue?: Pick<Plan, 'id' | 'name'>
 }>(), {
   defaultValue: () => ({
     id: 0,
@@ -15,23 +10,21 @@ const props = withDefaults(defineProps<{
   }),
 })
 
-const model = ref<Plan>(props.defaultValue)
-const formRef = ref<FormInstance>()
+const emit = defineEmits(['finish', 'cancel'])
 
-async function submit() {
-  await formRef.value?.validate()
-  return model.value
+const model = ref(props.defaultValue)
+
+function finish() {
+  emit('finish', {
+    name: model.value.name,
+  })
 }
-
-defineExpose({
-  submit,
-})
 </script>
 
 <template>
-  <a-form ref="formRef" :model="model" autocomplete="off">
+  <modal-form :model="model" @finish="finish" @cancel="() => $emit('cancel')">
     <a-form-item name="name" :label="$t('plan.name')" :rules="[{ required: true }]">
       <a-input v-model:value="model.name" />
     </a-form-item>
-  </a-form>
+  </modal-form>
 </template>

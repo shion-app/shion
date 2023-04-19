@@ -7,10 +7,16 @@ config:
   locale: Language
 plan:
   create: Create plan
-  select: Select plan
   name: Name
 error:
   unique: '{field} already exists'
   unhandle: Unhandled exception({content})
 message:
   success: Operate successfully
+note:
+  fill:
+    title: Fill in information
+    plan: Plan Name
+modal:
+  submit: Submit
+  cancel: Cancel
