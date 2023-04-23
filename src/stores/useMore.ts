@@ -41,8 +41,13 @@ export const useMore = defineStore('more', () => {
       click()
   }
 
-  function setMenu(children: Menu['children']) {
-    menu.value.children = children
+  function setMenu(handler: () => Menu['children']) {
+    watchEffect(() => {
+      menu.value.children = handler()
+    })
+    onScopeDispose(() => {
+      menu.value.children = []
+    })
   }
 
   return {

@@ -5,19 +5,15 @@ useConfig()
 
 const planCreateVisible = ref(false)
 
-watchEffect(() => {
-  setMenu([
-    {
-      key: 'createPlan',
-      title: t('plan.create'),
-      click() {
-        planCreateVisible.value = true
-      },
+setMenu(() => [
+  {
+    key: 'createPlan',
+    title: t('plan.create'),
+    click() {
+      planCreateVisible.value = true
     },
-  ])
-})
-
-onUnmounted(() => setMenu([]))
+  },
+])
 </script>
 
 <template>
