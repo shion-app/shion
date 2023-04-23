@@ -1,13 +1,11 @@
 <script setup lang="ts">
 const store = useTime()
-const { setMenu } = useMore()
-const { t } = useI18n()
 
 const { running, time } = storeToRefs(store)
 const { start, finish } = store
 
 const planId = ref(0)
-const disabled = computed(() => planId.value == 0)
+const visible = ref(false)
 
 async function create() {
   const time = Date.now()
@@ -23,19 +21,20 @@ async function create() {
   })
 }
 
-// watchEffect(() => {
-//   setMenu([
-//     {
-//       key: 'selectPlan',
-//       title: t('plan.select'),
-//       click() {
+function openModal() {
+  visible.value = true
+}
+function cancelModal() {
+  visible.value = false
+}
 
-//       },
-//     },
-//   ])
-// })
-
-// onUnmounted(() => setMenu([]))
+function finishModal(data: {
+  planId: number
+}) {
+  cancelModal()
+  planId.value = data.planId
+  create()
+}
 </script>
 
 <template>
@@ -48,10 +47,13 @@ async function create() {
         <div i-mdi:stop />
       </template>
     </a-button>
-    <a-button v-else :disabled="disabled" shape="circle" @click="create">
+    <a-button v-else shape="circle" @click="openModal">
       <template #icon>
         <div i-mdi:play />
       </template>
     </a-button>
   </div>
+  <a-modal v-model:visible="visible" destroy-on-close :title="$t('note.fill.title')" :footer="null">
+    <note-before-create @finish="finishModal" @cancel="cancelModal" />
+  </a-modal>
 </template>

@@ -23,6 +23,7 @@ declare module '@vue/runtime-core' {
     ASubMenu: typeof import('ant-design-vue/es')['SubMenu']
     ModalForm: typeof import('./components/ModalForm.vue')['default']
     NavDrawer: typeof import('./components/NavDrawer.vue')['default']
+    NoteBeforeCreate: typeof import('./components/note/BeforeCreate.vue')['default']
     PlanCreate: typeof import('./components/plan/Create.vue')['default']
     PlanForm: typeof import('./components/plan/Form.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
