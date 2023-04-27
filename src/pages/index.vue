@@ -3,7 +3,6 @@ import type { Plan } from '@interfaces/index'
 
 const { setMenu } = useMore()
 const { t } = useI18n()
-useConfig()
 
 const planCreateVisible = ref(false)
 const list = ref<Array<Plan>>([])

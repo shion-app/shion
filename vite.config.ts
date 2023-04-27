@@ -41,7 +41,6 @@ export default defineConfig(async () => ({
     Components({
       resolvers: [AntDesignVueResolver()],
       dts: 'src/components.d.ts',
-      directoryAsNamespace: true,
     }),
     Pages(),
     tsconfigPaths(),
