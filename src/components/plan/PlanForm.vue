@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CreatePlan } from '@interfaces/database'
+import type { CreatePlan } from '@interfaces/index'
 
 const props = withDefaults(defineProps<{
   defaultValue?: CreatePlan

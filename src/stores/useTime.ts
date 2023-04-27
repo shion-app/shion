@@ -41,17 +41,10 @@ export const useTime = defineStore('time', () => {
     _update = null
   }
 
-  function complement(num: number) {
-    return num < 10 ? `0${num}` : num
-  }
-
   function formatTime(time: number) {
-    const { milli, second, minute, hour } = extractTime(time)
-    const _milli = complement(~~(milli / 10))
-    const _second = complement(second)
-    const _minute = complement(minute)
-    const result = `${_minute}:${_second}.${_milli}`
-    return hour ? `${complement(hour)}:${result}` : result
+    const { milli, second, minute, hour } = extractTime(time).complement
+    const result = `${minute}:${second}.${milli}`
+    return hour ? `${hour}:${result}` : result
   }
 
   return {

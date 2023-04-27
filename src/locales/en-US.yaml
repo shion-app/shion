@@ -7,10 +7,13 @@ config:
   locale: Language
 plan:
   create: Create plan
+  update: Update plan
   name: Name
+  hourMinute: "{hour} hour {minute} min"
+  minute: "{minute} min"
 error:
   unique: '{field} already exists'
-  unhandle: Unhandled exception({content})
+  unhandle: Unhandled exception({error})
 message:
   success: Operate successfully
 note:
@@ -20,3 +23,11 @@ note:
 modal:
   submit: Submit
   cancel: Cancel
+  prompt: Prompt
+  confirmDelete: Are you sure to delete?
+button:
+  update: Update
+  remove: Remove
+time:
+  hour: hour
+  minute: min

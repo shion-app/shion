@@ -7,10 +7,13 @@ config:
   locale: 语言
 plan:
   create: 创建计划
+  update: 修改计划
   name: 名称
+  hourMinute: "{hour}小时{minute}分钟"
+  minute: "{minute}分钟"
 error:
   unique: "{field}已存在"
-  unhandle: "未处理异常({content})"
+  unhandle: "未处理异常({error})"
 message:
   success: 操作成功
 note:
@@ -20,4 +23,11 @@ note:
 modal:
   submit: 确认
   cancel: 取消
-
+  prompt: 提示
+  confirmDelete: 确认删除吗?
+button:
+  update: 更改
+  remove: 删除
+time:
+  hour: 小时
+  minute: 分钟

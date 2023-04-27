@@ -1,15 +1,48 @@
 <script setup lang="ts">
 import type { Plan } from '@interfaces/index'
+import { Modal, message } from 'ant-design-vue'
 
 const { setMenu } = useMore()
 const { t } = useI18n()
 
 const planCreateVisible = ref(false)
+const planUpdateVisible = ref(false)
+const planModel = ref({} as Plan)
 const list = ref<Array<Plan>>([])
 
 async function refresh() {
   const data = await selectPlan()
   list.value = data
+}
+
+function handleUpdate(plan: Plan) {
+  planUpdateVisible.value = true
+  planModel.value = plan
+}
+
+function handleRemove(plan: Plan) {
+  Modal.confirm({
+    title: t('modal.confirmDelete'),
+    async onOk() {
+      await removePlan(plan.id)
+      message.success(t('message.success'))
+      refresh()
+    },
+  })
+}
+
+function formatTime(time: number) {
+  const { hour: rHour, minute: rMinute } = extractTime(time).raw
+  const { minute } = extractTime(time).complement
+  if (rHour == 0) {
+    return t('plan.minute', {
+      minute: rMinute,
+    })
+  }
+  return t('plan.hourMinute', {
+    hour: rHour,
+    minute,
+  })
 }
 
 setMenu(() => [
@@ -31,18 +64,37 @@ refresh()
     grid grid-cols-3
   >
     <div
-      v-for="{ id, name, totalTime } in list"
-      :key="id"
+      v-for="plan in list"
+      :key="plan.id"
       rounded-2
       m-4
       p-4
       bg-white
       shadow-lg
+      class="group"
     >
-      <div>{{ name }}</div>
-      <div>{{ totalTime }}</div>
+      <div>{{ plan.name }}</div>
+      <div flex>
+        <div>{{ formatTime(plan.totalTime) }}</div>
+        <div flex-1 />
+        <div flex op-0 group-hover-op-100 transition-opacity-400 space-x-2>
+          <a-tooltip placement="bottom">
+            <template #title>
+              <span>{{ $t('button.update') }}</span>
+            </template>
+            <div i-mdi:file-edit text-6 cursor-pointer @click="handleUpdate(plan)" />
+          </a-tooltip>
+          <a-tooltip placement="bottom">
+            <template #title>
+              <span>{{ $t('button.remove') }}</span>
+            </template>
+            <div i-mdi:delete text-6 cursor-pointer @click="handleRemove(plan)" />
+          </a-tooltip>
+        </div>
+      </div>
     </div>
   </div>
   <a-empty v-else h-full flex flex-col justify-center />
   <plan-create v-model:visible="planCreateVisible" @refresh="refresh" />
+  <plan-update v-model:visible="planUpdateVisible" :model="planModel" @refresh="refresh" />
 </template>

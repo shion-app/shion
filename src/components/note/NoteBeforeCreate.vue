@@ -3,7 +3,9 @@ import type { SelectProps } from 'ant-design-vue'
 
 const emit = defineEmits(['finish', 'cancel'])
 
-const model = ref({
+const model = ref<{
+  planId?: number
+}>({
   planId: undefined,
 })
 

@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import type { Plan } from '@interfaces/index'
 import { message } from 'ant-design-vue'
 
 const props = defineProps<{
   visible: boolean
+  model: Plan
 }>()
 
 const emit = defineEmits(['refresh'])
@@ -12,7 +14,7 @@ const { t } = useI18n()
 
 async function finish(value) {
   try {
-    await createPlan(value)
+    await updatePlan(props.model.id, value)
   }
   catch (error) {
     message.error(t('error.unhandle', {
@@ -31,7 +33,7 @@ function cancel() {
 </script>
 
 <template>
-  <a-modal v-model:visible="visibleVModel" destroy-on-close :title="$t('plan.create')" :footer="null">
-    <plan-form @finish="finish" @cancel="cancel" />
+  <a-modal v-model:visible="visibleVModel" destroy-on-close :title="$t('plan.update')" :footer="null">
+    <plan-form :default-value="model" @finish="finish" @cancel="cancel" />
   </a-modal>
 </template>
