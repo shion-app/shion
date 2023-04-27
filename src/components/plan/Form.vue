@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import type { Plan } from '@interfaces/database'
+import type { CreatePlan } from '@interfaces/database'
 
 const props = withDefaults(defineProps<{
-  defaultValue?: Pick<Plan, 'id' | 'name'>
+  defaultValue?: CreatePlan
 }>(), {
   defaultValue: () => ({
-    id: 0,
     name: '',
   }),
 })

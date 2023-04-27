@@ -38,7 +38,7 @@
     "windows": [
       {
         "fullscreen": false,
-        "resizable": true,
+        "resizable": false,
         "title": "shion",
         "width": 960,
         "height": 540
