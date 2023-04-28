@@ -1,5 +1,6 @@
 import 'uno.css'
 import 'ant-design-vue/es/message/style/css'
+import '@unocss/reset/tailwind.css'
 
 import { createApp } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'

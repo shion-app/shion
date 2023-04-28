@@ -3,7 +3,7 @@ import { snakeCase } from 'snake-case'
 import { camelCase } from 'camel-case'
 
 import { i18n } from '@locales/index'
-import type { CreatePlan, Plan } from '@interfaces/index'
+import type { CreatePlan, Note, Plan } from '@interfaces/index'
 
 const PATH = `sqlite:data${import.meta.env.DEV ? '-dev' : ''}.db`
 
@@ -36,14 +36,6 @@ function parseMessage(code: SqliteError, error) {
 }
 
 const db = await Database.load(PATH)
-
-interface Note {
-  id: number
-  startTime: number
-  endTime: number
-  description: string
-  planId: number
-}
 
 type CreateNote = Pick<Note, 'startTime' | 'endTime' | 'planId'> & Partial<Pick<Note, 'description'>>
 

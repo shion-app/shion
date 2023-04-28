@@ -4,6 +4,7 @@ import { Modal, message } from 'ant-design-vue'
 
 const { setMenu } = useMore()
 const { t } = useI18n()
+const router = useRouter()
 
 const planCreateVisible = ref(false)
 const planUpdateVisible = ref(false)
@@ -11,8 +12,7 @@ const planModel = ref({} as Plan)
 const list = ref<Array<Plan>>([])
 
 async function refresh() {
-  const data = await selectPlan()
-  list.value = data
+  list.value = await selectPlan()
 }
 
 function handleUpdate(plan: Plan) {
@@ -45,6 +45,15 @@ function formatTime(time: number) {
   })
 }
 
+function viewNote(planId: number) {
+  router.push({
+    path: '/note',
+    query: {
+      planId,
+    },
+  })
+}
+
 setMenu(() => [
   {
     key: 'createPlan',
@@ -72,6 +81,7 @@ refresh()
       bg-white
       shadow-lg
       class="group"
+      @click="viewNote(plan.id)"
     >
       <div>{{ plan.name }}</div>
       <div flex>
@@ -82,13 +92,13 @@ refresh()
             <template #title>
               <span>{{ $t('button.update') }}</span>
             </template>
-            <div i-mdi:file-edit text-6 cursor-pointer @click="handleUpdate(plan)" />
+            <div i-mdi:file-edit text-6 cursor-pointer @click.stop="handleUpdate(plan)" />
           </a-tooltip>
           <a-tooltip placement="bottom">
             <template #title>
               <span>{{ $t('button.remove') }}</span>
             </template>
-            <div i-mdi:delete text-6 cursor-pointer @click="handleRemove(plan)" />
+            <div i-mdi:delete text-6 cursor-pointer @click.stop="handleRemove(plan)" />
           </a-tooltip>
         </div>
       </div>

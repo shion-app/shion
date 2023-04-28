@@ -5,3 +5,11 @@ export interface Plan {
 }
 
 export type CreatePlan = Pick<Plan, 'name'>
+
+export interface Note {
+  id: number
+  startTime: number
+  endTime: number
+  description: string
+  planId: number
+}

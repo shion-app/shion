@@ -11,7 +11,7 @@ specifiers:
   '@unocss/reset': ^0.50.4
   '@vitejs/plugin-vue': ^4.0.0
   '@vue/runtime-core': ^3.2.47
-  '@vueuse/core': ^9.13.0
+  '@vueuse/core': ^10.1.0
   ant-design-vue: ^3.2.17
   camel-case: ^4.1.2
   date-fns: ^2.29.3
@@ -38,15 +38,15 @@ specifiers:
 dependencies:
   '@tauri-apps/api': 1.2.0
   '@unocss/reset': 0.50.8
-  '@vueuse/core': 9.13.0_vue@3.2.47
+  '@vueuse/core': 10.1.0_vue@3.2.47
   ant-design-vue: 3.2.17_vue@3.2.47
   camel-case: 4.1.2
   date-fns: 2.29.3
   pinia: 2.0.34_hmuptsblhheur2tugfgucj7gc4
   snake-case: 3.0.4
-  tauri-plugin-log-api: github.com/tauri-apps/tauri-plugin-log/05a9bfd9edb9b5f4ab95412bb607691708b65a25
-  tauri-plugin-sql-api: github.com/tauri-apps/tauri-plugin-sql/3a8b9a6b244df7512bc5ef8692cebdedbab3ccce
-  tauri-plugin-store-api: github.com/tauri-apps/tauri-plugin-store/f0da2d1ac8370bd4cc7c1c0617175f0d5b5833a0
+  tauri-plugin-log-api: github.com/tauri-apps/tauri-plugin-log/782a97aeb30cf0f54355d04e6026842fa420bd83
+  tauri-plugin-sql-api: github.com/tauri-apps/tauri-plugin-sql/e180c047ed2de5b3fd89af92e4fed57520d8c918
+  tauri-plugin-store-api: github.com/tauri-apps/tauri-plugin-store/f4ef29684e4a32eddf51befaae98a5e498df8574
   vue: 3.2.47
   vue-i18n: 9.2.2_vue@3.2.47
   vue-router: 4.1.6_vue@3.2.47
@@ -65,7 +65,7 @@ devDependencies:
   simple-git-hooks: 2.8.1
   typescript: 4.9.5
   unocss: 0.50.8_vite@4.2.1
-  unplugin-auto-import: 0.15.3_@vueuse+core@9.13.0
+  unplugin-auto-import: 0.15.3_@vueuse+core@10.1.0
   unplugin-vue-components: 0.24.1_vue@3.2.47
   vite: 4.2.1_@types+node@18.15.11
   vite-plugin-pages: 0.29.0_vite@4.2.1
@@ -1309,22 +1309,22 @@ packages:
   /@vue/shared/3.2.47:
     resolution: {integrity: sha512-BHGyyGN3Q97EZx0taMQ+OLNuZcW3d37ZEVmEAyeoA9ERdGvm9Irc/0Fua8SNyOtV1w6BS4q25wbMzJujO9HIfQ==}
 
-  /@vueuse/core/9.13.0_vue@3.2.47:
-    resolution: {integrity: sha512-pujnclbeHWxxPRqXWmdkKV5OX4Wk4YeK7wusHqRwU0Q7EFusHoqNA/aPhB6KCh9hEqJkLAJo7bb0Lh9b+OIVzw==}
+  /@vueuse/core/10.1.0_vue@3.2.47:
+    resolution: {integrity: sha512-3Znoa5m5RO+z4/C9w6DRaKTR3wCVJvD5rav8HTDGsr+7rOZRHtcgFJ8NcCs0ZvIpmev2kExTa311ns5j2RbzDQ==}
     dependencies:
       '@types/web-bluetooth': 0.0.16
-      '@vueuse/metadata': 9.13.0
-      '@vueuse/shared': 9.13.0_vue@3.2.47
+      '@vueuse/metadata': 10.1.0
+      '@vueuse/shared': 10.1.0_vue@3.2.47
       vue-demi: 0.14.0_vue@3.2.47
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
 
-  /@vueuse/metadata/9.13.0:
-    resolution: {integrity: sha512-gdU7TKNAUVlXXLbaF+ZCfte8BjRJQWPCa2J55+7/h+yDtzw3vOoGQDRXzI6pyKyo6bXFT5/QoPE4hAknExjRLQ==}
+  /@vueuse/metadata/10.1.0:
+    resolution: {integrity: sha512-cM28HjDEw5FIrPE9rgSPFZvQ0ZYnOLAOr8hl1XM6tFl80U3WAR5ROdnAqiYybniwP5gt9MKKAJAqd/ab2aHkqg==}
 
-  /@vueuse/shared/9.13.0_vue@3.2.47:
-    resolution: {integrity: sha512-UrnhU+Cnufu4S6JLCPZnkWh0WwZGUp72ktOF2DFptMlOs3TOdVv8xJN53zhHGARmVOsz5KqOls09+J1NR6sBKw==}
+  /@vueuse/shared/10.1.0_vue@3.2.47:
+    resolution: {integrity: sha512-2X52ogu12i9DkKOQ01yeb/BKg9UO87RNnpm5sXkQvyORlbq8ONS5l39MYkjkeVWWjdT0teJru7a2S41dmHmqjQ==}
     dependencies:
       vue-demi: 0.14.0_vue@3.2.47
     transitivePeerDependencies:
@@ -4311,7 +4311,7 @@ packages:
       - vite
     dev: true
 
-  /unplugin-auto-import/0.15.3_@vueuse+core@9.13.0:
+  /unplugin-auto-import/0.15.3_@vueuse+core@10.1.0:
     resolution: {integrity: sha512-RLT8SqbPn4bT7yBshZId0uPSofKWnwr66RyDaxWaFb/+f7OTDOWAsVNz+hOQLBWSjvbekr2xZY9ccS8TDHJbCQ==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -4325,7 +4325,7 @@ packages:
     dependencies:
       '@antfu/utils': 0.7.2
       '@rollup/pluginutils': 5.0.2
-      '@vueuse/core': 9.13.0_vue@3.2.47
+      '@vueuse/core': 10.1.0_vue@3.2.47
       local-pkg: 0.4.3
       magic-string: 0.30.0
       minimatch: 9.0.0
@@ -4676,24 +4676,24 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  github.com/tauri-apps/tauri-plugin-log/05a9bfd9edb9b5f4ab95412bb607691708b65a25:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-log/tar.gz/05a9bfd9edb9b5f4ab95412bb607691708b65a25}
+  github.com/tauri-apps/tauri-plugin-log/782a97aeb30cf0f54355d04e6026842fa420bd83:
+    resolution: {commit: 782a97aeb30cf0f54355d04e6026842fa420bd83, repo: git+ssh://git@github.com/tauri-apps/tauri-plugin-log.git, type: git}
     name: tauri-plugin-log-api
     version: 0.0.0
     dependencies:
       '@tauri-apps/api': 1.2.0
     dev: false
 
-  github.com/tauri-apps/tauri-plugin-sql/3a8b9a6b244df7512bc5ef8692cebdedbab3ccce:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-sql/tar.gz/3a8b9a6b244df7512bc5ef8692cebdedbab3ccce}
+  github.com/tauri-apps/tauri-plugin-sql/e180c047ed2de5b3fd89af92e4fed57520d8c918:
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-sql/tar.gz/e180c047ed2de5b3fd89af92e4fed57520d8c918}
     name: tauri-plugin-sql-api
     version: 0.0.0
     dependencies:
       '@tauri-apps/api': 1.2.0
     dev: false
 
-  github.com/tauri-apps/tauri-plugin-store/f0da2d1ac8370bd4cc7c1c0617175f0d5b5833a0:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/f0da2d1ac8370bd4cc7c1c0617175f0d5b5833a0}
+  github.com/tauri-apps/tauri-plugin-store/f4ef29684e4a32eddf51befaae98a5e498df8574:
+    resolution: {commit: f4ef29684e4a32eddf51befaae98a5e498df8574, repo: git+ssh://git@github.com/tauri-apps/tauri-plugin-store.git, type: git}
     name: tauri-plugin-store-api
     version: 0.0.0
     dependencies:

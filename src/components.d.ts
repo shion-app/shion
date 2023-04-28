@@ -23,6 +23,7 @@ declare module '@vue/runtime-core' {
     ASelect: typeof import('ant-design-vue/es')['Select']
     ASubMenu: typeof import('ant-design-vue/es')['SubMenu']
     ATooltip: typeof import('ant-design-vue/es')['Tooltip']
+    Calendar: typeof import('./components/note/Calendar.vue')['default']
     ModalForm: typeof import('./components/shared/ModalForm.vue')['default']
     NavDrawer: typeof import('./components/nav/NavDrawer.vue')['default']
     NoteBeforeCreate: typeof import('./components/note/NoteBeforeCreate.vue')['default']
