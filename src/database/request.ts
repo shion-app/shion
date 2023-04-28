@@ -69,10 +69,15 @@ async function create(table: TableName, data: Record<string, unknown>) {
   }
 }
 
-function update(table: TableName, id: number, data: Record<string, unknown>) {
+async function update(table: TableName, id: number, data: Record<string, unknown>) {
   const placeholder = Object.entries(data).map(([k], i) => `${snakeCase(k)} = $${i + 1}`).join(', ')
   const value = Object.values(data)
-  return db.execute(`UPDATE ${table} SET ${placeholder} WHERE id = ${id}`, value)
+  try {
+    return await db.execute(`UPDATE ${table} SET ${placeholder} WHERE id = ${id}`, value)
+  }
+  catch (error) {
+    return Promise.reject(parseError(error))
+  }
 }
 
 function remove(table: TableName, id: number) {

@@ -15,9 +15,7 @@ async function finish(value) {
     await createPlan(value)
   }
   catch (error) {
-    message.error(t('error.unhandle', {
-      error,
-    }))
+    message.error(error as string)
     return
   }
   visibleVModel.value = false

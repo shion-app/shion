@@ -17,7 +17,7 @@ async function refresh() {
 
 function handleUpdate(plan: Plan) {
   planUpdateVisible.value = true
-  planModel.value = plan
+  Object.assign(planModel.value, plan)
 }
 
 function handleRemove(plan: Plan) {

@@ -17,9 +17,7 @@ async function finish(value) {
     await updatePlan(props.model.id, value)
   }
   catch (error) {
-    message.error(t('error.unhandle', {
-      error,
-    }))
+    message.error(error as string)
     return
   }
   visibleVModel.value = false
