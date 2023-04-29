@@ -20,7 +20,7 @@ init()
 </script>
 
 <template>
-  <div flex>
+  <div flex h-full>
     <div flex-1 />
     <Calendar />
   </div>
