@@ -9,8 +9,6 @@ plan:
   create: Create plan
   update: Update plan
   name: Name
-  hourMinute: "{hour} hour {minute} min"
-  minute: "{minute} min"
 error:
   unique: '{field} already exists'
   unhandle: Unhandled exception({error})

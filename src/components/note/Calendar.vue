@@ -1,5 +1,15 @@
 <script setup lang="ts">
 import { endOfMonth } from 'date-fns'
+import classnames from 'classnames'
+
+defineProps<{
+  data: Map<string, number>
+}>()
+
+const emit = defineEmits<{
+  (e: 'refresh', range: Array<number>): void
+  (e: 'click', date: Date): void
+}>()
 
 const { locale } = useI18n()
 
@@ -120,7 +130,7 @@ function setCurrentYear() {
 }
 
 function colorLevel(time: number) {
-  const { hour } = extractTime(time).raw
+  const hour = time / (60 * 60 * 1000)
   if (hour == 0)
     return ''
 
@@ -147,7 +157,7 @@ function init() {
   })
 }
 
-init()
+onBeforeUpdate(() => calendarMonthList.value = [])
 
 whenever(() => arrivedState.top, () => {
   const first = cellList.value.flat()[0]
@@ -159,9 +169,18 @@ whenever(() => arrivedState.bottom, () => {
   cellList.value.push(...generate(last.year + 1))
 })
 
+watch(cellList, (v) => {
+  const range = [...new Set(v.flat().map(i => i.year))]
+  emit('refresh', range)
+}, {
+  deep: true,
+})
+
 watch(mode, setCurrentYear, {
   flush: 'post',
 })
+
+init()
 </script>
 
 <template>
@@ -177,9 +196,10 @@ watch(mode, setCurrentYear, {
         {{ format(new Date('2023-1-1').setMonth(getInfo(list).month), 'MMM') }}
       </div>
       <div
-        v-for="{ date, visible } in list" :key="date" :class="{
+        v-for="{ date, year, month, visible } in list" :key="date" :class="classnames(colorLevel(data.get(`${year}-${month}-${date}`) || 0), {
           invisible: !visible,
-        }" w-2.5em h-2.5em inline-flex justify-center items-center hover:opacity-80 cursor-pointer rounded-full relative
+        })" w-2.5em h-2.5em inline-flex justify-center items-center hover:opacity-80 cursor-pointer rounded-full relative
+        @click="emit('click', new Date(`${year}-${month}-${date}`))"
       >
         <div
           w-full h-full

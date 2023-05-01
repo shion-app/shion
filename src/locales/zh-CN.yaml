@@ -9,8 +9,6 @@ plan:
   create: 创建计划
   update: 修改计划
   name: 名称
-  hourMinute: "{hour}小时{minute}分钟"
-  minute: "{minute}分钟"
 error:
   unique: "{field}已存在"
   unhandle: "未处理异常({error})"

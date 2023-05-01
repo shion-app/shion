@@ -6,6 +6,7 @@
     "moduleResolution": "node",
     "skipLibCheck": true,
     "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true,
     "types": [
       "@intlify/unplugin-vue-i18n/messages",
       "vite-plugin-pages/client"

@@ -47,7 +47,7 @@ const name = computed(() => route.name as string)
         <sub-menu v-if="moreMenu.children?.length" :menu="moreMenu" />
       </a-menu>
     </a-layout-sider>
-    <a-layout overflow-y-auto>
+    <a-layout overflow-y-auto class="bg-white!">
       <slot />
     </a-layout>
   </a-layout>

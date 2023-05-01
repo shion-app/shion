@@ -14,6 +14,7 @@ specifiers:
   '@vueuse/core': ^10.1.0
   ant-design-vue: ^3.2.17
   camel-case: ^4.1.2
+  classnames: ^2.3.2
   date-fns: ^2.29.3
   eslint: ^8.36.0
   lint-staged: ^13.2.1
@@ -41,10 +42,11 @@ dependencies:
   '@vueuse/core': 10.1.0_vue@3.2.47
   ant-design-vue: 3.2.17_vue@3.2.47
   camel-case: 4.1.2
+  classnames: 2.3.2
   date-fns: 2.29.3
   pinia: 2.0.34_hmuptsblhheur2tugfgucj7gc4
   snake-case: 3.0.4
-  tauri-plugin-log-api: github.com/tauri-apps/tauri-plugin-log/782a97aeb30cf0f54355d04e6026842fa420bd83
+  tauri-plugin-log-api: github.com/tauri-apps/tauri-plugin-log/be811332676ff73e1e891f31ce3de8d447fdf07e
   tauri-plugin-sql-api: github.com/tauri-apps/tauri-plugin-sql/e180c047ed2de5b3fd89af92e4fed57520d8c918
   tauri-plugin-store-api: github.com/tauri-apps/tauri-plugin-store/f4ef29684e4a32eddf51befaae98a5e498df8574
   vue: 3.2.47
@@ -1632,6 +1634,10 @@ packages:
     resolution: {integrity: sha512-eXTggHWSooYhq49F2opQhuHWgzucfF2YgODK4e1566GQs5BIfP30B0oenwBJHfWxAs2fyPB1s7Mg949zLf61Yw==}
     engines: {node: '>=8'}
     dev: true
+
+  /classnames/2.3.2:
+    resolution: {integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==}
+    dev: false
 
   /clean-regexp/1.0.0:
     resolution: {integrity: sha512-GfisEZEJvzKrmGWkvfhgzcz/BllN1USeqD2V6tg14OAOgaCD2Z/PUEuxnAZ/nPvmaHRG7a8y77p1T/IRQ4D1Hw==}
@@ -4676,8 +4682,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  github.com/tauri-apps/tauri-plugin-log/782a97aeb30cf0f54355d04e6026842fa420bd83:
-    resolution: {commit: 782a97aeb30cf0f54355d04e6026842fa420bd83, repo: git+ssh://git@github.com/tauri-apps/tauri-plugin-log.git, type: git}
+  github.com/tauri-apps/tauri-plugin-log/be811332676ff73e1e891f31ce3de8d447fdf07e:
+    resolution: {commit: be811332676ff73e1e891f31ce3de8d447fdf07e, repo: git+ssh://git@github.com/tauri-apps/tauri-plugin-log.git, type: git}
     name: tauri-plugin-log-api
     version: 0.0.0
     dependencies:
@@ -4685,7 +4691,7 @@ packages:
     dev: false
 
   github.com/tauri-apps/tauri-plugin-sql/e180c047ed2de5b3fd89af92e4fed57520d8c918:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-sql/tar.gz/e180c047ed2de5b3fd89af92e4fed57520d8c918}
+    resolution: {commit: e180c047ed2de5b3fd89af92e4fed57520d8c918, repo: git+ssh://git@github.com/tauri-apps/tauri-plugin-sql.git, type: git}
     name: tauri-plugin-sql-api
     version: 0.0.0
     dependencies:

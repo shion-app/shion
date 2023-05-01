@@ -32,16 +32,15 @@ function handleRemove(plan: Plan) {
 }
 
 function formatTime(time: number) {
-  const { hour: rHour, minute: rMinute } = extractTime(time).raw
-  const { minute } = extractTime(time).complement
-  if (rHour == 0) {
-    return t('plan.minute', {
-      minute: rMinute,
+  const { hour, minute } = extractTime(time).raw
+  if (hour == 0) {
+    return formatDuration({
+      minutes: minute,
     })
   }
-  return t('plan.hourMinute', {
-    hour: rHour,
-    minute,
+  return formatDuration({
+    hours: hour,
+    minutes: minute,
   })
 }
 
