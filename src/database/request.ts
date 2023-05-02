@@ -3,7 +3,7 @@ import { snakeCase } from 'snake-case'
 import { camelCase } from 'camel-case'
 
 import { i18n } from '@locales/index'
-import type { CreatePlan, Note, Plan } from '@interfaces/index'
+import type { CreateLabel, CreatePlan, Label, Note, Plan } from '@interfaces/index'
 
 const PATH = `sqlite:data${import.meta.env.DEV ? '-dev' : ''}.db`
 
@@ -39,15 +39,7 @@ const db = await Database.load(PATH)
 
 type CreateNote = Pick<Note, 'startTime' | 'endTime' | 'planId'> & Partial<Pick<Note, 'description'>>
 
-interface Label {
-  id: number
-  name: string
-  totalTime: number
-}
-
-type CreateLabel = Pick<Label, 'name'>
-
-type TableName = 'plan' | 'note' | 'label'
+type TableName = 'plan' | 'note' | 'label' | 'note_label'
 
 async function create(table: TableName, data: Record<string, unknown>) {
   const key = Object.keys(data).map(key => snakeCase(key)).join(', ')
@@ -191,4 +183,11 @@ function selectLabelTotalTime(id: number) {
           note_label.note_id = note.id AND
           note.deleted_at = 0
   `, [id]).then(i => i.pop()!)
+}
+
+export function relateNoteAndLabel(noteId: number, labelIdList: Array<number>) {
+  return Promise.all(labelIdList.map(labelId => create('note_label', {
+    noteId,
+    labelId,
+  })))
 }

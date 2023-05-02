@@ -96,6 +96,7 @@ declare global {
   const refDefault: typeof import('@vueuse/core')['refDefault']
   const refThrottled: typeof import('@vueuse/core')['refThrottled']
   const refWithControl: typeof import('@vueuse/core')['refWithControl']
+  const relateNoteAndLabel: typeof import('./database/request')['relateNoteAndLabel']
   const removeLabel: typeof import('./database/request')['removeLabel']
   const removeNote: typeof import('./database/request')['removeNote']
   const removePlan: typeof import('./database/request')['removePlan']
@@ -415,6 +416,7 @@ declare module 'vue' {
     readonly refDefault: UnwrapRef<typeof import('@vueuse/core')['refDefault']>
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
+    readonly relateNoteAndLabel: UnwrapRef<typeof import('./database/request')['relateNoteAndLabel']>
     readonly removeLabel: UnwrapRef<typeof import('./database/request')['removeLabel']>
     readonly removeNote: UnwrapRef<typeof import('./database/request')['removeNote']>
     readonly removePlan: UnwrapRef<typeof import('./database/request')['removePlan']>

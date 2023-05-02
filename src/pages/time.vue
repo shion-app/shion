@@ -5,17 +5,19 @@ const { running, time } = storeToRefs(store)
 const { start, finish } = store
 
 const planId = ref(0)
+const labelIdList = ref<Array<number>>([])
 const visible = ref(false)
 
 async function create() {
   const time = Date.now()
-  const result = await createNote({
+  const { lastInsertId: noteId } = await createNote({
     startTime: time,
     endTime: time,
     planId: planId.value,
   })
+  await relateNoteAndLabel(noteId, labelIdList.value)
   start(() => {
-    updateNote(result.lastInsertId, {
+    updateNote(noteId, {
       endTime: Date.now(),
     })
   })
@@ -28,12 +30,16 @@ function cancelModal() {
   visible.value = false
 }
 
-function finishModal(data: {
+async function finishModal(data: {
   planId: number
+  labelIdList: Array<number>
 }) {
   cancelModal()
   planId.value = data.planId
-  create()
+  labelIdList.value = data.labelIdList
+  await create()
+  planId.value = 0
+  labelIdList.value = []
 }
 </script>
 

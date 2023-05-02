@@ -12,15 +12,15 @@ const menu = computed(() => [{
   tip: t('nav.plan'),
   to: '/',
 }, {
-  icon: 'i-mdi:clock',
-  key: 'time',
-  tip: t('nav.time'),
-  to: '/time',
-}, {
   icon: 'i-mdi:label',
   key: 'label',
   tip: t('nav.label'),
   to: '/label',
+}, {
+  icon: 'i-mdi:clock',
+  key: 'time',
+  tip: t('nav.time'),
+  to: '/time',
 }, {
   icon: 'i-mdi:cog',
   key: 'config',

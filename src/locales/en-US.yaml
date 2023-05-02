@@ -9,6 +9,10 @@ plan:
   create: Create plan
   update: Update plan
   name: Name
+label:
+  create: Create Label
+  update: Update Label
+  name: Name
 error:
   unique: '{field} already exists'
   unhandle: Unhandled exception({error})
@@ -18,6 +22,7 @@ note:
   fill:
     title: Fill in information
     plan: Plan Name
+    label: Label Name
 modal:
   submit: Submit
   cancel: Cancel

@@ -5,15 +5,22 @@ const emit = defineEmits(['finish', 'cancel'])
 
 const model = ref<{
   planId?: number
+  labelIdList?: Array<number>
 }>({
   planId: undefined,
+  labelIdList: [],
 })
 
 const planOptions = ref<SelectProps['options']>([])
+const labelOptions = ref<SelectProps['options']>([])
 
 async function init() {
-  const data = await selectPlan()
-  planOptions.value = data.map(({ id, name }) => ({
+  const [plan, label] = await Promise.all([selectPlan(), selectLabel()])
+  planOptions.value = plan.map(({ id, name }) => ({
+    label: name,
+    value: id,
+  }))
+  labelOptions.value = label.map(({ id, name }) => ({
     label: name,
     value: id,
   }))
@@ -32,6 +39,13 @@ function finish() {
       <a-select
         v-model:value="model.planId"
         :options="planOptions"
+      />
+    </a-form-item>
+    <a-form-item name="labelIdList" :label="$t('note.fill.label')">
+      <a-select
+        v-model:value="model.labelIdList"
+        mode="multiple"
+        :options="labelOptions"
       />
     </a-form-item>
   </modal-form>

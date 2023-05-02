@@ -9,6 +9,10 @@ plan:
   create: 创建计划
   update: 修改计划
   name: 名称
+label:
+  create: 创建标签
+  update: 修改标签
+  name: 名称
 error:
   unique: "{field}已存在"
   unhandle: "未处理异常({error})"
@@ -18,6 +22,7 @@ note:
   fill:
     title: 填写信息
     plan: 计划名称
+    label: 标签名称
 modal:
   submit: 确认
   cancel: 取消

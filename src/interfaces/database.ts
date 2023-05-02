@@ -13,3 +13,11 @@ export interface Note {
   description: string
   planId: number
 }
+
+export interface Label {
+  id: number
+  name: string
+  totalTime: number
+}
+
+export type CreateLabel = Pick<Label, 'name'>

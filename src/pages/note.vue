@@ -4,12 +4,12 @@ import { getDate, getMonth, getYear, isSameDay } from 'date-fns'
 import type { ComponentPublicInstance } from 'vue'
 
 const { query } = useRoute()
-const { planId } = query
+const { planId, labelId } = query
 
-const list = ref<Array<Note>>([])
+const noteList = ref<Array<Note>>([])
 const calendarData = computed(() => {
   const map = new Map<string, number>()
-  list.value.forEach(({ startTime, endTime }) => {
+  noteList.value.forEach(({ startTime, endTime }) => {
     const year = getYear(startTime)
     const month = getMonth(startTime)
     const date = getDate(startTime)
@@ -28,7 +28,9 @@ const timelineList = ref<Array<ComponentPublicInstance>>([])
 
 async function refresh(start: number, end: number) {
   if (planId !== undefined)
-    list.value = await selectNoteByPlanId(Number(planId), start, end)
+    noteList.value = await selectNoteByPlanId(Number(planId), start, end)
+  if (labelId !== undefined)
+    noteList.value = await selectNoteByLabelId(Number(labelId), start, end)
 }
 
 function handleRefresh(range: Array<number>) {
@@ -71,9 +73,12 @@ onBeforeUpdate(() => timelineList.value = [])
 <template>
   <div flex h-full>
     <div flex-1 overflow-y-auto p-4>
-      <a-timeline>
+      <div v-if="!noteList.length" h-full flex justify-center items-center>
+        <a-empty />
+      </div>
+      <a-timeline v-else>
         <a-timeline-item
-          v-for="{ startTime, endTime, id, description } in list" :key="id"
+          v-for="{ startTime, endTime, id, description } in noteList" :key="id"
           :ref="el => timelineList.push(el as ComponentPublicInstance)"
           :data-year="getYear(startTime)"
           :data-month="getMonth(startTime)"
