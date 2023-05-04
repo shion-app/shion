@@ -24,7 +24,7 @@ const calendarData = computed(() => {
   })
   return map
 })
-const timelineList = ref<Array<ComponentPublicInstance>>([])
+const timelineList = useTemplateRefsList<ComponentPublicInstance>()
 
 async function refresh(start: number, end: number) {
   if (planId !== undefined)
@@ -66,8 +66,6 @@ function slide(time: Date) {
   if (node)
     node.scrollIntoView()
 }
-
-onBeforeUpdate(() => timelineList.value = [])
 </script>
 
 <template>
@@ -79,7 +77,7 @@ onBeforeUpdate(() => timelineList.value = [])
       <a-timeline v-else>
         <a-timeline-item
           v-for="{ startTime, endTime, id, description } in noteList" :key="id"
-          :ref="el => timelineList.push(el as ComponentPublicInstance)"
+          :ref="timelineList.set"
           :data-year="getYear(startTime)"
           :data-month="getMonth(startTime)"
           :data-date="getDate(startTime)"

@@ -27,7 +27,7 @@ type CalendarMode = 'month' | 'year'
 
 const cellList = ref<Array<MonthCell>>([])
 const mode = ref<CalendarMode>('month')
-const calendarMonthList = ref<Array<HTMLElement>>([])
+const calendarMonthList = useTemplateRefsList<HTMLElement>()
 const scrollCalendar = ref<HTMLElement>()
 const currentYear = ref(new Date().getFullYear())
 
@@ -157,8 +157,6 @@ function init() {
   })
 }
 
-onBeforeUpdate(() => calendarMonthList.value = [])
-
 whenever(() => arrivedState.top, () => {
   const first = cellList.value.flat()[0]
   cellList.value.unshift(...generate(first.year - 1))
@@ -186,7 +184,7 @@ init()
 <template>
   <DefineMonth v-slot="{ list }">
     <div
-      :ref="el => calendarMonthList.push(el as HTMLElement)" w-20em :data-month="getInfo(list).month"
+      :ref="calendarMonthList.set" w-20em :data-month="getInfo(list).month"
       :data-year="getInfo(list).year"
       :class="isMonthMode ? 'p-1.25em' : 'px-1.25em py-0.5em'"
     >
