@@ -48,16 +48,12 @@ async function finishModal(data: {
     <div font-mono text-20>
       {{ time }}
     </div>
-    <a-button v-if="running" shape="circle" @click="finish">
-      <template #icon>
-        <div i-mdi:stop />
-      </template>
-    </a-button>
-    <a-button v-else shape="circle" @click="openModal">
-      <template #icon>
-        <div i-mdi:play />
-      </template>
-    </a-button>
+    <div
+      shadow-lg hover:shadow-xl transition-shadow w-20 h-20 rounded-full cursor-pointer text-12 flex justify-center items-center bg-white
+    >
+      <div v-if="running" i-mdi:stop @click="finish" />
+      <div v-else i-mdi:play @click="openModal" />
+    </div>
   </div>
   <a-modal v-model:visible="visible" destroy-on-close :title="$t('note.fill.title')" :footer="null">
     <note-before-create @finish="finishModal" @cancel="cancelModal" />

@@ -14,8 +14,8 @@ label:
   update: 修改标签
   name: 名称
 error:
-  unique: "{field}已存在"
-  unhandle: "未处理异常({error})"
+  unique: '{field}已存在'
+  unhandle: '未处理异常({error})'
 message:
   success: 操作成功
 note:
@@ -34,3 +34,7 @@ button:
 time:
   hour: 小时
   minute: 分钟
+calendar:
+  year: 年
+  month: 月
+  switch: 切换到{mode}

@@ -34,3 +34,7 @@ button:
 time:
   hour: hour
   minute: min
+calendar:
+  year: year
+  month: month
+  switch: Switch to {mode}

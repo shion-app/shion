@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { endOfMonth } from 'date-fns'
-import classnames from 'classnames'
+import classNames from 'classnames'
 
 defineProps<{
   data: Map<string, number>
@@ -135,19 +135,19 @@ function colorLevel(time: number) {
     return ''
 
   if (hour < 1)
-    return 'bg-green-3'
+    return 'bg-green-2'
 
   else if (hour < 2)
-    return 'bg-green-4'
+    return 'bg-green-3'
 
   else if (hour < 3)
-    return 'bg-green-5'
+    return 'bg-green-4'
 
   else if (hour < 6)
-    return 'bg-green-6'
+    return 'bg-green-5'
 
   else
-    return 'bg-green-7'
+    return 'bg-green-6'
 }
 
 function init() {
@@ -194,7 +194,7 @@ init()
         {{ format(new Date('2023-1-1').setMonth(getInfo(list).month), 'MMM') }}
       </div>
       <div
-        v-for="{ date, year, month, visible } in list" :key="date" :class="classnames(colorLevel(data.get(`${year}-${month}-${date}`) || 0), {
+        v-for="{ date, year, month, visible } in list" :key="date" :class="classNames(colorLevel(data.get(`${year}-${month}-${date}`) || 0), {
           invisible: !visible,
         })" w-2.5em h-2.5em inline-flex justify-center items-center hover:opacity-80 cursor-pointer rounded-full relative
         @click="emit('click', new Date(`${year}-${month}-${date}`))"
@@ -208,7 +208,6 @@ init()
         >
           {{ date }}
         </div>
-        <div v-if="isMonthMode" absolute w-0.25em h-0.25em rounded-full bottom-4px />
       </div>
     </div>
   </DefineMonth>
@@ -218,17 +217,26 @@ init()
     }"
     @scroll="handleScroll"
   >
-    <div sticky top-0 bg-white shadow px-1.25em z-1>
-      <div flex justify-between items-center>
+    <div sticky top-0 bg-white shadow z-1>
+      <div flex justify-between items-center px-4>
         <div text-7 font-bold>
           {{ format(new Date().setFullYear(currentYear), 'yyyy') }}
         </div>
         <div cursor-pointer @click="toggleMode">
-          {{ modeName }}
+          <a-tooltip placement="bottom">
+            <template #title>
+              <span>{{ $t('calendar.switch', {
+                mode: isMonthMode ? $t('calendar.year') : $t('calendar.month'),
+              }) }}</span>
+            </template>
+            <div :class="classNames(isMonthMode ? 'i-mdi:calendar' : 'i-mdi:calendar-month', isMonthMode ? 'scale-100' : 'scale-300')" origin-right />
+          </a-tooltip>
         </div>
       </div>
-      <div v-for="day in dayName" v-show="isMonthMode" :key="day" w-45px h-45px inline-flex justify-center items-center>
-        {{ day }}
+      <div px-1.25em>
+        <div v-for="day in dayName" v-show="isMonthMode" :key="day" w-45px h-45px inline-flex justify-center items-center>
+          {{ day }}
+        </div>
       </div>
     </div>
     <template v-if="isMonthMode">

@@ -69,16 +69,17 @@ refresh()
 <template>
   <div
     v-if="list.length"
-    grid grid-cols-3
+    grid grid-cols-3 gap-6 p-4
   >
     <div
       v-for="plan in list"
       :key="plan.id"
       rounded-2
-      m-4
       p-4
       bg-white
       shadow-lg
+      hover:shadow-xl
+      transition-shadow
       class="group"
       @click="viewNote(plan.id)"
     >

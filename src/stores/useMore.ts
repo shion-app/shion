@@ -6,7 +6,7 @@ export const useMore = defineStore('more', () => {
   const menu = ref<Menu>({
     key: 'more',
     title: 'more',
-    icon: 'i-mdi:dots-vertical',
+    icon: 'i-mdi:dots-vertical scale-150',
     children: [],
   })
   const map = new Map<string, Function>()

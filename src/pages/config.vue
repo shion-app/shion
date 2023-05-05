@@ -18,16 +18,18 @@ const localeOptions: SelectProps['options'] = [
 </script>
 
 <template>
-  <a-form
-    layout="vertical"
-  >
-    <a-form-item
-      :label="$t('config.locale')"
+  <div h-full p-4>
+    <a-form
+      layout="vertical"
     >
-      <a-select
-        v-model:value="config.locale"
-        :options="localeOptions"
-      />
-    </a-form-item>
-  </a-form>
+      <a-form-item
+        :label="$t('config.locale')"
+      >
+        <a-select
+          v-model:value="config.locale"
+          :options="localeOptions"
+        />
+      </a-form-item>
+    </a-form>
+  </div>
 </template>

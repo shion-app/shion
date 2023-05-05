@@ -67,9 +67,20 @@ refresh()
 </script>
 
 <template>
-  <div v-if="list.length" grid grid-cols-3>
+  <div
+    v-if="list.length"
+    grid grid-cols-3 gap-6 p-4
+  >
     <div
-      v-for="label in list" :key="label.id" rounded-2 m-4 p-4 bg-white shadow-lg class="group"
+      v-for="label in list"
+      :key="label.id"
+      rounded-2
+      p-4
+      bg-white
+      shadow-lg
+      hover:shadow-xl
+      transition-shadow
+      class="group"
       @click="viewNote(label.id)"
     >
       <div>{{ label.name }}</div>
