@@ -27,8 +27,8 @@ type CalendarMode = 'month' | 'year'
 
 const cellList = ref<Array<MonthCell>>([])
 const mode = ref<CalendarMode>('month')
-const calendarMonthList = useTemplateRefsList<HTMLElement>()
-const scrollCalendar = ref<HTMLElement>()
+const calendarMonthRef = useTemplateRefsList<HTMLElement>()
+const scrollCalendarRef = ref<HTMLElement>()
 const currentYear = ref(new Date().getFullYear())
 
 const cellYearList = computed(() => {
@@ -44,8 +44,6 @@ const cellYearList = computed(() => {
   return list
 })
 const isMonthMode = computed(() => mode.value == 'month')
-const modeName = computed(() => isMonthMode.value ? '年' : '月')
-
 const isZH = computed(() => locale.value == 'zh-CN')
 const dayIndex = computed(() => isZH.value ? [1, 2, 3, 4, 5, 6, 0] : [0, 1, 2, 3, 4, 5, 6])
 const dayMap = {
@@ -56,11 +54,11 @@ const dayName = computed(() => {
   return dayIndex.value.map(i => dayMap[locale.value][i])
 })
 
-const { arrivedState } = useScroll(scrollCalendar, {
+const { arrivedState } = useScroll(scrollCalendarRef, {
   offset: { top: 30, bottom: 30 },
 })
+const { right, left, y, height } = useElementBounding(scrollCalendarRef)
 
-const { right, left, y, height } = useElementBounding(scrollCalendar)
 const point = computed(() => ({
   x: (left.value + right.value) / 2,
   y: y.value + height.value / 4,
@@ -100,7 +98,7 @@ function generate(year: number) {
   return list
 }
 
-function getInfo(monthList: MonthCell) {
+function getCell(monthList: MonthCell) {
   return monthList.at(-1)!
 }
 
@@ -108,7 +106,7 @@ function scrollToView() {
   const now = new Date()
   const month = now.getMonth()
   const year = now.getFullYear()
-  const node = calendarMonthList.value.find(i => Number(i.dataset.month) == month && Number(i.dataset.year) == year)
+  const node = calendarMonthRef.value.find(i => Number(i.dataset.month) == month && Number(i.dataset.year) == year)
   if (node)
     node.scrollIntoView()
 }
@@ -132,7 +130,7 @@ function setCurrentYear() {
 function colorLevel(time: number) {
   const hour = time / (60 * 60 * 1000)
   if (hour == 0)
-    return ''
+    return 'hover:bg-gray-2'
 
   if (hour < 1)
     return 'bg-green-2'
@@ -184,19 +182,21 @@ init()
 <template>
   <DefineMonth v-slot="{ list }">
     <div
-      :ref="calendarMonthList.set" w-20em :data-month="getInfo(list).month"
-      :data-year="getInfo(list).year"
+      :ref="calendarMonthRef.set" w-20em :data-month="getCell(list).month"
+      :data-year="getCell(list).year"
       :class="isMonthMode ? 'p-1.25em' : 'px-1.25em py-0.5em'"
     >
       <div
         h-2em text-1.25em font-bold
       >
-        {{ format(new Date('2023-1-1').setMonth(getInfo(list).month), 'MMM') }}
+        {{ format(new Date('2023-1-1').setMonth(getCell(list).month), 'MMM') }}
       </div>
       <div
         v-for="{ date, year, month, visible } in list" :key="date" :class="classNames(colorLevel(data.get(`${year}-${month}-${date}`) || 0), {
           invisible: !visible,
-        })" w-2.5em h-2.5em inline-flex justify-center items-center hover:opacity-80 cursor-pointer rounded-full relative
+        })"
+        w-2.5em h-2.5em inline-flex justify-center items-center
+        hover:opacity-80 opacity-100 transition-opacity cursor-pointer rounded-full relative
         @click="emit('click', new Date(`${year}-${month}-${date}`))"
       >
         <div
@@ -212,12 +212,11 @@ init()
     </div>
   </DefineMonth>
   <div
-    ref="scrollCalendar" bg-white h-full overflow-y-auto overflow-x-hidden :style="{
+    h-full flex flex-col bg-white :style="{
       fontSize: isMonthMode ? '18px' : '6px',
     }"
-    @scroll="handleScroll"
   >
-    <div sticky top-0 bg-white shadow z-1>
+    <div shadow>
       <div flex justify-between items-center px-4>
         <div text-7 font-bold>
           {{ format(new Date().setFullYear(currentYear), 'yyyy') }}
@@ -239,20 +238,26 @@ init()
         </div>
       </div>
     </div>
-    <template v-if="isMonthMode">
-      <ReuseMonth v-for="monthList, in cellList" :key="getInfo(monthList).year" :list="monthList" />
-    </template>
-    <template v-else>
-      <div
-        v-for="yearList, in cellYearList" :key="getInfo(yearList[0]).year" :class="{
-          'grid': !isMonthMode,
-          'grid-cols-3': !isMonthMode,
-        }"
-        w-360px
-        border-t
-      >
-        <ReuseMonth v-for="monthList, in yearList" :key="getInfo(monthList).year" :list="monthList" />
-      </div>
-    </template>
+    <div
+      ref="scrollCalendarRef"
+      flex-1 overflow-y-auto overflow-x-hidden
+      @scroll="handleScroll"
+    >
+      <template v-if="isMonthMode">
+        <ReuseMonth v-for="monthList, in cellList" :key="getCell(monthList).year" :list="monthList" />
+      </template>
+      <template v-else>
+        <div
+          v-for="yearList, in cellYearList" :key="getCell(yearList[0]).year" :class="{
+            'grid': !isMonthMode,
+            'grid-cols-3': !isMonthMode,
+          }"
+          w-360px
+          border-t
+        >
+          <ReuseMonth v-for="monthList, in yearList" :key="getCell(monthList).year" :list="monthList" />
+        </div>
+      </template>
+    </div>
   </div>
 </template>

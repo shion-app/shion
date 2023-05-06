@@ -54,8 +54,8 @@ export default defineConfig(async () => ({
         modifyVars: {
           'primary-color': '#1867c0',
           'border-radius-base': '6px',
-          'menu-item-vertical-margin': '0px',
-          'menu-item-boundary-margin': '0px',
+          'menu-item-vertical-margin': 0,
+          'menu-item-boundary-margin': 0,
         },
       },
     },

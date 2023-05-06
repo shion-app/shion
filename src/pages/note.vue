@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Note } from '@interfaces/index'
 import { getDate, getMonth, getYear, isSameDay } from 'date-fns'
-import type { ComponentPublicInstance } from 'vue'
 
 const { query } = useRoute()
 const { planId, labelId } = query
@@ -24,7 +23,29 @@ const calendarData = computed(() => {
   })
   return map
 })
-const timelineList = useTemplateRefsList<ComponentPublicInstance>()
+const noteGroupList = computed(() => {
+  const list: Array<Array<Note>> = []
+  let group: Array<Note> = []
+  for (const note of noteList.value) {
+    if (group.length) {
+      const last = group.at(-1)!
+      if (format(last.startTime, 'yyyy-MM-dd') == format(note.startTime, 'yyyy-MM-dd')) {
+        group.push(note)
+      }
+      else {
+        list.push(group)
+        group = [note]
+      }
+    }
+    else {
+      group.push(note)
+    }
+  }
+  list.push(group)
+  return list
+})
+
+const noteRef = useTemplateRefsList<HTMLElement>()
 
 async function refresh(start: number, end: number) {
   if (planId !== undefined)
@@ -58,13 +79,19 @@ function spendTime(start: number, end: number) {
 }
 
 function slide(time: Date) {
-  const nodeList = timelineList.value.map(i => i.$el) as HTMLElement[]
-  const node = nodeList.find((i) => {
+  const node = noteRef.value.find((i) => {
     const { year, month, date } = i.dataset
     return isSameDay(time, new Date(`${year}-${month}-${date}`))
   })
-  if (node)
-    node.scrollIntoView()
+  if (node) {
+    node.scrollIntoView({
+      block: 'center',
+    })
+  }
+}
+
+function getNote(list: Array<Note>) {
+  return list[0]
 }
 </script>
 
@@ -74,22 +101,31 @@ function slide(time: Date) {
       <div v-if="!noteList.length" h-full flex justify-center items-center>
         <a-empty />
       </div>
-      <a-timeline v-else>
-        <a-timeline-item
-          v-for="{ startTime, endTime, id, description } in noteList" :key="id"
-          :ref="timelineList.set"
-          :data-year="getYear(startTime)"
-          :data-month="getMonth(startTime)"
-          :data-date="getDate(startTime)"
+      <div v-else space-y-4>
+        <div
+          v-for="group in noteGroupList" :key="group.map(i => i.id).join('-')"
+          :ref="noteRef.set"
+          :data-year="getYear(getNote(group).startTime)"
+          :data-month="getMonth(getNote(group).startTime)"
+          :data-date="getDate(getNote(group).startTime)"
+          p-4 bg-white rounded-4 space-y-2
         >
-          <div>
-            {{ format(startTime, 'MM-dd') }}
+          <div flex items-center>
+            <div i-mdi:calendar-text text-6 mr-2 />
+            <div text-5>
+              {{ format(getNote(group).startTime, 'yyyy-MM-dd') }}
+            </div>
           </div>
-          <div>{{ format(startTime, 'HH : mm') }} - {{ format(endTime, 'HH : mm') }}</div>
-          <div>{{ spendTime(startTime, endTime) }}</div>
-          <div>{{ description }}</div>
-        </a-timeline-item>
-      </a-timeline>
+          <div v-for="{ startTime, endTime, id, description } in group" :key="id" flex>
+            <div i-mdi:notebook text-6 mr-2 />
+            <div>
+              <div>{{ format(startTime, 'HH : mm') }} - {{ format(endTime, 'HH : mm') }}</div>
+              <div>{{ spendTime(startTime, endTime) }}</div>
+              <div>{{ description }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <Calendar :data="calendarData" @refresh="handleRefresh" @click="slide" />
   </div>
