@@ -39,12 +39,27 @@ export default defineConfig(async () => ({
       presets: [presetUno(), presetAttributify(), presetIcons()],
     }),
     Components({
-      resolvers: [AntDesignVueResolver()],
+      resolvers: [AntDesignVueResolver({
+        importStyle: 'less',
+      })],
       dts: 'src/components.d.ts',
     }),
     Pages(),
     tsconfigPaths(),
   ],
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true,
+        modifyVars: {
+          'primary-color': '#1867c0',
+          'border-radius-base': '6px',
+          'menu-item-vertical-margin': '0px',
+          'menu-item-boundary-margin': '0px',
+        },
+      },
+    },
+  },
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   // prevent vite from obscuring rust errors
   clearScreen: false,

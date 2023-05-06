@@ -13,7 +13,6 @@
     ],
     "baseUrl": "./",
     "paths": {
-      "@database/*": ["src/database/*"],
       "@locales/*": ["src/locales/*"],
       "@interfaces/*": ["src/interfaces/*"]
     }

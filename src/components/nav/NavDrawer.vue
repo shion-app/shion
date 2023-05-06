@@ -34,7 +34,7 @@ const name = computed(() => route.name as string)
 <template>
   <a-layout h-screen>
     <a-layout-sider collapsed :trigger="null" theme="light" collapsed-width="60">
-      <a-menu :selected-keys="[name]" flex flex-col h-full @click="handleMenuClick">
+      <a-menu :selected-keys="[name]" flex flex-col h-full space-y-1 @click="handleMenuClick">
         <a-menu-item v-for="{ key, icon, tip, to } in menu" :key="key">
           <template #icon>
             <div :class="icon" scale-150 />
@@ -47,7 +47,7 @@ const name = computed(() => route.name as string)
         <sub-menu v-if="moreMenu.children?.length" :menu="moreMenu" />
       </a-menu>
     </a-layout-sider>
-    <a-layout overflow-y-auto class="bg-blue-100">
+    <a-layout overflow-y-auto>
       <slot />
     </a-layout>
   </a-layout>
