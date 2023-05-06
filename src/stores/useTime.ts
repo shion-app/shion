@@ -18,7 +18,7 @@ export const useTime = defineStore('time', () => {
   function count() {
     frame = requestAnimationFrame(() => {
       endTime = Date.now()
-      if (endTime - currentTime > 1000 * 6) {
+      if (endTime - currentTime > 1000 * 60) {
         currentTime = endTime
         _update!()
       }
@@ -42,9 +42,10 @@ export const useTime = defineStore('time', () => {
   }
 
   function formatTime(time: number) {
-    const { milli, second, minute, hour } = extractTime(time).complement
+    const { complement, raw } = extractTime(time)
+    const { milli, second, minute, hour } = complement
     const result = `${minute}:${second}.${milli}`
-    return hour ? `${hour}:${result}` : result
+    return raw.hour ? `${hour}:${result}` : result
   }
 
   return {
