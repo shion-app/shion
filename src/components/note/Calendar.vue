@@ -30,6 +30,8 @@ const mode = ref<CalendarMode>('month')
 const calendarMonthRef = useTemplateRefsList<HTMLElement>()
 const scrollCalendarRef = ref<HTMLElement>()
 const currentYear = ref(new Date().getFullYear())
+const currentMonth = ref(new Date().getMonth())
+const isScrollToView = ref(false)
 
 const cellYearList = computed(() => {
   const list: Array<Array<MonthCell>> = []
@@ -103,27 +105,35 @@ function getCell(monthList: MonthCell) {
 }
 
 function scrollToView() {
-  const now = new Date()
-  const month = now.getMonth()
-  const year = now.getFullYear()
-  const node = calendarMonthRef.value.find(i => Number(i.dataset.month) == month && Number(i.dataset.year) == year)
-  if (node)
+  const node = calendarMonthRef.value.find(i => Number(i.dataset.month) == currentMonth.value && Number(i.dataset.year) == currentYear.value)
+  if (node) {
+    isScrollToView.value = true
     node.scrollIntoView()
+    nextTick(() => {
+      isScrollToView.value = false
+    })
+  }
 }
 
-function toggleMode() {
+async function toggleMode() {
   mode.value = mode.value == 'month' ? 'year' : 'month'
+  await nextTick()
+  scrollToView()
 }
 
 function handleScroll() {
-  setCurrentYear()
+  setCurrentTime()
 }
 
-function setCurrentYear() {
+async function setCurrentTime() {
+  if (isScrollToView.value)
+    return
   const list = document.elementsFromPoint(point.value.x, point.value.y) as HTMLElement[]
   for (const node of list) {
-    if (node.dataset.year)
+    if (node.dataset.year) {
       currentYear.value = Number(node.dataset.year)
+      currentMonth.value = Number(node.dataset.month)
+    }
   }
 }
 
@@ -150,9 +160,6 @@ function colorLevel(time: number) {
 
 function init() {
   cellList.value = generate(new Date().getFullYear())
-  onMounted(() => {
-    scrollToView()
-  })
 }
 
 whenever(() => arrivedState.top, () => {
@@ -172,9 +179,7 @@ watch(cellList, (v) => {
   deep: true,
 })
 
-watch(mode, setCurrentYear, {
-  flush: 'post',
-})
+onMounted(scrollToView)
 
 init()
 </script>
