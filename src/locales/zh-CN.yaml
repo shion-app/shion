@@ -23,6 +23,10 @@ note:
     title: 填写信息
     plan: 计划名称
     label: 标签名称
+  update:
+    title: 修改记录
+    timeRange: 时间范围
+    description: 描述
 modal:
   submit: 确认
   cancel: 取消

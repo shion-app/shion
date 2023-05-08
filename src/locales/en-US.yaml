@@ -23,6 +23,10 @@ note:
     title: Fill in information
     plan: Plan Name
     label: Label Name
+  update:
+    title: Update Note
+    timeRange: Time range
+    description: Description
 modal:
   submit: Submit
   cancel: Cancel

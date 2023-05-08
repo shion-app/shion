@@ -30,6 +30,8 @@ declare module '@vue/runtime-core' {
     ModalForm: typeof import('./components/shared/ModalForm.vue')['default']
     NavDrawer: typeof import('./components/nav/NavDrawer.vue')['default']
     NoteBeforeCreate: typeof import('./components/note/NoteBeforeCreate.vue')['default']
+    NoteForm: typeof import('./components/note/NoteForm.vue')['default']
+    NoteUpdate: typeof import('./components/note/NoteUpdate.vue')['default']
     PlanCreate: typeof import('./components/plan/PlanCreate.vue')['default']
     PlanForm: typeof import('./components/plan/PlanForm.vue')['default']
     PlanUpdate: typeof import('./components/plan/PlanUpdate.vue')['default']

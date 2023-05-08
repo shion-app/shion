@@ -1,11 +1,23 @@
 <script setup lang="ts">
 import type { Note } from '@interfaces/index'
+import { Modal, message } from 'ant-design-vue'
+
 import { getDate, getMonth, getYear, isSameDay } from 'date-fns'
 
 const { query } = useRoute()
+const { t } = useI18n()
+
 const { planId, labelId } = query
 
+const noteRange = {
+  start: 0,
+  end: 0,
+}
+
 const noteList = ref<Array<Note>>([])
+const noteUpdateVisible = ref(false)
+const noteModel = ref({} as Note)
+
 const calendarData = computed(() => {
   const map = new Map<string, number>()
   noteList.value.forEach(({ startTime, endTime }) => {
@@ -66,6 +78,8 @@ function handleRefresh(range: Array<number>) {
     start = new Date(`${range[0]}-1-1`).getTime()
     end = new Date(`${range[0] + 1}-1-1`).getTime()
   }
+  noteRange.start = start
+  noteRange.end = end
   refresh(start, end)
 }
 
@@ -93,6 +107,22 @@ function slide(time: Date) {
 function getNote(list: Array<Note>) {
   return list[0]
 }
+
+function handleRemove(note: Note) {
+  Modal.confirm({
+    title: t('modal.confirmDelete'),
+    async onOk() {
+      await removeNote(note.id)
+      message.success(t('message.success'))
+      refresh(noteRange.start, noteRange.end)
+    },
+  })
+}
+
+function handleUpdate(note: Note) {
+  noteUpdateVisible.value = true
+  Object.assign(noteModel.value, note)
+}
 </script>
 
 <template>
@@ -116,17 +146,33 @@ function getNote(list: Array<Note>) {
               {{ format(getNote(group).startTime, 'yyyy-MM-dd') }}
             </div>
           </div>
-          <div v-for="{ startTime, endTime, id, description } in group" :key="id" flex>
+          <div v-for="note in group" :key="note.id" flex class="group">
             <div i-mdi:notebook text-6 mr-2 />
             <div>
-              <div>{{ format(startTime, 'HH : mm') }} - {{ format(endTime, 'HH : mm') }}</div>
-              <div>{{ spendTime(startTime, endTime) }}</div>
-              <div>{{ description }}</div>
+              <div>{{ format(note.startTime, 'HH : mm') }} - {{ format(note.endTime, 'HH : mm') }}</div>
+              <div>{{ spendTime(note.startTime, note.endTime) }}</div>
+              <div>{{ note.description }}</div>
+            </div>
+            <div flex-1 />
+            <div flex op-0 group-hover-op-100 transition-opacity-400 space-x-2 items-end>
+              <a-tooltip placement="bottom">
+                <template #title>
+                  <span>{{ $t('button.update') }}</span>
+                </template>
+                <div i-mdi:file-edit text-6 cursor-pointer @click="handleUpdate(note)" />
+              </a-tooltip>
+              <a-tooltip placement="bottom">
+                <template #title>
+                  <span>{{ $t('button.remove') }}</span>
+                </template>
+                <div i-mdi:delete text-6 cursor-pointer @click="handleRemove(note)" />
+              </a-tooltip>
             </div>
           </div>
         </div>
       </div>
     </div>
     <Calendar :data="calendarData" @refresh="handleRefresh" @click="slide" />
+    <note-update v-model:visible="noteUpdateVisible" :model="noteModel" @refresh="() => refresh(noteRange.start, noteRange.end)" />
   </div>
 </template>
