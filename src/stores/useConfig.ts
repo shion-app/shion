@@ -1,5 +1,6 @@
 import { Store } from 'tauri-plugin-store-api'
 import { getVersion } from '@tauri-apps/api/app'
+import { invoke } from '@tauri-apps/api'
 
 interface Config {
   version: string
@@ -9,7 +10,7 @@ interface Config {
 const PATH = `config${import.meta.env.DEV ? '-dev' : ''}.json`
 
 export const useConfig = defineStore('config', () => {
-  const { locale } = useI18n()
+  const { locale, t } = useI18n()
 
   const store = new Store(PATH)
   const config = ref<Config>({} as Config)
@@ -52,7 +53,14 @@ export const useConfig = defineStore('config', () => {
     deep: true,
   })
 
-  watch(() => config.value.locale, v => locale.value = v)
+  watch(() => config.value.locale, (v) => {
+    locale.value = v
+    invoke('update_tray_menu', {
+      data: {
+        quit: t('tray.quit'),
+      },
+    })
+  })
 
   return {
     config,

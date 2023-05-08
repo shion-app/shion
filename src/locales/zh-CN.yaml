@@ -38,3 +38,5 @@ calendar:
   year: 年
   month: 月
   switch: 切换到{mode}
+tray:
+  quit: 退出

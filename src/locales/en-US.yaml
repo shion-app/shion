@@ -38,3 +38,5 @@ calendar:
   year: year
   month: month
   switch: Switch to {mode}
+tray:
+  quit: Quit
