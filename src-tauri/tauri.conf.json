@@ -24,7 +24,7 @@
         "icons/icon.ico"
       ],
       "identifier": "hanaTsuk1.shion",
-      "targets": "all"
+      "targets": "nsis"
     },
     "systemTray": {
       "iconPath": "icons/icon.png",
