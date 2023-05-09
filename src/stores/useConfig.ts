@@ -13,7 +13,7 @@ export const useConfig = defineStore('config', () => {
   const { locale, t } = useI18n()
 
   const store = new Store(PATH)
-  const config = ref<Config>({} as Config)
+  const config = ref({} as Config)
 
   async function init() {
     const len = await store.length()
@@ -35,11 +35,7 @@ export const useConfig = defineStore('config', () => {
   }
 
   async function read() {
-    const data = {} as Config
-    for (const [key, value] of await store.entries())
-      data[key] = value
-
-    config.value = data
+    config.value = Object.fromEntries(await store.entries()) as unknown as Config
   }
 
   init()

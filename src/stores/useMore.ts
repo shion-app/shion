@@ -1,6 +1,7 @@
 // @unocss-include
 
 import type { Menu } from '@interfaces/index'
+import type { MenuInfo } from 'ant-design-vue/es/menu/src/interface'
 
 export const useMore = defineStore('more', () => {
   const menu = ref<Menu>({
@@ -33,9 +34,8 @@ export const useMore = defineStore('more', () => {
     deep: true,
   })
 
-  function handler(info) {
-    const { keyPath } = info
-    const key = (keyPath as string[]).join('.')
+  function handleClick({ keyPath }: MenuInfo) {
+    const key = keyPath!.join('.')
     const click = map.get(key)
     if (click)
       click()
@@ -52,7 +52,7 @@ export const useMore = defineStore('more', () => {
 
   return {
     menu,
-    handler,
+    handleClick,
     setMenu,
   }
 })

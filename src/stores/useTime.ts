@@ -2,10 +2,12 @@ export const useTime = defineStore('time', () => {
   const running = ref(false)
   const spend = ref(0)
   const time = computed(() => formatTime(spend.value))
+
   let startTime = 0
   let endTime = 0
   let currentTime = 0
   let frame: number
+  const INTERVAL = 1000 * 60
   let _update: Function | null
 
   function start(update: Function) {
@@ -18,7 +20,7 @@ export const useTime = defineStore('time', () => {
   function count() {
     frame = requestAnimationFrame(() => {
       endTime = Date.now()
-      if (endTime - currentTime > 1000 * 60) {
+      if (endTime - currentTime > INTERVAL) {
         currentTime = endTime
         _update!()
       }

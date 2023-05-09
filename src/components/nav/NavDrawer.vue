@@ -4,7 +4,7 @@ const route = useRoute()
 const store = useMore()
 
 const { menu: moreMenu } = storeToRefs(store)
-const { handler: handleMenuClick } = store
+const { handleClick } = store
 
 const menu = computed(() => [{
   icon: 'i-mdi:view-grid',
@@ -34,7 +34,7 @@ const name = computed(() => route.name as string)
 <template>
   <a-layout h-screen>
     <a-layout-sider collapsed :trigger="null" theme="light" collapsed-width="60">
-      <a-menu :selected-keys="[name]" flex flex-col h-full space-y-1 @click="handleMenuClick">
+      <a-menu :selected-keys="[name]" flex flex-col h-full space-y-1 @click="handleClick">
         <a-menu-item v-for="{ key, icon, tip, to } in menu" :key="key">
           <template #icon>
             <div :class="icon" scale-150 />
