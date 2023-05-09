@@ -28,10 +28,10 @@ note:
     timeRange: 时间范围
     description: 描述
 modal:
-  submit: 确认
+  submit: 确定
   cancel: 取消
   prompt: 提示
-  confirmDelete: 确认删除吗?
+  confirmDelete: 确定删除吗?
 button:
   update: 更改
   remove: 删除

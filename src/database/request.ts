@@ -3,7 +3,7 @@ import { snakeCase } from 'snake-case'
 import { camelCase } from 'camel-case'
 
 import { i18n } from '@locales/index'
-import type { CreateLabel, CreatePlan, Label, Note, Plan } from '@interfaces/index'
+import type { Label, Note, Plan } from '@interfaces/index'
 
 const PATH = `sqlite:data${import.meta.env.DEV ? '-dev' : ''}.db`
 
@@ -38,6 +38,10 @@ function parseMessage(code: SqliteError, error) {
 const db = await Database.load(PATH)
 
 type CreateNote = Pick<Note, 'startTime' | 'endTime' | 'planId'> & Partial<Pick<Note, 'description'>>
+
+ type CreatePlan = Pick<Plan, 'name'>
+
+ type CreateLabel = Pick<Label, 'name'>
 
 type TableName = 'plan' | 'note' | 'label' | 'note_label'
 

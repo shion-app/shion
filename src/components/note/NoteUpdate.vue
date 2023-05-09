@@ -1,37 +1,59 @@
 <script setup lang="ts">
-import type { Note } from '@interfaces/index'
 import { message } from 'ant-design-vue'
+import { RangePicker } from 'ant-design-vue/es/date-picker/date-fns'
+
+import type { Note } from '@interfaces/index'
 
 const props = defineProps<{
   visible: boolean
   model: Note
 }>()
 
-const emit = defineEmits(['refresh'])
+const emit = defineEmits(['refresh', 'update:visible'])
 
-const { visible: visibleVModel } = useVModels(props)
+const { visible: visibleVModel, model: vModel } = useVModels(props)
 const { t } = useI18n()
+const { close } = useFormDialog(visibleVModel, vModel)
 
-async function finish(value) {
+const range = computed<[Date, Date]>({
+  get() {
+    return [new Date(vModel.value.startTime), new Date(vModel.value.endTime)]
+  },
+  set([a, b]) {
+    vModel.value.startTime = a.getTime()
+    vModel.value.endTime = b.getTime()
+  },
+})
+
+async function finish() {
+  const { startTime, endTime, description, id } = vModel.value
   try {
-    await updateNote(props.model.id, value)
+    await updateNote(id, { startTime, endTime, description })
   }
   catch (error) {
     message.error(error as string)
     return
   }
-  visibleVModel.value = false
+  close()
   emit('refresh')
   message.success(t('message.success'))
-}
-
-function cancel() {
-  visibleVModel.value = false
 }
 </script>
 
 <template>
-  <a-modal v-model:visible="visibleVModel" destroy-on-close :title="$t('note.update.title')" :footer="null">
-    <note-form :default-value="model" @finish="finish" @cancel="cancel" />
+  <a-modal v-model:visible="visibleVModel" :title="$t('note.update.title')" :footer="null">
+    <modal-form :model="vModel" @finish="finish" @cancel="close">
+      <a-form-item :label="$t('note.update.timeRange')">
+        <RangePicker
+          v-model:value="range"
+          :allow-clear="false"
+          :show-time="{ format: 'HH:mm' }"
+          format="YYYY-MM-DD HH:mm"
+        />
+      </a-form-item>
+      <a-form-item :label="$t('note.update.description')">
+        <a-input v-model:value="vModel.description" />
+      </a-form-item>
+    </modal-form>
   </a-modal>
 </template>

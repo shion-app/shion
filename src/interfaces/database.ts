@@ -4,8 +4,6 @@ export interface Plan {
   totalTime: number
 }
 
-export type CreatePlan = Pick<Plan, 'name'>
-
 export interface Note {
   id: number
   startTime: number
@@ -19,5 +17,3 @@ export interface Label {
   name: string
   totalTime: number
 }
-
-export type CreateLabel = Pick<Label, 'name'>

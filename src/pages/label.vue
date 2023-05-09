@@ -8,7 +8,10 @@ const router = useRouter()
 
 const labelCreateVisible = ref(false)
 const labelUpdateVisible = ref(false)
-const labelModel = ref({} as Label)
+const labelCreateModel = ref({
+  name: '',
+} as Label)
+const labelUpdateModel = ref({} as Label)
 const list = ref<Array<Label>>([])
 
 async function refresh() {
@@ -17,7 +20,7 @@ async function refresh() {
 
 function handleUpdate(label: Label) {
   labelUpdateVisible.value = true
-  Object.assign(labelModel.value, label)
+  Object.assign(labelUpdateModel.value, label)
 }
 
 function handleRemove(label: Label) {
@@ -67,21 +70,10 @@ refresh()
 </script>
 
 <template>
-  <div
-    v-if="list.length"
-    grid grid-cols-3 gap-6 p-4
-  >
+  <div v-if="list.length" grid grid-cols-3 gap-6 p-4>
     <div
-      v-for="label in list"
-      :key="label.id"
-      rounded-2
-      p-4
-      bg-white
-      shadow-lg
-      hover:shadow-xl
-      transition-shadow
-      class="group"
-      @click="viewNote(label.id)"
+      v-for="label in list" :key="label.id" rounded-2 p-4 bg-white shadow-lg hover:shadow-xl transition-shadow
+      class="group" @click="viewNote(label.id)"
     >
       <div>{{ label.name }}</div>
       <div flex>
@@ -105,6 +97,6 @@ refresh()
     </div>
   </div>
   <a-empty v-else h-full flex flex-col justify-center />
-  <label-create v-model:visible="labelCreateVisible" @refresh="refresh" />
-  <label-update v-model:visible="labelUpdateVisible" :model="labelModel" @refresh="refresh" />
+  <label-form v-model:visible="labelCreateVisible" v-model:model="labelCreateModel" type="create" @refresh="refresh" />
+  <label-form v-model:visible="labelUpdateVisible" type="update" :model="labelUpdateModel" @refresh="refresh" />
 </template>

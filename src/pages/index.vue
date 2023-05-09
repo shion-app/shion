@@ -8,7 +8,10 @@ const router = useRouter()
 
 const planCreateVisible = ref(false)
 const planUpdateVisible = ref(false)
-const planModel = ref({} as Plan)
+const planCreateModel = ref({
+  name: '',
+} as Plan)
+const planUpdateModel = ref({} as Plan)
 const list = ref<Array<Plan>>([])
 
 async function refresh() {
@@ -17,7 +20,7 @@ async function refresh() {
 
 function handleUpdate(plan: Plan) {
   planUpdateVisible.value = true
-  Object.assign(planModel.value, plan)
+  Object.assign(planUpdateModel.value, plan)
 }
 
 function handleRemove(plan: Plan) {
@@ -105,6 +108,6 @@ refresh()
     </div>
   </div>
   <a-empty v-else h-full flex flex-col justify-center />
-  <plan-create v-model:visible="planCreateVisible" @refresh="refresh" />
-  <plan-update v-model:visible="planUpdateVisible" :model="planModel" @refresh="refresh" />
+  <plan-form v-model:visible="planCreateVisible" v-model:model="planCreateModel" type="create" @refresh="refresh" />
+  <plan-form v-model:visible="planUpdateVisible" type="update" :model="planUpdateModel" @refresh="refresh" />
 </template>
