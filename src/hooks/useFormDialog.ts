@@ -19,8 +19,14 @@ export function useFormDialog(visibleRef: Ref<boolean>, modelRef: Props | Ref<Pr
 
   function close() {
     visibleRef.value = false
-    resetFields()
   }
+
+  const unwatch = watch(visibleRef, (v) => {
+    if (!v)
+      resetFields()
+  })
+
+  onScopeDispose(unwatch)
 
   return {
     close,
