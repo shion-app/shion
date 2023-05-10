@@ -36,5 +36,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: ${{ github.ref_name }}
-          releaseName: shion v__VERSION__
+          releaseName: v__VERSION__
           prerelease: ${{ contains(github.ref_name, '-') }}

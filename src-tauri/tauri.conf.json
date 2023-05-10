@@ -24,11 +24,19 @@
         "icons/icon.ico"
       ],
       "identifier": "hanaTsuk1.shion",
-      "targets": "nsis"
+      "publisher": "hanaTsuk1",
+      "targets": "nsis",
+      "windows": {
+        "nsis": {
+          "languages": ["English", "SimpChinese"],
+          "installerIcon": "icons/icon.ico"
+        }
+      }
     },
     "systemTray": {
       "iconPath": "icons/icon.png",
-      "iconAsTemplate": true
+      "iconAsTemplate": true,
+      "menuOnLeftClick": false
     },
     "security": {
       "csp": null
@@ -40,6 +48,7 @@
       {
         "fullscreen": false,
         "resizable": false,
+        "center": true,
         "title": "shion",
         "width": 960,
         "height": 540
