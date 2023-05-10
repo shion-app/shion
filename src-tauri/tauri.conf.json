@@ -25,7 +25,7 @@
       ],
       "identifier": "hanaTsuk1.shion",
       "publisher": "hanaTsuk1",
-      "targets": "nsis",
+      "targets": ["nsis", "updater"],
       "windows": {
         "nsis": {
           "languages": ["English", "SimpChinese"],
@@ -42,7 +42,12 @@
       "csp": null
     },
     "updater": {
-      "active": false
+      "active": true,
+      "endpoints": [],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDMyMzU3MEI3QTAyNjZDQTIKUldTaWJDYWd0M0ExTW5uMEZ3MWtsVEE1WTFHWVBYY24zSlZvb0RZdjVVVlRySng4U2VtRDVmQkcK",
+      "windows": {
+        "installMode": "basicUi"
+      }
     },
     "windows": [
       {
