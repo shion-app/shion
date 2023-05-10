@@ -17,9 +17,9 @@ tauri = { version = "1.3", features = ["app-all", "system-tray"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 log = "^0.4"
-tauri-plugin-sql = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev", features = ["sqlite"] }
-tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
-tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
+tauri-plugin-sql = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1", features = ["sqlite"] }
+tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
+tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 
 
 [features]

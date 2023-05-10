@@ -3085,8 +3085,8 @@ dependencies = [
 
 [[package]]
 name = "tauri-plugin-log"
-version = "0.1.0"
-source = "git+https://github.com/tauri-apps/plugins-workspace?branch=dev#cea1d4f7b54b94354e8100daf804b810c680efd7"
+version = "0.0.0"
+source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v1#e46acc74be5681e0e1f22e9b08f9ba39140ff1b2"
 dependencies = [
  "byte-unit",
  "fern",
@@ -3100,8 +3100,8 @@ dependencies = [
 
 [[package]]
 name = "tauri-plugin-sql"
-version = "0.1.0"
-source = "git+https://github.com/tauri-apps/plugins-workspace?branch=dev#cea1d4f7b54b94354e8100daf804b810c680efd7"
+version = "0.0.0"
+source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v1#e46acc74be5681e0e1f22e9b08f9ba39140ff1b2"
 dependencies = [
  "futures-core",
  "log",
@@ -3116,8 +3116,8 @@ dependencies = [
 
 [[package]]
 name = "tauri-plugin-store"
-version = "0.1.0"
-source = "git+https://github.com/tauri-apps/plugins-workspace?branch=dev#cea1d4f7b54b94354e8100daf804b810c680efd7"
+version = "0.0.0"
+source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v1#e46acc74be5681e0e1f22e9b08f9ba39140ff1b2"
 dependencies = [
  "log",
  "serde",
