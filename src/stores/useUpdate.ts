@@ -54,7 +54,7 @@ export const useUpdate = defineStore('update', () => {
   }, 1000)
 
   onUpdaterEvent(({ error: e, status }) => {
-    if (e) {
+    if (downloading.value && e) {
       downloading.value = false
       message.error({
         content: t('updater.updating'),

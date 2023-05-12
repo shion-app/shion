@@ -1,7 +1,6 @@
 import 'uno.css'
 import 'ant-design-vue/es/message/style/css'
 import 'ant-design-vue/es/date-picker/style/index.less'
-import '@unocss/reset/tailwind.css'
 import './styles/index.css'
 
 import { createApp } from 'vue'
