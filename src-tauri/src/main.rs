@@ -4,7 +4,7 @@
 use std::collections::HashMap;
 
 use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu};
-use tauri_plugin_log::LogTarget;
+use tauri_plugin_log::{LogTarget, TimezoneStrategy};
 use tauri_plugin_sql::{Migration, MigrationKind};
 
 #[derive(Clone, serde::Serialize)]
@@ -47,6 +47,7 @@ fn main() {
         .plugin(
             tauri_plugin_log::Builder::default()
                 .targets([LogTarget::LogDir, LogTarget::Stdout, LogTarget::Webview])
+                .timezone_strategy(TimezoneStrategy::UseLocal)
                 .build(),
         )
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {

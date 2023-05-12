@@ -48,3 +48,5 @@ tray:
 updater:
   title: 更新
   content: 新版本{version}已发布，确定更新吗?
+  checkUpdate: 拉取最新版本时出现错误
+  updating: 更新过程中出现错误
