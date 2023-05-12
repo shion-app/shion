@@ -24,3 +24,6 @@ createApp(App)
   .use(router)
   .use(pinia)
   .mount('#app')
+
+if (import.meta.env.PROD)
+  window.addEventListener('contextmenu', e => e.preventDefault())
