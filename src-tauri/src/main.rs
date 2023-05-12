@@ -7,6 +7,12 @@ use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu
 use tauri_plugin_log::LogTarget;
 use tauri_plugin_sql::{Migration, MigrationKind};
 
+#[derive(Clone, serde::Serialize)]
+struct Payload {
+  args: Vec<String>,
+  cwd: String,
+}
+
 #[tauri::command]
 fn update_tray_menu(app: tauri::AppHandle, data: HashMap<String, String>) {
     for (key, value) in data {
@@ -43,6 +49,11 @@ fn main() {
                 .targets([LogTarget::LogDir, LogTarget::Stdout, LogTarget::Webview])
                 .build(),
         )
+        .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
+            app.emit_all("single-instance", Payload { args: argv, cwd }).unwrap();
+            let window = app.get_window("main").unwrap();
+            window.show().unwrap();
+        }))
         .invoke_handler(tauri::generate_handler![])
         .system_tray(system_tray)
         .on_system_tray_event(|app, event| match event {
