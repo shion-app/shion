@@ -1,4 +1,4 @@
-import { join } from 'node:path'
+import { resolve } from 'node:path'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -11,6 +11,9 @@ import Components from 'unplugin-vue-components/vite'
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
 import Pages from 'vite-plugin-pages'
 import tsconfigPaths from 'vite-tsconfig-paths'
+import { visualizer } from 'rollup-plugin-visualizer'
+
+import minifyLocale from './plugins/minify-date-fns-locale'
 
 // const mobile =
 //   process.env.TAURI_PLATFORM === "android" ||
@@ -21,7 +24,7 @@ export default defineConfig(async () => ({
   plugins: [
     vue(),
     VueI18nPlugin({
-      include: [join(__dirname, 'src/locales/**.yaml')],
+      include: [resolve('src/locales/**.yaml')],
     }),
     AutoImport({
       imports: [
@@ -46,6 +49,12 @@ export default defineConfig(async () => ({
     }),
     Pages(),
     tsconfigPaths(),
+    visualizer({
+      filename: '.visualizer/index.html',
+    }),
+    minifyLocale({
+      locale: ['zhCN', 'enUS'],
+    }),
   ],
   css: {
     preprocessorOptions: {
