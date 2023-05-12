@@ -19,17 +19,29 @@ const localeOptions: SelectProps['options'] = [
 
 <template>
   <div h-full p-4>
-    <a-form
-      layout="vertical"
-    >
+    <a-form :label-col="{ style: { width: '100px' } }" label-align="left">
       <a-form-item
         :label="$t('config.locale')"
       >
         <a-select
           v-model:value="config.locale"
+          :style="{
+            width: '250px',
+          }"
           :options="localeOptions"
         />
+      </a-form-item>
+      <a-form-item
+        :label="$t('config.checkUpdate')"
+      >
+        <a-switch v-model:checked="config.checkUpdate" />
       </a-form-item>
     </a-form>
   </div>
 </template>
+
+<style scoped>
+:deep(.ant-form-item-label) > label::after {
+  content: '';
+}
+</style>

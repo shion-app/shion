@@ -5,6 +5,7 @@ nav:
   config: 设置
 config:
   locale: 语言
+  checkUpdate: 检查更新
 plan:
   create: 创建计划
   update: 修改计划
@@ -44,3 +45,6 @@ calendar:
   switch: 切换到{mode}
 tray:
   quit: 退出
+updater:
+  title: 更新
+  content: 新版本{version}已发布，确定更新吗?

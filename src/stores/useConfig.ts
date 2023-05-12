@@ -5,6 +5,7 @@ import { invoke } from '@tauri-apps/api'
 interface Config {
   version: string
   locale: 'zh-CN' | 'en-US'
+  checkUpdate: boolean
 }
 
 const PATH = `config${import.meta.env.DEV ? '-dev' : ''}.json`
@@ -19,6 +20,7 @@ export const useConfig = defineStore('config', () => {
     const data: Config = {
       version: await getVersion(),
       locale: 'en-US',
+      checkUpdate: true,
     }
     const len = await store.length()
     if (len == 0)

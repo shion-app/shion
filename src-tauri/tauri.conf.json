@@ -25,10 +25,16 @@
       ],
       "identifier": "hanaTsuk1.shion",
       "publisher": "hanaTsuk1",
-      "targets": ["nsis", "updater"],
+      "targets": [
+        "nsis",
+        "updater"
+      ],
       "windows": {
         "nsis": {
-          "languages": ["English", "SimpChinese"],
+          "languages": [
+            "English",
+            "SimpChinese"
+          ],
           "installerIcon": "icons/icon.ico"
         }
       }
@@ -43,11 +49,11 @@
     },
     "updater": {
       "active": true,
-      "endpoints": ["https://github.com/hanaTsuk1/shion/releases/latest/download/latest.json"],
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDMyMzU3MEI3QTAyNjZDQTIKUldTaWJDYWd0M0ExTW5uMEZ3MWtsVEE1WTFHWVBYY24zSlZvb0RZdjVVVlRySng4U2VtRDVmQkcK",
-      "windows": {
-        "installMode": "basicUi"
-      }
+      "dialog": false,
+      "endpoints": [
+        "https://github.com/hanaTsuk1/shion/releases/latest/download/latest.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDMyMzU3MEI3QTAyNjZDQTIKUldTaWJDYWd0M0ExTW5uMEZ3MWtsVEE1WTFHWVBYY24zSlZvb0RZdjVVVlRySng4U2VtRDVmQkcK"
     },
     "windows": [
       {

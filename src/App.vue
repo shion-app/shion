@@ -3,7 +3,15 @@ import zhCN from 'ant-design-vue/es/locale/zh_CN'
 import enUS from 'ant-design-vue/es/locale/en_US'
 
 const { locale: l } = useI18n()
-useConfig()
+const { start } = useUpdate()
+const store = useConfig()
+
+const { config } = storeToRefs(store)
+
+watchOnce(() => config.value.checkUpdate, (v) => {
+  if (v)
+    start()
+})
 
 const locale = computed(() => {
   switch (l.value) {

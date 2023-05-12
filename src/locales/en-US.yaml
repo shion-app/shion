@@ -5,6 +5,7 @@ nav:
   config: Config
 config:
   locale: Language
+  checkUpdate: Check update
 plan:
   create: Create plan
   update: Update plan
@@ -44,3 +45,6 @@ calendar:
   switch: Switch to {mode}
 tray:
   quit: Quit
+updater:
+  title: Update
+  content: The new version {version} has been released. Are you sure to update it?
