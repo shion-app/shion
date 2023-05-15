@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Label } from '@interfaces/index'
+import type { Label, Plan } from '@interfaces/index'
 import { Modal, message } from 'ant-design-vue'
 
 const { setMenu } = useMore()
@@ -10,10 +10,11 @@ const labelCreateVisible = ref(false)
 const labelUpdateVisible = ref(false)
 const labelCreateModel = ref({} as Label)
 const labelUpdateModel = ref({} as Label)
-const list = ref<Array<Label>>([])
+const labelList = ref<Array<Label>>([])
+const planList = ref<Array<Plan>>([])
 
 async function refresh() {
-  list.value = await selectLabel()
+  [labelList.value, planList.value] = await Promise.all([selectLabel(), selectPlan()])
 }
 
 function handleUpdate(label: Label) {
@@ -29,19 +30,6 @@ function handleRemove(label: Label) {
       message.success(t('message.success'))
       refresh()
     },
-  })
-}
-
-function formatTime(time: number) {
-  const { hour, minute } = extractTime(time).raw
-  if (hour == 0) {
-    return formatDuration({
-      minutes: minute,
-    })
-  }
-  return formatDuration({
-    hours: hour,
-    minutes: minute,
   })
 }
 
@@ -68,27 +56,42 @@ refresh()
 </script>
 
 <template>
-  <div v-if="list.length" grid grid-cols-3 gap-6 p-4>
+  <div v-if="labelList.length" grid grid-cols-3 gap-6 p-4>
     <div
-      v-for="label in list" :key="label.id" rounded-2 p-4 bg-white shadow-lg hover:shadow-xl transition-shadow
-      class="group" @click="viewNote(label.id)"
+      v-for="label in labelList"
+      :key="label.id"
+      rounded-2 p-4 bg-white shadow-lg hover:shadow-xl transition-shadow space-y-2
+      @click="viewNote(label.id)"
     >
-      <div>{{ label.name }}</div>
-      <div flex>
-        <div>{{ formatTime(label.totalTime) }}</div>
+      <div flex justify-between>
+        <div>{{ label.name }}</div>
+        <a-tooltip>
+          <template #title>
+            <span>{{ planList.find(i => i.id == label.planId)!.name }}</span>
+          </template>
+          <div
+            w-3 h-3 rounded-full cursor-pointer mr-1
+            :style="{
+              backgroundColor: planList.find(i => i.id == label.planId)!.color,
+            }"
+          />
+        </a-tooltip>
+      </div>
+      <div flex class="group">
+        <div>{{ formatHHmm(label.totalTime) }}</div>
         <div flex-1 />
         <div flex op-0 group-hover-op-100 transition-opacity-400 space-x-2>
           <a-tooltip placement="bottom">
             <template #title>
               <span>{{ $t('button.update') }}</span>
             </template>
-            <div i-mdi:file-edit text-6 cursor-pointer @click.stop="handleUpdate(label)" />
+            <div i-mdi:file-edit text-5 cursor-pointer @click.stop="handleUpdate(label)" />
           </a-tooltip>
           <a-tooltip placement="bottom">
             <template #title>
               <span>{{ $t('button.remove') }}</span>
             </template>
-            <div i-mdi:delete text-6 cursor-pointer @click.stop="handleRemove(label)" />
+            <div i-mdi:delete text-5 cursor-pointer @click.stop="handleRemove(label)" />
           </a-tooltip>
         </div>
       </div>

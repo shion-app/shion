@@ -111,3 +111,16 @@ export function formatDuration(
     ...options,
   })
 }
+
+export function formatHHmm(time: number) {
+  const { hour, minute } = extractTime(time).raw
+  if (hour == 0) {
+    return formatDuration({
+      minutes: minute,
+    })
+  }
+  return formatDuration({
+    hours: hour,
+    minutes: minute,
+  })
+}

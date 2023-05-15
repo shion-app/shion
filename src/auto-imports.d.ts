@@ -42,6 +42,7 @@ declare global {
   const formatDistance: typeof import('./utils/index')['formatDistance']
   const formatDistanceStrict: typeof import('./utils/index')['formatDistanceStrict']
   const formatDuration: typeof import('./utils/index')['formatDuration']
+  const formatHHmm: typeof import('./utils/index')['formatHHmm']
   const getActivePinia: typeof import('pinia')['getActivePinia']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
@@ -104,6 +105,7 @@ declare global {
   const resolveRef: typeof import('@vueuse/core')['resolveRef']
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
   const selectLabel: typeof import('./database/request')['selectLabel']
+  const selectLabelByNoteId: typeof import('./database/request')['selectLabelByNoteId']
   const selectNoteByLabelId: typeof import('./database/request')['selectNoteByLabelId']
   const selectNoteByPlanId: typeof import('./database/request')['selectNoteByPlanId']
   const selectPlan: typeof import('./database/request')['selectPlan']
@@ -364,6 +366,7 @@ declare module 'vue' {
     readonly formatDistance: UnwrapRef<typeof import('./utils/index')['formatDistance']>
     readonly formatDistanceStrict: UnwrapRef<typeof import('./utils/index')['formatDistanceStrict']>
     readonly formatDuration: UnwrapRef<typeof import('./utils/index')['formatDuration']>
+    readonly formatHHmm: UnwrapRef<typeof import('./utils/index')['formatHHmm']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
@@ -426,6 +429,7 @@ declare module 'vue' {
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
     readonly selectLabel: UnwrapRef<typeof import('./database/request')['selectLabel']>
+    readonly selectLabelByNoteId: UnwrapRef<typeof import('./database/request')['selectLabelByNoteId']>
     readonly selectNoteByLabelId: UnwrapRef<typeof import('./database/request')['selectNoteByLabelId']>
     readonly selectNoteByPlanId: UnwrapRef<typeof import('./database/request')['selectNoteByPlanId']>
     readonly selectPlan: UnwrapRef<typeof import('./database/request')['selectPlan']>

@@ -11,6 +11,7 @@ export interface Note {
   endTime: number
   description: string
   planId: number
+  labels?: Array<Label>
 }
 
 export interface Label {

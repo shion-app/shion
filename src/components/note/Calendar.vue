@@ -204,15 +204,20 @@ init()
         hover:opacity-80 opacity-100 transition-opacity cursor-pointer rounded-full relative
         @click="emit('click', new Date(`${year}-${month}-${date}`))"
       >
-        <div
-          w-full h-full
-          flex justify-center items-center
-          :class="{
-            'scale-80': !isMonthMode,
-          }"
-        >
-          {{ date }}
-        </div>
+        <a-tooltip>
+          <template #title>
+            <span>{{ formatHHmm(data.get(`${year}-${month}-${date}`) || 0) }}</span>
+          </template>
+          <div
+            w-full h-full
+            flex justify-center items-center
+            :class="{
+              'scale-80': !isMonthMode,
+            }"
+          >
+            {{ date }}
+          </div>
+        </a-tooltip>
       </div>
     </div>
   </DefineMonth>

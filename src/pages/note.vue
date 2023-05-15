@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Note } from '@interfaces/index'
 import { Modal, message } from 'ant-design-vue'
+import { vIntersectionObserver } from '@vueuse/components'
 
 import { getDate, getMonth, getYear, isSameDay } from 'date-fns'
 
@@ -123,6 +124,12 @@ function handleUpdate(note: Note) {
   noteUpdateVisible.value = true
   Object.assign(noteModel.value, note)
 }
+
+async function onIntersectionObserver(e: IntersectionObserverEntry[], note: Note) {
+  const [{ isIntersecting }] = e
+  if (isIntersecting)
+    note.labels = await selectLabelByNoteId(note.id)
+}
 </script>
 
 <template>
@@ -146,9 +153,13 @@ function handleUpdate(note: Note) {
               {{ format(getNote(group).startTime, 'yyyy-MM-dd') }}
             </div>
           </div>
-          <div v-for="note in group" :key="note.id" flex class="group">
-            <div i-mdi:notebook text-6 mr-2 />
+          <div v-for="note in group" :key="note.id" v-intersection-observer="e => onIntersectionObserver(e, note)" flex class="group">
+            <div v-if="note.labels?.length" i-mdi:label text-6 mr-2 />
+            <div v-else i-mdi:notebook text-6 mr-2 />
             <div>
+              <div v-if="note.labels?.length">
+                {{ note.labels.map(i => i.name).join(', ') }}
+              </div>
               <div>{{ format(note.startTime, 'HH : mm') }} - {{ format(note.endTime, 'HH : mm') }}</div>
               <div>{{ spendTime(note.startTime, note.endTime) }}</div>
               <div>{{ note.description }}</div>
@@ -159,13 +170,13 @@ function handleUpdate(note: Note) {
                 <template #title>
                   <span>{{ $t('button.update') }}</span>
                 </template>
-                <div i-mdi:file-edit text-6 cursor-pointer @click="handleUpdate(note)" />
+                <div i-mdi:file-edit text-5 cursor-pointer @click="handleUpdate(note)" />
               </a-tooltip>
               <a-tooltip placement="bottom">
                 <template #title>
                   <span>{{ $t('button.remove') }}</span>
                 </template>
-                <div i-mdi:delete text-6 cursor-pointer @click="handleRemove(note)" />
+                <div i-mdi:delete text-5 cursor-pointer @click="handleRemove(note)" />
               </a-tooltip>
             </div>
           </div>

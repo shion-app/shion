@@ -32,19 +32,6 @@ function handleRemove(plan: Plan) {
   })
 }
 
-function formatTime(time: number) {
-  const { hour, minute } = extractTime(time).raw
-  if (hour == 0) {
-    return formatDuration({
-      minutes: minute,
-    })
-  }
-  return formatDuration({
-    hours: hour,
-    minutes: minute,
-  })
-}
-
 function viewNote(planId: number) {
   router.push({
     path: '/note',
@@ -81,25 +68,33 @@ refresh()
       shadow-lg
       hover:shadow-xl
       transition-shadow
-      class="group"
+      space-y-2
       @click="viewNote(plan.id)"
     >
-      <div>{{ plan.name }}</div>
-      <div flex>
-        <div>{{ formatTime(plan.totalTime) }}</div>
+      <div flex justify-between>
+        <div>{{ plan.name }}</div>
+        <div
+          w-3 h-3 rounded-full mr-1
+          :style="{
+            backgroundColor: plan.color,
+          }"
+        />
+      </div>
+      <div flex class="group">
+        <div>{{ formatHHmm(plan.totalTime) }}</div>
         <div flex-1 />
         <div flex op-0 group-hover-op-100 transition-opacity-400 space-x-2>
           <a-tooltip placement="bottom">
             <template #title>
               <span>{{ $t('button.update') }}</span>
             </template>
-            <div i-mdi:file-edit text-6 cursor-pointer @click.stop="handleUpdate(plan)" />
+            <div i-mdi:file-edit text-5 cursor-pointer @click.stop="handleUpdate(plan)" />
           </a-tooltip>
           <a-tooltip placement="bottom">
             <template #title>
               <span>{{ $t('button.remove') }}</span>
             </template>
-            <div i-mdi:delete text-6 cursor-pointer @click.stop="handleRemove(plan)" />
+            <div i-mdi:delete text-5 cursor-pointer @click.stop="handleRemove(plan)" />
           </a-tooltip>
         </div>
       </div>

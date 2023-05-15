@@ -129,23 +129,18 @@ export function removeNote(id: number) {
 
 export function selectNoteByPlanId(id: number, start: number, end: number) {
   return select<Array<Note>>(`
-    SELECT *
+    SELECT id, start_time, end_time, IFNULL(description, '') AS description, plan_id
       FROM note
     WHERE start_time > $1 AND
       start_time < $2 AND
       plan_id = ${id} AND
       deleted_at = 0
-    ORDER BY start_time`, [start, end]).then(data => data.map((note) => {
-    if (!note.description)
-      note.description = ''
-
-    return note
-  }))
+    ORDER BY start_time`, [start, end])
 }
 
 export function selectNoteByLabelId(id: number, start: number, end: number) {
   return select<Array<Note>>(`
-    SELECT note.*
+    SELECT id, start_time, end_time, IFNULL(description, '') AS description, plan_id
       FROM note,
           note_label
     WHERE note_label.label_id = ${id} AND
@@ -153,12 +148,7 @@ export function selectNoteByLabelId(id: number, start: number, end: number) {
       start_time > $1 AND
       start_time < $2 AND
       note.deleted_at = 0
-    ORDER BY start_time`, [start, end]).then(data => data.map((note) => {
-    if (!note.description)
-      note.description = ''
-
-    return note
-  }))
+    ORDER BY start_time`, [start, end])
 }
 
 export function createLabel(data: CreateLabel) {
@@ -189,6 +179,16 @@ function selectLabelTotalTime(id: number) {
           note_label.note_id = note.id AND
           note.deleted_at = 0
   `, [id]).then(i => i.pop()!)
+}
+
+export function selectLabelByNoteId(id: number) {
+  return select<Array<Label>>(`
+    SELECT label.*
+      FROM label,
+          note_label
+    WHERE note_label.note_id = ${id} AND
+      note_label.label_id = label.id AND
+      label.deleted_at = 0`)
 }
 
 export function relateNoteAndLabel(noteId: number, labelIdList: Array<number>) {
