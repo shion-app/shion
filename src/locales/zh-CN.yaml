@@ -10,10 +10,12 @@ plan:
   create: 创建计划
   update: 修改计划
   name: 名称
+  color: 颜色
 label:
   create: 创建标签
   update: 修改标签
   name: 名称
+  plan: 计划名称
 error:
   unique: '{field}已存在'
   unhandle: '未处理异常({error})'

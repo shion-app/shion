@@ -8,9 +8,7 @@ const router = useRouter()
 
 const labelCreateVisible = ref(false)
 const labelUpdateVisible = ref(false)
-const labelCreateModel = ref({
-  name: '',
-} as Label)
+const labelCreateModel = ref({} as Label)
 const labelUpdateModel = ref({} as Label)
 const list = ref<Array<Label>>([])
 

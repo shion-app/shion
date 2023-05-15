@@ -1,8 +1,10 @@
 CREATE TABLE IF NOT EXISTS plan (
   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   name TEXT NOT NULL,
+  color TEXT NOT NULL,
   deleted_at TIMESTAMP DEFAULT 0,
-  UNIQUE (name, deleted_at)
+  UNIQUE (name, deleted_at),
+  UNIQUE (color, deleted_at)
 );
 
 CREATE TABLE IF NOT EXISTS note (
@@ -19,6 +21,8 @@ CREATE TABLE IF NOT EXISTS label (
   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   name TEXT NOT NULL UNIQUE,
   deleted_at TIMESTAMP DEFAULT 0,
+  plan_id INTEGER NOT NULL,
+  FOREIGN KEY (plan_id) REFERENCES plan (id),
   UNIQUE (name, deleted_at)
 );
 

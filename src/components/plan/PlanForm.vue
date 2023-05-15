@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { Plan } from '@interfaces/index'
 import { message } from 'ant-design-vue'
+
+import type { Plan } from '@interfaces/index'
 
 const props = defineProps<{
   type: 'create' | 'update'
@@ -18,16 +19,18 @@ const title = computed(() => props.type == 'create' ? t('plan.create') : t('plan
 const request = computed(() => props.type == 'create' ? create : update)
 
 function create() {
-  const { name } = vModel.value
+  const { name, color } = vModel.value
   return createPlan({
     name,
+    color,
   })
 }
 
 function update() {
-  const { name, id } = vModel.value
+  const { name, id, color } = vModel.value
   return updatePlan(id, {
     name,
+    color,
   })
 }
 
@@ -50,6 +53,9 @@ async function finish() {
     <modal-form v-model:model="vModel" @finish="finish" @cancel="close">
       <a-form-item name="name" :label="$t('plan.name')" :rules="[{ required: true }]">
         <a-input v-model:value="vModel.name" />
+      </a-form-item>
+      <a-form-item name="color" :label="$t('plan.color')" :rules="[{ required: true }]">
+        <input v-model="vModel.color" type="color">
       </a-form-item>
     </modal-form>
   </a-modal>

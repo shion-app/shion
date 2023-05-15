@@ -10,10 +10,12 @@ plan:
   create: Create plan
   update: Update plan
   name: Name
+  color: Color
 label:
   create: Create Label
   update: Update Label
   name: Name
+  plan: Plan Name
 error:
   unique: '{field} already exists'
   unhandle: Unhandled exception({error})

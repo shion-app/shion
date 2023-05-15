@@ -39,9 +39,9 @@ const db = await Database.load(PATH)
 
 type CreateNote = Pick<Note, 'startTime' | 'endTime' | 'planId'> & Partial<Pick<Note, 'description'>>
 
- type CreatePlan = Pick<Plan, 'name'>
+type CreatePlan = Pick<Plan, 'name' | 'color'>
 
- type CreateLabel = Pick<Label, 'name'>
+type CreateLabel = Pick<Label, 'name' | 'planId'>
 
 type TableName = 'plan' | 'note' | 'label' | 'note_label'
 
@@ -100,7 +100,7 @@ export function removePlan(id: number) {
 }
 
 export async function selectPlan() {
-  const data = await select<Array<Plan>>('SELECT * FROM plan WHERE deleted_at = 0')
+  const data = await select<Array<Plan>>('SELECT * FROM plan WHERE deleted_at = 0 ORDER BY id')
   const list = (await Promise.all(data.map(({ id }) => selectPlanTotalTime(id))))
   data.forEach((plan, index) => plan.totalTime = list[index].totalTime)
   return data
@@ -134,7 +134,8 @@ export function selectNoteByPlanId(id: number, start: number, end: number) {
     WHERE start_time > $1 AND
       start_time < $2 AND
       plan_id = ${id} AND
-      deleted_at = 0`, [start, end]).then(data => data.map((note) => {
+      deleted_at = 0
+    ORDER BY start_time`, [start, end]).then(data => data.map((note) => {
     if (!note.description)
       note.description = ''
 
@@ -151,7 +152,8 @@ export function selectNoteByLabelId(id: number, start: number, end: number) {
       note_label.note_id = note.id AND
       start_time > $1 AND
       start_time < $2 AND
-      note.deleted_at = 0;`, [start, end]).then(data => data.map((note) => {
+      note.deleted_at = 0
+    ORDER BY start_time`, [start, end]).then(data => data.map((note) => {
     if (!note.description)
       note.description = ''
 
@@ -172,7 +174,7 @@ export function removeLabel(id: number) {
 }
 
 export async function selectLabel() {
-  const data = await select<Array<Label>>('SELECT * FROM label WHERE deleted_at = 0')
+  const data = await select<Array<Label>>('SELECT * FROM label WHERE deleted_at = 0 ORDER BY id')
   const list = (await Promise.all(data.map(({ id }) => selectLabelTotalTime(id))))
   data.forEach((plan, index) => plan.totalTime = list[index].totalTime)
   return data
