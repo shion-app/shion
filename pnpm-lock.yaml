@@ -9,7 +9,6 @@ specifiers:
   '@tauri-apps/cli': ^1.3.1
   '@types/node': ^18.7.10
   '@unocss/preset-icons': ^0.50.4
-  '@unocss/reset': ^0.50.4
   '@vitejs/plugin-vue': ^4.0.0
   '@vue/runtime-core': ^3.2.47
   '@vueuse/components': ^10.1.2
@@ -47,7 +46,6 @@ specifiers:
 
 dependencies:
   '@tauri-apps/api': 1.3.0
-  '@unocss/reset': 0.50.8
   '@vueuse/components': 10.1.2_vue@3.2.47
   '@vueuse/core': 10.1.0_vue@3.2.47
   ant-design-vue: 3.2.17_vue@3.2.47
@@ -1151,6 +1149,7 @@ packages:
 
   /@unocss/reset/0.50.8:
     resolution: {integrity: sha512-2WoM6O9VyuHDPAnvCXr7LBJQ8ZRHDnuQAFsL1dWXp561Iq2l9whdNtPuMcozLGJGUUrFfVBXIrHY4sfxxScgWg==}
+    dev: true
 
   /@unocss/scope/0.50.8:
     resolution: {integrity: sha512-QA4G9JYK8jrnU02qi1WBi45S+V0HKNUY0u6h5drYqRkcUho2YrpcfMagYi1A5XGg5ykmtP9e6vx1D9lij+JGnQ==}
