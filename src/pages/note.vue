@@ -94,10 +94,13 @@ function spendTime(start: number, end: number) {
 }
 
 function slide(time: Date) {
-  const node = noteRef.value.find((i) => {
+  let node = noteRef.value.find((i) => {
     const { year, month, date } = i.dataset
     return isSameDay(time, new Date(`${year}-${month}-${date}`))
   })
+  if (!node)
+    node = noteRef.value.at(-1)
+
   if (node) {
     node.scrollIntoView({
       block: 'center',
@@ -130,6 +133,12 @@ async function onIntersectionObserver(e: IntersectionObserverEntry[], note: Note
   if (isIntersecting)
     note.labels = await selectLabelByNoteId(note.id)
 }
+
+watchOnce(noteList, () => {
+  slide(new Date())
+}, {
+  flush: 'post',
+})
 </script>
 
 <template>

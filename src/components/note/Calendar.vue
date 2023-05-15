@@ -161,7 +161,7 @@ function colorLevel(time: number) {
 }
 
 function init() {
-  cellList.value = generate(new Date().getFullYear())
+  cellList.value = [...generate(new Date().getFullYear() - 1), ...generate(new Date().getFullYear())]
 }
 
 whenever(() => arrivedState.top, () => {
