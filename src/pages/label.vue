@@ -8,7 +8,10 @@ const router = useRouter()
 
 const labelCreateVisible = ref(false)
 const labelUpdateVisible = ref(false)
-const labelCreateModel = ref({} as Label)
+const labelCreateModel = ref({
+  name: '',
+  planId: undefined,
+} as unknown as Label)
 const labelUpdateModel = ref({} as Label)
 const labelList = ref<Array<Label>>([])
 const planList = ref<Array<Plan>>([])

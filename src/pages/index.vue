@@ -8,7 +8,10 @@ const router = useRouter()
 
 const planCreateVisible = ref(false)
 const planUpdateVisible = ref(false)
-const planCreateModel = ref({} as Plan)
+const planCreateModel = ref({
+  name: '',
+  color: '',
+} as Plan)
 const planUpdateModel = ref({} as Plan)
 const list = ref<Array<Plan>>([])
 
