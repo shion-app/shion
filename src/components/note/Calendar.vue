@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { endOfMonth } from 'date-fns'
 import classNames from 'classnames'
-import { UseMouseInElement } from '@vueuse/components'
+import { UseElementVisibility, UseMouseInElement } from '@vueuse/components'
 
 defineProps<{
   data: Map<string, number>
@@ -206,15 +206,17 @@ init()
         hover:opacity-80 opacity-100 transition-opacity cursor-pointer rounded-full relative
         @click="emit('click', new Date(`${year}-${month}-${date}`))"
       >
-        <UseMouseInElement v-slot="{ isOutside }" w-full h-full>
-          <ReuseDate v-if="isOutside" :date="date" />
-          <a-tooltip v-else :visible="true">
-            <template #title>
-              <span>{{ formatHHmm(data.get(`${year}-${month}-${date}`) || 0) }}</span>
-            </template>
-            <ReuseDate :date="date" />
-          </a-tooltip>
-        </UseMouseInElement>
+        <UseElementVisibility v-slot="{ isVisible }" w-full h-full>
+          <UseMouseInElement v-slot="{ isOutside }" w-full h-full>
+            <ReuseDate v-if="isOutside" :date="date" />
+            <a-tooltip v-else :visible="isVisible && !isOutside">
+              <template #title>
+                <span>{{ formatHHmm(data.get(`${year}-${month}-${date}`) || 0) }}</span>
+              </template>
+              <ReuseDate :date="date" />
+            </a-tooltip>
+          </UseMouseInElement>
+        </UseElementVisibility>
       </div>
     </div>
   </DefineMonth>
