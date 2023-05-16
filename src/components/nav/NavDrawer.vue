@@ -55,7 +55,7 @@ const name = computed(() => route.name as string)
         <slot />
       </a-layout-content>
     </a-layout>
-    <a-layout-footer class="px-2! py-0! bg-white! text-4!" h-6>
+    <a-layout-footer class="px-2! py-0! bg-white! text-4!" h-6 border-t>
       <div
         v-if="downloading"
         flex justify-end space-x-1

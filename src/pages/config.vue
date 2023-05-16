@@ -18,8 +18,19 @@ const localeOptions: SelectProps['options'] = [
 </script>
 
 <template>
-  <div h-full p-4>
-    <a-form :label-col="{ style: { width: '100px' } }" label-align="left">
+  <div h-full px-30 py-8>
+    <a-form
+      :label-col="{
+        style: {
+          width: '100px',
+        },
+      }"
+      :wrapper-col="{
+        style: {
+          alignItems: 'flex-end',
+        },
+      }" label-align="left" :colon="false"
+    >
       <a-form-item
         :label="$t('config.locale')"
       >
@@ -39,9 +50,3 @@ const localeOptions: SelectProps['options'] = [
     </a-form>
   </div>
 </template>
-
-<style scoped>
-:deep(.ant-form-item-label) > label::after {
-  content: '';
-}
-</style>
