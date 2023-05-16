@@ -7,11 +7,9 @@ const { start, finish } = store
 const visible = ref(false)
 
 async function create(noteId: number) {
-  start(() => {
-    updateNote(noteId, {
-      endTime: Date.now(),
-    })
-  })
+  start(() => updateNote(noteId, {
+    endTime: Date.now(),
+  }))
 }
 
 function openModal() {

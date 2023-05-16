@@ -55,7 +55,6 @@ fn main() {
             let window = app.get_window("main").unwrap();
             window.show().unwrap();
         }))
-        .invoke_handler(tauri::generate_handler![])
         .system_tray(system_tray)
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::DoubleClick { .. } => {
@@ -64,7 +63,9 @@ fn main() {
             }
             SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
                 "quit" => {
-                    std::process::exit(0);
+                    let window = app.get_window("main").unwrap();
+                    window.hide().unwrap();
+                    app.emit_to("main", "quit", ()).unwrap();
                 }
                 _ => {}
             },

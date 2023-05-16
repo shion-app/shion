@@ -8,9 +8,9 @@ export const useTime = defineStore('time', () => {
   let currentTime = 0
   let frame: number
   const INTERVAL = 1000 * 60
-  let _update: Function | null
+  let _update: (() => Promise<unknown>) | null
 
-  function start(update: Function) {
+  function start(update: () => Promise<unknown>) {
     _update = update
     running.value = true
     currentTime = endTime = startTime = Date.now()
@@ -30,10 +30,10 @@ export const useTime = defineStore('time', () => {
     })
   }
 
-  function finish() {
+  async function finish() {
     running.value = false
     cancelAnimationFrame(frame)
-    _update!()
+    await _update!()
     reset()
   }
 

@@ -15,6 +15,9 @@
       "all": false,
       "app": {
         "all": true
+      },
+      "process": {
+        "exit": true
       }
     },
     "bundle": {

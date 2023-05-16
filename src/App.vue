@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
 import enUS from 'ant-design-vue/es/locale/en_US'
+import { listen } from '@tauri-apps/api/event'
+import { exit } from '@tauri-apps/api/process'
 
 const { locale: l } = useI18n()
 const { start } = useUpdate()
-const store = useConfig()
+const configStore = useConfig()
+const timeStore = useTime()
 
-const { config } = storeToRefs(store)
+const { finish } = timeStore
+const { config } = storeToRefs(configStore)
+const { running } = storeToRefs(timeStore)
 
 watchOnce(() => config.value.checkUpdate, (v) => {
   if (v)
@@ -21,6 +26,12 @@ const locale = computed(() => {
     default:
       return enUS
   }
+})
+
+listen('quit', async () => {
+  if (running.value)
+    await finish()
+  await exit()
 })
 </script>
 
