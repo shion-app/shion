@@ -1,6 +1,7 @@
 import Database from 'tauri-plugin-sql-api'
 import { snakeCase } from 'snake-case'
 import { camelCase } from 'camel-case'
+import { error } from 'tauri-plugin-log-api'
 
 import { i18n } from '@locales/index'
 import type { Label, Note, Plan } from '@interfaces/index'
@@ -12,13 +13,15 @@ const enum SqliteError {
   SQLITE_CONSTRAINT_UNIQUE = 2067,
 }
 
-function parseError(error) {
-  const match = /\(code: (\d+)\)/.exec(error)!
+function parseError(e) {
+  const match = /\(code: (\d+)\)/.exec(e)!
   const code = +match[1]
-  return parseMessage(code, error)
+  const message = parseMessage(code, e)
+  error(e)
+  return message
 }
 
-function parseMessage(code: SqliteError, error) {
+function parseMessage(code: SqliteError, error: string) {
   switch (code) {
     case SqliteError.SQLITE_CONSTRAINT_UNIQUE: {
       const match = /UNIQUE constraint failed:(.*)/.exec(error)!
@@ -30,7 +33,7 @@ function parseMessage(code: SqliteError, error) {
     }
     default:
       return i18n.global.t('error.unhandle', {
-        content: error,
+        error,
       })
   }
 }
@@ -53,7 +56,7 @@ async function create(table: TableName, data: Record<string, unknown>) {
     return await db.execute(`INSERT INTO ${table} (${key}) VALUES (${placeholder})`, value)
   }
   catch (error) {
-    return Promise.reject(parseError(error))
+    throw parseError(error)
   }
 }
 
@@ -64,12 +67,12 @@ async function update(table: TableName, id: number, data: Record<string, unknown
     return await db.execute(`UPDATE ${table} SET ${placeholder} WHERE id = ${id}`, value)
   }
   catch (error) {
-    return Promise.reject(parseError(error))
+    throw parseError(error)
   }
 }
 
 function remove(table: TableName, id: number) {
-  return db.execute(`UPDATE ${table} SET deleted_at = datetime('now', 'localtime') WHERE id = ${id}`)
+  return db.execute(`UPDATE ${table} SET deleted_at = strftime('%Y-%m-%d %H:%M:%f') WHERE id = ${id}`)
 }
 
 function select<T>(query: string, bindValues?: unknown[]): Promise<T> {
@@ -129,7 +132,7 @@ export function removeNote(id: number) {
 
 export function selectNoteByPlanId(id: number, start: number, end: number) {
   return select<Array<Note>>(`
-    SELECT id, start_time, end_time, IFNULL(description, '') AS description, plan_id
+    SELECT id, start_time, end_time, description, plan_id
       FROM note
     WHERE start_time > $1 AND
       start_time < $2 AND
@@ -140,7 +143,7 @@ export function selectNoteByPlanId(id: number, start: number, end: number) {
 
 export function selectNoteByLabelId(id: number, start: number, end: number) {
   return select<Array<Note>>(`
-    SELECT id, start_time, end_time, IFNULL(description, '') AS description, plan_id
+    SELECT id, start_time, end_time, description, plan_id
       FROM note,
           note_label
     WHERE note_label.label_id = ${id} AND

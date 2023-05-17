@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS note (
   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   start_time TIMESTAMP NOT NULL,
   end_time TIMESTAMP NOT NULL,
-  description TEXT,
+  description TEXT DEFAULT (''),
   deleted_at TIMESTAMP DEFAULT 0,
   plan_id INTEGER NOT NULL,
   FOREIGN KEY (plan_id) REFERENCES plan (id)
@@ -30,3 +30,75 @@ CREATE TABLE IF NOT EXISTS note_label (
   note_id INTEGER NOT NULL REFERENCES note (id),
   label_id INTEGER NOT NULL REFERENCES label (id)
 );
+
+CREATE TABLE IF NOT EXISTS sync_log (
+  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  table_name TEXT NOT NULL,
+  type TEXT NOT NULL,
+  data TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  sync BOOLEAN DEFAULT 0
+);
+
+CREATE TRIGGER log_plan_insert
+  AFTER INSERT
+  ON plan
+BEGIN
+  INSERT INTO sync_log
+    (table_name, type, data, created_at)
+  VALUES ("plan", "insert", '{"id":"' || new.id || '","name":"' || new.name || '","color":"' || new.color || '","deleted_at":"' || new.deleted_at || '"}', strftime('%Y-%m-%d %H:%M:%f'));
+END;
+
+CREATE TRIGGER log_plan_update
+  AFTER UPDATE
+  ON plan
+BEGIN
+  INSERT INTO sync_log
+    (table_name, type, data, created_at)
+  VALUES ("plan", "update", '{"id":"' || new.id || '","name":"' || new.name || '","color":"' || new.color || '","deleted_at":"' || new.deleted_at || '"}', strftime('%Y-%m-%d %H:%M:%f'));
+END;
+
+CREATE TRIGGER log_label_insert
+  AFTER INSERT
+  ON label
+BEGIN
+  INSERT INTO sync_log
+    (table_name, type, data, created_at)
+  VALUES ("label", "insert", '{"id":"' || new.id || '","name":"' || new.name || '","plan_id":"' || new.plan_id || '","deleted_at":"' || new.deleted_at || '"}', strftime('%Y-%m-%d %H:%M:%f'));
+END;
+
+CREATE TRIGGER log_label_update
+  AFTER UPDATE
+  ON label
+BEGIN
+  INSERT INTO sync_log
+    (table_name, type, data, created_at)
+  VALUES ("label", "update", '{"id":"' || new.id || '","name":"' || new.name || '","plan_id":"' || new.plan_id || '","deleted_at":"' || new.deleted_at || '"}', strftime('%Y-%m-%d %H:%M:%f'));
+END;
+
+CREATE TRIGGER log_note_insert
+  AFTER INSERT
+  ON note
+BEGIN
+  INSERT INTO sync_log
+    (table_name, type, data, created_at)
+  VALUES ("note", "insert", '{"id":"' || new.id || '","start_time":"' || new.start_time || '","end_time":"' || new.end_time || '","description":"' || new.description || '","plan_id":"' || new.plan_id || '","deleted_at":"' || new.deleted_at || '"}', strftime('%Y-%m-%d %H:%M:%f'));
+END;
+
+CREATE TRIGGER log_note_update
+  AFTER UPDATE
+  ON note
+BEGIN
+  INSERT INTO sync_log
+    (table_name, type, data, created_at)
+  VALUES ("note", "update", '{"id":"' || new.id || '","start_time":"' || new.start_time || '","end_time":"' || new.end_time || '","description":"' || new.description || '","plan_id":"' || new.plan_id || '","deleted_at":"' || new.deleted_at || '"}', strftime('%Y-%m-%d %H:%M:%f'));
+END;
+
+CREATE TRIGGER log_note_label_insert
+  AFTER INSERT
+  ON note_label
+BEGIN
+  INSERT INTO sync_log
+    (table_name, type, data, created_at)
+  VALUES ("note_label", "insert", '{"note_id":"' || new.note_id || '","label_id":"' || new.label_id || '"}', strftime('%Y-%m-%d %H:%M:%f'));
+END;
