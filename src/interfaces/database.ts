@@ -1,3 +1,5 @@
+export type TableName = 'plan' | 'note' | 'label' | 'note_label' | 'sync_log'
+
 export interface Plan {
   id: number
   name: string
@@ -19,4 +21,12 @@ export interface Label {
   name: string
   planId: number
   totalTime: number
+}
+
+export interface SyncLog {
+  id: number
+  tableName: Exclude<TableName, 'sync_log'>
+  type: 'insert' | 'update'
+  data: string
+  sync: boolean
 }

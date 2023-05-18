@@ -4,7 +4,7 @@ import { camelCase } from 'camel-case'
 import { error } from 'tauri-plugin-log-api'
 
 import { i18n } from '@locales/index'
-import type { Label, Note, Plan } from '@interfaces/index'
+import type { Label, Note, Plan, SyncLog, TableName } from '@interfaces/index'
 
 const PATH = `sqlite:data${import.meta.env.DEV ? '-dev' : ''}.db`
 
@@ -46,29 +46,26 @@ type CreatePlan = Pick<Plan, 'name' | 'color'>
 
 type CreateLabel = Pick<Label, 'name' | 'planId'>
 
-type TableName = 'plan' | 'note' | 'label' | 'note_label'
-
-async function create(table: TableName, data: Record<string, unknown>) {
-  const key = Object.keys(data).map(key => snakeCase(key)).join(', ')
-  const placeholder = Object.keys(data).map((_, i) => `$${i + 1}`).join(', ')
-  const value = Object.values(data)
+export async function execute(query: string, bindValues?: unknown[]) {
   try {
-    return await db.execute(`INSERT INTO ${table} (${key}) VALUES (${placeholder})`, value)
+    return await db.execute(query, bindValues)
   }
   catch (error) {
     throw parseError(error)
   }
 }
 
-async function update(table: TableName, id: number, data: Record<string, unknown>) {
+export async function create(table: TableName, data: Record<string, unknown>) {
+  const key = Object.keys(data).map(key => snakeCase(key)).join(', ')
+  const placeholder = Object.keys(data).map((_, i) => `$${i + 1}`).join(', ')
+  const value = Object.values(data)
+  return execute(`INSERT INTO ${table} (${key}) VALUES (${placeholder})`, value)
+}
+
+export async function update(table: TableName, id: number, data: Record<string, unknown>) {
   const placeholder = Object.entries(data).map(([k], i) => `${snakeCase(k)} = $${i + 1}`).join(', ')
   const value = Object.values(data)
-  try {
-    return await db.execute(`UPDATE ${table} SET ${placeholder} WHERE id = ${id}`, value)
-  }
-  catch (error) {
-    throw parseError(error)
-  }
+  return execute(`UPDATE ${table} SET ${placeholder} WHERE id = ${id}`, value)
 }
 
 function remove(table: TableName, id: number) {
@@ -199,4 +196,27 @@ export function relateNoteAndLabel(noteId: number, labelIdList: Array<number>) {
     noteId,
     labelId,
   })))
+}
+
+export function getLastSyncId() {
+  return select<Array<Pick<SyncLog, 'id'>>>(`
+    SELECT MAX(id) AS id
+      FROM sync_log
+    WHERE id IN (
+      SELECT id
+        FROM sync_log
+      WHERE sync = 1
+    )`).then(i => i.pop()?.id || 0)
+}
+
+export function selectUnsyncLog() {
+  return select<Array<SyncLog>>('SELECT * FROM sync_log WHERE sync = 0 ORDER BY id')
+}
+
+export function setLogSync() {
+  return execute('UPDATE sync_log SET sync = 1 WHERE sync = 0')
+}
+
+export function resetTableAutoIncrementId(tableName: string) {
+  return execute(`DELETE FROM sqlite_sequence WHERE name = "${tableName}"`)
 }

@@ -3,6 +3,7 @@ const { t } = useI18n()
 const route = useRoute()
 const moreStore = useMore()
 const updateStore = useUpdate()
+const { sync } = useSync()
 
 const { menu: moreMenu } = storeToRefs(moreStore)
 const { precent, downloading } = storeToRefs(updateStore)
@@ -57,18 +58,25 @@ const name = computed(() => route.name as string)
     </a-layout>
     <a-layout-footer class="px-2! py-0! bg-white! text-4!" h-6 border-t>
       <div
-        v-if="downloading"
         flex justify-end space-x-1
         class="[&>*]:flex [&>*]:items-center [&>*]:px-1
         [&>*:hover]:cursor-pointer [&>*:hover]:bg-gray-100"
       >
-        <a-tooltip>
+        <a-tooltip v-if="downloading">
           <template #title>
             <span>{{ precent }}%</span>
           </template>
           <div w-20 space-x-2>
             <div i-mdi:download text-6 animate-bounce />
             <a-progress :percent="precent" size="small" :show-info="false" trail-color="#dbdbdb" />
+          </div>
+        </a-tooltip>
+        <a-tooltip>
+          <template #title>
+            <span>{{ $t('sync.title') }}</span>
+          </template>
+          <div>
+            <div i-mdi:sync text-5 @click="sync" />
           </div>
         </a-tooltip>
       </div>
