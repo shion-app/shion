@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Note } from '@interfaces/index'
 import { Modal, message } from 'ant-design-vue'
-import { vIntersectionObserver } from '@vueuse/components'
 
 import { getDate, getMonth, getYear, isSameDay } from 'date-fns'
 
@@ -128,12 +127,6 @@ function handleUpdate(note: Note) {
   Object.assign(noteModel.value, note)
 }
 
-async function onIntersectionObserver(e: IntersectionObserverEntry[], note: Note) {
-  const [{ isIntersecting }] = e
-  if (isIntersecting)
-    note.labels = await selectLabelByNoteId(note.id)
-}
-
 watchOnce(noteList, () => {
   slide(new Date())
 }, {
@@ -162,12 +155,12 @@ watchOnce(noteList, () => {
               {{ format(getNote(group).startTime, 'yyyy-MM-dd') }}
             </div>
           </div>
-          <div v-for="note in group" :key="note.id" v-intersection-observer="e => onIntersectionObserver(e, note)" flex class="group">
-            <div v-if="note.labels?.length" i-mdi:label text-6 mr-2 />
+          <div v-for="note in group" :key="note.id" flex class="group">
+            <div v-if="note.label" i-mdi:label text-6 mr-2 />
             <div v-else i-mdi:notebook text-6 mr-2 />
             <div>
-              <div v-if="note.labels?.length">
-                {{ note.labels.map(i => i.name).join(', ') }}
+              <div v-if="note.label">
+                {{ note.label.name }}
               </div>
               <div>{{ format(note.startTime, 'HH : mm') }} - {{ format(note.endTime, 'HH : mm') }}</div>
               <div>{{ spendTime(note.startTime, note.endTime) }}</div>

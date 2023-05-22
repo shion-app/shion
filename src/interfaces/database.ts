@@ -1,4 +1,4 @@
-export type TableName = 'plan' | 'note' | 'label' | 'note_label' | 'sync_log'
+export type TableName = 'plan' | 'note' | 'label' | 'sync_log'
 
 export interface Plan {
   id: number
@@ -13,7 +13,8 @@ export interface Note {
   endTime: number
   description: string
   planId: number
-  labels?: Array<Label>
+  labelId: number
+  label: Label
 }
 
 export interface Label {

@@ -40,7 +40,7 @@ function parseMessage(code: SqliteError, error: string) {
 
 const db = await Database.load(PATH)
 
-type CreateNote = Pick<Note, 'startTime' | 'endTime' | 'planId'> & Partial<Pick<Note, 'description'>>
+type CreateNote = Pick<Note, 'startTime' | 'endTime' | 'planId' | 'labelId'> & Partial<Pick<Note, 'description'>>
 
 type CreatePlan = Pick<Plan, 'name' | 'color'>
 
@@ -127,28 +127,32 @@ export function removeNote(id: number) {
   return remove('note', id)
 }
 
-export function selectNoteByPlanId(id: number, start: number, end: number) {
-  return select<Array<Note>>(`
-    SELECT id, start_time, end_time, description, plan_id
+export async function selectNoteByPlanId(id: number, start: number, end: number) {
+  const noteList = await select<Array<Note>>(`
+    SELECT id, start_time, end_time, description, plan_id, label_id
       FROM note
     WHERE start_time > $1 AND
       start_time < $2 AND
       plan_id = ${id} AND
       deleted_at = 0
     ORDER BY start_time`, [start, end])
+  const labelList = (await Promise.all(noteList.map(({ labelId }) => selectLabelById(labelId))))
+  noteList.forEach((note, index) => note.label = labelList[index]!)
+  return noteList
 }
 
-export function selectNoteByLabelId(id: number, start: number, end: number) {
-  return select<Array<Note>>(`
-    SELECT id, start_time, end_time, description, plan_id
-      FROM note,
-          note_label
-    WHERE note_label.label_id = ${id} AND
-      note_label.note_id = note.id AND
-      start_time > $1 AND
+export async function selectNoteByLabelId(id: number, start: number, end: number) {
+  const noteList = await select<Array<Note>>(`
+    SELECT id, start_time, end_time, description, plan_id, label_id
+      FROM note
+    WHERE start_time > $1 AND
       start_time < $2 AND
-      note.deleted_at = 0
+      label_id = ${id} AND
+      deleted_at = 0
     ORDER BY start_time`, [start, end])
+  const labelList = (await Promise.all(noteList.map(({ labelId }) => selectLabelById(labelId))))
+  noteList.forEach((note, index) => note.label = labelList[index]!)
+  return noteList
 }
 
 export function createLabel(data: CreateLabel) {
@@ -170,32 +174,21 @@ export async function selectLabel() {
   return data
 }
 
+async function selectLabelById(id: number) {
+  const label = (await select<Array<Label>>(`SELECT * FROM label WHERE deleted_at = 0 AND id = ${id} ORDER BY id`)).pop()
+  if (label)
+    label.totalTime = 0
+
+  return label
+}
+
 function selectLabelTotalTime(id: number) {
   return select<Array<Pick<Label, 'totalTime'>>>(`
-    SELECT IFNULL(sum(note.end_time - note.start_time), 0) AS total_time
-      FROM note,
-          note_label
-    WHERE note_label.label_id = $1 AND
-          note_label.note_id = note.id AND
-          note.deleted_at = 0
-  `, [id]).then(i => i.pop()!)
-}
-
-export function selectLabelByNoteId(id: number) {
-  return select<Array<Label>>(`
-    SELECT label.*
-      FROM label,
-          note_label
-    WHERE note_label.note_id = ${id} AND
-      note_label.label_id = label.id AND
-      label.deleted_at = 0`)
-}
-
-export function relateNoteAndLabel(noteId: number, labelIdList: Array<number>) {
-  return Promise.all(labelIdList.map(labelId => create('note_label', {
-    noteId,
-    labelId,
-  })))
+    SELECT IFNULL(sum(end_time - start_time), 0) AS total_time
+      FROM note
+    WHERE label_id = ${id} AND
+      deleted_at = 0
+  `).then(i => i.pop()!)
 }
 
 export function getLastSyncId() {

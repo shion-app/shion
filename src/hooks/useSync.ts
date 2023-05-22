@@ -82,7 +82,7 @@ export function useSync() {
   }
 
   async function clean(local: WrapSyncLog[]) {
-    const tableOrder: TableName[] = ['note_label', 'label', 'note', 'plan']
+    const tableOrder: TableName[] = ['note', 'label', 'plan']
     const entityList = local.filter(i => i.type == 'insert').map(i => ({
       id: i._data.id,
       tableName: i.tableName,
@@ -92,7 +92,7 @@ export function useSync() {
       await execute(`DELETE FROM ${tableName} WHERE id = ${id}`)
 
     await Promise.all(local.map(({ id }) => execute(`DELETE FROM sync_log WHERE id = ${id}`)))
-    const tableList: TableName[] = ['plan', 'label', 'note', 'note_label', 'sync_log']
+    const tableList: TableName[] = ['plan', 'label', 'note', 'sync_log']
     await Promise.all(tableList.map(i => resetTableAutoIncrementId(i)))
   }
 

@@ -9,10 +9,10 @@ const emit = defineEmits(['finish', 'cancel', 'update:visible'])
 
 const model = ref<{
   planId?: number
-  labelIdList?: Array<number>
+  labelId?: number
 }>({
   planId: undefined,
-  labelIdList: [],
+  labelId: undefined,
 })
 
 const { visible: visibleVModel } = useVModels(props)
@@ -28,22 +28,24 @@ async function init() {
     label: name,
     value: id,
   }))
-  labelOptions.value = label.map(({ id, name }) => ({
-    label: name,
-    value: id,
-  }))
+  watch(() => model.value.planId, (v) => {
+    labelOptions.value = label.filter(i => i.planId == v).map(({ id, name }) => ({
+      label: name,
+      value: id,
+    }))
+  })
 }
 
 async function finish() {
   const time = Date.now()
-  const { planId, labelIdList } = model.value
+  const { planId, labelId } = model.value
 
   const { lastInsertId: noteId } = await createNote({
     startTime: time,
     endTime: time,
     planId: planId!,
+    labelId: labelId!,
   })
-  await relateNoteAndLabel(noteId, labelIdList!)
 
   close()
   emit('finish', noteId)
@@ -61,10 +63,9 @@ init()
           :options="planOptions"
         />
       </a-form-item>
-      <a-form-item name="labelIdList" :label="$t('note.fill.label')">
+      <a-form-item name="labelId" :label="$t('note.fill.label')" :rules="[{ required: true }]">
         <a-select
-          v-model:value="model.labelIdList"
-          mode="multiple"
+          v-model:value="model.labelId"
           :options="labelOptions"
         />
       </a-form-item>
