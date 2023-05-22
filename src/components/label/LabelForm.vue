@@ -18,8 +18,8 @@ const { close } = useFormDialog(visibleVModel, vModel)
 const planOptions = ref<SelectProps['options']>([])
 
 const isCreate = computed(() => props.type == 'create')
-const title = computed(() => isCreate ? t('label.create') : t('label.update'))
-const request = computed(() => isCreate ? create : update)
+const title = computed(() => isCreate.value ? t('label.create') : t('label.update'))
+const request = computed(() => isCreate.value ? create : update)
 
 function create() {
   const { name, planId, color } = vModel.value

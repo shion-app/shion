@@ -157,13 +157,11 @@ function colorLevelStyle(data?: { total: number; colors: string[] }): CSSPropert
 
 function colorLevelClass(data?: { total: number; colors: string[] }) {
   if (!data)
-    return ''
+    return 'hover:bg-gray-2'
 
   const { total } = data
 
   const hour = total / (60 * 60 * 1000)
-  if (hour == 0)
-    return 'hover:bg-gray-2'
 
   if (hour < 1)
     return 'bg-green-2'
@@ -221,9 +219,8 @@ init()
       </div>
       <div
         v-for="{ date, year, month, visible } in list" :key="date"
-        :class="classNames({
+        :class="classNames(colorLevelClass(data.get(`${year}-${month}-${date}`)), {
           invisible: !visible,
-          [colorLevelClass(data.get(`${year}-${month}-${date}`))]: !isMonthMode,
         })"
         :style="isMonthMode ? colorLevelStyle(data.get(`${year}-${month}-${date}`)) : {}"
         w-2.5em h-2.5em inline-flex justify-center items-center

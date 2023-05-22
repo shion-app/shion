@@ -16,8 +16,8 @@ const { t } = useI18n()
 const { close } = useFormDialog(visibleVModel, vModel)
 
 const isCreate = computed(() => props.type == 'create')
-const title = computed(() => isCreate ? t('plan.create') : t('plan.update'))
-const request = computed(() => isCreate ? create : update)
+const title = computed(() => isCreate.value ? t('plan.create') : t('plan.update'))
+const request = computed(() => isCreate.value ? create : update)
 
 function create() {
   const { name, color } = vModel.value
