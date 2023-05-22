@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS label (
   deleted_at TIMESTAMP DEFAULT 0,
   plan_id INTEGER NOT NULL,
   FOREIGN KEY (plan_id) REFERENCES plan (id),
-  UNIQUE (name, deleted_at)
+  UNIQUE (name, deleted_at),
+  UNIQUE (color, deleted_at)
 );
 
 CREATE TABLE IF NOT EXISTS note (
@@ -79,7 +80,7 @@ CREATE TRIGGER log_note_insert
 BEGIN
   INSERT INTO sync_log
     (table_name, type, data)
-  VALUES ("note", "insert", '{"id":' || new.id || ',"start_time":"' || new.start_time || '","end_time":"' || new.end_time || '","description":"' || new.description || '","plan_id":' || new.plan_id || '","label_id":' || new.label_id || ',"deleted_at":"' || new.deleted_at || '"}');
+  VALUES ("note", "insert", '{"id":' || new.id || ',"start_time":"' || new.start_time || '","end_time":"' || new.end_time || '","description":"' || new.description || '","plan_id":' || new.plan_id || ',"label_id":' || new.label_id || ',"deleted_at":"' || new.deleted_at || '"}');
 END;
 
 CREATE TRIGGER log_note_update
@@ -88,5 +89,5 @@ CREATE TRIGGER log_note_update
 BEGIN
   INSERT INTO sync_log
     (table_name, type, data)
-  VALUES ("note", "update", '{"id":' || new.id || ',"start_time":"' || new.start_time || '","end_time":"' || new.end_time || '","description":"' || new.description || '","plan_id":' || new.plan_id || '","label_id":' || new.label_id || ',"deleted_at":"' || new.deleted_at || '"}');
+  VALUES ("note", "update", '{"id":' || new.id || ',"start_time":"' || new.start_time || '","end_time":"' || new.end_time || '","description":"' || new.description || '","plan_id":' || new.plan_id || ',"label_id":' || new.label_id || ',"deleted_at":"' || new.deleted_at || '"}');
 END;

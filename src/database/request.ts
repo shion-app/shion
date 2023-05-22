@@ -168,7 +168,7 @@ export function removeLabel(id: number) {
 }
 
 export async function selectLabel() {
-  const data = await select<Array<Label>>('SELECT * FROM label WHERE deleted_at = 0 ORDER BY id')
+  const data = await select<Array<Label>>('SELECT * FROM label WHERE deleted_at = 0 ORDER BY plan_id, id')
   const list = (await Promise.all(data.map(({ id }) => selectLabelTotalTime(id))))
   data.forEach((plan, index) => plan.totalTime = list[index].totalTime)
   return data
