@@ -37,15 +37,6 @@ CREATE TABLE IF NOT EXISTS sync_log (
   sync BOOLEAN DEFAULT 0
 );
 
-CREATE TRIGGER auto_insert_label
-  AFTER INSERT
-  ON plan
-BEGIN
-  INSERT INTO label
-    (name, plan_id)
-  VALUES (new.name, new.id);
-END;
-
 CREATE TRIGGER log_plan_insert
   AFTER INSERT
   ON plan
