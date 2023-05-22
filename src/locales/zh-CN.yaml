@@ -16,6 +16,7 @@ label:
   update: 修改标签
   name: 名称
   plan: 计划名称
+  color: 颜色
 error:
   unique: '{field}已存在'
   unhandle: '未处理异常({error})'

@@ -44,7 +44,7 @@ type CreateNote = Pick<Note, 'startTime' | 'endTime' | 'planId' | 'labelId'> & P
 
 type CreatePlan = Pick<Plan, 'name' | 'color'>
 
-type CreateLabel = Pick<Label, 'name' | 'planId'>
+type CreateLabel = Pick<Label, 'name' | 'planId' | 'color'>
 
 export async function execute(query: string, bindValues?: unknown[]) {
   try {

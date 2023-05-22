@@ -16,6 +16,7 @@ label:
   update: Update Label
   name: Name
   plan: Plan Name
+  color: Color
 error:
   unique: '{field} already exists'
   unhandle: Unhandled exception({error})

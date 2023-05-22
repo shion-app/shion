@@ -21,18 +21,20 @@ const title = computed(() => props.type == 'create' ? t('label.create') : t('lab
 const request = computed(() => props.type == 'create' ? create : update)
 
 function create() {
-  const { name, planId } = vModel.value
+  const { name, planId, color } = vModel.value
   return createLabel({
     name,
     planId,
+    color,
   })
 }
 
 function update() {
-  const { name, id, planId } = vModel.value
+  const { name, id, planId, color } = vModel.value
   return updateLabel(id, {
     name,
     planId,
+    color,
   })
 }
 
@@ -70,6 +72,9 @@ init()
           v-model:value="vModel.planId"
           :options="planOptions"
         />
+      </a-form-item>
+      <a-form-item name="color" :label="$t('label.color')" :rules="[{ required: true }]">
+        <input v-model="vModel.color" type="color">
       </a-form-item>
     </modal-form>
   </a-modal>

@@ -2,9 +2,13 @@
 import { endOfMonth } from 'date-fns'
 import classNames from 'classnames'
 import { UseElementVisibility, UseMouseInElement } from '@vueuse/components'
+import type { CSSProperties } from 'vue'
 
 defineProps<{
-  data: Map<string, number>
+  data: Map<string, {
+    total: number
+    colors: string[]
+  }>
 }>()
 
 const emit = defineEmits<{
@@ -139,8 +143,25 @@ async function setCurrentTime() {
   }
 }
 
-function colorLevel(time: number) {
-  const hour = time / (60 * 60 * 1000)
+function colorLevelStyle(data?: { total: number; colors: string[] }): CSSProperties {
+  if (!data)
+    return {}
+
+  const { colors } = data
+  const ratio = 360 / colors.length
+
+  return {
+    background: `conic-gradient(${colors.map((color, index) => `${color} ${index * ratio}deg ${(index + 1) * ratio}deg`).join(', ')})`,
+  }
+}
+
+function colorLevelClass(data?: { total: number; colors: string[] }) {
+  if (!data)
+    return ''
+
+  const { total } = data
+
+  const hour = total / (60 * 60 * 1000)
   if (hour == 0)
     return 'hover:bg-gray-2'
 
@@ -199,9 +220,12 @@ init()
         {{ format(new Date('2023-1-1').setMonth(getCell(list).month), 'MMM') }}
       </div>
       <div
-        v-for="{ date, year, month, visible } in list" :key="date" :class="classNames(colorLevel(data.get(`${year}-${month}-${date}`) || 0), {
+        v-for="{ date, year, month, visible } in list" :key="date"
+        :class="classNames({
           invisible: !visible,
+          [colorLevelClass(data.get(`${year}-${month}-${date}`))]: !isMonthMode,
         })"
+        :style="isMonthMode ? colorLevelStyle(data.get(`${year}-${month}-${date}`)) : {}"
         w-2.5em h-2.5em inline-flex justify-center items-center
         hover:opacity-80 opacity-100 transition-opacity cursor-pointer rounded-full relative
         @click="emit('click', new Date(`${year}-${month}-${date}`))"
@@ -211,7 +235,7 @@ init()
             <ReuseDate v-if="isOutside" :date="date" />
             <a-tooltip v-else :visible="isVisible && !isOutside">
               <template #title>
-                <span>{{ formatHHmm(data.get(`${year}-${month}-${date}`) || 0) }}</span>
+                <span>{{ formatHHmm(data.get(`${year}-${month}-${date}`)?.total || 0) }}</span>
               </template>
               <ReuseDate :date="date" />
             </a-tooltip>

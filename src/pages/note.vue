@@ -19,18 +19,27 @@ const noteUpdateVisible = ref(false)
 const noteModel = ref({} as Note)
 
 const calendarData = computed(() => {
-  const map = new Map<string, number>()
-  noteList.value.forEach(({ startTime, endTime }) => {
+  const map = new Map<string, {
+    total: number
+    colors: string[]
+  }>()
+  noteList.value.forEach(({ startTime, endTime, label }) => {
     const year = getYear(startTime)
     const month = getMonth(startTime)
     const date = getDate(startTime)
     const time = `${year}-${month}-${date}`
     if (map.has(time)) {
-      const total = map.get(time)!
-      map.set(time, total + endTime - startTime)
+      const { total, colors } = map.get(time)!
+      map.set(time, {
+        total: total + endTime - startTime,
+        colors: [...new Set([...colors, label.color])],
+      })
     }
     else {
-      map.set(time, endTime - startTime)
+      map.set(time, {
+        total: endTime - startTime,
+        colors: [label.color],
+      })
     }
   })
   return map
@@ -156,10 +165,13 @@ watchOnce(noteList, () => {
             </div>
           </div>
           <div v-for="note in group" :key="note.id" flex class="group">
-            <div v-if="note.label" i-mdi:label text-6 mr-2 />
-            <div v-else i-mdi:notebook text-6 mr-2 />
+            <div
+              i-mdi:label text-5 mr-2 :style="{
+                color: note.label.color,
+              }"
+            />
             <div>
-              <div v-if="note.label">
+              <div>
                 {{ note.label.name }}
               </div>
               <div>{{ format(note.startTime, 'HH : mm') }} - {{ format(note.endTime, 'HH : mm') }}</div>

@@ -20,6 +20,7 @@ export interface Note {
 export interface Label {
   id: number
   name: string
+  color: string
   planId: number
   totalTime: number
 }
