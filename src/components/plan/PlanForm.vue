@@ -15,8 +15,9 @@ const { visible: visibleVModel, model: vModel } = useVModels(props)
 const { t } = useI18n()
 const { close } = useFormDialog(visibleVModel, vModel)
 
-const title = computed(() => props.type == 'create' ? t('plan.create') : t('plan.update'))
-const request = computed(() => props.type == 'create' ? create : update)
+const isCreate = computed(() => props.type == 'create')
+const title = computed(() => isCreate ? t('plan.create') : t('plan.update'))
+const request = computed(() => isCreate ? create : update)
 
 function create() {
   const { name, color } = vModel.value
@@ -46,6 +47,10 @@ async function finish() {
   emit('refresh')
   message.success(t('message.success'))
 }
+
+whenever(() => visibleVModel.value && isCreate.value, () => {
+  vModel.value.color = randomColor()
+})
 </script>
 
 <template>

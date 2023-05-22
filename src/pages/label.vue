@@ -11,6 +11,7 @@ const labelUpdateVisible = ref(false)
 const labelCreateModel = ref({
   name: '',
   planId: undefined,
+  color: randomColor(),
 } as unknown as Label)
 const labelUpdateModel = ref({} as Label)
 const labelList = ref<Array<Label>>([])

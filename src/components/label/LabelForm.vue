@@ -17,8 +17,9 @@ const { close } = useFormDialog(visibleVModel, vModel)
 
 const planOptions = ref<SelectProps['options']>([])
 
-const title = computed(() => props.type == 'create' ? t('label.create') : t('label.update'))
-const request = computed(() => props.type == 'create' ? create : update)
+const isCreate = computed(() => props.type == 'create')
+const title = computed(() => isCreate ? t('label.create') : t('label.update'))
+const request = computed(() => isCreate ? create : update)
 
 function create() {
   const { name, planId, color } = vModel.value
@@ -57,6 +58,10 @@ async function init() {
     value: id,
   }))
 }
+
+whenever(() => visibleVModel.value && isCreate.value, () => {
+  vModel.value.color = randomColor()
+})
 
 init()
 </script>
