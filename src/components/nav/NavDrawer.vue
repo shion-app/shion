@@ -71,14 +71,14 @@ const name = computed(() => route.name as string)
             <a-progress :percent="precent" size="small" :show-info="false" trail-color="#dbdbdb" />
           </div>
         </a-tooltip>
-        <a-tooltip>
+        <!-- <a-tooltip>
           <template #title>
             <span>{{ $t('sync.title') }}</span>
           </template>
           <div>
             <div i-mdi:sync text-5 @click="sync" />
           </div>
-        </a-tooltip>
+        </a-tooltip> -->
       </div>
     </a-layout-footer>
   </a-layout>
