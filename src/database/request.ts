@@ -95,8 +95,10 @@ export function updatePlan(id: number, data: Partial<CreatePlan>) {
   return update('plan', id, data)
 }
 
-export function removePlan(id: number) {
-  return remove('plan', id)
+export async function removePlan(id: number) {
+  await remove('plan', id)
+  await execute(`UPDATE label SET deleted_at = strftime('%Y-%m-%d %H:%M:%f') WHERE plan_id = ${id}`)
+  await execute(`UPDATE note SET deleted_at = strftime('%Y-%m-%d %H:%M:%f') WHERE plan_id = ${id}`)
 }
 
 export async function selectPlan() {
@@ -163,8 +165,9 @@ export function updateLabel(id: number, data: Partial<CreateLabel>) {
   return update('label', id, data)
 }
 
-export function removeLabel(id: number) {
-  return remove('label', id)
+export async function removeLabel(id: number) {
+  await remove('label', id)
+  await execute(`UPDATE note SET deleted_at = strftime('%Y-%m-%d %H:%M:%f') WHERE label_id = ${id}`)
 }
 
 export async function selectLabel() {
