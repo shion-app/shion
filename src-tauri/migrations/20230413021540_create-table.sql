@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS label (
   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   name TEXT NOT NULL UNIQUE,
   color TEXT NOT NULL,
-  deleted_at TIMESTAMP DEFAULT 0,
   plan_id INTEGER NOT NULL,
+  deleted_at TIMESTAMP DEFAULT 0,
   FOREIGN KEY (plan_id) REFERENCES plan (id),
   UNIQUE (name, deleted_at),
   UNIQUE (color, deleted_at)
@@ -23,9 +23,9 @@ CREATE TABLE IF NOT EXISTS note (
   start_time TIMESTAMP NOT NULL,
   end_time TIMESTAMP NOT NULL,
   description TEXT DEFAULT (''),
-  deleted_at TIMESTAMP DEFAULT 0,
   plan_id INTEGER NOT NULL,
   label_id INTEGER NOT NULL,
+  deleted_at TIMESTAMP DEFAULT 0,
   FOREIGN KEY (plan_id) REFERENCES plan (id),
   FOREIGN KEY (label_id) REFERENCES label (id)
 );
@@ -44,7 +44,7 @@ CREATE TRIGGER log_plan_insert
 BEGIN
   INSERT INTO sync_log
     (table_name, type, data)
-  VALUES ("plan", "insert", '{"id":' || new.id || ',"name":"' || new.name || '","color":"' || new.color || '","deleted_at":"' || new.deleted_at || '"}');
+  VALUES ("plan", "insert", json_object('id', new.id, 'name', new.name, 'color', new.color, 'deleted_at', new.deleted_at));
 END;
 
 CREATE TRIGGER log_plan_update
@@ -53,7 +53,7 @@ CREATE TRIGGER log_plan_update
 BEGIN
   INSERT INTO sync_log
     (table_name, type, data)
-  VALUES ("plan", "update", '{"id":' || new.id || ',"name":"' || new.name || '","color":"' || new.color || '","deleted_at":"' || new.deleted_at || '"}');
+  VALUES ("plan", "update", json_object('id', new.id, 'name', new.name, 'color', new.color, 'deleted_at', new.deleted_at));
 END;
 
 CREATE TRIGGER log_label_insert
@@ -62,7 +62,7 @@ CREATE TRIGGER log_label_insert
 BEGIN
   INSERT INTO sync_log
     (table_name, type, data)
-  VALUES ("label", "insert", '{"id":' || new.id || ',"name":"' || new.name || '","plan_id":' || new.plan_id || ',"deleted_at":"' || new.deleted_at || '"}');
+  VALUES ("label", "insert", json_object('id', new.id, 'name', new.name, 'color', new.color, 'plan_id', new.plan_id, 'deleted_at', new.deleted_at));
 END;
 
 CREATE TRIGGER log_label_update
@@ -71,7 +71,7 @@ CREATE TRIGGER log_label_update
 BEGIN
   INSERT INTO sync_log
     (table_name, type, data)
-  VALUES ("label", "update", '{"id":' || new.id || ',"name":"' || new.name || '","plan_id":' || new.plan_id || ',"deleted_at":"' || new.deleted_at || '"}');
+  VALUES ("label", "update", json_object('id', new.id, 'name', new.name, 'color', new.color, 'plan_id', new.plan_id, 'deleted_at', new.deleted_at));
 END;
 
 CREATE TRIGGER log_note_insert
@@ -80,7 +80,7 @@ CREATE TRIGGER log_note_insert
 BEGIN
   INSERT INTO sync_log
     (table_name, type, data)
-  VALUES ("note", "insert", '{"id":' || new.id || ',"start_time":"' || new.start_time || '","end_time":"' || new.end_time || '","description":"' || new.description || '","plan_id":' || new.plan_id || ',"label_id":' || new.label_id || ',"deleted_at":"' || new.deleted_at || '"}');
+  VALUES ("note", "insert", json_object('id', new.id, 'start_time', new.start_time, 'end_time', new.end_time, 'description', new.description, 'plan_id', new.plan_id, 'label_id', new.label_id, 'deleted_at', new.deleted_at));
 END;
 
 CREATE TRIGGER log_note_update
@@ -89,5 +89,5 @@ CREATE TRIGGER log_note_update
 BEGIN
   INSERT INTO sync_log
     (table_name, type, data)
-  VALUES ("note", "update", '{"id":' || new.id || ',"start_time":"' || new.start_time || '","end_time":"' || new.end_time || '","description":"' || new.description || '","plan_id":' || new.plan_id || ',"label_id":' || new.label_id || ',"deleted_at":"' || new.deleted_at || '"}');
+  VALUES ("note", "update", json_object('id', new.id, 'start_time', new.start_time, 'end_time', new.end_time, 'description', new.description, 'plan_id', new.plan_id, 'label_id', new.label_id, 'deleted_at', new.deleted_at));
 END;
