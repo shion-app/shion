@@ -4,15 +4,23 @@ import { message } from 'ant-design-vue'
 const store = useTime()
 const { t } = useI18n()
 
-const { running, time } = storeToRefs(store)
+const { running, time, isCountdownOver, countdown } = storeToRefs(store)
 const { start, finish } = store
 
 const visible = ref(false)
 
-async function create(noteId: number) {
-  start(() => updateNote(noteId, {
-    endTime: Date.now(),
-  }))
+async function create({
+  noteId,
+  countdown,
+  time,
+}: { noteId: number
+  countdown: boolean
+  time: number
+}) {
+  start(countdown,
+    time, () => updateNote(noteId, {
+      endTime: Date.now(),
+    }))
 }
 
 function openModal() {
@@ -27,7 +35,12 @@ async function finishTimer() {
 
 <template>
   <div flex flex-col items-center justify-evenly m-a h-full relative>
-    <div font-mono text-20>
+    <div
+      font-mono text-20 :class="{
+        'text-red-6': countdown && !isCountdownOver,
+        'text-green-6': countdown && isCountdownOver,
+      }"
+    >
       {{ time }}
     </div>
     <div

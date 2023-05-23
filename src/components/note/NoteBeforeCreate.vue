@@ -10,9 +10,13 @@ const emit = defineEmits(['finish', 'cancel', 'update:visible'])
 const model = ref<{
   planId?: number
   labelId?: number
+  countdown: boolean
+  time: number
 }>({
   planId: undefined,
   labelId: undefined,
+  countdown: false,
+  time: 1,
 })
 
 const { visible: visibleVModel } = useVModels(props)
@@ -37,18 +41,22 @@ async function init() {
 }
 
 async function finish() {
-  const time = Date.now()
-  const { planId, labelId } = model.value
+  const now = Date.now()
+  const { planId, labelId, countdown, time } = model.value
 
   const { lastInsertId: noteId } = await createNote({
-    startTime: time,
-    endTime: time,
+    startTime: now,
+    endTime: now,
     planId: planId!,
     labelId: labelId!,
   })
 
   close()
-  emit('finish', noteId)
+  emit('finish', {
+    noteId,
+    countdown,
+    time: time * 1000 * 60,
+  })
 }
 
 init()
@@ -68,6 +76,12 @@ init()
           v-model:value="model.labelId"
           :options="labelOptions"
         />
+      </a-form-item>
+      <a-form-item name="countdown" :label="$t('note.fill.countdown')">
+        <a-switch v-model:checked="model.countdown" />
+      </a-form-item>
+      <a-form-item v-if="model.countdown" name="time" :label="$t('note.fill.time')">
+        <a-input-number v-model:value="model.time" :min="1" :precision="0" :addon-after="$t('time.minute')" />
       </a-form-item>
     </modal-form>
   </a-modal>

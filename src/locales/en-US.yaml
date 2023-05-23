@@ -25,8 +25,10 @@ message:
 note:
   fill:
     title: Fill in information
-    plan: Plan Name
-    label: Label Name
+    plan: Plan name
+    label: Label name
+    countdown: Countdown
+    time: Time
   update:
     title: Update Note
     timeRange: Time range
@@ -55,3 +57,5 @@ updater:
   error: An error occurred while updating
 sync:
   title: Sync data
+timer:
+  countdown: The countdown has reached the target time

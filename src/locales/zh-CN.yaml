@@ -27,6 +27,8 @@ note:
     title: 填写信息
     plan: 计划名称
     label: 标签名称
+    countdown: 倒计时
+    time: 时间
   update:
     title: 修改记录
     timeRange: 时间范围
@@ -55,3 +57,5 @@ updater:
   updating: 更新过程中出现错误
 sync:
   title: 同步数据
+timer:
+  countdown: 倒计时已达到目标时间

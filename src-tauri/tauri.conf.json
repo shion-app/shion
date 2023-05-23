@@ -18,6 +18,9 @@
       },
       "process": {
         "exit": true
+      },
+      "notification": {
+        "all": true
       }
     },
     "bundle": {
