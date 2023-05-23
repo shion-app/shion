@@ -5,6 +5,7 @@ import fs from 'fs-extra'
 import semver from 'semver'
 import { Argument, Command, Option } from 'commander'
 import { execa } from 'execa'
+import inquirer from 'inquirer'
 
 const run = (bin, args, opts = {}) =>
   execa(bin, args, { stdio: 'inherit', ...opts })
@@ -25,12 +26,20 @@ program
   .addOption(new Option('-i, --identifier <version>', 'prerelease identifier').choices(['alpha', 'beta']))
   .action(async (release, { identifier }) => {
     if (release.startsWith('pre') && !identifier) {
-      console.error('missing option "identifier"')
+      console.error('Missing option "identifier"')
       return
     }
     const newVersion = semver.inc(config.version, release, identifier)
-    repleaceVersion(newVersion)
     const targetVersion = `v${newVersion}`
+    console.log(`release version: ${targetVersion}`)
+    const { versionConfirm } = await inquirer.prompt({
+      type: 'confirm',
+      name: 'versionConfirm',
+      message: 'Are you sure it is expected?',
+    })
+    if (!versionConfirm)
+      return
+    repleaceVersion(newVersion)
     await run('git', ['add', '.'])
     await run('git', ['commit', '-m', `release: ${targetVersion}`])
     await run('git', ['tag', targetVersion])
