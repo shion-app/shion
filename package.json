@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint:fix": "eslint . --fix",
     "tauri": "tauri",
-    "release": "node scripts/release"
+    "release": "vue-tsc --noEmit && node scripts/release"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.3.0",
