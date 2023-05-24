@@ -3,7 +3,7 @@ const { t } = useI18n()
 const route = useRoute()
 const moreStore = useMore()
 const updateStore = useUpdate()
-const { sync } = useSync()
+// const { sync } = useSync()
 
 const { menu: moreMenu } = storeToRefs(moreStore)
 const { precent, downloading } = storeToRefs(updateStore)
@@ -11,10 +11,15 @@ const { precent, downloading } = storeToRefs(updateStore)
 const { handleClick } = moreStore
 
 const menu = computed(() => [{
-  icon: 'i-mdi:view-grid',
+  icon: 'i-mdi:eye',
   key: 'index',
-  tip: t('nav.plan'),
+  tip: t('nav.overview'),
   to: '/',
+}, {
+  icon: 'i-mdi:view-grid',
+  key: 'plan',
+  tip: t('nav.plan'),
+  to: '/plan',
 }, {
   icon: 'i-mdi:label',
   key: 'label',

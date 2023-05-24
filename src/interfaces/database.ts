@@ -17,6 +17,15 @@ export interface Note {
   label: Label
 }
 
+export interface RecentNote {
+  planId: number
+  labelId: number
+  planName: string
+  labelName: string
+  date: string
+  totalTime: number
+}
+
 export interface Label {
   id: number
   name: string

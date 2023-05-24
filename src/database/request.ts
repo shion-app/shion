@@ -4,7 +4,7 @@ import { camelCase } from 'camel-case'
 import { error } from 'tauri-plugin-log-api'
 
 import { i18n } from '@locales/index'
-import type { Label, Note, Plan, SyncLog, TableName } from '@interfaces/index'
+import type { Label, Note, Plan, RecentNote, SyncLog, TableName } from '@interfaces/index'
 
 const PATH = `sqlite:data${import.meta.env.DEV ? '-dev' : ''}.db`
 
@@ -155,6 +155,28 @@ export async function selectNoteByLabelId(id: number, start: number, end: number
   const labelList = (await Promise.all(noteList.map(({ labelId }) => selectLabelById(labelId))))
   noteList.forEach((note, index) => note.label = labelList[index]!)
   return noteList
+}
+
+export function selectRecentNote(range = 7) {
+  return select<Array<RecentNote>>(`
+    SELECT note.plan_id,
+        note.label_id,
+        sum(note.end_time - note.start_time) AS total_time,
+        date(note.start_time / 1000, 'unixepoch') AS date,
+        [plan].name AS plan_name,
+        label.name AS label_name
+    FROM note,
+        [plan],
+        label
+    WHERE note.deleted_at = 0 AND
+          note.plan_id = [plan].id AND
+          note.label_id = label.id AND
+          note.start_time >= strftime('%s', 'now', '-${range} day') * 1000 AND
+          note.start_time <= strftime('%s', 'now') * 1000
+    GROUP BY note.plan_id,
+              note.label_id,
+              date(note.start_time / 1000, 'unixepoch')
+    ORDER BY note.start_time DESC;`)
 }
 
 export function createLabel(data: CreateLabel) {

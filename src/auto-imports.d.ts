@@ -112,6 +112,7 @@ declare global {
   const selectNoteByLabelId: typeof import('./database/request')['selectNoteByLabelId']
   const selectNoteByPlanId: typeof import('./database/request')['selectNoteByPlanId']
   const selectPlan: typeof import('./database/request')['selectPlan']
+  const selectRecentNote: typeof import('./database/request')['selectRecentNote']
   const selectUnsyncLog: typeof import('./database/request')['selectUnsyncLog']
   const setActivePinia: typeof import('pinia')['setActivePinia']
   const setLogSync: typeof import('./database/request')['setLogSync']
@@ -443,6 +444,7 @@ declare module 'vue' {
     readonly selectNoteByLabelId: UnwrapRef<typeof import('./database/request')['selectNoteByLabelId']>
     readonly selectNoteByPlanId: UnwrapRef<typeof import('./database/request')['selectNoteByPlanId']>
     readonly selectPlan: UnwrapRef<typeof import('./database/request')['selectPlan']>
+    readonly selectRecentNote: UnwrapRef<typeof import('./database/request')['selectRecentNote']>
     readonly selectUnsyncLog: UnwrapRef<typeof import('./database/request')['selectUnsyncLog']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
     readonly setLogSync: UnwrapRef<typeof import('./database/request')['setLogSync']>
