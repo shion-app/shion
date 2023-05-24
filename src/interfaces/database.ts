@@ -22,6 +22,8 @@ export interface RecentNote {
   labelId: number
   planName: string
   labelName: string
+  planColor: string
+  labelColor: string
   date: string
   totalTime: number
 }

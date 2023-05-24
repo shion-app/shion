@@ -164,7 +164,9 @@ export function selectRecentNote(range = 7) {
         sum(note.end_time - note.start_time) AS total_time,
         date(note.start_time / 1000, 'unixepoch') AS date,
         [plan].name AS plan_name,
-        label.name AS label_name
+        label.name AS label_name,
+        [plan].color AS plan_color,
+        label.color AS label_color
     FROM note,
         [plan],
         label
