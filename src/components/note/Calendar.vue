@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { endOfMonth } from 'date-fns'
 import classNames from 'classnames'
-import { UseElementVisibility, UseMouseInElement } from '@vueuse/components'
 import type { CSSProperties } from 'vue'
 
 defineProps<{
@@ -72,7 +71,6 @@ const point = computed(() => ({
 }))
 
 const [DefineMonth, ReuseMonth] = createReusableTemplate<{ list: MonthCell }>()
-const [DefineDate, ReuseDate] = createReusableTemplate<{ date: number }>()
 
 function generate(year: number) {
   const list: Array<MonthCell> = []
@@ -227,31 +225,23 @@ init()
         hover:opacity-80 opacity-100 transition-opacity cursor-pointer rounded-full relative
         @click="emit('click', new Date(`${year}-${month}-${date}`))"
       >
-        <UseElementVisibility v-slot="{ isVisible }" w-full h-full>
-          <UseMouseInElement v-slot="{ isOutside }" w-full h-full>
-            <ReuseDate v-if="isOutside" :date="date" />
-            <a-tooltip v-else :visible="isVisible && !isOutside">
-              <template #title>
-                <span>{{ formatHHmm(data.get(`${year}-${month}-${date}`)?.total || 0) }}</span>
-              </template>
-              <ReuseDate :date="date" />
-            </a-tooltip>
-          </UseMouseInElement>
-        </UseElementVisibility>
+        <a-tooltip>
+          <template #title>
+            <span>{{ formatHHmm(data.get(`${year}-${month}-${date}`)?.total || 0) }}</span>
+          </template>
+          <div
+            w-full h-full
+            flex justify-center items-center
+            :class="{
+              'scale-80': !isMonthMode,
+            }"
+          >
+            {{ date }}
+          </div>
+        </a-tooltip>
       </div>
     </div>
   </DefineMonth>
-  <DefineDate v-slot="{ date }">
-    <div
-      w-full h-full
-      flex justify-center items-center
-      :class="{
-        'scale-80': !isMonthMode,
-      }"
-    >
-      {{ date }}
-    </div>
-  </DefineDate>
   <div
     h-full flex flex-col bg-white :style="{
       fontSize: isMonthMode ? '18px' : '6px',

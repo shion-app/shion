@@ -52,7 +52,7 @@ async function finish() {
         />
       </a-form-item>
       <a-form-item :label="$t('note.update.description')">
-        <a-input v-model:value="vModel.description" />
+        <a-textarea v-model:value="vModel.description" :auto-size="{ minRows: 2, maxRows: 5 }" />
       </a-form-item>
     </modal-form>
   </a-modal>
