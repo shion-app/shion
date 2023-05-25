@@ -4,6 +4,8 @@ import { subDays } from 'date-fns'
 
 import type { RecentNote } from '@interfaces/database'
 
+const { t } = useI18n()
+
 const list = ref<Array<RecentNote>>([])
 
 const option = computed(() => {
@@ -20,6 +22,9 @@ const option = computed(() => {
       itemStyle: {
         color: list.value.find(i => i.planName == name)!.planColor,
       },
+      emphasis: {
+        focus: 'series',
+      },
     }
   })
 
@@ -34,18 +39,32 @@ const option = computed(() => {
       itemStyle: {
         color: list.value.find(i => i.labelName == name)!.labelColor,
       },
+      emphasis: {
+        focus: 'series',
+      },
+      barWidth: 10,
     }
   })
 
   return {
+    title: {
+      text: t('chart.week') as string,
+    },
     tooltip: {
       trigger: 'axis',
       axisPointer: {
         type: 'shadow',
       },
       valueFormatter: formatHHmm,
+      // formatter(params) {
+      //   return params.filter(({ value }) => value != 0).map(({ marker, seriesName, value }) => {
+      //     return `${marker}  ${seriesName}  ${formatHHmm(value)}`
+      //   }).join('<br/>')
+      // },
     },
-    legend: {},
+    legend: {
+      top: '5%',
+    },
     grid: {
       left: '2%',
       right: '2%',
@@ -55,7 +74,7 @@ const option = computed(() => {
     xAxis: [
       {
         type: 'category',
-        data: xAxis,
+        data: xAxis.map(i => format(new Date(i), 'MM-dd')),
       },
     ],
     yAxis: [

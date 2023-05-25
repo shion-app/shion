@@ -14,6 +14,7 @@ import { BarChart } from 'echarts/charts'
 import {
   GridComponent,
   LegendComponent,
+  TitleComponent,
   TooltipComponent,
 } from 'echarts/components'
 
@@ -34,6 +35,7 @@ use([
   GridComponent,
   TooltipComponent,
   LegendComponent,
+  TitleComponent,
 ])
 
 createApp(App)

@@ -60,3 +60,5 @@ sync:
   title: 同步数据
 timer:
   countdown: 倒计时已达到目标时间
+chart:
+  week: 一周活跃状态

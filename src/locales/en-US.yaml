@@ -60,3 +60,5 @@ sync:
   title: Sync data
 timer:
   countdown: The countdown has reached the target time
+chart:
+  week: One week active status
