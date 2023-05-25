@@ -7,6 +7,12 @@ import type { RecentNote } from '@interfaces/database'
 const { t } = useI18n()
 
 const list = ref<Array<RecentNote>>([])
+const planMode = ref(true)
+const legendHeight = ref(30)
+const chartRef = ref()
+
+const TITLE_HEIGHT = 30
+const LEGEND_MARGIN_BOTTOM = 10
 
 const option = computed(() => {
   const xAxis = new Array(7).fill(0).map((_, i) => format(subDays(new Date(), i), 'yyyy-MM-dd')).reverse()
@@ -42,13 +48,12 @@ const option = computed(() => {
       emphasis: {
         focus: 'series',
       },
-      barWidth: 10,
     }
   })
 
   return {
     title: {
-      text: t('chart.week') as string,
+      text: t('chart.week.active') as string,
     },
     tooltip: {
       trigger: 'axis',
@@ -63,12 +68,14 @@ const option = computed(() => {
       // },
     },
     legend: {
-      top: '5%',
+      top: TITLE_HEIGHT,
+      height: legendHeight.value,
     },
     grid: {
       left: '2%',
       right: '2%',
       bottom: '2%',
+      top: legendHeight.value + TITLE_HEIGHT + LEGEND_MARGIN_BOTTOM,
       containLabel: true,
     },
     xAxis: [
@@ -85,15 +92,31 @@ const option = computed(() => {
         },
       },
     ],
-    series: [
-      ...planData,
-      ...labelData,
+    series: planMode.value ? planData : labelData,
+    graphic: [
+      {
+        type: 'text',
+        right: '2%',
+        top: '1%',
+        style: {
+          text: t('chart.week.switch'),
+          fontSize: 16,
+        },
+        onclick() {
+          planMode.value = !planMode.value
+        },
+      },
     ],
   } as EChartsOption
 })
 
 async function init() {
   list.value = await selectRecentNote()
+}
+
+function handleChartRendered() {
+  const { chart } = chartRef.value
+  legendHeight.value = chart.getViewOfComponentModel(chart.getModel().getComponent('legend')).group.getBoundingRect().height
 }
 
 init()
@@ -120,7 +143,7 @@ init()
       </div>
     </div>
     <div class="h-[calc(100vh-1.5rem)]" flex-1 sticky top-0 bg-white>
-      <v-chart class="chart" :option="option" autoresize />
+      <v-chart ref="chartRef" class="chart" :option="option" autoresize @rendered="handleChartRendered" />
     </div>
   </div>
   <a-empty v-else h-full flex flex-col justify-center />

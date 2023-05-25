@@ -12,6 +12,7 @@ import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { BarChart } from 'echarts/charts'
 import {
+  GraphicComponent,
   GridComponent,
   LegendComponent,
   TitleComponent,
@@ -36,6 +37,7 @@ use([
   TooltipComponent,
   LegendComponent,
   TitleComponent,
+  GraphicComponent,
 ])
 
 createApp(App)

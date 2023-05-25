@@ -61,4 +61,6 @@ sync:
 timer:
   countdown: The countdown has reached the target time
 chart:
-  week: One week active status
+  week:
+    active: One week active status
+    switch: Switch
