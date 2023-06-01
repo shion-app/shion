@@ -18,6 +18,8 @@ label:
   name: Name
   plan: Plan Name
   color: Color
+  button:
+    start: Start timing
 error:
   unique: '{field} already exists'
   unhandle: Unhandled exception({error})
@@ -60,6 +62,7 @@ sync:
   title: Sync data
 timer:
   countdown: The countdown has reached the target time
+  timing: Timing
 chart:
   week:
     active: One week active status

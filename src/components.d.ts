@@ -30,6 +30,7 @@ declare module '@vue/runtime-core' {
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
     ATooltip: typeof import('ant-design-vue/es')['Tooltip']
     Calendar: typeof import('./components/note/Calendar.vue')['default']
+    Display: typeof import('./components/time/Display.vue')['default']
     LabelForm: typeof import('./components/label/LabelForm.vue')['default']
     ModalForm: typeof import('./components/shared/ModalForm.vue')['default']
     NavDrawer: typeof import('./components/nav/NavDrawer.vue')['default']

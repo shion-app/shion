@@ -4,7 +4,7 @@ import { message } from 'ant-design-vue'
 const store = useTime()
 const { t } = useI18n()
 
-const { running, time, isCountdownOver, countdown } = storeToRefs(store)
+const { running } = storeToRefs(store)
 const { start, finish } = store
 
 const visible = ref(false)
@@ -13,14 +13,14 @@ async function create({
   noteId,
   countdown,
   time,
-}: { noteId: number
+}: {
+  noteId: number
   countdown: boolean
   time: number
 }) {
-  start(countdown,
-    time, () => updateNote(noteId, {
-      endTime: Date.now(),
-    }))
+  start(countdown, time, () => updateNote(noteId, {
+    endTime: Date.now(),
+  }))
 }
 
 function openModal() {
@@ -35,19 +35,14 @@ async function finishTimer() {
 
 <template>
   <div flex flex-col items-center justify-evenly m-a h-full relative>
-    <div
-      font-mono text-20 :class="{
-        'text-red-6': countdown && !isCountdownOver,
-        'text-green-6': countdown && isCountdownOver,
-      }"
-    >
-      {{ time }}
-    </div>
+    <display text-20 />
     <div
       shadow-lg hover:shadow-xl transition-shadow w-20 h-20 rounded-full cursor-pointer text-12 flex justify-center items-center bg-white
+      @click="() => {
+        running ? finishTimer() : openModal()
+      }"
     >
-      <div v-if="running" i-mdi:stop @click="finishTimer" />
-      <div v-else i-mdi:play @click="openModal" />
+      <div :class="running ? 'i-mdi:stop' : 'i-mdi:play'" />
     </div>
   </div>
   <note-before-create v-model:visible="visible" @finish="create" />

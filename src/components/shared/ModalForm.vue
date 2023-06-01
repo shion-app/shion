@@ -9,7 +9,13 @@ defineEmits(['finish', 'cancel'])
 </script>
 
 <template>
-  <a-form :model="model" autocomplete="off" :label-col="{ style: { width: '100px' } }" @finish="() => $emit('finish')">
+  <a-form
+    :model="model"
+    autocomplete="off"
+    :label-col="{ style: { width: '100px' } }"
+    :colon="false"
+    @finish="() => $emit('finish')"
+  >
     <slot />
     <a-form-item class="mb-0!">
       <div flex>

@@ -3,6 +3,10 @@ import type { SelectProps } from 'ant-design-vue'
 
 const props = defineProps<{
   visible: boolean
+  form?: {
+    planId: number
+    labelId: number
+  }
 }>()
 
 const emit = defineEmits(['finish', 'cancel', 'update:visible'])
@@ -58,6 +62,12 @@ async function finish() {
     time: time * 1000 * 60,
   })
 }
+
+watch(() => props.form, (v) => {
+  Object.assign(model.value, v)
+}, {
+  deep: true,
+})
 
 init()
 </script>

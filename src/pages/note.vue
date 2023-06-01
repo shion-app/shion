@@ -184,13 +184,13 @@ watchOnce(noteList, () => {
                 <template #title>
                   <span>{{ $t('button.update') }}</span>
                 </template>
-                <div i-mdi:file-edit text-5 cursor-pointer @click="handleUpdate(note)" />
+                <div i-mdi:file-edit-outline text-5 cursor-pointer @click="handleUpdate(note)" />
               </a-tooltip>
               <a-tooltip placement="bottom">
                 <template #title>
                   <span>{{ $t('button.remove') }}</span>
                 </template>
-                <div i-mdi:delete text-5 cursor-pointer @click="handleRemove(note)" />
+                <div i-mdi:delete-outline text-5 cursor-pointer @click="handleRemove(note)" />
               </a-tooltip>
             </div>
           </div>

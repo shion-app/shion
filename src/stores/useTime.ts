@@ -13,7 +13,7 @@ export const useTime = defineStore('time', () => {
   let frame: number
   const INTERVAL = 1000 * 60
   let _update: (() => Promise<unknown>) | null
-  let _countdownTime: number
+  let _countdownTime = 0
 
   const time = computed(() => formatTime(countdown.value ? Math.abs(_countdownTime - spend.value) : spend.value))
   const isCountdownOver = computed(() => spend.value > _countdownTime)
@@ -62,7 +62,7 @@ export const useTime = defineStore('time', () => {
     return raw.hour ? `${hour}:${result}` : result
   }
 
-  whenever(isCountdownOver, async () => {
+  whenever(() => countdown.value && isCountdownOver.value, () => {
     sendNotification(t('timer.countdown'))
   })
 

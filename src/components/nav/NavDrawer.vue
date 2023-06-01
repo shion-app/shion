@@ -3,10 +3,12 @@ const { t } = useI18n()
 const route = useRoute()
 const moreStore = useMore()
 const updateStore = useUpdate()
+const timeStore = useTime()
 // const { sync } = useSync()
 
 const { menu: moreMenu } = storeToRefs(moreStore)
 const { precent, downloading } = storeToRefs(updateStore)
+const { running: timerRunning } = storeToRefs(timeStore)
 
 const { handleClick } = moreStore
 
@@ -38,6 +40,8 @@ const menu = computed(() => [{
 }])
 
 const name = computed(() => route.name as string)
+
+const isShowTimer = computed(() => timerRunning.value && name.value != 'time')
 </script>
 
 <template>
@@ -84,6 +88,12 @@ const name = computed(() => route.name as string)
             <div i-mdi:sync text-5 @click="sync" />
           </div>
         </a-tooltip> -->
+        <a-tooltip v-if="isShowTimer">
+          <template #title>
+            <span>{{ $t('timer.timing') }}</span>
+          </template>
+          <display />
+        </a-tooltip>
       </div>
     </a-layout-footer>
   </a-layout>

@@ -18,6 +18,8 @@ label:
   name: 名称
   plan: 计划名称
   color: 颜色
+  button:
+    start: 开始计时
 error:
   unique: '{field}已存在'
   unhandle: '未处理异常({error})'
@@ -60,6 +62,7 @@ sync:
   title: 同步数据
 timer:
   countdown: 倒计时已达到目标时间
+  timing: 计时中
 chart:
   week:
     active: 一周活跃状态
