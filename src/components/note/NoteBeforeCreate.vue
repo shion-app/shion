@@ -63,6 +63,10 @@ async function finish() {
   })
 }
 
+function handlePlanChange() {
+  model.value.labelId = undefined
+}
+
 watch(() => props.form, (v) => {
   Object.assign(model.value, v)
 }, {
@@ -79,6 +83,7 @@ init()
         <a-select
           v-model:value="model.planId"
           :options="planOptions"
+          @change="handlePlanChange"
         />
       </a-form-item>
       <a-form-item name="labelId" :label="$t('note.fill.label')" :rules="[{ required: true }]">
