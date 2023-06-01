@@ -5,6 +5,7 @@ import { subDays } from 'date-fns'
 import type { RecentNote } from '@interfaces/database'
 
 const { t } = useI18n()
+const router = useRouter()
 
 const list = ref<Array<RecentNote>>([])
 const planMode = ref(true)
@@ -119,6 +120,15 @@ function handleChartRendered() {
   legendHeight.value = chart.getViewOfComponentModel(chart.getModel().getComponent('legend')).group.getBoundingRect().height
 }
 
+function viewNote(planId: number) {
+  router.push({
+    path: '/note',
+    query: {
+      planId,
+    },
+  })
+}
+
 init()
 </script>
 
@@ -133,6 +143,8 @@ init()
         shadow-lg
         hover:shadow-xl
         transition-shadow
+        cursor-pointer
+        @click="viewNote(planId)"
       >
         <div text-6 font-bold>
           {{ date }}
