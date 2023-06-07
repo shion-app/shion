@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::ffi::OsStr;
 use std::iter::once;
 use std::mem;
@@ -32,10 +33,93 @@ use winapi::um::winuser::{
 };
 use winapi::um::winver::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW};
 
-struct Program {
-    path: String,
-    description: String,
-    active: bool,
+use super::shared::{Program, WatchOption};
+
+thread_local! {
+    static WINDOW: RefCell<Option<Box<dyn Fn(Program) -> ()>>> = RefCell::new(None);
+    static MOUSE: RefCell<Option<Box<dyn Fn() -> ()>>> = RefCell::new(None);
+    static KEYBOARD: RefCell<Option<Box<dyn Fn() -> ()>>> = RefCell::new(None);
+}
+
+unsafe extern "system" fn mouse_hook_callback(
+    n_code: i32,
+    w_param: usize,
+    l_param: isize,
+) -> isize {
+    if n_code >= 0 {
+        MOUSE.with(|i| {
+            if let Some(f) = &*i.borrow() {
+                f();
+            }
+        });
+    }
+    CallNextHookEx(null_mut(), n_code, w_param, l_param)
+}
+
+unsafe extern "system" fn keyboard_hook_callback(
+    n_code: i32,
+    w_param: usize,
+    l_param: isize,
+) -> isize {
+    if n_code >= 0 {
+        KEYBOARD.with(|i| {
+            if let Some(f) = &*i.borrow() {
+                f();
+            }
+        });
+    }
+    CallNextHookEx(null_mut(), n_code, w_param, l_param)
+}
+
+unsafe extern "system" fn handle_event(
+    _: winapi::shared::windef::HWINEVENTHOOK,
+    event: DWORD,
+    hwnd: HWND,
+    id_object: LONG,
+    _: LONG,
+    _: DWORD,
+    _: DWORD,
+) {
+    let is_switch_window = event == EVENT_SYSTEM_FOREGROUND;
+    let is_title_change = event == EVENT_OBJECT_NAMECHANGE && id_object == OBJID_WINDOW;
+
+    let ok = vec![is_switch_window, is_title_change]
+        .into_iter()
+        .any(|x| x);
+
+    if !ok {
+        return;
+    }
+    let title = get_application_title(hwnd);
+
+    if title.is_none() {
+        return;
+    }
+
+    let title = title.unwrap();
+
+    let application_path = get_application_path(hwnd);
+
+    if application_path.is_none() {
+        return;
+    }
+
+    let path = application_path.unwrap();
+
+    let description = get_application_description(path.clone());
+    let description =  if description.is_some() && description.clone().unwrap().len() != 0 {
+        description.unwrap()
+    } else {
+        let file_stem = Path::new(&path).file_stem().unwrap().to_str().unwrap();
+        file_stem.to_string()
+    };
+    let program = Program { path, description, title };
+
+    WINDOW.with(|i| {
+        if let Some(f) = &*i.borrow() {
+            f(program);
+        }
+    });
 }
 
 fn to_u16(str: String) -> Vec<u16> {
@@ -47,6 +131,7 @@ fn get_application_title(hwnd: HWND) -> Option<String> {
     if len == 0 {
         return None;
     }
+    println!("{}", len);
     let mut title: Vec<u16> = vec![0; len as usize + 1];
     let ret = unsafe { GetWindowTextW(hwnd, title.as_mut_ptr(), len + 1) };
     if ret == 0 {
@@ -164,72 +249,16 @@ fn get_application_description(application_path: String) -> Option<String> {
     Some(String::from_utf16_lossy(&description))
 }
 
-fn watch_input() {
-    unsafe extern "system" fn mouse_hook_callback(
-        n_code: i32,
-        w_param: usize,
-        l_param: isize,
-    ) -> isize {
-        if n_code >= 0 {}
-        CallNextHookEx(null_mut(), n_code, w_param, l_param)
-    }
+fn watch_input(option: WatchOption) {
+    let WatchOption {
+        window,
+        mouse,
+        keyboard,
+    } = option;
 
-    unsafe extern "system" fn keyboard_hook_callback(
-        n_code: i32,
-        w_param: usize,
-        l_param: isize,
-    ) -> isize {
-        if n_code >= 0 {}
-        CallNextHookEx(null_mut(), n_code, w_param, l_param)
-    }
-
-    unsafe extern "system" fn handle_event(
-        _: winapi::shared::windef::HWINEVENTHOOK,
-        event: DWORD,
-        hwnd: HWND,
-        id_object: LONG,
-        _: LONG,
-        _: DWORD,
-        _: DWORD,
-    ) {
-        let is_switch_window = event == EVENT_SYSTEM_FOREGROUND;
-        let is_title_change = event == EVENT_OBJECT_NAMECHANGE && id_object == OBJID_WINDOW;
-
-        let ok = vec![is_switch_window, is_title_change]
-            .into_iter()
-            .any(|x| x);
-
-        if !ok {
-            return;
-        }
-        let title = get_application_title(hwnd);
-
-        if title.is_none() {
-            return;
-        }
-
-        let application_path = get_application_path(hwnd);
-
-        if application_path.is_none() {
-            return;
-        }
-
-        let path = application_path.unwrap();
-
-        let description = match get_application_description(path.clone()) {
-            Some(description) => description,
-            None => {
-                let file_stem = Path::new(&path).file_stem().unwrap().to_str().unwrap();
-                file_stem.to_string()
-            }
-        };
-
-        let program = Program {
-            path,
-            description,
-            active: true,
-        };
-    }
+    WINDOW.with(|f| *f.borrow_mut() = Some(Box::new(window)));
+    MOUSE.with(|f| *f.borrow_mut() = Some(Box::new(mouse)));
+    KEYBOARD.with(|f| *f.borrow_mut() = Some(Box::new(keyboard)));
 
     let hook = unsafe {
         SetWinEventHook(
@@ -274,9 +303,9 @@ fn watch_input() {
     unsafe { UnhookWinEvent(hook) };
 }
 
-pub fn run() {
+pub fn run(option: WatchOption) {
     let handle1 = thread::spawn(|| {
-        watch_input();
+        watch_input(option);
     });
 
     handle1.join().unwrap();

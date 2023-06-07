@@ -7,6 +7,8 @@ use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu
 use tauri_plugin_log::{LogTarget, TimezoneStrategy};
 use tauri_plugin_sql::{Migration, MigrationKind};
 
+use shion::monitor;
+
 #[derive(Clone, serde::Serialize)]
 struct Payload {
     args: Vec<String>,
@@ -21,7 +23,7 @@ fn update_tray_menu(app: tauri::AppHandle, data: HashMap<String, String>) {
     }
 }
 
-fn main() {
+fn run_app() {
     let migrations = vec![Migration {
         version: 1,
         description: "create table",
@@ -82,4 +84,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![update_tray_menu])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+fn main() {
+    run_app();
 }
