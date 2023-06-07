@@ -9,8 +9,8 @@ use tauri_plugin_sql::{Migration, MigrationKind};
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {
-  args: Vec<String>,
-  cwd: String,
+    args: Vec<String>,
+    cwd: String,
 }
 
 #[tauri::command]
@@ -51,7 +51,8 @@ fn main() {
                 .build(),
         )
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
-            app.emit_all("single-instance", Payload { args: argv, cwd }).unwrap();
+            app.emit_all("single-instance", Payload { args: argv, cwd })
+                .unwrap();
             let window = app.get_window("main").unwrap();
             window.show().unwrap();
         }))
