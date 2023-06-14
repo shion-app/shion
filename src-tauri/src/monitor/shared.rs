@@ -1,4 +1,6 @@
-#[derive(Debug)]
+use serde::Serialize;
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Program {
     pub path: String,
     pub description: String,
@@ -6,7 +8,7 @@ pub struct Program {
 }
 
 pub struct WatchOption {
-    pub window: fn(Program) -> (),
-    pub mouse: fn() -> (),
-    pub keyboard: fn() -> (),
+    pub window: Box<dyn Fn(Program) -> ()>,
+    pub mouse: Box<dyn Fn() -> ()>,
+    pub keyboard: Box<dyn Fn() -> ()>,
 }

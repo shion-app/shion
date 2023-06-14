@@ -1,13 +1,17 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::collections::HashMap;
+use std::{
+    collections::HashMap,
+    sync::atomic::{AtomicBool, Ordering::Relaxed},
+    thread,
+};
 
 use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu};
 use tauri_plugin_log::{LogTarget, TimezoneStrategy};
 use tauri_plugin_sql::{Migration, MigrationKind};
 
-use shion::monitor;
+use shion::monitor::Monitor;
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {
@@ -23,7 +27,15 @@ fn update_tray_menu(app: tauri::AppHandle, data: HashMap<String, String>) {
     }
 }
 
-fn run_app() {
+static IS_SEND_PROGRAM: AtomicBool = AtomicBool::new(false);
+
+#[tauri::command]
+fn toggle_filter_program() {
+    let value = IS_SEND_PROGRAM.load(Relaxed);
+    IS_SEND_PROGRAM.store(!value, Relaxed);
+}
+
+fn main() {
     let migrations = vec![Migration {
         version: 1,
         description: "create table",
@@ -81,11 +93,25 @@ fn run_app() {
             }
             _ => {}
         })
-        .invoke_handler(tauri::generate_handler![update_tray_menu])
+        .invoke_handler(tauri::generate_handler![
+            update_tray_menu,
+            toggle_filter_program
+        ])
+        .setup(|app| {
+            let app_handle = app.handle();
+            thread::spawn(move || {
+                let monitor = Monitor::new(app_handle);
+                monitor.set_window(|app_handle, program| {
+                    let is_send_program = IS_SEND_PROGRAM.load(Relaxed);
+                    if is_send_program {
+                        // println!("{:?}", program);
+                        app_handle.emit_all("filter-program", program).unwrap();
+                    }
+                }).run()
+            });
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
-fn main() {
-    run_app();
-}

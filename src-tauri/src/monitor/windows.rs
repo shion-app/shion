@@ -6,7 +6,6 @@ use std::os::windows::ffi::OsStrExt;
 use std::path::Path;
 use std::ptr;
 use std::ptr::null_mut;
-use std::thread;
 
 use winapi::shared::minwindef::DWORD;
 use winapi::shared::minwindef::LPCVOID;
@@ -107,13 +106,17 @@ unsafe extern "system" fn handle_event(
     let path = application_path.unwrap();
 
     let description = get_application_description(path.clone());
-    let description =  if description.is_some() && description.clone().unwrap().len() != 0 {
+    let description = if description.is_some() && description.clone().unwrap().len() != 0 {
         description.unwrap()
     } else {
         let file_stem = Path::new(&path).file_stem().unwrap().to_str().unwrap();
         file_stem.to_string()
     };
-    let program = Program { path, description, title };
+    let program = Program {
+        path,
+        description,
+        title,
+    };
 
     WINDOW.with(|i| {
         if let Some(f) = &*i.borrow() {
@@ -131,7 +134,6 @@ fn get_application_title(hwnd: HWND) -> Option<String> {
     if len == 0 {
         return None;
     }
-    println!("{}", len);
     let mut title: Vec<u16> = vec![0; len as usize + 1];
     let ret = unsafe { GetWindowTextW(hwnd, title.as_mut_ptr(), len + 1) };
     if ret == 0 {
@@ -304,9 +306,5 @@ fn watch_input(option: WatchOption) {
 }
 
 pub fn run(option: WatchOption) {
-    let handle1 = thread::spawn(|| {
-        watch_input(option);
-    });
-
-    handle1.join().unwrap();
+    watch_input(option);
 }
