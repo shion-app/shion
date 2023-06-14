@@ -99,12 +99,11 @@ fn main() {
         ])
         .setup(|app| {
             let app_handle = app.handle();
-            thread::spawn(move || {
+            thread::spawn(|| {
                 let monitor = Monitor::new(app_handle);
                 monitor.set_window(|app_handle, program| {
                     let is_send_program = IS_SEND_PROGRAM.load(Relaxed);
                     if is_send_program {
-                        // println!("{:?}", program);
                         app_handle.emit_all("filter-program", program).unwrap();
                     }
                 }).run()

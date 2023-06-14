@@ -3,6 +3,7 @@ nav:
   plan: Plan
   time: Time
   label: Label
+  monitor: Monitor
   config: Config
 config:
   locale: Language

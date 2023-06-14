@@ -6,4 +6,10 @@ export interface Menu {
   click?: Function
 }
 
+export interface Program {
+  path: string
+  description: string
+  title: string
+}
+
 export * from './database'

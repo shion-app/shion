@@ -18,7 +18,7 @@ impl Monitor {
         }
     }
 
-    pub fn set_window(mut self, f: fn(app_handle: Arc<tauri::AppHandle>, Program) -> ()) -> Self {
+    pub fn set_window(mut self, f: fn(Arc<tauri::AppHandle>, Program) -> ()) -> Self {
         let app_handle = self.app_handle.clone();
         self.window_handler = Box::new(move |p| f(app_handle.clone(), p));
         self
