@@ -5,13 +5,17 @@ use std::{
     collections::HashMap,
     sync::atomic::{AtomicBool, Ordering::Relaxed},
     thread,
+    time::{SystemTime, UNIX_EPOCH},
 };
 
 use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu};
 use tauri_plugin_log::{LogTarget, TimezoneStrategy};
 use tauri_plugin_sql::{Migration, MigrationKind};
 
-use shion::monitor::Monitor;
+use shion::monitor::{
+    self,
+    shared::{Activity, Program, WatchOption},
+};
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {
@@ -100,17 +104,34 @@ fn main() {
         .setup(|app| {
             let app_handle = app.handle();
             thread::spawn(|| {
-                let monitor = Monitor::new(app_handle);
-                monitor.set_window(|app_handle, program| {
+                let window = move |program: Program| {
                     let is_send_program = IS_SEND_PROGRAM.load(Relaxed);
                     if is_send_program {
                         app_handle.emit_all("filter-program", program).unwrap();
+                    } else {
+                        let timestamp = SystemTime::now()
+                            .duration_since(UNIX_EPOCH)
+                            .unwrap()
+                            .as_millis();
+                        let activity = Activity {
+                            path: program.path,
+                            timestamp,
+                            active: true,
+                        };
+                        app_handle.emit_all("program-activity", activity).unwrap();
                     }
-                }).run()
+                };
+                monitor::run(WatchOption {
+                    window: Box::new(window),
+                    // mouse: || println!("mouse move"),
+                    // keyboard: || println!("key press"),
+                    mouse: Box::new(|| {}),
+                    keyboard: Box::new(|| {}),
+                });
             });
+
             Ok(())
         })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-

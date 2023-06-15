@@ -134,7 +134,7 @@ fn get_application_title(hwnd: HWND) -> Option<String> {
     if len == 0 {
         return None;
     }
-    let mut title: Vec<u16> = vec![0; len as usize + 1];
+    let mut title: Vec<u16> = vec![0; len as usize];
     let ret = unsafe { GetWindowTextW(hwnd, title.as_mut_ptr(), len + 1) };
     if ret == 0 {
         return None;
@@ -307,4 +307,20 @@ fn watch_input(option: WatchOption) {
 
 pub fn run(option: WatchOption) {
     watch_input(option);
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn watch() {
+        run(WatchOption {
+            window: Box::new(|program| println!("{:#?}", program)),
+            // mouse: || println!("mouse move"),
+            // keyboard: || println!("key press"),
+            mouse: Box::new(|| {}),
+            keyboard: Box::new(|| {}),
+        });
+    }
 }

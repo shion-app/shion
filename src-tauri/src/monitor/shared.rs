@@ -12,3 +12,11 @@ pub struct WatchOption {
     pub mouse: Box<dyn Fn() -> ()>,
     pub keyboard: Box<dyn Fn() -> ()>,
 }
+
+#[derive(Clone, Serialize)]
+
+pub struct Activity {
+    pub active: bool,
+    pub timestamp: u128,
+    pub path: String,
+}
