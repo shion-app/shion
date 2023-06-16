@@ -12,7 +12,7 @@ export const useMonitor = defineStore('monitor', () => {
   const whiteList = ref<Program[]>([])
 
   let timeout: number
-  let task = () => {}
+  let task: (immediate: boolean) => void = () => {}
   let lastActivity: backend.Activity | null = null
 
   async function init() {
@@ -38,12 +38,15 @@ export const useMonitor = defineStore('monitor', () => {
 
   listen('program-activity', (event: Event<backend.Activity>) => {
     const { payload } = event
-    const program = whiteList.value.find(i => i.path == payload.path)
-    if (!program)
-      return
     const exist = lastActivity?.path == payload.path && lastActivity.title == payload.title
     if (exist)
       return
+    const program = whiteList.value.find(i => i.path == payload.path)
+    if (!program) {
+      task(true)
+      return
+    }
+
     lastActivity = payload
     const activity = {
       programId: program.id,
@@ -52,21 +55,27 @@ export const useMonitor = defineStore('monitor', () => {
       title: payload.title,
     }
     createActivity(activity)
-    task = () => {
+
+    task = (immediate: boolean) => {
       clearTimeout(timeout)
-      timeout = setTimeout(() => {
+      const fn = () => {
         createActivity({
           ...activity,
+          time: Date.now(),
           active: false,
         })
-        task = () => {}
+        task = () => { }
         lastActivity = null
-      }, 1000 * 60)
+      }
+      if (immediate)
+        fn()
+      else
+        timeout = setTimeout(fn, 1000 * 60)
     }
-    task()
+    task(false)
   })
 
-  const activate = useThrottleFn(task, 1000)
+  const activate = useThrottleFn(() => task(false), 1000)
 
   listen('program-activity-activate', activate)
 

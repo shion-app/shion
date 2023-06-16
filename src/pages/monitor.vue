@@ -32,11 +32,13 @@ async function handleRemoveProgram(id: number) {
     <div>
       <template v-if="filterList.length">
         <div v-for="program in filterList" :key="program.path" p-4 flex justify-between>
-          <div>
-            <div>{{ program.path }}</div>
+          <div class="max-w-80%">
+            <div truncate>
+              {{ program.path }}
+            </div>
             <div>{{ program.description }}</div>
-            <div i-mdi:add text-6 cursor-pointer @click="() => handleCreateProgram(program)" />
           </div>
+          <div i-mdi:add text-6 cursor-pointer @click="() => handleCreateProgram(program)" />
         </div>
       </template>
       <template v-else>
@@ -46,8 +48,10 @@ async function handleRemoveProgram(id: number) {
     <div>
       <template v-if="whiteList.length">
         <div v-for="{ path, description, id } in whiteList" :key="id" p-4 flex justify-between>
-          <div>
-            <div>{{ path }}</div>
+          <div class="max-w-80%">
+            <div truncate>
+              {{ path }}
+            </div>
             <div>{{ description }}</div>
           </div>
           <div i-mdi:remove text-6 cursor-pointer @click="() => handleRemoveProgram(id)" />
