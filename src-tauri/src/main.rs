@@ -3,7 +3,10 @@
 
 use std::{
     collections::HashMap,
-    sync::atomic::{AtomicBool, Ordering::Relaxed},
+    sync::{
+        atomic::{AtomicBool, Ordering::Relaxed},
+        Arc,
+    },
     thread,
     time::{SystemTime, UNIX_EPOCH},
 };
@@ -102,31 +105,40 @@ fn main() {
             toggle_filter_program
         ])
         .setup(|app| {
-            let app_handle = app.handle();
-            thread::spawn(|| {
-                let window = move |program: Program| {
-                    let is_send_program = IS_SEND_PROGRAM.load(Relaxed);
-                    if is_send_program {
-                        app_handle.emit_all("filter-program", program).unwrap();
-                    } else {
-                        let timestamp = SystemTime::now()
-                            .duration_since(UNIX_EPOCH)
-                            .unwrap()
-                            .as_millis();
-                        let activity = Activity {
-                            path: program.path,
-                            timestamp,
-                            active: true,
-                        };
-                        app_handle.emit_all("program-activity", activity).unwrap();
+            let app_handle = Arc::new(app.handle());
+            let app_handle_clone = app_handle.clone();
+            thread::spawn(move || {
+                let window = {
+                    let app_handle = app_handle_clone.clone();
+                    move |program: Program| {
+                        let is_send_program = IS_SEND_PROGRAM.load(Relaxed);
+                        if is_send_program {
+                            app_handle.emit_all("filter-program", program).unwrap();
+                        } else {
+                            let timestamp = SystemTime::now()
+                                .duration_since(UNIX_EPOCH)
+                                .unwrap()
+                                .as_millis();
+                            let activity = Activity {
+                                path: program.path,
+                                timestamp,
+                                title: program.title,
+                                active: true,
+                            };
+                            app_handle.emit_all("program-activity", activity).unwrap();
+                        }
+                    }
+                };
+                let mouse = {
+                    let app_handle = app_handle_clone.clone();
+                    move || {
+                        app_handle.emit_all("program-activity-activate", ()).unwrap();
                     }
                 };
                 monitor::run(WatchOption {
                     window: Box::new(window),
-                    // mouse: || println!("mouse move"),
-                    // keyboard: || println!("key press"),
-                    mouse: Box::new(|| {}),
-                    keyboard: Box::new(|| {}),
+                    mouse: Box::new(mouse.clone()),
+                    keyboard: Box::new(mouse),
                 });
             });
 

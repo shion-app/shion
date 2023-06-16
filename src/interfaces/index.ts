@@ -12,4 +12,13 @@ export interface Program {
   title: string
 }
 
+export type SavedProgram = Omit<Program, 'title'>
+
+export interface Activity {
+  active: boolean
+  timestamp: number
+  path: string
+  title: string
+}
+
 export * from './database'

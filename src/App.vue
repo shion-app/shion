@@ -8,6 +8,7 @@ const { locale: l } = useI18n()
 const { start } = useUpdate()
 const configStore = useConfig()
 const timeStore = useTime()
+useMonitor()
 
 const { finish } = timeStore
 const { config } = storeToRefs(configStore)

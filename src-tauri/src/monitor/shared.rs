@@ -19,4 +19,5 @@ pub struct Activity {
     pub active: bool,
     pub timestamp: u128,
     pub path: String,
+    pub title: String
 }
