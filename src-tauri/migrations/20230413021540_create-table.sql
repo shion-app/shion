@@ -38,6 +38,23 @@ CREATE TABLE IF NOT EXISTS sync_log (
   sync BOOLEAN DEFAULT 0
 );
 
+CREATE TABLE IF NOT EXISTS program (
+  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  path TEXT NOT NULL,
+  description TEXT NOT NULL,
+  deleted_at TIMESTAMP DEFAULT 0,
+);
+
+CREATE TABLE IF NOT EXISTS activity (
+  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  title TEXT NOT NULL,
+  time TIMESTAMP NOT NULL,
+  active BOOLEAN NOT NULL,
+  program_id INTEGER NOT NULL,
+  deleted_at TIMESTAMP DEFAULT 0,
+  FOREIGN KEY (program_id) REFERENCES program (id)
+);
+
 CREATE TRIGGER log_plan_insert
   AFTER INSERT
   ON plan
@@ -90,4 +107,40 @@ BEGIN
   INSERT INTO sync_log
     (table_name, type, data)
   VALUES ("note", "update", json_object('id', new.id, 'start_time', new.start_time, 'end_time', new.end_time, 'description', new.description, 'plan_id', new.plan_id, 'label_id', new.label_id, 'deleted_at', new.deleted_at));
+END;
+
+CREATE TRIGGER log_program_insert
+  AFTER INSERT
+  ON program
+BEGIN
+  INSERT INTO sync_log
+    (table_name, type, data)
+  VALUES ("program", "insert", json_object('id', new.id, 'path', new.path, 'description', new.description));
+END;
+
+CREATE TRIGGER log_program_update
+  AFTER UPDATE
+  ON program
+BEGIN
+  INSERT INTO sync_log
+    (table_name, type, data)
+  VALUES ("program", "update", json_object('id', new.id, 'path', new.path, 'description', new.description));
+END;
+
+CREATE TRIGGER log_activity_insert
+  AFTER INSERT
+  ON activity
+BEGIN
+  INSERT INTO sync_log
+    (table_name, type, data)
+  VALUES ("activity", "insert", json_object('id', new.id, 'title', new.title, 'time', new.time, 'active', new.active, 'program_id', new.program_id));
+END;
+
+CREATE TRIGGER log_activity_update
+  AFTER UPDATE
+  ON activity
+BEGIN
+  INSERT INTO sync_log
+    (table_name, type, data)
+  VALUES ("activity", "update", json_object('id', new.id, 'title', new.title, 'time', new.time, 'active', new.active, 'program_id', new.program_id));
 END;

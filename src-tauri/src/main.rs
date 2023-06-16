@@ -121,7 +121,7 @@ fn main() {
                                 .as_millis();
                             let activity = Activity {
                                 path: program.path,
-                                timestamp,
+                                time: timestamp,
                                 title: program.title,
                                 active: true,
                             };

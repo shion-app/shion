@@ -4,7 +4,7 @@ import { camelCase } from 'camel-case'
 import { error } from 'tauri-plugin-log-api'
 
 import { i18n } from '@locales/index'
-import type { Label, Note, Plan, RecentNote, SyncLog, TableName } from '@interfaces/index'
+import type { Activity, Label, Note, Plan, Program, RecentNote, SyncLog, TableName } from '@interfaces/index'
 
 const PATH = `sqlite:data${import.meta.env.DEV ? '-dev' : ''}.db`
 
@@ -45,6 +45,10 @@ type CreateNote = Pick<Note, 'startTime' | 'endTime' | 'planId' | 'labelId'> & P
 type CreatePlan = Pick<Plan, 'name' | 'color'>
 
 type CreateLabel = Pick<Label, 'name' | 'planId' | 'color'>
+
+type CreateProgram = Pick<Program, 'description' | 'path'>
+
+type CreateActivity = Pick<Activity, 'active' | 'programId' | 'time' | 'title'>
 
 export async function execute(query: string, bindValues?: unknown[]) {
   try {
@@ -239,4 +243,24 @@ export function setLogSync() {
 
 export function resetTableAutoIncrementId(tableName: string) {
   return execute(`DELETE FROM sqlite_sequence WHERE name = "${tableName}"`)
+}
+
+export function createProgram(data: CreateProgram) {
+  return create('program', data)
+}
+
+export async function removeProgram(id: number) {
+  await remove('program', id)
+}
+
+export function selectProgram() {
+  return select<Array<Program>>('SELECT * FROM program WHERE deleted_at = 0 ORDER BY id')
+}
+
+export function createActivity(data: CreateActivity) {
+  return create('activity', data)
+}
+
+export function selectActivity() {
+  return select<Array<Activity>>('SELECT * FROM activity WHERE deleted_at = 0 ORDER BY id')
 }
