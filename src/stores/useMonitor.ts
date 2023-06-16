@@ -13,6 +13,7 @@ export const useMonitor = defineStore('monitor', () => {
 
   let timeout: number
   let task = () => {}
+  let lastActivity: backend.Activity | null = null
 
   async function init() {
     whiteList.value = await selectProgram()
@@ -20,9 +21,11 @@ export const useMonitor = defineStore('monitor', () => {
 
   init()
 
-  whenever(filtering, () => {
-    invoke('toggle_filter_program')
-    filterList.value = []
+  watch(filtering, (v) => {
+    if (v)
+      invoke('toggle_filter_program')
+    else
+      filterList.value = []
   })
 
   listen('filter-program', async (event: Event<backend.Program>) => {
@@ -33,32 +36,37 @@ export const useMonitor = defineStore('monitor', () => {
     filterList.value.push(payload)
   })
 
-  listen('program-activity', async (event: Event<backend.Activity>) => {
+  listen('program-activity', (event: Event<backend.Activity>) => {
     const { payload } = event
     const program = whiteList.value.find(i => i.path == payload.path)
     if (!program)
       return
-    const { lastInsertId } = await createActivity({
+    const exist = lastActivity?.path == payload.path && lastActivity.title == payload.title
+    if (exist)
+      return
+    lastActivity = payload
+    const activity = {
       programId: program.id,
       active: true,
       time: payload.time,
       title: payload.title,
-    })
+    }
+    createActivity(activity)
     task = () => {
+      clearTimeout(timeout)
       timeout = setTimeout(() => {
-        updateActivity(lastInsertId, {
+        createActivity({
+          ...activity,
           active: false,
         })
         task = () => {}
+        lastActivity = null
       }, 1000 * 60)
     }
     task()
   })
 
-  const activate = useThrottleFn(() => {
-    clearTimeout(timeout)
-    task()
-  }, 1000)
+  const activate = useThrottleFn(task, 1000)
 
   listen('program-activity-activate', activate)
 

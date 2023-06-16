@@ -145,7 +145,6 @@ declare global {
   const unrefElement: typeof import('@vueuse/core')['unrefElement']
   const until: typeof import('@vueuse/core')['until']
   const update: typeof import('./database/request')['update']
-  const updateActivity: typeof import('./database/request')['updateActivity']
   const updateLabel: typeof import('./database/request')['updateLabel']
   const updateNote: typeof import('./database/request')['updateNote']
   const updatePlan: typeof import('./database/request')['updatePlan']
@@ -484,7 +483,6 @@ declare module 'vue' {
     readonly unrefElement: UnwrapRef<typeof import('@vueuse/core')['unrefElement']>
     readonly until: UnwrapRef<typeof import('@vueuse/core')['until']>
     readonly update: UnwrapRef<typeof import('./database/request')['update']>
-    readonly updateActivity: UnwrapRef<typeof import('./database/request')['updateActivity']>
     readonly updateLabel: UnwrapRef<typeof import('./database/request')['updateLabel']>
     readonly updateNote: UnwrapRef<typeof import('./database/request')['updateNote']>
     readonly updatePlan: UnwrapRef<typeof import('./database/request')['updatePlan']>

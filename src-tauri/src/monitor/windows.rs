@@ -134,12 +134,12 @@ fn get_application_title(hwnd: HWND) -> Option<String> {
     if len == 0 {
         return None;
     }
-    let mut title: Vec<u16> = vec![0; len as usize];
+    let mut title: Vec<u16> = vec![0; len as usize + 1];
     let ret = unsafe { GetWindowTextW(hwnd, title.as_mut_ptr(), len + 1) };
     if ret == 0 {
         return None;
     }
-    Some(String::from_utf16_lossy(&title))
+    Some(String::from_utf16_lossy(&title[..ret as usize]))
 }
 
 fn get_application_path(hwnd: HWND) -> Option<String> {
