@@ -261,6 +261,10 @@ export function createActivity(data: CreateActivity) {
   return create('activity', data)
 }
 
+export function updateActivity(id: number, data: Partial<CreateActivity>) {
+  return update('activity', id, data)
+}
+
 export function selectActivity() {
   return select<Array<Activity>>('SELECT * FROM activity WHERE deleted_at = 0 ORDER BY id')
 }

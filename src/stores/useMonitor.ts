@@ -1,52 +1,58 @@
 import type { Event } from '@tauri-apps/api/event'
 import { listen } from '@tauri-apps/api/event'
 
-import type { Program as DatabaseProgram } from '@interfaces/index'
+import type { Program } from '@interfaces/index'
 
-interface Program {
-  path: string
-  description: string
-  title: string
-}
-
-interface Activity {
-  active: boolean
-  time: number
-  path: string
-  title: string
-}
+import type * as backend from '@interfaces/backend'
+import { invoke } from '@tauri-apps/api'
 
 export const useMonitor = defineStore('monitor', () => {
   const filtering = ref(false)
-  const whiteList = ref<DatabaseProgram[]>([])
+  const filterList = ref<backend.Program[]>([])
+  const whiteList = ref<Program[]>([])
 
   let timeout: number
   let task = () => {}
 
-  listen('filter-program', (event: Event<Program>) => {
-    // const { path, description } = event.payload
-    // const exist = whiteList.value.find(i => i.path == path)
-    // if (exist)
-    //   return
-    // whiteList.value.push({
-    //   path,
-    //   description,
-    // })
-    // TODO: database
+  async function init() {
+    whiteList.value = await selectProgram()
+  }
+
+  init()
+
+  whenever(filtering, () => {
+    invoke('toggle_filter_program')
+    filterList.value = []
   })
 
-  listen('program-activity', (event: Event<Activity>) => {
+  listen('filter-program', async (event: Event<backend.Program>) => {
     const { payload } = event
-    const exist = whiteList.value.find(i => i.path == payload.path)
-    if (!exist)
+    const exist = [...filterList.value, ...whiteList.value].find(i => i.path == payload.path)
+    if (exist)
       return
-    // TODO: database
-    const delay = 1000 * 60
+    filterList.value.push(payload)
+  })
+
+  listen('program-activity', async (event: Event<backend.Activity>) => {
+    const { payload } = event
+    const program = whiteList.value.find(i => i.path == payload.path)
+    if (!program)
+      return
+    const { lastInsertId } = await createActivity({
+      programId: program.id,
+      active: true,
+      time: payload.time,
+      title: payload.title,
+    })
     task = () => {
       timeout = setTimeout(() => {
-        // TODO: database
-      }, delay)
+        updateActivity(lastInsertId, {
+          active: false,
+        })
+        task = () => {}
+      }, 1000 * 60)
     }
+    task()
   })
 
   const activate = useThrottleFn(() => {
@@ -58,5 +64,7 @@ export const useMonitor = defineStore('monitor', () => {
 
   return {
     filtering,
+    filterList,
+    whiteList,
   }
 })

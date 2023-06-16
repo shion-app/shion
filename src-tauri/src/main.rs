@@ -123,7 +123,6 @@ fn main() {
                                 path: program.path,
                                 time: timestamp,
                                 title: program.title,
-                                active: true,
                             };
                             app_handle.emit_all("program-activity", activity).unwrap();
                         }
@@ -132,7 +131,12 @@ fn main() {
                 let mouse = {
                     let app_handle = app_handle_clone.clone();
                     move || {
-                        app_handle.emit_all("program-activity-activate", ()).unwrap();
+                        let is_send_program = IS_SEND_PROGRAM.load(Relaxed);
+                        if !is_send_program {
+                            app_handle
+                                .emit_all("program-activity-activate", ())
+                                .unwrap();
+                        }
                     }
                 };
                 monitor::run(WatchOption {
