@@ -14,7 +14,8 @@
     "baseUrl": "./",
     "paths": {
       "@locales/*": ["src/locales/*"],
-      "@interfaces/*": ["src/interfaces/*"]
+      "@interfaces/*": ["src/interfaces/*"],
+      "@assets/*": ["src/assets/*"]
     }
   },
   "include": [

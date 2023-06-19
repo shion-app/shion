@@ -46,7 +46,7 @@ type CreatePlan = Pick<Plan, 'name' | 'color'>
 
 type CreateLabel = Pick<Label, 'name' | 'planId' | 'color'>
 
-type CreateProgram = Pick<Program, 'description' | 'path'>
+type CreateProgram = Pick<Program, 'description' | 'path' | 'icon'>
 
 type CreateActivity = Pick<Activity, 'active' | 'programId' | 'time' | 'title'>
 
@@ -246,7 +246,10 @@ export function resetTableAutoIncrementId(tableName: string) {
 }
 
 export function createProgram(data: CreateProgram) {
-  return create('program', data)
+  return create('program', {
+    ...data,
+    icon: data.icon.join(', '),
+  })
 }
 
 export async function removeProgram(id: number) {
@@ -254,7 +257,14 @@ export async function removeProgram(id: number) {
 }
 
 export function selectProgram() {
-  return select<Array<Program>>('SELECT * FROM program WHERE deleted_at = 0 ORDER BY id')
+  return select<Array<Omit<Program, 'icon'> & {
+    icon: string
+  }>>('SELECT * FROM program WHERE deleted_at = 0 ORDER BY id').then(list => list.map((i) => {
+    return {
+      ...i,
+      icon: i.icon.split(',').map(Number),
+    }
+  }))
 }
 
 export function createActivity(data: CreateActivity) {

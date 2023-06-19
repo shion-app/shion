@@ -48,6 +48,7 @@ export interface Program {
   id: number
   path: string
   description: string
+  icon: number[]
 }
 
 export interface Activity {

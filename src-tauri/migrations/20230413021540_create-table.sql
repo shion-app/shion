@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS program (
   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   path TEXT NOT NULL,
   description TEXT NOT NULL,
+  icon BLOB NOT NULL,
   deleted_at TIMESTAMP DEFAULT 0
 );
 
@@ -115,7 +116,7 @@ CREATE TRIGGER log_program_insert
 BEGIN
   INSERT INTO sync_log
     (table_name, type, data)
-  VALUES ("program", "insert", json_object('id', new.id, 'path', new.path, 'description', new.description));
+  VALUES ("program", "insert", json_object('id', new.id, 'path', new.path, 'description', new.description, 'icon', new.icon));
 END;
 
 CREATE TRIGGER log_program_update
@@ -124,7 +125,7 @@ CREATE TRIGGER log_program_update
 BEGIN
   INSERT INTO sync_log
     (table_name, type, data)
-  VALUES ("program", "update", json_object('id', new.id, 'path', new.path, 'description', new.description));
+  VALUES ("program", "update", json_object('id', new.id, 'path', new.path, 'description', new.description, 'icon', new.icon));
 END;
 
 CREATE TRIGGER log_activity_insert

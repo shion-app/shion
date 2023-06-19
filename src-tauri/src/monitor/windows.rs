@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 use std::ffi::OsStr;
+use std::io::Cursor;
 use std::iter::once;
 use std::mem;
 use std::os::windows::ffi::OsStrExt;
@@ -13,24 +14,36 @@ use winapi::shared::minwindef::LPVOID;
 use winapi::shared::minwindef::MAX_PATH;
 use winapi::shared::minwindef::WORD;
 use winapi::shared::ntdef::LONG;
+use winapi::shared::windef::HICON__;
 use winapi::shared::windef::HWND;
 use winapi::um::handleapi::CloseHandle;
 use winapi::um::processthreadsapi::OpenProcess;
 use winapi::um::psapi::{EnumProcessModulesEx, GetModuleFileNameExW};
+use winapi::um::wingdi::BITMAPINFOHEADER;
+use winapi::um::wingdi::BI_RGB;
+use winapi::um::wingdi::DIB_RGB_COLORS;
+use winapi::um::wingdi::GetDIBits;
 use winapi::um::winnt::PROCESS_QUERY_INFORMATION;
 use winapi::um::winnt::PROCESS_VM_READ;
+use winapi::um::winuser::GetDC;
+use winapi::um::winuser::GetDesktopWindow;
 use winapi::um::winuser::GetMessageW;
 use winapi::um::winuser::GetWindowThreadProcessId;
 use winapi::um::winuser::EVENT_OBJECT_NAMECHANGE;
 use winapi::um::winuser::EVENT_SYSTEM_FOREGROUND;
+use winapi::um::winuser::ICONINFO;
 use winapi::um::winuser::MSG;
 use winapi::um::winuser::OBJID_WINDOW;
+use winapi::um::winuser::ReleaseDC;
 use winapi::um::winuser::{CallNextHookEx, SetWindowsHookExW, WH_KEYBOARD_LL, WH_MOUSE_LL};
 use winapi::um::winuser::{
     DispatchMessageW, GetWindowTextLengthW, GetWindowTextW, SetWinEventHook, TranslateMessage,
-    UnhookWinEvent, WINEVENT_OUTOFCONTEXT, WINEVENT_SKIPOWNPROCESS,
+    UnhookWinEvent, WINEVENT_OUTOFCONTEXT, WINEVENT_SKIPOWNPROCESS,GetIconInfo
 };
 use winapi::um::winver::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW};
+use winapi::um::shellapi::ExtractIconExW;
+use image::{ImageBuffer, ImageFormat, Rgba};
+
 
 use super::shared::{Program, WatchOption};
 
@@ -112,10 +125,18 @@ unsafe extern "system" fn handle_event(
         let file_stem = Path::new(&path).file_stem().unwrap().to_str().unwrap();
         file_stem.to_string()
     };
+
+    let handle = get_icon_handle(path.clone());
+    let mut buffer: Vec<u8> = vec![];
+    if handle.is_some() {
+        buffer = get_image_buffer(handle.unwrap(), 32);
+    }
+
     let program = Program {
         path,
         description,
         title,
+        icon: buffer
     };
 
     WINDOW.with(|i| {
@@ -249,6 +270,81 @@ fn get_application_description(application_path: String) -> Option<String> {
     let description: Vec<u16> =
         unsafe { std::slice::from_raw_parts(value_ptr, (value_size - 1) as usize).to_vec() };
     Some(String::from_utf16_lossy(&description))
+}
+
+fn get_icon_handle(appliaction_path: String) -> Option<*mut HICON__> {
+    let path_wide = to_u16(appliaction_path);
+    let mut large_icon = ptr::null_mut();
+    let mut small_icon = ptr::null_mut();
+    unsafe { ExtractIconExW(path_wide.as_ptr(), 0, &mut large_icon, &mut small_icon, 1) };
+    if large_icon.is_null() {
+        return None;
+    }
+    Some(large_icon)
+}
+
+fn get_image_buffer(icon_handle: *mut HICON__, icon_size: i32) -> Vec<u8> {
+    let mut icon_info = ICONINFO {
+        fIcon: 0,
+        xHotspot: 0,
+        yHotspot: 0,
+        hbmMask: ptr::null_mut(),
+        hbmColor: ptr::null_mut(),
+    };
+    unsafe { GetIconInfo(icon_handle, &mut icon_info) };
+    let hwnd = unsafe { GetDesktopWindow() };
+    let hdc = unsafe { GetDC(hwnd) };
+    let width = icon_size;
+    let height = icon_size;
+
+    let mut bitmap_info = BITMAPINFOHEADER {
+        biSize: mem::size_of::<BITMAPINFOHEADER>() as DWORD,
+        biWidth: width,
+        biHeight: -height,
+        biPlanes: 1,
+        biBitCount: 32,
+        biCompression: BI_RGB,
+        biSizeImage: 0,
+        biXPelsPerMeter: 0,
+        biYPelsPerMeter: 0,
+        biClrUsed: 0,
+        biClrImportant: 0,
+    };
+    let mut bgra_bitmap_data = vec![0u8; (width * height * 4) as usize];
+    unsafe { GetDIBits(
+        hdc,
+        icon_info.hbmColor,
+        0,
+        height as u32,
+        bgra_bitmap_data.as_mut_ptr() as *mut _,
+        &mut bitmap_info as *mut _ as *mut _,
+        DIB_RGB_COLORS,
+    ) };
+
+    unsafe { ReleaseDC(hwnd, hdc) };
+
+    let mut rgba_bitmap_data = Vec::with_capacity(bgra_bitmap_data.len());
+    for y in 0..height {
+        for x in 0..width {
+            let offset = ((y * width + x) * 4) as usize;
+            let b = bgra_bitmap_data[offset];
+            let g = bgra_bitmap_data[offset + 1];
+            let r = bgra_bitmap_data[offset + 2];
+            let a = bgra_bitmap_data[offset + 3];
+            rgba_bitmap_data.extend_from_slice(&[r, g, b, a]);
+        }
+    }
+
+    let icon_image =
+        ImageBuffer::<Rgba<u8>, Vec<u8>>::from_vec(width as u32, height as u32, rgba_bitmap_data)
+            .unwrap();
+
+    let mut buffer = Vec::new();
+    icon_image
+        .write_to(&mut Cursor::new(&mut buffer), ImageFormat::Png)
+        .unwrap();
+
+    buffer
 }
 
 fn watch_input(option: WatchOption) {

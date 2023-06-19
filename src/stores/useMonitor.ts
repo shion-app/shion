@@ -1,15 +1,17 @@
 import type { Event } from '@tauri-apps/api/event'
 import { listen } from '@tauri-apps/api/event'
+import { invoke } from '@tauri-apps/api'
 
 import type { Program } from '@interfaces/index'
-
 import type * as backend from '@interfaces/backend'
-import { invoke } from '@tauri-apps/api'
+
+import exe from '@assets/exe.ico'
 
 export const useMonitor = defineStore('monitor', () => {
   const filtering = ref(false)
   const filterList = ref<backend.Program[]>([])
   const whiteList = ref<Program[]>([])
+  const iconMap = ref(new Map<string, string>())
 
   let timeout: number
   let task: (immediate: boolean) => void = () => {}
@@ -17,6 +19,17 @@ export const useMonitor = defineStore('monitor', () => {
 
   async function init() {
     whiteList.value = await selectProgram()
+    whiteList.value.forEach(transformIcon)
+  }
+
+  function transformIcon(program: Pick<backend.Program, 'path' | 'icon'>) {
+    const { path, icon } = program
+    if (iconMap.value.has(path))
+      return
+    if (icon.length)
+      iconMap.value.set(path, URL.createObjectURL(new Blob([new Uint8Array(icon)], { type: 'image/png' })))
+    else
+      iconMap.value.set(path, exe)
   }
 
   init()
@@ -33,7 +46,8 @@ export const useMonitor = defineStore('monitor', () => {
     const exist = [...filterList.value, ...whiteList.value].find(i => i.path == payload.path)
     if (exist)
       return
-    filterList.value.push(payload)
+    filterList.value.unshift(payload)
+    transformIcon(payload)
   })
 
   listen('program-activity', (event: Event<backend.Activity>) => {
@@ -83,5 +97,6 @@ export const useMonitor = defineStore('monitor', () => {
     filtering,
     filterList,
     whiteList,
+    iconMap,
   }
 })
