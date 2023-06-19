@@ -2,6 +2,10 @@
 import type * as backend from '@interfaces/backend'
 
 const store = useMonitor()
+const { setMenu } = useMore()
+
+const { t } = useI18n()
+
 const { getIconUrl } = store
 const { filtering, filterList, whiteList } = storeToRefs(store)
 
@@ -27,11 +31,20 @@ async function handleRemoveProgram(id: number) {
   whiteList.value.splice(index, 1)
   removeProgram(id)
 }
+
+setMenu(() => [
+  {
+    key: 'toggleFilter',
+    title: t('monitor.filter'),
+    click() {
+      filtering.value = !filtering.value
+    },
+  },
+])
 </script>
 
 <template>
-  <a-switch v-model:checked="filtering" />
-  <div flex class="h-[calc(100%-30px)] [&>*]:w-50% [&>*]:h-full">
+  <div flex h-full class="[&>*]:w-50% [&>*]:h-full">
     <div>
       <template v-if="filterList.length">
         <div v-for="program in filterList" :key="program.path" p-4 flex space-x-4>
@@ -46,7 +59,7 @@ async function handleRemoveProgram(id: number) {
         </div>
       </template>
       <template v-else>
-        <a-empty h-full flex flex-col justify-center />
+        <a-empty h-full flex flex-col justify-center :description="filtering ? t('monitor.switchWindowTip') : t('monitor.needSwitchFilter')" />
       </template>
     </div>
     <div>
