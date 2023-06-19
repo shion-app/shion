@@ -2,7 +2,8 @@
 import type * as backend from '@interfaces/backend'
 
 const store = useMonitor()
-const { filtering, filterList, whiteList, iconMap } = storeToRefs(store)
+const { getIconUrl } = store
+const { filtering, filterList, whiteList } = storeToRefs(store)
 
 async function handleCreateProgram(program: backend.Program) {
   const { description, path, icon } = program
@@ -34,9 +35,9 @@ async function handleRemoveProgram(id: number) {
     <div>
       <template v-if="filterList.length">
         <div v-for="program in filterList" :key="program.path" p-4 flex space-x-4>
-          <img :src="iconMap.get(program.path)" width="32" height="32" object-contain>
+          <img :src="getIconUrl(program.path)" width="32" height="32" object-contain>
           <div flex-1 min-w-0>
-            <div truncate>
+            <div truncate :title="program.path">
               {{ program.path }}
             </div>
             <div>{{ program.description }}</div>
@@ -51,9 +52,9 @@ async function handleRemoveProgram(id: number) {
     <div>
       <template v-if="whiteList.length">
         <div v-for="{ path, description, id } in whiteList" :key="id" p-4 flex space-x-4>
-          <img :src="iconMap.get(path)" width="32" height="32" object-contain>
+          <img :src="getIconUrl(path)" width="32" height="32" object-contain>
           <div flex-1 min-w-0>
-            <div truncate>
+            <div truncate :title="path">
               {{ path }}
             </div>
             <div>{{ description }}</div>

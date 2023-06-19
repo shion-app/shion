@@ -24,12 +24,21 @@ export const useMonitor = defineStore('monitor', () => {
 
   function transformIcon(program: Pick<backend.Program, 'path' | 'icon'>) {
     const { path, icon } = program
-    if (iconMap.value.has(path))
+    const p = path.toLowerCase()
+    if (iconMap.value.has(p))
       return
     if (icon.length)
-      iconMap.value.set(path, URL.createObjectURL(new Blob([new Uint8Array(icon)], { type: 'image/png' })))
+      iconMap.value.set(p, URL.createObjectURL(new Blob([new Uint8Array(icon)], { type: 'image/png' })))
     else
-      iconMap.value.set(path, exe)
+      iconMap.value.set(p, exe)
+  }
+
+  function isPathEqual(base: string, target: string) {
+    return base.toLowerCase() == target.toLowerCase()
+  }
+
+  function getIconUrl(path: string) {
+    return iconMap.value.get(path.toLowerCase())
   }
 
   init()
@@ -43,7 +52,7 @@ export const useMonitor = defineStore('monitor', () => {
 
   listen('filter-program', async (event: Event<backend.Program>) => {
     const { payload } = event
-    const exist = [...filterList.value, ...whiteList.value].find(i => i.path == payload.path)
+    const exist = [...filterList.value, ...whiteList.value].find(i => isPathEqual(i.path, payload.path))
     if (exist)
       return
     filterList.value.unshift(payload)
@@ -52,10 +61,10 @@ export const useMonitor = defineStore('monitor', () => {
 
   listen('program-activity', (event: Event<backend.Activity>) => {
     const { payload } = event
-    const exist = lastActivity?.path == payload.path && lastActivity.title == payload.title
+    const exist = lastActivity && isPathEqual(lastActivity.path, payload.path) && lastActivity.title == payload.title
     if (exist)
       return
-    const program = whiteList.value.find(i => i.path == payload.path)
+    const program = whiteList.value.find(i => isPathEqual(i.path, payload.path))
     if (!program) {
       task(true)
       return
@@ -97,6 +106,6 @@ export const useMonitor = defineStore('monitor', () => {
     filtering,
     filterList,
     whiteList,
-    iconMap,
+    getIconUrl,
   }
 })
