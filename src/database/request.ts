@@ -49,7 +49,7 @@ type CreateLabel = Pick<Label, 'name' | 'planId' | 'color'>
 
 type CreateProgram = Pick<Program, 'description' | 'path' | 'icon'>
 
-type CreateActivity = Pick<Activity, 'active' | 'programId' | 'time' | 'title'>
+type CreateActivity = Pick<Activity, 'active' | 'time' | 'title' | 'programPath' | 'programDescription'>
 
 export async function execute(query: string, bindValues?: unknown[]) {
   try {

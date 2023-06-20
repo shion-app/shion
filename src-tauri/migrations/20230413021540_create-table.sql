@@ -35,7 +35,8 @@ CREATE TABLE IF NOT EXISTS program (
   path TEXT NOT NULL,
   description TEXT NOT NULL,
   icon BLOB NOT NULL,
-  deleted_at TIMESTAMP DEFAULT 0
+  deleted_at TIMESTAMP DEFAULT 0,
+  UNIQUE (path, deleted_at)
 );
 
 CREATE TABLE IF NOT EXISTS activity (
@@ -43,9 +44,9 @@ CREATE TABLE IF NOT EXISTS activity (
   title TEXT NOT NULL,
   time TIMESTAMP NOT NULL,
   active BOOLEAN NOT NULL,
-  program_id INTEGER NOT NULL,
-  deleted_at TIMESTAMP DEFAULT 0,
-  FOREIGN KEY (program_id) REFERENCES program (id)
+  program_path TEXT NOT NULL,
+  program_description TEXT NOT NULL,
+  deleted_at TIMESTAMP DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS sync_log (
@@ -134,7 +135,7 @@ CREATE TRIGGER log_activity_insert
 BEGIN
   INSERT INTO sync_log
     (table_name, type, data)
-  VALUES ("activity", "insert", json_object('id', new.id, 'title', new.title, 'time', new.time, 'active', new.active, 'program_id', new.program_id));
+  VALUES ("activity", "insert", json_object('id', new.id, 'title', new.title, 'time', new.time, 'active', new.active, 'program_path', new.program_path, 'program_description', new.program_description));
 END;
 
 CREATE TRIGGER log_activity_update
@@ -143,5 +144,5 @@ CREATE TRIGGER log_activity_update
 BEGIN
   INSERT INTO sync_log
     (table_name, type, data)
-  VALUES ("activity", "update", json_object('id', new.id, 'title', new.title, 'time', new.time, 'active', new.active, 'program_id', new.program_id));
+  VALUES ("activity", "update", json_object('id', new.id, 'title', new.title, 'time', new.time, 'active', new.active, 'program_path', new.program_path, 'program_description', new.program_description));
 END;

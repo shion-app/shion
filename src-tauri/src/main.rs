@@ -37,9 +37,8 @@ fn update_tray_menu(app: tauri::AppHandle, data: HashMap<String, String>) {
 static IS_SEND_PROGRAM: AtomicBool = AtomicBool::new(false);
 
 #[tauri::command]
-fn toggle_filter_program() {
-    let value = IS_SEND_PROGRAM.load(Relaxed);
-    IS_SEND_PROGRAM.store(!value, Relaxed);
+fn toggle_filter_program(data: bool) {
+    IS_SEND_PROGRAM.store(data, Relaxed);
 }
 
 fn main() {

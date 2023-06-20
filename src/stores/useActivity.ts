@@ -35,10 +35,11 @@ export const useActivity = defineStore('activity', () => {
 
     lastActivity = payload
     const activity: Omit<Activity, 'id'> = {
-      programId: vaildProgram.id,
       active: true,
       time: payload.time,
       title: payload.title,
+      programPath: vaildProgram.path,
+      programDescription: vaildProgram.description,
     }
     const { lastInsertId } = await createActivity(activity)
     activityList.value.push({

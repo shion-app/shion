@@ -73,3 +73,5 @@ monitor:
   filter: Toggle filter switch
   needSwitchFilter: You need to turn on the filter switch to listen for window changes
   switchWindowTip: Switch windows and select the program to monitor
+activity:
+  idle: Idle

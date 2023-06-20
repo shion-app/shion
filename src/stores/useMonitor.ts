@@ -39,10 +39,11 @@ export const useMonitor = defineStore('monitor', () => {
 
   init()
 
-  watch(filtering, (v) => {
-    if (v)
-      invoke('toggle_filter_program')
-    else
+  watch(filtering, (data) => {
+    invoke('toggle_filter_program', {
+      data,
+    })
+    if (!data)
       filterList.value = []
   })
 

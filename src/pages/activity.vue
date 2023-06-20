@@ -1,31 +1,33 @@
 <script setup lang="ts">
 import type { EChartsOption, SeriesOption } from 'echarts'
 
-const monitorStore = useMonitor()
-const activityStore = useActivity()
-const { whiteList } = storeToRefs(monitorStore)
-const { activityList } = storeToRefs(activityStore)
+const { t } = useI18n()
+
+const store = useActivity()
+const { activityList } = storeToRefs(store)
+
+const IDLE = 'idle'
 
 const option = computed(() => {
   let base = 0
 
-  const seriesMap = new Map<number, SeriesOption>()
+  const seriesMap = new Map<string, SeriesOption>()
 
   ;[{
-    id: 0,
-    name: 'idle',
-  }, ...activityList.value.map(({ programId }) => {
-    const program = whiteList.value.find(i => i.id == programId)!
+    path: IDLE,
+    name: t('activity.idle'),
+  }, ...activityList.value.map(({ programPath, programDescription }) => {
     return {
-      id: programId,
-      name: program.description,
+      path: programPath,
+      name: programDescription,
     }
-  })].forEach(({ id, name }) => {
-    seriesMap.set(id, {
+  })].forEach(({ path, name }) => {
+    seriesMap.set(path.toLowerCase(), {
       name,
       type: 'line',
       symbol: 'none',
       data: [],
+      areaStyle: {},
     })
   })
 
@@ -34,25 +36,31 @@ const option = computed(() => {
     const last = activityList.value[i - 1]
     if (base == 0)
       base = current.time
-    if (last && last.programId != current.programId) {
-      // const series = seriesMap.get(0)!;
-      // (series.data as number[][]).push([last.time, last.time - base], [current.time, last.time - base])
-      // seriesMap.set(0, series)
+    if (last && !isCaseInsensitivePathEqual(last.programPath, current.programPath)) {
+      const series = seriesMap.get(IDLE)!;
+      (series.data as unknown[]).push([last.time, last.time - base], [current.time, last.time - base], '-')
+      seriesMap.set(IDLE, series)
       base += current.time - last.time
     }
 
-    const series = seriesMap.get(current.programId)!;
-    (series.data as number[][]).push([current.time, current.time - base])
-    seriesMap.set(current.programId, series)
+    const key = current.programPath.toLowerCase()
+
+    const series = seriesMap.get(key)!;
+    (series.data as unknown[]).push([current.time, current.time - base])
+
+    if (!current.active)
+      (series.data as unknown[]).push('-')
+
+    seriesMap.set(key, series)
   }
 
   return {
     tooltip: {
       trigger: 'axis',
+      valueFormatter: formatHHmm,
     },
     title: {
       left: 'center',
-      text: 'Large Ara Chart',
     },
     xAxis: {
       type: 'time',
@@ -60,7 +68,9 @@ const option = computed(() => {
     },
     yAxis: {
       type: 'value',
-      boundaryGap: [0, '100%'],
+      axisLabel: {
+        formatter: formatHHmm,
+      },
     },
     dataZoom: [
       {
@@ -74,6 +84,5 @@ const option = computed(() => {
 </script>
 
 <template>
-  <v-chart v-if="whiteList.length" :option="option" autoresize />
-  <a-empty v-else h-full flex flex-col justify-center />
+  <v-chart :option="option" autoresize />
 </template>

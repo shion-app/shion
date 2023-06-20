@@ -73,3 +73,5 @@ monitor:
   filter: 切换筛选开关
   needSwitchFilter: 需要打开筛选开关，才能监听到窗口变化
   switchWindowTip: 切换窗口，选出要监听的程序
+activity:
+  idle: 空闲

@@ -53,8 +53,9 @@ export interface Program {
 
 export interface Activity {
   id: number
-  programId: number
   active: boolean
   time: number
   title: string
+  programPath: string
+  programDescription: string
 }
