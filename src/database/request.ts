@@ -5,6 +5,7 @@ import { error } from 'tauri-plugin-log-api'
 
 import { i18n } from '@locales/index'
 import type { Activity, Label, Note, Plan, Program, RecentNote, SyncLog, TableName } from '@interfaces/index'
+import { startOfDay } from 'date-fns'
 
 const PATH = `sqlite:data${import.meta.env.DEV ? '-dev' : ''}.db`
 
@@ -268,9 +269,24 @@ export function selectProgram() {
 }
 
 export function createActivity(data: CreateActivity) {
-  return create('activity', data)
+  return create('activity', {
+    ...data,
+    active: data.active ? 1 : 0,
+  })
 }
 
 export function selectActivity() {
-  return select<Array<Activity>>('SELECT * FROM activity WHERE deleted_at = 0 ORDER BY id')
+  return select<Array<Omit<Activity, 'active'> & {
+    active: number
+  }>>(`
+    SELECT * FROM activity
+      WHERE deleted_at = 0 AND
+      time >= ${startOfDay(new Date()).getTime()} AND
+      time <= ${new Date().getTime()}
+      ORDER BY id`).then(list => list.map((i) => {
+    return {
+      ...i,
+      active: Boolean(i.active),
+    }
+  }))
 }
