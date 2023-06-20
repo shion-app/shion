@@ -5,7 +5,7 @@ import { error } from 'tauri-plugin-log-api'
 
 import { i18n } from '@locales/index'
 import type { Activity, Label, Note, Plan, Program, RecentNote, SyncLog, TableName } from '@interfaces/index'
-import { startOfDay } from 'date-fns'
+import { startOfDay, subDays } from 'date-fns'
 
 const PATH = `sqlite:data${import.meta.env.DEV ? '-dev' : ''}.db`
 
@@ -74,7 +74,7 @@ export async function update(table: TableName, id: number, data: Record<string, 
 }
 
 function remove(table: TableName, id: number) {
-  return db.execute(`UPDATE ${table} SET deleted_at = strftime('%Y-%m-%d %H:%M:%f') WHERE id = ${id}`)
+  return db.execute(`UPDATE ${table} SET deleted_at = ${new Date().getTime()} WHERE id = ${id}`)
 }
 
 function select<T>(query: string, bindValues?: unknown[]): Promise<T> {
@@ -102,8 +102,8 @@ export function updatePlan(id: number, data: Partial<CreatePlan>) {
 
 export async function removePlan(id: number) {
   await remove('plan', id)
-  await execute(`UPDATE label SET deleted_at = strftime('%Y-%m-%d %H:%M:%f') WHERE plan_id = ${id}`)
-  await execute(`UPDATE note SET deleted_at = strftime('%Y-%m-%d %H:%M:%f') WHERE plan_id = ${id}`)
+  await execute(`UPDATE label SET deleted_at = ${new Date().getTime()} WHERE plan_id = ${id}`)
+  await execute(`UPDATE note SET deleted_at = ${new Date().getTime()} WHERE plan_id = ${id}`)
 }
 
 export async function selectPlan() {
@@ -178,8 +178,8 @@ export function selectRecentNote(range = 7) {
     WHERE note.deleted_at = 0 AND
           note.plan_id = [plan].id AND
           note.label_id = label.id AND
-          note.start_time >= strftime('%s', 'now', '-${range} day') * 1000 AND
-          note.start_time <= strftime('%s', 'now') * 1000
+          note.start_time >= ${startOfDay(subDays(new Date(), range - 1)).getTime()} AND
+          note.start_time <= ${new Date().getTime()}
     GROUP BY note.plan_id,
               note.label_id,
               date(note.start_time / 1000, 'unixepoch')
@@ -196,7 +196,7 @@ export function updateLabel(id: number, data: Partial<CreateLabel>) {
 
 export async function removeLabel(id: number) {
   await remove('label', id)
-  await execute(`UPDATE note SET deleted_at = strftime('%Y-%m-%d %H:%M:%f') WHERE label_id = ${id}`)
+  await execute(`UPDATE note SET deleted_at = ${new Date().getTime()} WHERE label_id = ${id}`)
 }
 
 export async function selectLabel() {
