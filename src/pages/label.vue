@@ -55,10 +55,17 @@ function viewNote(labelId: number) {
   })
 }
 
-function handleStart(label: Label) {
+async function handleStart(label: Label) {
   noteBeforeCreateVisible.value = true
-  noteBeforeCreateForm.value.labelId = label.id
-  noteBeforeCreateForm.value.planId = label.planId
+  noteBeforeCreateForm.value = {
+    labelId: 0,
+    planId: 0,
+  }
+  await nextTick()
+  noteBeforeCreateForm.value = {
+    labelId: label.id,
+    planId: label.planId,
+  }
 }
 
 async function create({
@@ -73,6 +80,7 @@ async function create({
   start(countdown, time, () => updateNote(noteId, {
     endTime: Date.now(),
   }))
+  router.push('/time')
 }
 
 setMenu(() => [
