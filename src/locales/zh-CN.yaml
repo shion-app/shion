@@ -4,6 +4,7 @@ nav:
   time: 计时
   label: 标签
   monitor: 监听
+  activity: 活动
   config: 设置
 config:
   locale: 语言

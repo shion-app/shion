@@ -55,6 +55,7 @@ declare global {
   const h: typeof import('vue')['h']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
   const inject: typeof import('vue')['inject']
+  const isCaseInsensitivePathEqual: typeof import('./utils/index')['isCaseInsensitivePathEqual']
   const isDefined: typeof import('@vueuse/core')['isDefined']
   const isProxy: typeof import('vue')['isProxy']
   const isReactive: typeof import('vue')['isReactive']
@@ -149,6 +150,7 @@ declare global {
   const updateNote: typeof import('./database/request')['updateNote']
   const updatePlan: typeof import('./database/request')['updatePlan']
   const useActiveElement: typeof import('@vueuse/core')['useActiveElement']
+  const useActivity: typeof import('./stores/useActivity')['useActivity']
   const useAnimate: typeof import('@vueuse/core')['useAnimate']
   const useArrayDifference: typeof import('@vueuse/core')['useArrayDifference']
   const useArrayEvery: typeof import('@vueuse/core')['useArrayEvery']
@@ -393,6 +395,7 @@ declare module 'vue' {
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
+    readonly isCaseInsensitivePathEqual: UnwrapRef<typeof import('./utils/index')['isCaseInsensitivePathEqual']>
     readonly isDefined: UnwrapRef<typeof import('@vueuse/core')['isDefined']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
@@ -487,6 +490,7 @@ declare module 'vue' {
     readonly updateNote: UnwrapRef<typeof import('./database/request')['updateNote']>
     readonly updatePlan: UnwrapRef<typeof import('./database/request')['updatePlan']>
     readonly useActiveElement: UnwrapRef<typeof import('@vueuse/core')['useActiveElement']>
+    readonly useActivity: UnwrapRef<typeof import('./stores/useActivity')['useActivity']>
     readonly useAnimate: UnwrapRef<typeof import('@vueuse/core')['useAnimate']>
     readonly useArrayDifference: UnwrapRef<typeof import('@vueuse/core')['useArrayDifference']>
     readonly useArrayEvery: UnwrapRef<typeof import('@vueuse/core')['useArrayEvery']>

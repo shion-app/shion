@@ -126,3 +126,5 @@ export function formatHHmm(time: number) {
 }
 
 export const randomColor = () => `#${(Math.random() * 0xFFFFFF << 0).toString(16)}`
+
+export const isCaseInsensitivePathEqual = (base: string, target: string) => base.toLowerCase() == target.toLowerCase()

@@ -10,8 +10,9 @@ import { createPinia } from 'pinia'
 import VChart from 'vue-echarts'
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { BarChart } from 'echarts/charts'
+import { BarChart, LineChart } from 'echarts/charts'
 import {
+  DataZoomComponent,
   GraphicComponent,
   GridComponent,
   LegendComponent,
@@ -33,11 +34,13 @@ const pinia = createPinia()
 use([
   CanvasRenderer,
   BarChart,
+  LineChart,
   GridComponent,
   TooltipComponent,
   LegendComponent,
   TitleComponent,
   GraphicComponent,
+  DataZoomComponent,
 ])
 
 createApp(App)

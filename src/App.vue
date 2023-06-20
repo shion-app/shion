@@ -9,6 +9,7 @@ const { start } = useUpdate()
 const configStore = useConfig()
 const timeStore = useTime()
 useMonitor()
+useActivity()
 
 const { finish } = timeStore
 const { config } = storeToRefs(configStore)

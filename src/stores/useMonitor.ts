@@ -13,10 +13,6 @@ export const useMonitor = defineStore('monitor', () => {
   const whiteList = ref<Program[]>([])
   const iconMap = ref(new Map<string, string>())
 
-  let timeout: number
-  let task: (immediate: boolean) => void = () => {}
-  let lastActivity: backend.Activity | null = null
-
   async function init() {
     whiteList.value = await selectProgram()
     whiteList.value.forEach(transformIcon)
@@ -33,7 +29,7 @@ export const useMonitor = defineStore('monitor', () => {
       iconMap.value.set(p, exe)
   }
 
-  function isPathEqual(base: string, target: string) {
+  function isCaseInsensitivePathEqual(base: string, target: string) {
     return base.toLowerCase() == target.toLowerCase()
   }
 
@@ -52,55 +48,12 @@ export const useMonitor = defineStore('monitor', () => {
 
   listen('filter-program', async (event: Event<backend.Program>) => {
     const { payload } = event
-    const exist = [...filterList.value, ...whiteList.value].find(i => isPathEqual(i.path, payload.path))
+    const exist = [...filterList.value, ...whiteList.value].find(i => isCaseInsensitivePathEqual(i.path, payload.path))
     if (exist)
       return
     filterList.value.unshift(payload)
     transformIcon(payload)
   })
-
-  listen('program-activity', (event: Event<backend.Activity>) => {
-    const { payload } = event
-    const exist = lastActivity && isPathEqual(lastActivity.path, payload.path) && lastActivity.title == payload.title
-    if (exist)
-      return
-    const program = whiteList.value.find(i => isPathEqual(i.path, payload.path))
-    if (!program) {
-      task(true)
-      return
-    }
-
-    lastActivity = payload
-    const activity = {
-      programId: program.id,
-      active: true,
-      time: payload.time,
-      title: payload.title,
-    }
-    createActivity(activity)
-
-    task = (immediate: boolean) => {
-      clearTimeout(timeout)
-      const fn = () => {
-        createActivity({
-          ...activity,
-          time: Date.now(),
-          active: false,
-        })
-        task = () => { }
-        lastActivity = null
-      }
-      if (immediate)
-        fn()
-      else
-        timeout = setTimeout(fn, 1000 * 60)
-    }
-    task(false)
-  })
-
-  const activate = useThrottleFn(() => task(false), 1000)
-
-  listen('program-activity-activate', activate)
 
   return {
     filtering,

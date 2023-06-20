@@ -4,6 +4,7 @@ nav:
   time: Time
   label: Label
   monitor: Monitor
+  activity: Activity
   config: Config
 config:
   locale: Language
