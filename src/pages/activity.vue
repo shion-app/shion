@@ -28,6 +28,9 @@ const option = computed(() => {
       symbol: 'none',
       data: [],
       areaStyle: {},
+      emphasis: {
+        focus: 'series',
+      },
     })
   })
 
@@ -36,7 +39,7 @@ const option = computed(() => {
     const last = activityList.value[i - 1]
     if (base == 0)
       base = current.time
-    if (last && !isCaseInsensitivePathEqual(last.programPath, current.programPath)) {
+    if (last && (!isCaseInsensitivePathEqual(last.programPath, current.programPath) || (!last.active && current.active))) {
       const series = seriesMap.get(IDLE)!;
       (series.data as unknown[]).push([last.time, last.time - base], [current.time, last.time - base], '-')
       seriesMap.set(IDLE, series)
@@ -78,6 +81,7 @@ const option = computed(() => {
         end: 100,
       },
     ],
+    legend: {},
     series: [...seriesMap.values()],
   } as EChartsOption
 })

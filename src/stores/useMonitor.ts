@@ -29,10 +29,6 @@ export const useMonitor = defineStore('monitor', () => {
       iconMap.value.set(p, exe)
   }
 
-  function isCaseInsensitivePathEqual(base: string, target: string) {
-    return base.toLowerCase() == target.toLowerCase()
-  }
-
   function getIconUrl(path: string) {
     return iconMap.value.get(path.toLowerCase())
   }

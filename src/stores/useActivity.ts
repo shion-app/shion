@@ -49,19 +49,31 @@ export const useActivity = defineStore('activity', () => {
 
     task = async (immediate: boolean) => {
       clearTimeout(timeout)
-      const fn = () => {
-        createActivity({
+      const fn = async () => {
+        const a = {
           ...activity,
           time: Date.now(),
           active: false,
+        }
+        const { lastInsertId } = await createActivity(a)
+        activityList.value.push({
+          ...a,
+          id: lastInsertId,
         })
         task = async () => { }
         lastActivity = null
       }
-      if (immediate)
-        fn()
-      else
-        timeout = setTimeout(fn, 1000 * 60)
+      if (immediate) {
+        await fn()
+      }
+      else {
+        await new Promise<void>((resolve) => {
+          timeout = setTimeout(async () => {
+            await fn()
+            resolve()
+          }, 1000 * 60)
+        })
+      }
     }
     task(false)
   })
