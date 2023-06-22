@@ -385,7 +385,7 @@ fn watch_input(option: WatchOption) {
             Some(handle_event),
             0,
             0,
-            WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS,
+            WINEVENT_OUTOFCONTEXT,
         )
     };
     if hook.is_null() {
