@@ -50,5 +50,5 @@ createApp(App)
   .component('v-chart', VChart)
   .mount('#app')
 
-if (import.meta.env.PROD)
+if (!import.meta.env.TAURI_DEBUG)
   window.addEventListener('contextmenu', e => e.preventDefault())

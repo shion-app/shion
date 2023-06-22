@@ -8,7 +8,7 @@ interface Config {
   checkUpdate: boolean
 }
 
-const PATH = `config${import.meta.env.DEV ? '-dev' : ''}.json`
+const PATH = `config${import.meta.env.TAURI_DEBUG ? '-dev' : ''}.json`
 
 export const useConfig = defineStore('config', () => {
   const { locale, t } = useI18n()

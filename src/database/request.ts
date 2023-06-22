@@ -7,7 +7,7 @@ import { i18n } from '@locales/index'
 import type { Activity, Label, Note, Plan, Program, RecentNote, SyncLog, TableName } from '@interfaces/index'
 import { startOfDay, subDays } from 'date-fns'
 
-const PATH = `sqlite:data${import.meta.env.DEV ? '-dev' : ''}.db`
+const PATH = `sqlite:data${import.meta.env.TAURI_DEBUG ? '-dev' : ''}.db`
 
 const enum SqliteError {
   UNHANDLED = -1,
