@@ -8,6 +8,7 @@ use std::path::Path;
 use std::ptr;
 use std::ptr::null_mut;
 
+use image::{ImageBuffer, ImageFormat, Rgba};
 use winapi::shared::minwindef::DWORD;
 use winapi::shared::minwindef::LPCVOID;
 use winapi::shared::minwindef::LPVOID;
@@ -19,31 +20,31 @@ use winapi::shared::windef::HWND;
 use winapi::um::handleapi::CloseHandle;
 use winapi::um::processthreadsapi::OpenProcess;
 use winapi::um::psapi::{EnumProcessModulesEx, GetModuleFileNameExW};
+use winapi::um::shellapi::ExtractIconExW;
+use winapi::um::wingdi::GetDIBits;
+use winapi::um::wingdi::GetObjectW;
+use winapi::um::wingdi::BITMAP;
 use winapi::um::wingdi::BITMAPINFOHEADER;
 use winapi::um::wingdi::BI_RGB;
 use winapi::um::wingdi::DIB_RGB_COLORS;
-use winapi::um::wingdi::GetDIBits;
 use winapi::um::winnt::PROCESS_QUERY_INFORMATION;
 use winapi::um::winnt::PROCESS_VM_READ;
 use winapi::um::winuser::GetDC;
 use winapi::um::winuser::GetDesktopWindow;
 use winapi::um::winuser::GetMessageW;
 use winapi::um::winuser::GetWindowThreadProcessId;
+use winapi::um::winuser::ReleaseDC;
 use winapi::um::winuser::EVENT_OBJECT_NAMECHANGE;
 use winapi::um::winuser::EVENT_SYSTEM_FOREGROUND;
 use winapi::um::winuser::ICONINFO;
 use winapi::um::winuser::MSG;
 use winapi::um::winuser::OBJID_WINDOW;
-use winapi::um::winuser::ReleaseDC;
 use winapi::um::winuser::{CallNextHookEx, SetWindowsHookExW, WH_KEYBOARD_LL, WH_MOUSE_LL};
 use winapi::um::winuser::{
-    DispatchMessageW, GetWindowTextLengthW, GetWindowTextW, SetWinEventHook, TranslateMessage,
-    UnhookWinEvent, WINEVENT_OUTOFCONTEXT, WINEVENT_SKIPOWNPROCESS,GetIconInfo
+    DispatchMessageW, GetIconInfo, GetWindowTextLengthW, GetWindowTextW, SetWinEventHook,
+    TranslateMessage, UnhookWinEvent, WINEVENT_OUTOFCONTEXT, WINEVENT_SKIPOWNPROCESS,
 };
 use winapi::um::winver::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW};
-use winapi::um::shellapi::ExtractIconExW;
-use image::{ImageBuffer, ImageFormat, Rgba};
-
 
 use super::shared::{Program, WatchOption};
 
@@ -129,14 +130,14 @@ unsafe extern "system" fn handle_event(
     let handle = get_icon_handle(path.clone());
     let mut buffer: Vec<u8> = vec![];
     if handle.is_some() {
-        buffer = get_image_buffer(handle.unwrap(), 32);
+        buffer = get_image_buffer(handle.unwrap());
     }
 
     let program = Program {
         path,
         description,
         title,
-        icon: buffer
+        icon: buffer,
     };
 
     WINDOW.with(|i| {
@@ -283,7 +284,7 @@ fn get_icon_handle(appliaction_path: String) -> Option<*mut HICON__> {
     Some(large_icon)
 }
 
-fn get_image_buffer(icon_handle: *mut HICON__, icon_size: i32) -> Vec<u8> {
+fn get_image_buffer(icon_handle: *mut HICON__) -> Vec<u8> {
     let mut icon_info = ICONINFO {
         fIcon: 0,
         xHotspot: 0,
@@ -292,10 +293,26 @@ fn get_image_buffer(icon_handle: *mut HICON__, icon_size: i32) -> Vec<u8> {
         hbmColor: ptr::null_mut(),
     };
     unsafe { GetIconInfo(icon_handle, &mut icon_info) };
+    let mut bmp = BITMAP {
+        bmType: 0,
+        bmWidth: 0,
+        bmHeight: 0,
+        bmWidthBytes: 0,
+        bmPlanes: 0,
+        bmBitsPixel: 0,
+        bmBits: ptr::null_mut(),
+    };
+    unsafe {
+        GetObjectW(
+            icon_info.hbmColor as *mut _,
+            std::mem::size_of::<BITMAP>().try_into().unwrap(),
+            &mut bmp as *mut BITMAP as *mut _,
+        )
+    };
     let hwnd = unsafe { GetDesktopWindow() };
     let hdc = unsafe { GetDC(hwnd) };
-    let width = icon_size;
-    let height = icon_size;
+    let width = bmp.bmWidth;
+    let height = bmp.bmHeight;
 
     let mut bitmap_info = BITMAPINFOHEADER {
         biSize: mem::size_of::<BITMAPINFOHEADER>() as DWORD,
@@ -311,15 +328,17 @@ fn get_image_buffer(icon_handle: *mut HICON__, icon_size: i32) -> Vec<u8> {
         biClrImportant: 0,
     };
     let mut bgra_bitmap_data = vec![0u8; (width * height * 4) as usize];
-    unsafe { GetDIBits(
-        hdc,
-        icon_info.hbmColor,
-        0,
-        height as u32,
-        bgra_bitmap_data.as_mut_ptr() as *mut _,
-        &mut bitmap_info as *mut _ as *mut _,
-        DIB_RGB_COLORS,
-    ) };
+    unsafe {
+        GetDIBits(
+            hdc,
+            icon_info.hbmColor,
+            0,
+            height as u32,
+            bgra_bitmap_data.as_mut_ptr() as *mut _,
+            &mut bitmap_info as *mut _ as *mut _,
+            DIB_RGB_COLORS,
+        )
+    };
 
     unsafe { ReleaseDC(hwnd, hdc) };
 
@@ -412,7 +431,7 @@ mod test {
     #[test]
     fn watch() {
         run(WatchOption {
-            window: Box::new(|program| println!("{:#?}", program)),
+            window: Box::new(|program| println!("{:#?}", program.path)),
             // mouse: || println!("mouse move"),
             // keyboard: || println!("key press"),
             mouse: Box::new(|| {}),

@@ -5,7 +5,7 @@ pub struct Program {
     pub path: String,
     pub description: String,
     pub title: String,
-    pub icon: Vec<u8>
+    pub icon: Vec<u8>,
 }
 
 pub struct WatchOption {
