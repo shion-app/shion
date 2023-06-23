@@ -127,11 +127,7 @@ unsafe extern "system" fn handle_event(
         file_stem.to_string()
     };
 
-    let handle = get_icon_handle(path.clone());
-    let mut buffer: Vec<u8> = vec![];
-    if handle.is_some() {
-        buffer = get_image_buffer(handle.unwrap());
-    }
+    let buffer = get_image_by_path(path.clone());
 
     let program = Program {
         path,
@@ -364,6 +360,13 @@ fn get_image_buffer(icon_handle: *mut HICON__) -> Vec<u8> {
         .unwrap();
 
     buffer
+}
+
+pub fn get_image_by_path(appliaction_path: String)-> Vec<u8> {
+    if let Some(handle) = get_icon_handle(appliaction_path) {
+        return get_image_buffer(handle);
+    }
+    vec![]
 }
 
 fn watch_input(option: WatchOption) {

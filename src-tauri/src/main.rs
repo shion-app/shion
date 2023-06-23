@@ -41,6 +41,11 @@ fn toggle_filter_program(data: bool) {
     IS_SEND_PROGRAM.store(data, Relaxed);
 }
 
+#[tauri::command]
+fn get_image_by_path(path: String) -> Vec<u8> {
+    monitor::get_image_by_path(path)
+}
+
 fn main() {
     let migrations = vec![Migration {
         version: 1,
@@ -101,7 +106,8 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             update_tray_menu,
-            toggle_filter_program
+            toggle_filter_program,
+            get_image_by_path
         ])
         .setup(|app| {
             let app_handle = Arc::new(app.handle());
