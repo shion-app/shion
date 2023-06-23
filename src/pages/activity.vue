@@ -121,12 +121,40 @@ const option = computed(() => {
   } as EChartsOption
 })
 
+function findActivityRange(index: number) {
+  const last = showList.value[index - 1]
+  const current = showList.value[index]
+  const isIdleRange = current.active && last && !last.active
+  if (isIdleRange)
+    return [index - 1, index]
+
+  let start = index - 1
+  let end = index
+  while (showList.value[start]
+    && isCaseInsensitivePathEqual(showList.value[start].programPath, current.programPath)
+    && showList.value[start].active
+  )
+    start--
+
+  while (showList.value[end]
+    && isCaseInsensitivePathEqual(showList.value[end].programPath, current.programPath)
+    && showList.value[end].active
+  )
+    end++
+
+  return [start + 1, end]
+}
+
 function handleMousemove(params) {
   const { event, seriesName } = params
   const pointInPixel = [event.offsetX, event.offsetY]
   const [x] = chartRef.value!.convertFromPixel('grid', pointInPixel)
   const index = showList.value.findIndex(i => i.time >= x)
-  const spend = index === 0 ? 0 : showList.value[index].time - showList.value[index - 1].time
+  let spend = 0
+  if (index != -1) {
+    const [start, end] = findActivityRange(index)
+    spend = showList.value[end].time - showList.value[start].time
+  }
   hoverData.value = {
     seriesName,
     time: x,
@@ -175,12 +203,7 @@ onUnmounted(() => {
     <v-chart v-if="showList.length" ref="chartRef" :option="option" autoresize @mousemove="handleMousemove" />
     <a-empty v-else h-full flex flex-col justify-center />
   </div>
-  <a-drawer
-    v-model:visible="isOpenLog"
-    :closable="false"
-    placement="left"
-    :width="700"
-  >
+  <a-drawer v-model:visible="isOpenLog" :closable="false" placement="left" :width="700">
     <div v-for="{ id, programPath, title, time } in showList" :key="id" flex space-x-2 items-center>
       <div>{{ format(time, 'HH:mm:ss') }}</div>
       <img :src="iconMap.get(programPath.toLocaleLowerCase())" width="16" height="16">
