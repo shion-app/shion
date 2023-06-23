@@ -61,10 +61,10 @@ const option = computed(() => {
       axisPointer: {
         type: 'shadow',
       },
-      valueFormatter: formatHHmm,
+      valueFormatter: formatHHmmss,
       // formatter(params) {
       //   return params.filter(({ value }) => value != 0).map(({ marker, seriesName, value }) => {
-      //     return `${marker}  ${seriesName}  ${formatHHmm(value)}`
+      //     return `${marker}  ${seriesName}  ${formatHHmmss(value)}`
       //   }).join('<br/>')
       // },
     },
@@ -89,7 +89,7 @@ const option = computed(() => {
       {
         type: 'value',
         axisLabel: {
-          formatter: formatHHmm,
+          formatter: formatHHmmss,
         },
       },
     ],
@@ -151,7 +151,7 @@ init()
         </div>
         <div>{{ planName }}</div>
         <div>{{ labelName }}</div>
-        <div>{{ formatHHmm(totalTime) }}</div>
+        <div>{{ formatHHmmss(totalTime) }}</div>
       </div>
     </div>
     <div class="h-[calc(100vh-1.5rem)]" flex-1 sticky top-0 bg-white>

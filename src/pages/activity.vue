@@ -81,7 +81,7 @@ const option = computed(() => {
           return ''
 
         const { marker, seriesName } = line
-        return `${format(hoverData.value.time, 'HH:mm:ss')}<br/>${marker}  ${seriesName}  ${formatHHmm(hoverData.value.spend)}`
+        return `${format(hoverData.value.time, 'HH:mm:ss')}<br/>${marker}  ${seriesName}  ${formatHHmmss(hoverData.value.spend)}`
       },
     },
     title: {
@@ -96,7 +96,7 @@ const option = computed(() => {
     yAxis: {
       type: 'value',
       axisLabel: {
-        formatter: formatHHmm,
+        formatter: formatHHmmss,
       },
     },
     dataZoom: [

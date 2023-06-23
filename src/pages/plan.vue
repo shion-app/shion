@@ -84,7 +84,7 @@ refresh()
         />
       </div>
       <div flex class="group">
-        <div>{{ formatHHmm(plan.totalTime) }}</div>
+        <div>{{ formatHHmmss(plan.totalTime) }}</div>
         <div flex-1 />
         <div flex op-0 group-hover-op-100 transition-opacity-400 space-x-2>
           <a-tooltip placement="bottom">

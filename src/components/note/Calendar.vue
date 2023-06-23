@@ -227,7 +227,7 @@ init()
       >
         <a-tooltip>
           <template #title>
-            <span>{{ formatHHmm(data.get(`${year}-${month}-${date}`)?.total || 0) }}</span>
+            <span>{{ formatHHmmss(data.get(`${year}-${month}-${date}`)?.total || 0) }}</span>
           </template>
           <div
             w-full h-full

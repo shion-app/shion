@@ -46,7 +46,7 @@ declare global {
   const formatDistance: typeof import('./utils/index')['formatDistance']
   const formatDistanceStrict: typeof import('./utils/index')['formatDistanceStrict']
   const formatDuration: typeof import('./utils/index')['formatDuration']
-  const formatHHmm: typeof import('./utils/index')['formatHHmm']
+  const formatHHmmss: typeof import('./utils/index')['formatHHmmss']
   const getActivePinia: typeof import('pinia')['getActivePinia']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
@@ -386,7 +386,7 @@ declare module 'vue' {
     readonly formatDistance: UnwrapRef<typeof import('./utils/index')['formatDistance']>
     readonly formatDistanceStrict: UnwrapRef<typeof import('./utils/index')['formatDistanceStrict']>
     readonly formatDuration: UnwrapRef<typeof import('./utils/index')['formatDuration']>
-    readonly formatHHmm: UnwrapRef<typeof import('./utils/index')['formatHHmm']>
+    readonly formatHHmmss: UnwrapRef<typeof import('./utils/index')['formatHHmmss']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
