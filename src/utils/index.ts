@@ -133,3 +133,5 @@ export function formatHHmmss(time: number) {
 export const randomColor = () => `#${(Math.random() * 0xFFFFFF << 0).toString(16)}`
 
 export const isCaseInsensitivePathEqual = (base: string, target: string) => base.toLowerCase() == target.toLowerCase()
+
+export const createIconBlob = (buffer: number[]) => new Blob([new Uint8Array(buffer)], { type: 'image/png' })

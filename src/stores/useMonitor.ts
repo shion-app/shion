@@ -24,7 +24,7 @@ export const useMonitor = defineStore('monitor', () => {
     if (iconMap.value.has(p))
       return
     if (icon.length)
-      iconMap.value.set(p, URL.createObjectURL(new Blob([new Uint8Array(icon)], { type: 'image/png' })))
+      iconMap.value.set(p, URL.createObjectURL(createIconBlob(icon)))
     else
       iconMap.value.set(p, exe)
   }

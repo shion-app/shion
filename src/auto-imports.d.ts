@@ -20,6 +20,7 @@ declare global {
   const createApp: typeof import('vue')['createApp']
   const createEventHook: typeof import('@vueuse/core')['createEventHook']
   const createGlobalState: typeof import('@vueuse/core')['createGlobalState']
+  const createIconBlob: typeof import('./utils/index')['createIconBlob']
   const createInjectionState: typeof import('@vueuse/core')['createInjectionState']
   const createLabel: typeof import('./database/request')['createLabel']
   const createNote: typeof import('./database/request')['createNote']
@@ -360,6 +361,7 @@ declare module 'vue' {
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createEventHook: UnwrapRef<typeof import('@vueuse/core')['createEventHook']>
     readonly createGlobalState: UnwrapRef<typeof import('@vueuse/core')['createGlobalState']>
+    readonly createIconBlob: UnwrapRef<typeof import('./utils/index')['createIconBlob']>
     readonly createInjectionState: UnwrapRef<typeof import('@vueuse/core')['createInjectionState']>
     readonly createLabel: UnwrapRef<typeof import('./database/request')['createLabel']>
     readonly createNote: UnwrapRef<typeof import('./database/request')['createNote']>

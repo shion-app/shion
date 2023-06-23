@@ -75,3 +75,4 @@ monitor:
   switchWindowTip: Switch windows and select the program to monitor
 activity:
   idle: Idle
+  detail: Open log

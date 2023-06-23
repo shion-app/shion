@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     AButton: typeof import('ant-design-vue/es')['Button']
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
     ADatePicker: typeof import('ant-design-vue/es')['DatePicker']
+    ADrawer: typeof import('ant-design-vue/es')['Drawer']
     AEmpty: typeof import('ant-design-vue/es')['Empty']
     AForm: typeof import('ant-design-vue/es')['Form']
     AFormItem: typeof import('ant-design-vue/es')['FormItem']

@@ -75,3 +75,4 @@ monitor:
   switchWindowTip: 切换窗口，选出要监听的程序
 activity:
   idle: 空闲
+  detail: 展开日志

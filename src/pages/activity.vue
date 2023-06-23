@@ -2,6 +2,7 @@
 import { isToday } from 'date-fns'
 import type { ECharts, EChartsOption, SeriesOption } from 'echarts'
 import DatePicker from 'ant-design-vue/es/date-picker/date-fns'
+import { invoke } from '@tauri-apps/api'
 
 import type { Activity } from '@interfaces/index'
 
@@ -12,14 +13,16 @@ const { activityList } = storeToRefs(store)
 
 const chartRef = ref<ECharts>()
 const date = ref(new Date())
-const isDateToday = computed(() => isToday(date.value))
 const queryActivityList = ref<Activity[]>([])
 const hoverData = ref({
   seriesName: '',
   time: 0,
   spend: 0,
 })
+const isOpenLog = ref(false)
+const iconMap = ref(new Map<string, string>())
 
+const isDateToday = computed(() => isToday(date.value))
 const showList = computed(() => isDateToday.value ? activityList.value : queryActivityList.value)
 
 const IDLE = 'idle'
@@ -131,16 +134,59 @@ function handleMousemove(params) {
   }
 }
 
+function openLog() {
+  isOpenLog.value = true
+}
+
 watch(date, async (v) => {
   queryActivityList.value = await selectActivity(v)
+})
+
+watch(showList, async (v) => {
+  const pathList = [...new Set(v.map(({ programPath }) => programPath))]
+  for (const programPath of pathList) {
+    const path = programPath.toLocaleLowerCase()
+    if (iconMap.value.has(path))
+      return
+
+    const buffer = await invoke<number[]>('get_image_by_path', {
+      path: programPath,
+    })
+    iconMap.value.set(path, URL.createObjectURL(createIconBlob(buffer)))
+  }
+}, {
+  deep: true,
+})
+
+onUnmounted(() => {
+  [...iconMap.value.values()].forEach(url => URL.revokeObjectURL(url))
 })
 </script>
 
 <template>
   <div h-full relative>
-    <div absolute z-1 left-2 top-2>
-      <DatePicker v-model:value="date" />
+    <div absolute z-1 flex w-full p-2 space-x-2>
+      <div flex-1 />
+      <DatePicker v-model:value="date" input-read-only :allow-clear="false" />
+      <a-button v-if="showList.length" type="primary" @click="openLog">
+        {{ t('activity.detail') }}
+      </a-button>
     </div>
-    <v-chart ref="chartRef" :option="option" autoresize @mousemove="handleMousemove" />
+    <v-chart v-if="showList.length" ref="chartRef" :option="option" autoresize @mousemove="handleMousemove" />
+    <a-empty v-else h-full flex flex-col justify-center />
   </div>
+  <a-drawer
+    v-model:visible="isOpenLog"
+    :closable="false"
+    placement="left"
+    :width="700"
+  >
+    <div v-for="{ id, programPath, title, time } in showList" :key="id" flex space-x-2 items-center>
+      <div>{{ format(time, 'HH:mm:ss') }}</div>
+      <img :src="iconMap.get(programPath.toLocaleLowerCase())" width="16" height="16">
+      <div truncate :title="title">
+        {{ title }}
+      </div>
+    </div>
+  </a-drawer>
 </template>
