@@ -66,6 +66,9 @@
   "lint-staged": {
     "*.{vue,ts,json,yaml}": [
       "eslint --fix"
+    ],
+    "*.rs": [
+      "rustfmt -- "
     ]
   }
 }

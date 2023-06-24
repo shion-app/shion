@@ -42,7 +42,7 @@ use winapi::um::winuser::OBJID_WINDOW;
 use winapi::um::winuser::{CallNextHookEx, SetWindowsHookExW, WH_KEYBOARD_LL, WH_MOUSE_LL};
 use winapi::um::winuser::{
     DispatchMessageW, GetIconInfo, GetWindowTextLengthW, GetWindowTextW, SetWinEventHook,
-    TranslateMessage, UnhookWinEvent, WINEVENT_OUTOFCONTEXT, WINEVENT_SKIPOWNPROCESS,
+    TranslateMessage, UnhookWinEvent, WINEVENT_OUTOFCONTEXT,
 };
 use winapi::um::winver::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW};
 
@@ -362,7 +362,7 @@ fn get_image_buffer(icon_handle: *mut HICON__) -> Vec<u8> {
     buffer
 }
 
-pub fn get_image_by_path(appliaction_path: String)-> Vec<u8> {
+pub fn get_image_by_path(appliaction_path: String) -> Vec<u8> {
     if let Some(handle) = get_icon_handle(appliaction_path) {
         return get_image_buffer(handle);
     }
