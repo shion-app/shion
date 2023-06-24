@@ -41,7 +41,7 @@ const option = computed(() => {
       name: programDescription,
     }
   })].forEach(({ path, name }) => {
-    seriesMap.set(path.toLowerCase(), {
+    seriesMap.set(pathToKey(path), {
       name,
       type: 'line',
       symbol: 'none',
@@ -64,7 +64,7 @@ const option = computed(() => {
       base += current.time - last.time
     }
 
-    const key = current.programPath.toLowerCase()
+    const key = pathToKey(current.programPath)
 
     const series = seriesMap.get(key)!;
     (series.data as unknown[]).push([current.time, current.time - base])
@@ -131,13 +131,13 @@ function findActivityRange(index: number) {
   let start = index - 1
   let end = index
   while (showList.value[start]
-    && isCaseInsensitivePathEqual(showList.value[start].programPath, current.programPath)
+    && isPathEqual(showList.value[start].programPath, current.programPath)
     && showList.value[start].active
   )
     start--
 
   while (showList.value[end]
-    && isCaseInsensitivePathEqual(showList.value[end].programPath, current.programPath)
+    && isPathEqual(showList.value[end].programPath, current.programPath)
     && showList.value[end].active
   )
     end++

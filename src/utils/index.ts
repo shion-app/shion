@@ -3,6 +3,8 @@ import { enUS, zhCN } from 'date-fns/locale'
 
 import { i18n } from '@locales/index'
 
+export * from './path'
+
 function complement(num: number) {
   return num < 10 ? `0${num}` : `${num}`
 }
@@ -131,7 +133,5 @@ export function formatHHmmss(time: number) {
 }
 
 export const randomColor = () => `#${(Math.random() * 0xFFFFFF << 0).toString(16)}`
-
-export const isCaseInsensitivePathEqual = (base: string, target: string) => base.toLowerCase() == target.toLowerCase()
 
 export const createIconBlob = (buffer: number[]) => new Blob([new Uint8Array(buffer)], { type: 'image/png' })

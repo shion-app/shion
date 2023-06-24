@@ -21,15 +21,15 @@ export const useActivity = defineStore('activity', () => {
 
   listen('program-activity', async (event: Event<backend.Activity>) => {
     const { payload } = event
-    const exist = lastActivity && isCaseInsensitivePathEqual(lastActivity.path, payload.path) && lastActivity.title == payload.title
+    const exist = lastActivity && isPathEqual(lastActivity.path, payload.path) && lastActivity.title == payload.title
     if (exist)
       return
-    const vaildProgram = monitor.whiteList.find(i => isCaseInsensitivePathEqual(i.path, payload.path))
+    const vaildProgram = monitor.whiteList.find(i => isPathEqual(i.path, payload.path))
     if (!vaildProgram) {
       task(true)
       return
     }
-    const isAnotherProgram = lastActivity && !isCaseInsensitivePathEqual(lastActivity.path, payload.path)
+    const isAnotherProgram = lastActivity && !isPathEqual(lastActivity.path, payload.path)
     if (isAnotherProgram)
       await task(true)
 

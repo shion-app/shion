@@ -20,17 +20,17 @@ export const useMonitor = defineStore('monitor', () => {
 
   function transformIcon(program: Pick<backend.Program, 'path' | 'icon'>) {
     const { path, icon } = program
-    const p = path.toLowerCase()
-    if (iconMap.value.has(p))
+    const key = pathToKey(path)
+    if (iconMap.value.has(key))
       return
     if (icon.length)
-      iconMap.value.set(p, URL.createObjectURL(createIconBlob(icon)))
+      iconMap.value.set(key, URL.createObjectURL(createIconBlob(icon)))
     else
-      iconMap.value.set(p, exe)
+      iconMap.value.set(key, exe)
   }
 
   function getIconUrl(path: string) {
-    return iconMap.value.get(path.toLowerCase())
+    return iconMap.value.get(pathToKey(path))
   }
 
   init()
@@ -45,7 +45,7 @@ export const useMonitor = defineStore('monitor', () => {
 
   listen('filter-program', async (event: Event<backend.Program>) => {
     const { payload } = event
-    const exist = [...filterList.value, ...whiteList.value].find(i => isCaseInsensitivePathEqual(i.path, payload.path))
+    const exist = [...filterList.value, ...whiteList.value].find(i => isPathEqual(i.path, payload.path))
     if (exist)
       return
     filterList.value.unshift(payload)
