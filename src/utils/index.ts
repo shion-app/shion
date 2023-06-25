@@ -144,3 +144,16 @@ export function excludeKeys<T extends object, K extends keyof T>(obj: T, keys: K
   })
   return result
 }
+
+export function sortObjectsByKey<T>(arr: T[], key: keyof T, desc = true): T[] {
+  return arr.sort((a, b) => {
+    if (a[key] < b[key])
+      return desc ? 1 : -1
+
+    else if (a[key] > b[key])
+      return desc ? -1 : 1
+
+    else
+      return 0
+  })
+}

@@ -76,3 +76,5 @@ monitor:
 activity:
   idle: Idle
   detail: Open log
+  line: Line chart
+  bar: Bar chart

@@ -76,3 +76,5 @@ monitor:
 activity:
   idle: 空闲
   detail: 展开日志
+  line: 折线图
+  bar: 柱状图
