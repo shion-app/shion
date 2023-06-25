@@ -78,6 +78,7 @@ const option = computed(() => {
   return {
     tooltip: {
       trigger: 'axis',
+      confine: true,
       formatter(params) {
         const line = params.find(i => i.seriesName == hoverData.value.seriesName)
         if (!line)
@@ -192,7 +193,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div h-full relative>
+  <div h-full relative overflow-hidden>
     <div absolute z-1 flex w-full p-2 space-x-2>
       <div flex-1 />
       <DatePicker v-model:value="date" input-read-only :allow-clear="false" />
