@@ -3,6 +3,7 @@ import { listen } from '@tauri-apps/api/event'
 
 import type * as backend from '@interfaces/backend'
 import type { Activity } from '@interfaces/index'
+import { addMinutes } from 'date-fns'
 
 export const useActivity = defineStore('activity', () => {
   const monitor = useMonitor()
@@ -14,6 +15,15 @@ export const useActivity = defineStore('activity', () => {
   let lastActivity: backend.Activity | null = null
 
   async function init() {
+    // Handling situations where the activity process has not been completed, such as "turning off the physical power button"
+    const last = await selectLastActivity()
+    if (last?.active) {
+      await createActivity({
+        ...excludeKeys(last, ['id']),
+        active: false,
+        time: addMinutes(new Date(last.time), 1).getTime(),
+      })
+    }
     activityList.value = await selectActivity()
   }
 

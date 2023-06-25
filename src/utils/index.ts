@@ -135,3 +135,12 @@ export function formatHHmmss(time: number) {
 export const randomColor = () => `#${(Math.random() * 0xFFFFFF << 0).toString(16)}`
 
 export const createIconBlob = (buffer: number[]) => new Blob([new Uint8Array(buffer)], { type: 'image/png' })
+
+export function excludeKeys<T extends object, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
+  const result = {} as T
+  Object.keys(obj).forEach((key) => {
+    if (!keys.includes(key as K))
+      result[key as keyof T] = obj[key as keyof T]
+  })
+  return result
+}

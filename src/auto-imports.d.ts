@@ -40,6 +40,7 @@ declare global {
   const defineStore: typeof import('pinia')['defineStore']
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const effectScope: typeof import('vue')['effectScope']
+  const excludeKeys: typeof import('./utils/index')['excludeKeys']
   const execute: typeof import('./database/request')['execute']
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const extractTime: typeof import('./utils/index')['extractTime']
@@ -117,6 +118,7 @@ declare global {
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
   const selectActivity: typeof import('./database/request')['selectActivity']
   const selectLabel: typeof import('./database/request')['selectLabel']
+  const selectLastActivity: typeof import('./database/request')['selectLastActivity']
   const selectNoteByLabelId: typeof import('./database/request')['selectNoteByLabelId']
   const selectNoteByPlanId: typeof import('./database/request')['selectNoteByPlanId']
   const selectPlan: typeof import('./database/request')['selectPlan']
@@ -383,6 +385,7 @@ declare module 'vue' {
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
+    readonly excludeKeys: UnwrapRef<typeof import('./utils/index')['excludeKeys']>
     readonly execute: UnwrapRef<typeof import('./database/request')['execute']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly extractTime: UnwrapRef<typeof import('./utils/index')['extractTime']>
@@ -460,6 +463,7 @@ declare module 'vue' {
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
     readonly selectActivity: UnwrapRef<typeof import('./database/request')['selectActivity']>
     readonly selectLabel: UnwrapRef<typeof import('./database/request')['selectLabel']>
+    readonly selectLastActivity: UnwrapRef<typeof import('./database/request')['selectLastActivity']>
     readonly selectNoteByLabelId: UnwrapRef<typeof import('./database/request')['selectNoteByLabelId']>
     readonly selectNoteByPlanId: UnwrapRef<typeof import('./database/request')['selectNoteByPlanId']>
     readonly selectPlan: UnwrapRef<typeof import('./database/request')['selectPlan']>

@@ -51,6 +51,10 @@ type CreateProgram = Pick<Program, 'description' | 'path' | 'icon'>
 
 type CreateActivity = Pick<Activity, 'active' | 'time' | 'title' | 'programPath' | 'programDescription'>
 
+type DatabaseActivity = Omit<Activity, 'active'> & {
+  active: number
+}
+
 export async function execute(query: string, bindValues?: unknown[]) {
   try {
     return await db.execute(query, bindValues)
@@ -276,9 +280,7 @@ export function createActivity(data: CreateActivity) {
 }
 
 export function selectActivity(date = new Date()) {
-  return select<Array<Omit<Activity, 'active'> & {
-    active: number
-  }>>(`
+  return select<Array<DatabaseActivity>>(`
     SELECT * FROM activity
       WHERE deleted_at = 0 AND
       time >= ${startOfDay(date).getTime()} AND
@@ -289,4 +291,21 @@ export function selectActivity(date = new Date()) {
       active: Boolean(i.active),
     }
   }))
+}
+
+export function selectLastActivity() {
+  return select<Array<DatabaseActivity>>(`
+    SELECT *
+      FROM activity
+    WHERE id = (
+      SELECT max(id)
+        FROM activity
+      WHERE deleted_at = 0
+    );
+  `).then(list => list.map((i) => {
+    return {
+      ...i,
+      active: Boolean(i.active),
+    }
+  }).pop())
 }
