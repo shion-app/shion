@@ -173,6 +173,7 @@ watch(showList, async (v) => {
   }
 }, {
   deep: true,
+  immediate: true,
 })
 
 onUnmounted(() => {
