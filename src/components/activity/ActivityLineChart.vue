@@ -164,7 +164,7 @@ watch(showList, async (v) => {
   for (const programPath of pathList) {
     const path = programPath.toLocaleLowerCase()
     if (iconMap.value.has(path))
-      return
+      continue
 
     const buffer = await invoke<number[]>('get_image_by_path', {
       path: programPath,
