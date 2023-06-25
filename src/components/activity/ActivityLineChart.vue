@@ -125,11 +125,11 @@ function findActivityRange(index: number) {
   if (isIdleRange)
     return [index - 1, index]
 
-  let start = index - 1
+  let start = index
   let end = index
   while (showList.value[start]
     && isPathEqual(showList.value[start].programPath, current.programPath)
-    && showList.value[start].active
+    && (start == index || showList.value[start].active)
   )
     start--
 

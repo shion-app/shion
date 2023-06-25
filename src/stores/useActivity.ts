@@ -3,7 +3,6 @@ import { listen } from '@tauri-apps/api/event'
 
 import type * as backend from '@interfaces/backend'
 import type { Activity } from '@interfaces/index'
-import { addMinutes } from 'date-fns'
 
 export const useActivity = defineStore('activity', () => {
   const monitor = useMonitor()
@@ -11,76 +10,79 @@ export const useActivity = defineStore('activity', () => {
   const activityList = ref<Activity[]>([])
 
   let timeout: number
-  let task: (immediate: boolean) => Promise<void> = async () => {}
+  let task: (immediate: boolean) => Promise<number> = async () => 0
   let lastActivity: backend.Activity | null = null
 
-  async function init() {
-    // Handling situations where the activity process has not been completed, such as "turning off the physical power button"
-    const last = await selectLastActivity()
-    if (last?.active) {
-      await createActivity({
-        ...excludeKeys(last, ['id']),
-        active: false,
-        time: addMinutes(new Date(last.time), 1).getTime(),
-      })
-    }
+  async function refresh() {
     activityList.value = await selectActivity()
   }
 
-  init()
+  refresh()
 
   listen('program-activity', async (event: Event<backend.Activity>) => {
     const { payload } = event
-    const exist = lastActivity && isPathEqual(lastActivity.path, payload.path) && lastActivity.title == payload.title
-    if (exist)
-      return
-    const vaildProgram = monitor.whiteList.find(i => isPathEqual(i.path, payload.path))
-    if (!vaildProgram) {
+
+    const program = monitor.whiteList.find(i => isPathEqual(i.path, payload.path))
+    const isInWhiteList = !!program
+    if (!isInWhiteList) {
       task(true)
       return
     }
+
+    const exist = lastActivity && isPathEqual(lastActivity.path, payload.path) && lastActivity.title == payload.title
+    if (exist)
+      return
+
     const isAnotherProgram = lastActivity && !isPathEqual(lastActivity.path, payload.path)
-    if (isAnotherProgram)
+    if (isAnotherProgram) {
       await task(true)
+      lastActivity = null
+    }
+
+    const isUpdate = !!lastActivity
+    if (isUpdate) {
+      const id = await task(true)
+      await updateActivity(id, {
+        active: true,
+      })
+    }
 
     lastActivity = payload
     const activity: Omit<Activity, 'id'> = {
       active: true,
       time: payload.time,
       title: payload.title,
-      programPath: vaildProgram.path,
-      programDescription: vaildProgram.description,
+      programPath: program.path,
+      programDescription: program.description,
     }
-    const { lastInsertId } = await createActivity(activity)
-    activityList.value.push({
+    if (!isUpdate)
+      await createActivity(activity)
+
+    const { lastInsertId: inactiveId } = await createActivity({
       ...activity,
-      id: lastInsertId,
+      active: false,
     })
+    await refresh()
 
     task = async (immediate: boolean) => {
       clearTimeout(timeout)
       const fn = async () => {
-        const a = {
-          ...activity,
-          time: Date.now(),
-          active: false,
-        }
-        const { lastInsertId } = await createActivity(a)
-        activityList.value.push({
-          ...a,
-          id: lastInsertId,
+        const time = Date.now()
+        await updateActivity(inactiveId, {
+          time,
         })
-        task = async () => { }
+        await refresh()
+        task = async () => 0
         lastActivity = null
+        return inactiveId
       }
       if (immediate) {
-        await fn()
+        return await fn()
       }
       else {
-        await new Promise<void>((resolve) => {
+        return await new Promise<number>((resolve) => {
           timeout = setTimeout(async () => {
-            await fn()
-            resolve()
+            resolve(await fn())
           }, 1000 * 60)
         })
       }
