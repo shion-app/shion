@@ -28,8 +28,7 @@ watch(date, async (v) => {
   <div h-full relative overflow-hidden>
     <div absolute z-1 flex w-full p-2 space-x-2>
       <div flex-1 />
-
-      <a-radio-group v-model:value="chartType" size="small">
+      <a-radio-group v-if="showList.length" v-model:value="chartType" size="small">
         <a-radio-button value="line">
           <a-tooltip :title="$t('activity.line')">
             <div h-full flex items-center>

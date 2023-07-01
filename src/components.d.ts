@@ -41,6 +41,7 @@ declare module '@vue/runtime-core' {
     NavDrawer: typeof import('./components/nav/NavDrawer.vue')['default']
     NoteBeforeCreate: typeof import('./components/note/NoteBeforeCreate.vue')['default']
     NoteUpdate: typeof import('./components/note/NoteUpdate.vue')['default']
+    OverviewChart: typeof import('./components/overview/OverviewChart.vue')['default']
     PlanForm: typeof import('./components/plan/PlanForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
