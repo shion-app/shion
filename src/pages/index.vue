@@ -56,6 +56,6 @@ watch(chartRange, refresh, {
       </div>
       <OverviewChart :list="list" :chart-mode="chartMode" :day="day" />
     </template>
-    <a-empty v-else h-full flex flex-col justify-center />
+    <a-empty v-else h-full flex flex-col justify-center :description="$t('overview.empty')" />
   </div>
 </template>

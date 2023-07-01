@@ -14,6 +14,7 @@ plan:
   update: 修改计划
   name: 名称
   color: 颜色
+  empty: 与其感慨路难行，不如马上出发
 label:
   create: 创建标签
   update: 修改标签
@@ -70,6 +71,7 @@ overview:
   month: 最近一个月
   plan: 计划
   label: 标签
+  empty: 这里没有丰碑，只有记录
 monitor:
   filter: 切换筛选开关
   needSwitchFilter: 需要打开筛选开关，才能监听到窗口变化
