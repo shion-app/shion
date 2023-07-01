@@ -7,11 +7,11 @@ import type { RecentNote } from '@interfaces/index'
 const props = defineProps<{
   list: Array<RecentNote>
   day: number
+  chartMode: 'plan' | 'label'
 }>()
 
 const { list, day } = toRefs(props)
 
-const planMode = ref(true)
 const legendHeight = ref(30)
 const chartRef = ref()
 
@@ -93,7 +93,7 @@ const option = computed(() => {
         },
       },
     ],
-    series: planMode.value ? planData : labelData,
+    series: props.chartMode == 'plan' ? planData : labelData,
   } as EChartsOption
 })
 

@@ -18,7 +18,7 @@ const menu = computed(() => [{
   tip: t('nav.overview'),
   to: '/',
 }, {
-  icon: 'i-mdi:view-grid',
+  icon: 'i-mdi:format-list-bulleted-type',
   key: 'plan',
   tip: t('nav.plan'),
   to: '/plan',

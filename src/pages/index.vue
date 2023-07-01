@@ -2,15 +2,16 @@
 import type { RecentNote } from '@interfaces/database'
 
 const list = ref<Array<RecentNote>>([])
+const chartRange = ref<'month' | 'week'>('week')
+const chartMode = ref<'plan' | 'label'>('plan')
 
-const chartType = ref<'month' | 'week'>('week')
-const day = computed(() => chartType.value == 'week' ? 7 : 31)
+const day = computed(() => chartRange.value == 'week' ? 7 : 31)
 
 async function refresh() {
   list.value = await selectRecentNote(day.value)
 }
 
-watch(chartType, refresh, {
+watch(chartRange, refresh, {
   immediate: true,
 })
 </script>
@@ -20,7 +21,7 @@ watch(chartType, refresh, {
     <template v-if="list.length">
       <div absolute z-1 flex w-full p-2 space-x-2>
         <div flex-1 />
-        <a-radio-group v-model:value="chartType" size="small">
+        <a-radio-group v-model:value="chartRange" size="small">
           <a-radio-button value="week">
             <a-tooltip :title="$t('overview.week')">
               <div h-full flex items-center>
@@ -36,8 +37,24 @@ watch(chartType, refresh, {
             </a-tooltip>
           </a-radio-button>
         </a-radio-group>
+        <a-radio-group v-model:value="chartMode" size="small">
+          <a-radio-button value="plan">
+            <a-tooltip :title="$t('overview.plan')">
+              <div h-full flex items-center>
+                <div i-mdi:format-list-bulleted-type text-4 />
+              </div>
+            </a-tooltip>
+          </a-radio-button>
+          <a-radio-button value="label">
+            <a-tooltip :title="$t('overview.label')">
+              <div h-full flex items-center>
+                <div i-mdi:label text-4 />
+              </div>
+            </a-tooltip>
+          </a-radio-button>
+        </a-radio-group>
       </div>
-      <OverviewChart :list="list" :day="day" />
+      <OverviewChart :list="list" :chart-mode="chartMode" :day="day" />
     </template>
     <a-empty v-else h-full flex flex-col justify-center />
   </div>

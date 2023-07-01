@@ -68,6 +68,8 @@ timer:
 overview:
   week: 最近一周
   month: 最近一个月
+  plan: 计划
+  label: 标签
 monitor:
   filter: 切换筛选开关
   needSwitchFilter: 需要打开筛选开关，才能监听到窗口变化
