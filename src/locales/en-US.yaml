@@ -65,10 +65,9 @@ sync:
 timer:
   countdown: The countdown has reached the target time
   timing: Timing
-chart:
-  week:
-    active: One week active status
-    switch: Switch
+overview:
+  week: Last week
+  month: Last month
 monitor:
   filter: Toggle filter switch
   needSwitchFilter: You need to turn on the filter switch to listen for window changes

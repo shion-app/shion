@@ -162,7 +162,7 @@ export async function selectNoteByLabelId(id: number, start: number, end: number
   return noteList
 }
 
-export function selectRecentNote(range = 7) {
+export function selectRecentNote(range: number) {
   return select<Array<RecentNote>>(`
     SELECT note.plan_id,
         note.label_id,

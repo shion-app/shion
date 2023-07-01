@@ -65,10 +65,9 @@ sync:
 timer:
   countdown: 倒计时已达到目标时间
   timing: 计时中
-chart:
-  week:
-    active: 一周活跃状态
-    switch: 切换
+overview:
+  week: 最近一周
+  month: 最近一个月
 monitor:
   filter: 切换筛选开关
   needSwitchFilter: 需要打开筛选开关，才能监听到窗口变化

@@ -5,18 +5,19 @@ import { subDays } from 'date-fns'
 import type { RecentNote } from '@interfaces/database'
 
 const { t } = useI18n()
-const router = useRouter()
 
 const list = ref<Array<RecentNote>>([])
 const planMode = ref(true)
 const legendHeight = ref(30)
 const chartRef = ref()
+const chartType = ref<'month' | 'week'>('week')
+const day = computed(() => chartType.value == 'week' ? 7 : 31)
 
 const TITLE_HEIGHT = 30
 const LEGEND_MARGIN_BOTTOM = 10
 
 const option = computed(() => {
-  const xAxis = new Array(7).fill(0).map((_, i) => format(subDays(new Date(), i), 'yyyy-MM-dd')).reverse()
+  const xAxis = new Array(day.value).fill(0).map((_, i) => format(subDays(new Date(), i), 'yyyy-MM-dd')).reverse()
 
   const planList = [...new Set(list.value.map(({ planName }) => planName))]
 
@@ -53,9 +54,6 @@ const option = computed(() => {
   })
 
   return {
-    title: {
-      text: t('chart.week.active') as string,
-    },
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -94,25 +92,11 @@ const option = computed(() => {
       },
     ],
     series: planMode.value ? planData : labelData,
-    graphic: [
-      {
-        type: 'text',
-        right: '2%',
-        top: '1%',
-        style: {
-          text: t('chart.week.switch'),
-          fontSize: 16,
-        },
-        onclick() {
-          planMode.value = !planMode.value
-        },
-      },
-    ],
   } as EChartsOption
 })
 
-async function init() {
-  list.value = await selectRecentNote()
+async function refresh() {
+  list.value = await selectRecentNote(day.value)
 }
 
 function handleChartRendered() {
@@ -120,43 +104,29 @@ function handleChartRendered() {
   legendHeight.value = chart.getViewOfComponentModel(chart.getModel().getComponent('legend')).group.getBoundingRect().height
 }
 
-function viewNote(planId: number) {
-  router.push({
-    path: '/note',
-    query: {
-      planId,
-    },
-  })
-}
-
-init()
+watch(chartType, refresh, {
+  immediate: true,
+})
 </script>
 
 <template>
-  <div v-if="list.length" flex>
-    <div class="w-[500px]" space-y-4 p-6>
-      <div
-        v-for="{ planId, planName, labelId, labelName, date, totalTime } in list" :key="`${planId}-${labelId}`"
-        rounded-2
-        p-4
-        bg-white
-        shadow-lg
-        hover:shadow-xl
-        transition-shadow
-        cursor-pointer
-        @click="viewNote(planId)"
-      >
-        <div text-6 font-bold>
-          {{ date }}
-        </div>
-        <div>{{ planName }}</div>
-        <div>{{ labelName }}</div>
-        <div>{{ formatHHmmss(totalTime) }}</div>
-      </div>
-    </div>
-    <div class="h-[calc(100vh-1.5rem)]" flex-1 sticky top-0 bg-white>
-      <v-chart ref="chartRef" class="chart" :option="option" autoresize @rendered="handleChartRendered" />
-    </div>
+  <div class="h-[calc(100vh-1.5rem)]" flex-1 sticky top-0 bg-white relative>
+    <a-radio-group v-model:value="chartType" size="small" absolute z-1>
+      <a-radio-button value="week">
+        <a-tooltip :title="$t('overview.week')">
+          <div h-full flex items-center>
+            <div i-mdi:view-split-vertical text-4 />
+          </div>
+        </a-tooltip>
+      </a-radio-button>
+      <a-radio-button value="month">
+        <a-tooltip :title="$t('overview.month')">
+          <div h-full flex items-center>
+            <div i-mdi:view-split-horizontal text-4 />
+          </div>
+        </a-tooltip>
+      </a-radio-button>
+    </a-radio-group>
+    <v-chart ref="chartRef" class="chart" :option="option" autoresize @rendered="handleChartRendered" />
   </div>
-  <a-empty v-else h-full flex flex-col justify-center />
 </template>
