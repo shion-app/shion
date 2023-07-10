@@ -20,7 +20,7 @@ export const useConfig = defineStore('config', () => {
     const data: Config = {
       version: await getVersion(),
       locale: 'en-US',
-      checkUpdate: true,
+      checkUpdate: false,
     }
     const len = await store.length()
     if (len == 0)
