@@ -34,10 +34,8 @@ export const useActivity = defineStore('activity', () => {
       return
 
     const isAnotherProgram = lastActivity && !isPathEqual(lastActivity.path, payload.path)
-    if (isAnotherProgram) {
+    if (isAnotherProgram)
       await task(true)
-      lastActivity = null
-    }
 
     const isUpdate = !!lastActivity
     if (isUpdate) {
@@ -62,7 +60,6 @@ export const useActivity = defineStore('activity', () => {
       ...activity,
       active: false,
     })
-    await refresh()
 
     task = async (immediate: boolean) => {
       clearTimeout(timeout)
@@ -71,9 +68,9 @@ export const useActivity = defineStore('activity', () => {
         await updateActivity(inactiveId, {
           time,
         })
-        await refresh()
         task = async () => 0
         lastActivity = null
+        refresh()
         return inactiveId
       }
       if (immediate) {
@@ -87,12 +84,17 @@ export const useActivity = defineStore('activity', () => {
         })
       }
     }
+
     task(false)
+
+    refresh()
   })
 
   const activate = useThrottleFn(() => task(false), 1000)
 
   listen('program-activity-activate', activate)
+
+  whenever(() => monitor.filtering, () => task(true))
 
   return {
     activityList,
