@@ -1,4 +1,8 @@
-![logo](./src-tauri/icons/128x128@2x.png)
+<p align="center">
+  <a href="https://shion.app/" target="_blank">
+    <img src="./src-tauri/icons/128x128@2x.png" alt="logo">
+  </a>
+</p>
 
 <p align="center">
   <a href="./README.md">English</a>
