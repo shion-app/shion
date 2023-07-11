@@ -29,5 +29,5 @@
 
 ## 快速入门
 
-[文档入口](https://shion.app/)
+[文档入口](https://shion.app/zh/)
 

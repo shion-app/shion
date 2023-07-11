@@ -29,5 +29,5 @@ You may need to record a book you have read and a song you have played over a pe
 
 ## Quick start
 
-[Document Entry](https://shion.app/)
+[Document](https://shion.app/)
 
