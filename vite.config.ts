@@ -12,6 +12,7 @@ import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
 import Pages from 'vite-plugin-pages'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { visualizer } from 'rollup-plugin-visualizer'
+import { AndDesignVueResolve, createStyleImportPlugin } from 'vite-plugin-style-import'
 
 import minifyLocale from './plugins/minify-date-fns-locale'
 
@@ -54,6 +55,9 @@ export default defineConfig(async () => ({
     }),
     minifyLocale({
       locale: ['zhCN', 'enUS'],
+    }),
+    createStyleImportPlugin({
+      resolves: [AndDesignVueResolve()],
     }),
   ],
   css: {

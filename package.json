@@ -57,6 +57,7 @@
     "unplugin-vue-components": "^0.24.1",
     "vite": "^4.3.0",
     "vite-plugin-pages": "^0.29.0",
+    "vite-plugin-style-import": "^2.0.0",
     "vite-tsconfig-paths": "^4.2.0",
     "vue-tsc": "^1.0.11"
   },
