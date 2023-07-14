@@ -31,17 +31,11 @@ const planOptions = ref<SelectProps['options']>([])
 const labelOptions = ref<SelectProps['options']>([])
 
 async function init() {
-  const [plan, label] = await Promise.all([selectPlan(), selectLabel()])
+  const plan = await selectPlan()
   planOptions.value = plan.map(({ id, name }) => ({
     label: name,
     value: id,
   }))
-  watch(() => model.value.planId, (v) => {
-    labelOptions.value = label.filter(i => i.planId == v).map(({ id, name }) => ({
-      label: name,
-      value: id,
-    }))
-  })
 }
 
 async function finish() {
@@ -71,6 +65,14 @@ watch(() => props.form, (v) => {
   Object.assign(model.value, v)
 }, {
   deep: true,
+})
+
+watch(() => model.value.planId, async (v) => {
+  const label = await selectLabel()
+  labelOptions.value = label.filter(i => i.planId == v).map(({ id, name }) => ({
+    label: name,
+    value: id,
+  }))
 })
 
 init()
