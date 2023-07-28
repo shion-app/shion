@@ -13,6 +13,7 @@ import Pages from 'vite-plugin-pages'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { AndDesignVueResolve, createStyleImportPlugin } from 'vite-plugin-style-import'
+import VueDevTools from 'vite-plugin-vue-devtools'
 
 import minifyLocale from './plugins/minify-date-fns-locale'
 
@@ -59,6 +60,7 @@ export default defineConfig(async () => ({
     createStyleImportPlugin({
       resolves: [AndDesignVueResolve()],
     }),
+    VueDevTools(),
   ],
   css: {
     preprocessorOptions: {
