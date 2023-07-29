@@ -223,7 +223,7 @@ init()
         :style="isMonthMode ? colorLevelStyle(data.get(`${year}-${month}-${date}`)) : {}"
         w-2.5em h-2.5em inline-flex justify-center items-center
         hover:opacity-80 opacity-100 transition-opacity cursor-pointer rounded-full relative
-        @click="emit('click', new Date(`${year}-${month}-${date}`))"
+        @click="emit('click', new Date(year, month, date))"
       >
         <a-tooltip>
           <template #title>
