@@ -25,6 +25,18 @@ const noteBeforeCreateForm = ref({
 })
 const labelList = ref<Array<Label>>([])
 const planList = ref<Array<Plan>>([])
+const labelGroup = computed(() => {
+  const map = new Map<number, Array<Label>>()
+  for (const label of labelList.value) {
+    if (!map.has(label.planId))
+      map.set(label.planId, [])
+
+    const list = map.get(label.planId)!
+    list.push(label)
+    map.set(label.planId, list)
+  }
+  return map
+})
 
 async function refresh() {
   [labelList.value, planList.value] = await Promise.all([selectLabel(), selectPlan()])
@@ -97,49 +109,51 @@ refresh()
 </script>
 
 <template>
-  <div v-if="labelList.length" grid grid-cols-3 gap-6 p-4>
-    <div
-      v-for="label in labelList"
-      :key="label.id"
-      rounded-2 p-4 bg-white shadow-lg hover:shadow-xl transition-shadow space-y-2
-      @click="viewNote(label.id)"
-    >
-      <div flex justify-between>
-        <div>{{ label.name }}</div>
-        <a-tooltip>
-          <template #title>
-            <span>{{ planList.find(i => i.id == label.planId)!.name }}</span>
-          </template>
-          <div
-            w-3 h-3 rounded-full cursor-pointer mr-1
-            :style="{
-              backgroundColor: planList.find(i => i.id == label.planId)!.color,
-            }"
-          />
-        </a-tooltip>
+  <div v-if="labelList.length">
+    <div v-for="group in labelGroup" :key="group[0]">
+      <div p-x-4 text-5 font-bold>
+        {{ planList.find(i => i.id == group[0])!.name }}
       </div>
-      <div flex class="group">
-        <div>{{ formatHHmmss(label.totalTime) }}</div>
-        <div flex-1 />
-        <div flex space-x-1 op-0 group-hover-op-100 transition-opacity-400>
-          <a-tooltip placement="bottom">
-            <template #title>
-              <span>{{ $t('button.update') }}</span>
-            </template>
-            <div i-mdi:file-edit-outline text-5 cursor-pointer @click.stop="handleUpdate(label)" />
-          </a-tooltip>
-          <a-tooltip placement="bottom">
-            <template #title>
-              <span>{{ $t('button.remove') }}</span>
-            </template>
-            <div i-mdi:delete-outline text-5 cursor-pointer @click.stop="handleRemove(label)" />
-          </a-tooltip>
-          <a-tooltip v-if="!timerRunning" placement="bottom">
-            <template #title>
-              <span>{{ $t('label.button.start') }}</span>
-            </template>
-            <div i-mdi:play-circle-outline text-5 cursor-pointer @click.stop="handleStart(label)" />
-          </a-tooltip>
+      <div grid grid-cols-3 gap-6 p-4>
+        <div
+          v-for="label in group[1]"
+          :key="label.id"
+          rounded-2 p-4 bg-white shadow-lg hover:shadow-xl transition-shadow space-y-2
+          @click="viewNote(label.id)"
+        >
+          <div flex justify-between>
+            <div>{{ label.name }}</div>
+            <div
+              w-3 h-3 rounded-full mr-1
+              :style="{
+                backgroundColor: label.color,
+              }"
+            />
+          </div>
+          <div flex class="group">
+            <div>{{ formatHHmmss(label.totalTime) }}</div>
+            <div flex-1 />
+            <div flex space-x-1 op-0 group-hover-op-100 transition-opacity-400>
+              <a-tooltip placement="bottom">
+                <template #title>
+                  <span>{{ $t('button.update') }}</span>
+                </template>
+                <div i-mdi:file-edit-outline text-5 cursor-pointer @click.stop="handleUpdate(label)" />
+              </a-tooltip>
+              <a-tooltip placement="bottom">
+                <template #title>
+                  <span>{{ $t('button.remove') }}</span>
+                </template>
+                <div i-mdi:delete-outline text-5 cursor-pointer @click.stop="handleRemove(label)" />
+              </a-tooltip>
+              <a-tooltip v-if="!timerRunning" placement="bottom">
+                <template #title>
+                  <span>{{ $t('label.button.start') }}</span>
+                </template>
+                <div i-mdi:play-circle-outline text-5 cursor-pointer @click.stop="handleStart(label)" />
+              </a-tooltip>
+            </div>
+          </div>
         </div>
       </div>
     </div>
