@@ -8,14 +8,15 @@ pub struct Program {
     pub icon: Vec<u8>,
 }
 
+pub type WatchWindowOption = Box<dyn Fn(Program) -> () + Send>;
+
 pub struct WatchOption {
-    pub window: Box<dyn Fn(Program) -> ()>,
+    pub window: WatchWindowOption,
     pub mouse: Box<dyn Fn() -> ()>,
     pub keyboard: Box<dyn Fn() -> ()>,
 }
 
 #[derive(Clone, Serialize)]
-
 pub struct Activity {
     pub time: u128,
     pub path: String,

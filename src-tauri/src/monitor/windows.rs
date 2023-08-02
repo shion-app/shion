@@ -29,6 +29,7 @@ use winapi::um::wingdi::BI_RGB;
 use winapi::um::wingdi::DIB_RGB_COLORS;
 use winapi::um::winnt::PROCESS_QUERY_INFORMATION;
 use winapi::um::winnt::PROCESS_VM_READ;
+use winapi::um::winuser::CallNextHookEx;
 use winapi::um::winuser::GetDC;
 use winapi::um::winuser::GetDesktopWindow;
 use winapi::um::winuser::GetMessageW;
@@ -39,49 +40,16 @@ use winapi::um::winuser::EVENT_SYSTEM_FOREGROUND;
 use winapi::um::winuser::ICONINFO;
 use winapi::um::winuser::MSG;
 use winapi::um::winuser::OBJID_WINDOW;
-use winapi::um::winuser::{CallNextHookEx, SetWindowsHookExW, WH_KEYBOARD_LL, WH_MOUSE_LL};
 use winapi::um::winuser::{
     DispatchMessageW, GetIconInfo, GetWindowTextLengthW, GetWindowTextW, SetWinEventHook,
     TranslateMessage, UnhookWinEvent, WINEVENT_OUTOFCONTEXT,
 };
 use winapi::um::winver::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW};
 
-use super::shared::{Program, WatchOption};
+use super::shared::{Program, WatchWindowOption};
 
 thread_local! {
     static WINDOW: RefCell<Option<Box<dyn Fn(Program) -> ()>>> = RefCell::new(None);
-    static MOUSE: RefCell<Option<Box<dyn Fn() -> ()>>> = RefCell::new(None);
-    static KEYBOARD: RefCell<Option<Box<dyn Fn() -> ()>>> = RefCell::new(None);
-}
-
-unsafe extern "system" fn mouse_hook_callback(
-    n_code: i32,
-    w_param: usize,
-    l_param: isize,
-) -> isize {
-    if n_code >= 0 {
-        MOUSE.with(|i| {
-            if let Some(f) = &*i.borrow() {
-                f();
-            }
-        });
-    }
-    CallNextHookEx(null_mut(), n_code, w_param, l_param)
-}
-
-unsafe extern "system" fn keyboard_hook_callback(
-    n_code: i32,
-    w_param: usize,
-    l_param: isize,
-) -> isize {
-    if n_code >= 0 {
-        KEYBOARD.with(|i| {
-            if let Some(f) = &*i.borrow() {
-                f();
-            }
-        });
-    }
-    CallNextHookEx(null_mut(), n_code, w_param, l_param)
 }
 
 unsafe extern "system" fn handle_event(
@@ -369,16 +337,8 @@ pub fn get_image_by_path(appliaction_path: String) -> Vec<u8> {
     vec![]
 }
 
-fn watch_input(option: WatchOption) {
-    let WatchOption {
-        window,
-        mouse,
-        keyboard,
-    } = option;
-
+fn watch_input(window: WatchWindowOption) {
     WINDOW.with(|f| *f.borrow_mut() = Some(Box::new(window)));
-    MOUSE.with(|f| *f.borrow_mut() = Some(Box::new(mouse)));
-    KEYBOARD.with(|f| *f.borrow_mut() = Some(Box::new(keyboard)));
 
     let hook = unsafe {
         SetWinEventHook(
@@ -392,18 +352,6 @@ fn watch_input(option: WatchOption) {
         )
     };
     if hook.is_null() {
-        return;
-    }
-
-    let mouse_hook =
-        unsafe { SetWindowsHookExW(WH_MOUSE_LL, Some(mouse_hook_callback), null_mut(), 0) };
-    if mouse_hook.is_null() {
-        return;
-    }
-
-    let keyboard_hook =
-        unsafe { SetWindowsHookExW(WH_KEYBOARD_LL, Some(keyboard_hook_callback), null_mut(), 0) };
-    if keyboard_hook.is_null() {
         return;
     }
 
@@ -423,8 +371,8 @@ fn watch_input(option: WatchOption) {
     unsafe { UnhookWinEvent(hook) };
 }
 
-pub fn run(option: WatchOption) {
-    watch_input(option);
+pub fn run(window: WatchWindowOption) {
+    watch_input(window);
 }
 
 #[cfg(test)]
@@ -433,12 +381,6 @@ mod test {
 
     #[test]
     fn watch() {
-        run(WatchOption {
-            window: Box::new(|program| println!("{:#?}", program.path)),
-            // mouse: || println!("mouse move"),
-            // keyboard: || println!("key press"),
-            mouse: Box::new(|| {}),
-            keyboard: Box::new(|| {}),
-        });
+        run(Box::new(|program| println!("{:#?}", program.path)));
     }
 }
