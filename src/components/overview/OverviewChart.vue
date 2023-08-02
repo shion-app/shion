@@ -61,12 +61,11 @@ const option = computed(() => {
       axisPointer: {
         type: 'shadow',
       },
-      valueFormatter: formatHHmmss,
-      // formatter(params) {
-      //   return params.filter(({ value }) => value != 0).map(({ marker, seriesName, value }) => {
-      //     return `${marker}  ${seriesName}  ${formatHHmmss(value)}`
-      //   }).join('<br/>')
-      // },
+      formatter(params) {
+        return params.filter(({ value }) => value != 0).sort((a, b) => b.value - a.value).map(({ marker, seriesName, value }) => {
+          return `${marker}  <span style="font-size:14px;color:#666;font-weight:400;margin-left:2px">${seriesName}</span>  <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatHHmmss(value)}</span>`
+        }).join('<br/>')
+      },
     },
     legend: {
       top: TITLE_HEIGHT,
