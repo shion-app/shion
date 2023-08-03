@@ -104,7 +104,7 @@ function spendTime(start: number, end: number) {
 function slide(time: Date) {
   let node = noteRef.value.find((i) => {
     const { year, month, date } = i.dataset
-    return isSameDay(time, new Date(year, month, date))
+    return isSameDay(time, new Date(Number(year), Number(month), Number(date)))
   })
   if (!node)
     node = noteRef.value.at(-1)
