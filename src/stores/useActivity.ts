@@ -90,9 +90,7 @@ export const useActivity = defineStore('activity', () => {
     refresh()
   })
 
-  const activate = useThrottleFn(() => task(false), 1000)
-
-  listen('program-activity-activate', activate)
+  listen('program-activity-activate', () => task(false))
 
   whenever(() => monitor.filtering, () => task(true))
 
