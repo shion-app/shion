@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type * as backend from '@interfaces/backend'
+import { Modal, message } from 'ant-design-vue'
 
 const store = useMonitor()
 const { setMenu } = useMore()
@@ -26,58 +27,94 @@ async function handleCreateProgram(program: backend.Program) {
   })
 }
 
+async function handleSelect() {
+  await Promise.all(filterList.value.filter(i => i.checked).map(handleCreateProgram))
+  filtering.value = false
+  message.success(t('message.success'))
+}
+
 async function handleRemoveProgram(id: number) {
-  const index = whiteList.value.findIndex(i => i.id == id)
-  whiteList.value.splice(index, 1)
-  removeProgram(id)
+  Modal.confirm({
+    title: t('modal.confirmDelete'),
+    async onOk() {
+      const index = whiteList.value.findIndex(i => i.id == id)
+      whiteList.value.splice(index, 1)
+      await removeProgram(id)
+      message.success(t('message.success'))
+    },
+  })
 }
 
 setMenu(() => [
   {
-    key: 'toggleFilter',
-    title: t('monitor.filter'),
+    key: 'filterProgram',
+    title: t('monitor.filterProgram'),
     click() {
-      filtering.value = !filtering.value
+      filtering.value = true
     },
   },
 ])
 </script>
 
 <template>
-  <div flex h-full class="[&>*]:w-50% [&>*]:h-full">
-    <div>
+  <div h-full>
+    <div v-if="whiteList.length" grid grid-cols-3 gap-6 p-4>
+      <div
+        v-for="{ path, description, id } in whiteList" :key="id"
+        p-4 flex space-x-4 items-center
+        rounded-2
+        bg-white
+        shadow-lg
+        hover:shadow-xl
+        transition-shadow
+      >
+        <img :src="getIconUrl(path)" width="32" height="32" object-contain>
+        <div flex-1 min-w-0>
+          <div :title="path">
+            {{ description }}
+          </div>
+          <div flex class="group">
+            <div flex-1 />
+            <div i-mdi:delete-outline text-6 cursor-pointer op-0 group-hover-op-100 transition-opacity-400 @click="handleRemoveProgram(id)" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <a-empty v-else h-full flex flex-col justify-center />
+    <a-modal
+      v-model:visible="filtering" :title="$t('monitor.filterProgram')" :body-style="{
+        height: '300px',
+        overflow: 'auto',
+      }" @ok="handleSelect"
+    >
       <template v-if="filterList.length">
-        <div v-for="program in filterList" :key="program.path" p-4 flex space-x-4>
-          <img :src="getIconUrl(program.path)" width="32" height="32" object-contain>
-          <div flex-1 min-w-0>
-            <div truncate :title="program.path">
-              {{ program.path }}
+        <div v-for="program in filterList" :key="program.path" flex items-center space-x-4>
+          <a-checkbox v-model:checked="program.checked" />
+          <div
+            flex-1 min-w-0
+            p-4 flex space-x-4 items-center
+            mb-4
+            rounded-2
+            bg-white
+            shadow-lg
+            hover:shadow-xl
+            transition-shadow
+          >
+            <img :src="getIconUrl(program.path)" width="32" height="32" object-contain>
+            <div flex-1 min-w-0>
+              <div>
+                {{ program.description }}
+              </div>
+              <div truncate :title="program.path">
+                {{ program.path }}
+              </div>
             </div>
-            <div>{{ program.description }}</div>
           </div>
-          <div i-mdi:add text-6 cursor-pointer flex-shrink-0 @click="handleCreateProgram(program)" />
         </div>
       </template>
       <template v-else>
-        <a-empty h-full flex flex-col justify-center :description="filtering ? t('monitor.switchWindowTip') : t('monitor.needSwitchFilter')" />
+        <a-empty h-full flex flex-col justify-center :description="$t('monitor.switchWindowTip')" />
       </template>
-    </div>
-    <div>
-      <template v-if="whiteList.length">
-        <div v-for="{ path, description, id } in whiteList" :key="id" p-4 flex space-x-4>
-          <img :src="getIconUrl(path)" width="32" height="32" object-contain>
-          <div flex-1 min-w-0>
-            <div truncate :title="path">
-              {{ path }}
-            </div>
-            <div>{{ description }}</div>
-          </div>
-          <div i-mdi:remove text-6 cursor-pointer @click="handleRemoveProgram(id)" />
-        </div>
-      </template>
-      <template v-else>
-        <a-empty h-full flex flex-col justify-center />
-      </template>
-    </div>
+    </a-modal>
   </div>
 </template>

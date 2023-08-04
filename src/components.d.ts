@@ -10,6 +10,7 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AButton: typeof import('ant-design-vue/es')['Button']
+    ACheckbox: typeof import('ant-design-vue/es')['Checkbox']
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
     ActivityBarChart: typeof import('./components/activity/ActivityBarChart.vue')['default']
     ActivityLineChart: typeof import('./components/activity/ActivityLineChart.vue')['default']

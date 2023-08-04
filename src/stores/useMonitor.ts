@@ -9,7 +9,9 @@ import exe from '@assets/exe.ico'
 
 export const useMonitor = defineStore('monitor', () => {
   const filtering = ref(false)
-  const filterList = ref<backend.Program[]>([])
+  const filterList = ref<Array<backend.Program & {
+    checked: boolean
+  }>>([])
   const whiteList = ref<Program[]>([])
   const iconMap = ref(new Map<string, string>())
 
@@ -48,7 +50,10 @@ export const useMonitor = defineStore('monitor', () => {
     const exist = [...filterList.value, ...whiteList.value].find(i => isPathEqual(i.path, payload.path))
     if (exist)
       return
-    filterList.value.unshift(payload)
+    filterList.value.unshift({
+      ...payload,
+      checked: false,
+    })
     transformIcon(payload)
   })
 
