@@ -47,7 +47,7 @@ type CreatePlan = Pick<Plan, 'name' | 'color'>
 
 type CreateLabel = Pick<Label, 'name' | 'planId' | 'color'>
 
-type CreateProgram = Pick<Program, 'description' | 'path' | 'icon'>
+type CreateProgram = Pick<Program, 'description' | 'path' | 'icon' | 'color'>
 
 type CreateActivity = Pick<Activity, 'startTime' | 'endTime' | 'programId'>
 

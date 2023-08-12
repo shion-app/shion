@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS program (
   path TEXT NOT NULL,
   description TEXT NOT NULL,
   icon BLOB NOT NULL,
+  color TEXT NOT NULL,
   deleted_at TIMESTAMP DEFAULT 0,
   UNIQUE (path, deleted_at)
 );

@@ -12,18 +12,21 @@ const { filtering, filterList, whiteList } = storeToRefs(store)
 
 async function handleCreateProgram(program: backend.Program) {
   const { description, path, icon } = program
+  const color = randomColor()
   const index = filterList.value.findIndex(i => i.path == path)
   filterList.value.splice(index, 1)
   const { lastInsertId } = await createProgram({
     description,
     path,
     icon,
+    color,
   })
   whiteList.value.unshift({
     description,
     id: lastInsertId,
     path,
     icon,
+    color,
   })
 }
 
