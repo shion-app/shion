@@ -106,20 +106,18 @@ export async function removePlan(id: number) {
   await execute(`UPDATE note SET deleted_at = ${new Date().getTime()} WHERE plan_id = ${id}`)
 }
 
-export async function selectPlan() {
-  const data = await select<Array<Plan>>('SELECT * FROM plan WHERE deleted_at = 0 ORDER BY id')
-  const list = (await Promise.all(data.map(({ id }) => selectPlanTotalTime(id))))
-  data.forEach((plan, index) => plan.totalTime = list[index].totalTime)
-  return data
-}
-
-function selectPlanTotalTime(id: number) {
-  return select<Array<Pick<Plan, 'totalTime'>>>(`
-    SELECT IFNULL(sum(end_time - start_time), 0) AS total_time
-      FROM note
-    WHERE plan_id = ${id} AND
-      deleted_at = 0
-  `).then(i => i.pop()!)
+export function selectPlan() {
+  return select<Array<Plan>>(`
+    SELECT [plan].*,
+        IFNULL(SUM(note.end_time - note.start_time), 0) AS totalTime
+      FROM [plan]
+          LEFT JOIN
+          note ON [plan].id = note.plan_id AND
+                  note.deleted_at = 0
+    WHERE [plan].deleted_at = 0
+    GROUP BY [plan].id
+    ORDER BY [plan].id;
+  `)
 }
 
 export function createNote(data: CreateNote) {
@@ -199,28 +197,34 @@ export async function removeLabel(id: number) {
   await execute(`UPDATE note SET deleted_at = ${new Date().getTime()} WHERE label_id = ${id}`)
 }
 
-export async function selectLabel() {
-  const data = await select<Array<Label>>('SELECT * FROM label WHERE deleted_at = 0 ORDER BY plan_id, id')
-  const list = (await Promise.all(data.map(({ id }) => selectLabelTotalTime(id))))
-  data.forEach((plan, index) => plan.totalTime = list[index].totalTime)
-  return data
+export function selectLabel() {
+  return select<Array<Label>>(`
+    SELECT label.*,
+        IFNULL(SUM(note.end_time - note.start_time), 0) AS totalTime
+      FROM label
+          LEFT JOIN
+          note ON label.id = note.label_id AND
+                  note.deleted_at = 0
+    WHERE label.deleted_at = 0
+    GROUP BY label.id
+    ORDER BY label.id;
+  `)
 }
 
 async function selectLabelById(id: number) {
-  const label = (await select<Array<Label>>(`SELECT * FROM label WHERE deleted_at = 0 AND id = ${id} ORDER BY id`)).pop()
-  if (label)
-    label.totalTime = 0
-
+  const label = (await select<Array<Label>>(`
+    SELECT label.*,
+        IFNULL(SUM(note.end_time - note.start_time), 0) AS totalTime
+      FROM label
+          LEFT JOIN
+          note ON label.id = note.label_id AND
+                  note.deleted_at = 0
+    WHERE label.deleted_at = 0 AND
+       label.id = ${id}
+    GROUP BY label.id
+    ORDER BY label.id;
+  `)).pop()
   return label
-}
-
-function selectLabelTotalTime(id: number) {
-  return select<Array<Pick<Label, 'totalTime'>>>(`
-    SELECT IFNULL(sum(end_time - start_time), 0) AS total_time
-      FROM note
-    WHERE label_id = ${id} AND
-      deleted_at = 0
-  `).then(i => i.pop()!)
 }
 
 export function getLastSyncId() {
