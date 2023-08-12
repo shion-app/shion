@@ -41,12 +41,11 @@ CREATE TABLE IF NOT EXISTS program (
 
 CREATE TABLE IF NOT EXISTS activity (
   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-  title TEXT NOT NULL,
-  time TIMESTAMP NOT NULL,
-  active BOOLEAN NOT NULL,
-  program_path TEXT NOT NULL,
-  program_description TEXT NOT NULL,
-  deleted_at TIMESTAMP DEFAULT 0
+  start_time TIMESTAMP NOT NULL,
+  end_time TIMESTAMP NOT NULL,
+  program_id INTEGER NOT NULL,
+  deleted_at TIMESTAMP DEFAULT 0,
+  FOREIGN KEY (program_id) REFERENCES program (id)
 );
 
 CREATE TABLE IF NOT EXISTS sync_log (

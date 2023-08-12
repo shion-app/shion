@@ -127,7 +127,6 @@ fn main() {
                             let activity = Activity {
                                 path: program.path,
                                 time: timestamp,
-                                title: program.title,
                             };
                             app_handle.emit_all("program-activity", activity).unwrap();
                         }

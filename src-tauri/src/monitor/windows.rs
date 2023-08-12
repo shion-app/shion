@@ -35,11 +35,9 @@ use winapi::um::winuser::GetDesktopWindow;
 use winapi::um::winuser::GetMessageW;
 use winapi::um::winuser::GetWindowThreadProcessId;
 use winapi::um::winuser::ReleaseDC;
-use winapi::um::winuser::EVENT_OBJECT_NAMECHANGE;
 use winapi::um::winuser::EVENT_SYSTEM_FOREGROUND;
 use winapi::um::winuser::ICONINFO;
 use winapi::um::winuser::MSG;
-use winapi::um::winuser::OBJID_WINDOW;
 use winapi::um::winuser::{
     DispatchMessageW, GetIconInfo, GetWindowTextLengthW, GetWindowTextW, SetWinEventHook,
     TranslateMessage, UnhookWinEvent, WINEVENT_OUTOFCONTEXT,
@@ -56,28 +54,16 @@ unsafe extern "system" fn handle_event(
     _: winapi::shared::windef::HWINEVENTHOOK,
     event: DWORD,
     hwnd: HWND,
-    id_object: LONG,
+    _: LONG,
     _: LONG,
     _: DWORD,
     _: DWORD,
 ) {
     let is_switch_window = event == EVENT_SYSTEM_FOREGROUND;
-    let is_title_change = event == EVENT_OBJECT_NAMECHANGE && id_object == OBJID_WINDOW;
 
-    let ok = vec![is_switch_window, is_title_change]
-        .into_iter()
-        .any(|x| x);
-
-    if !ok {
+    if !is_switch_window {
         return;
     }
-    let title = get_application_title(hwnd);
-
-    if title.is_none() {
-        return;
-    }
-
-    let title = title.unwrap();
 
     let application_path = get_application_path(hwnd);
 
@@ -100,7 +86,6 @@ unsafe extern "system" fn handle_event(
     let program = Program {
         path,
         description,
-        title,
         icon: buffer,
     };
 
@@ -343,7 +328,7 @@ fn watch_input(window: WatchWindowOption) {
     let hook = unsafe {
         SetWinEventHook(
             EVENT_SYSTEM_FOREGROUND,
-            EVENT_OBJECT_NAMECHANGE,
+            EVENT_SYSTEM_FOREGROUND,
             ptr::null_mut(),
             Some(handle_event),
             0,
