@@ -265,7 +265,17 @@ export async function removeProgram(id: number) {
 export function selectProgram() {
   return select<Array<Omit<Program, 'icon'> & {
     icon: string
-  }>>('SELECT * FROM program WHERE deleted_at = 0 ORDER BY id').then(list => list.map((i) => {
+  }>>(`
+    SELECT program.*,
+        IFNULL(SUM(activity.end_time - activity.start_time), 0) AS totalTime
+      FROM program
+          LEFT JOIN
+          activity ON program.id = activity.program_id AND
+                  activity.deleted_at = 0
+    WHERE program.deleted_at = 0
+    GROUP BY program.id
+    ORDER BY program.id;
+  `).then(list => list.map((i) => {
     return {
       ...i,
       icon: i.icon.split(',').map(Number),

@@ -15,7 +15,7 @@ export const useMonitor = defineStore('monitor', () => {
   const whiteList = ref<Program[]>([])
   const iconMap = ref(new Map<string, string>())
 
-  async function init() {
+  async function refresh() {
     whiteList.value = await selectProgram()
     whiteList.value.forEach(transformIcon)
   }
@@ -35,7 +35,7 @@ export const useMonitor = defineStore('monitor', () => {
     return iconMap.value.get(pathToKey(path))
   }
 
-  init()
+  refresh()
 
   watch(filtering, (data) => {
     invoke('toggle_filter_program', {
@@ -62,5 +62,6 @@ export const useMonitor = defineStore('monitor', () => {
     filterList,
     whiteList,
     getIconUrl,
+    refresh,
   }
 })

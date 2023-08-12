@@ -50,6 +50,7 @@ export interface Program {
   description: string
   icon: number[]
   color: string
+  totalTime: number
 }
 
 export interface Activity {

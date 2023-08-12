@@ -7,7 +7,7 @@ const { setMenu } = useMore()
 
 const { t } = useI18n()
 
-const { getIconUrl } = store
+const { getIconUrl, refresh } = store
 const { filtering, filterList, whiteList } = storeToRefs(store)
 
 async function handleCreateProgram(program: backend.Program) {
@@ -15,15 +15,8 @@ async function handleCreateProgram(program: backend.Program) {
   const color = randomColor()
   const index = filterList.value.findIndex(i => i.path == path)
   filterList.value.splice(index, 1)
-  const { lastInsertId } = await createProgram({
+  await createProgram({
     description,
-    path,
-    icon,
-    color,
-  })
-  whiteList.value.unshift({
-    description,
-    id: lastInsertId,
     path,
     icon,
     color,
@@ -33,6 +26,7 @@ async function handleCreateProgram(program: backend.Program) {
 async function handleSelect() {
   await Promise.all(filterList.value.filter(i => i.checked).map(handleCreateProgram))
   filtering.value = false
+  await refresh()
   message.success(t('message.success'))
 }
 
@@ -57,13 +51,15 @@ setMenu(() => [
     },
   },
 ])
+
+refresh()
 </script>
 
 <template>
   <div h-full>
     <div v-if="whiteList.length" grid grid-cols-3 gap-6 p-4>
       <div
-        v-for="{ path, description, id } in whiteList" :key="id"
+        v-for="{ path, description, id, totalTime, color } in whiteList" :key="id"
         p-4 flex space-x-4 items-center
         rounded-2
         bg-white
@@ -72,11 +68,20 @@ setMenu(() => [
         transition-shadow
       >
         <img :src="getIconUrl(path)" width="32" height="32" object-contain>
-        <div flex-1 min-w-0>
-          <div :title="path">
-            {{ description }}
+        <div flex-1 min-w-0 space-y-2>
+          <div flex justify-between>
+            <div :title="path">
+              {{ description }}
+            </div>
+            <div
+              w-3 h-3 rounded-full mr-1
+              :style="{
+                backgroundColor: color,
+              }"
+            />
           </div>
           <div flex class="group">
+            <div>{{ formatHHmmss(totalTime) }}</div>
             <div flex-1 />
             <div i-mdi:delete-outline text-6 cursor-pointer op-0 group-hover-op-100 transition-opacity-400 @click="handleRemoveProgram(id)" />
           </div>
