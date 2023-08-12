@@ -5,7 +5,7 @@ import { error } from 'tauri-plugin-log-api'
 
 import { i18n } from '@locales/index'
 import type { Activity, Label, Note, Plan, Program, RecentNote, SyncLog, TableName } from '@interfaces/index'
-import { endOfDay, isToday, startOfDay, subDays } from 'date-fns'
+import { startOfDay, subDays } from 'date-fns'
 
 const PATH = `sqlite:data${import.meta.env.TAURI_DEBUG ? '-dev' : ''}.db`
 
@@ -49,7 +49,7 @@ type CreateLabel = Pick<Label, 'name' | 'planId' | 'color'>
 
 type CreateProgram = Pick<Program, 'description' | 'path' | 'icon'>
 
-type CreateActivity = Pick<Activity, 'active' | 'time' | 'title' | 'programPath' | 'programDescription'>
+type CreateActivity = Pick<Activity, 'startTime' | 'endTime' | 'programId'>
 
 export async function execute(query: string, bindValues?: unknown[]) {
   try {
@@ -255,6 +255,7 @@ export function createProgram(data: CreateProgram) {
 
 export async function removeProgram(id: number) {
   await remove('program', id)
+  await execute(`UPDATE activity SET deleted_at = ${new Date().getTime()} WHERE program_id = ${id}`)
 }
 
 export function selectProgram() {
@@ -269,31 +270,9 @@ export function selectProgram() {
 }
 
 export function createActivity(data: CreateActivity) {
-  return create('activity', {
-    ...data,
-    active: data.active ? 1 : 0,
-  })
+  return create('activity', data)
 }
 
 export function updateActivity(id: number, data: Partial<CreateActivity>) {
-  return update('activity', id, {
-    ...data,
-    active: data.active ? 1 : 0,
-  })
-}
-
-export function selectActivity(date = new Date()) {
-  return select<Array<Omit<Activity, 'active'> & {
-    active: number
-  }>>(`
-    SELECT * FROM activity
-      WHERE deleted_at = 0 AND
-      time >= ${startOfDay(date).getTime()} AND
-      time <= ${isToday(date) ? date.getTime() : endOfDay(date).getTime()}
-      ORDER BY id`).then(list => list.map((i) => {
-    return {
-      ...i,
-      active: Boolean(i.active),
-    }
-  }))
+  return update('activity', id, data)
 }

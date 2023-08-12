@@ -38,11 +38,6 @@ const menu = computed(() => [{
   tip: t('nav.monitor'),
   to: '/monitor',
 }, {
-  icon: 'i-mdi:pulse',
-  key: 'activity',
-  tip: t('nav.activity'),
-  to: '/activity',
-}, {
   icon: 'i-mdi:cog',
   key: 'config',
   tip: t('nav.config'),

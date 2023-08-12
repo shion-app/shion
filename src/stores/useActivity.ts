@@ -2,99 +2,114 @@ import type { Event } from '@tauri-apps/api/event'
 import { listen } from '@tauri-apps/api/event'
 
 import type * as backend from '@interfaces/backend'
-import type { Activity } from '@interfaces/index'
+import type { Program } from '@interfaces/index'
+
+interface Activity {
+  id: number
+  start: number
+  end: number
+  path: string
+  timer: Timer
+}
+
+class Timer {
+  timer = 0
+
+  constructor(private timeout: number, private task: Function) {
+    this.start()
+  }
+
+  start() {
+    this.timer = setTimeout(this.task, this.timeout)
+  }
+
+  reset() {
+    clearTimeout(this.timer)
+    this.start()
+  }
+
+  cancel() {
+    clearTimeout(this.timer)
+    this.task()
+  }
+}
+
+class Watcher {
+  foreground: Activity | null = null
+  background: Activity[] = []
+
+  async push(data: backend.Activity, type: 'foreground' | 'background', whiteList: Program[]) {
+    if (type == 'foreground') {
+      const index = this.background.findIndex(i => isPathEqual(i.path, data.path))
+      const background = this.background[index]
+      if (background) {
+        this.background.splice(index, 1)
+        this.foreground?.timer.cancel()
+        this.foreground = background
+        this.foreground.timer.reset()
+      }
+      else {
+        this.foreground?.timer.cancel()
+        this.foreground = await this.create(data, whiteList)
+      }
+    }
+    else {
+      const activity = await this.create(data, whiteList)
+      this.background.push(activity)
+    }
+  }
+
+  async create(activity: backend.Activity, whiteList: Program[]) {
+    const programId = whiteList.find(i => isPathEqual(i.path, activity.path))!.id
+    const { lastInsertId } = await createActivity({
+      startTime: activity.time,
+      endTime: activity.time,
+      programId,
+    })
+    const timer = new Timer(1000 * 60, () => {
+      updateActivity(lastInsertId, {
+        endTime: Date.now(),
+      })
+    })
+    timer.start()
+    return {
+      id: lastInsertId,
+      start: activity.time,
+      end: activity.time,
+      path: activity.path,
+      timer,
+    }
+  }
+
+  activate() {
+    this.foreground?.timer.reset()
+  }
+
+  close() {
+    this.foreground?.timer.cancel()
+    for (const activity of this.background)
+      activity.timer.cancel()
+    this.foreground = null
+    this.background = []
+  }
+}
 
 export const useActivity = defineStore('activity', () => {
   const monitor = useMonitor()
 
-  const activityList = ref<Activity[]>([])
-
-  let timeout: number
-  let task: (immediate: boolean) => Promise<number> = async () => 0
-  let lastActivity: backend.Activity | null = null
-
-  async function refresh() {
-    activityList.value = await selectActivity()
-  }
-
-  refresh()
+  const watcher = new Watcher()
 
   listen('program-activity', async (event: Event<backend.Activity>) => {
     const { payload } = event
 
     const program = monitor.whiteList.find(i => isPathEqual(i.path, payload.path))
-    const isInWhiteList = !!program
-    if (!isInWhiteList) {
-      task(true)
-      return
-    }
-
-    const exist = lastActivity && isPathEqual(lastActivity.path, payload.path) && lastActivity.title == payload.title
-    if (exist)
+    if (!program)
       return
 
-    const isAnotherProgram = lastActivity && !isPathEqual(lastActivity.path, payload.path)
-    if (isAnotherProgram)
-      await task(true)
-
-    const isUpdate = !!lastActivity
-    if (isUpdate) {
-      const id = await task(true)
-      await updateActivity(id, {
-        active: true,
-      })
-    }
-
-    lastActivity = payload
-    const activity: Omit<Activity, 'id'> = {
-      active: true,
-      time: payload.time,
-      title: payload.title,
-      programPath: program.path,
-      programDescription: program.description,
-    }
-    if (!isUpdate)
-      await createActivity(activity)
-
-    const { lastInsertId: inactiveId } = await createActivity({
-      ...activity,
-      active: false,
-    })
-
-    task = async (immediate: boolean) => {
-      clearTimeout(timeout)
-      const fn = async () => {
-        const time = Date.now()
-        await updateActivity(inactiveId, {
-          time,
-        })
-        task = async () => 0
-        lastActivity = null
-        refresh()
-        return inactiveId
-      }
-      if (immediate) {
-        return await fn()
-      }
-      else {
-        return await new Promise<number>((resolve) => {
-          timeout = setTimeout(async () => {
-            resolve(await fn())
-          }, 1000 * 60)
-        })
-      }
-    }
-
-    task(false)
-
-    refresh()
+    watcher.push(payload, 'foreground', monitor.whiteList)
   })
 
-  listen('program-activity-activate', () => task(false))
+  listen('program-activity-activate', () => watcher.activate())
 
-  whenever(() => monitor.filtering, () => task(true))
-
-  return {
-    activityList,
-  }
+  whenever(() => monitor.filtering, () => watcher.close())
 })

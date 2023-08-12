@@ -53,9 +53,7 @@ export interface Program {
 
 export interface Activity {
   id: number
-  active: boolean
-  time: number
-  title: string
-  programPath: string
-  programDescription: string
+  startTime: number
+  endTime: number
+  programId: number
 }
