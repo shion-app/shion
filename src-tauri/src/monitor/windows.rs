@@ -2,13 +2,15 @@ use std::cell::RefCell;
 use std::ffi::OsStr;
 use std::io::Cursor;
 use std::iter::once;
-use std::mem;
 use std::os::windows::ffi::OsStrExt;
 use std::path::Path;
 use std::ptr;
 use std::ptr::null_mut;
+use std::{mem, thread};
 
 use image::{ImageBuffer, ImageFormat, Rgba};
+use nodio_win32::SessionState;
+use nodio_win32::{AudioSessionEvent, Win32Context};
 use winapi::shared::minwindef::DWORD;
 use winapi::shared::minwindef::LPCVOID;
 use winapi::shared::minwindef::LPVOID;
@@ -44,6 +46,7 @@ use winapi::um::winuser::{
 };
 use winapi::um::winver::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW};
 
+use super::shared::WatchAudioOption;
 use super::shared::{Program, WatchWindowOption};
 
 thread_local! {
@@ -356,16 +359,24 @@ fn watch_input(window: WatchWindowOption) {
     unsafe { UnhookWinEvent(hook) };
 }
 
-pub fn run(window: WatchWindowOption) {
-    watch_input(window);
+fn watch_audio<T>(audio: T)
+where
+    T: Fn(SessionState, String) + Send + Sync + 'static,
+{
+    Win32Context::new(move |event, name| match event {
+        AudioSessionEvent::StateChange(state) => {
+            audio(state, name);
+        }
+        _ => {}
+    });
+    loop {}
 }
 
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn watch() {
-        run(Box::new(|program| println!("{:#?}", program.path)));
-    }
+pub fn run(audio: WatchAudioOption, window: WatchWindowOption) {
+    thread::spawn(|| {
+        watch_audio(audio);
+    });
+    thread::spawn(|| {
+        watch_input(window);
+    });
 }

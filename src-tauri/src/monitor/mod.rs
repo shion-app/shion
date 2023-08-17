@@ -2,7 +2,6 @@ pub mod shared;
 mod windows;
 
 use std::cell::RefCell;
-use std::thread;
 
 use rdev::{listen, Event, EventType};
 use shared::WatchOption;
@@ -54,10 +53,8 @@ pub fn run(option: WatchOption) {
     MOUSE.with(|f| *f.borrow_mut() = Some(Box::new(mouse)));
     KEYBOARD.with(|f| *f.borrow_mut() = Some(Box::new(keyboard)));
 
-    thread::spawn(|| {
-        #[cfg(windows)]
-        windows::run(option.window);
-    });
+    #[cfg(windows)]
+    windows::run(option.audio, option.window);
 
     if let Err(error) = listen(callback) {
         println!("Error: {:?}", error)
@@ -70,7 +67,7 @@ pub fn get_image_by_path(path: String) -> Vec<u8> {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]
@@ -79,6 +76,10 @@ mod test {
             window: Box::new(|program| println!("{:#?}", program.path)),
             mouse: Box::new(|| println!("mouse")),
             keyboard: Box::new(|| println!("keyboard")),
+            audio: Box::new(|state, name| {
+                println!("{:?}", state);
+                println!("{:?}", name);
+            }),
         });
     }
 }
