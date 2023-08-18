@@ -21,12 +21,11 @@ pub struct WatchOption {
 
 #[derive(Clone, Serialize)]
 pub struct Activity {
-    pub time: u128,
     pub path: String,
 }
 
 #[derive(Clone, Serialize)]
 pub struct AudioActivity {
     pub state: SessionState,
-    pub name: String,
+    pub path: String,
 }

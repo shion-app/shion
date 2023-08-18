@@ -8,7 +8,6 @@ use std::{
         Arc,
     },
     thread,
-    time::{SystemTime, UNIX_EPOCH},
 };
 
 use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu};
@@ -119,15 +118,8 @@ fn main() {
                     if is_send_program {
                         app_handle.emit_all("filter-program", program).unwrap();
                     } else {
-                        let timestamp = SystemTime::now()
-                            .duration_since(UNIX_EPOCH)
-                            .unwrap()
-                            .as_millis();
-                        let activity = Activity {
-                            path: program.path,
-                            time: timestamp,
-                        };
-                        app_handle.emit_all("program-activity", activity).unwrap();
+                        let activity = Activity { path: program.path };
+                        app_handle.emit_all("window-activity", activity).unwrap();
                     }
                 }
             };
@@ -136,9 +128,7 @@ fn main() {
                 move || {
                     let is_send_program = IS_SEND_PROGRAM.load(Relaxed);
                     if !is_send_program {
-                        app_handle
-                            .emit_all("program-activity-activate", ())
-                            .unwrap();
+                        app_handle.emit_all("window-activate", ()).unwrap();
                     }
                 }
             };
@@ -146,7 +136,7 @@ fn main() {
                 let app_handle = app_handle_clone.clone();
                 move |state, name| {
                     app_handle
-                        .emit_all("audio-activity", AudioActivity { state, name })
+                        .emit_all("audio-activity", AudioActivity { state, path: name })
                         .unwrap();
                 }
             };

@@ -5,6 +5,10 @@ export interface Program {
 }
 
 export interface Activity {
-  time: number
+  path: string
+}
+
+export interface AudioActivity {
+  state: 'Active' | 'Inactive' | 'Expired'
   path: string
 }

@@ -9,88 +9,171 @@ interface Activity {
   start: number
   end: number
   path: string
+  foreground: boolean
+  background: boolean
+  reset: boolean
   timer: Timer
 }
 
 class Timer {
-  timer = 0
+  private time = Date.now()
+  private timeoutFlag = 0
 
-  constructor(private timeout: number, private task: Function) {
-    this.start()
+  constructor(private _timeout: number, private callback: Function) { }
+
+  interval() {
+    requestAnimationFrame(() => {
+      const now = Date.now()
+      if (now - this.time >= this._timeout) {
+        this.callback()
+        this.time = now
+      }
+      this.interval()
+    })
   }
 
-  start() {
-    this.timer = setTimeout(this.task, this.timeout)
+  timeout() {
+    this.timeoutFlag = setTimeout(this.callback, this._timeout)
   }
 
   reset() {
-    clearTimeout(this.timer)
-    this.start()
+    clearTimeout(this.timeoutFlag)
+    this.timeout()
   }
 
-  cancel() {
-    clearTimeout(this.timer)
-    this.task()
+  end() {
+    clearTimeout(this.timeoutFlag)
+    this.callback()
   }
 }
 
 class Watcher {
-  foreground: Activity | null = null
-  background: Activity[] = []
+  list: Activity[] = []
+  timer: Timer
 
-  async push(data: backend.Activity, type: 'foreground' | 'background', whiteList: Program[]) {
-    if (type == 'foreground') {
-      const index = this.background.findIndex(i => isPathEqual(i.path, data.path))
-      const background = this.background[index]
-      if (background) {
-        this.background.splice(index, 1)
-        this.foreground?.timer.cancel()
-        this.foreground = background
-        this.foreground.timer.reset()
-      }
-      else {
-        this.foreground?.timer.cancel()
-        this.foreground = await this.create(data, whiteList)
+  constructor() {
+    this.timer = new Timer(1000 * 60, () => {
+      this.record()
+    })
+    this.timer.interval()
+  }
+
+  contain(path: string) {
+    return this.list.some(i => isPathEqual(i.path, path))
+  }
+
+  find(path: string) {
+    return this.list.find(i => isPathEqual(i.path, path))
+  }
+
+  async pushForeground(data: backend.Activity, whiteList: Program[]) {
+    const { path } = data
+    const exist = this.contain(path)
+    const foreground = this.list.find(i => i.foreground)
+    if (foreground) {
+      foreground.foreground = false
+      this.settle(foreground)
+    }
+    if (!exist) {
+      const activity = await this.create(data, false, whiteList)
+      if (!activity)
+        return
+      this.list.push(activity)
+    }
+    else {
+      const activity = this.find(path)!
+      activity.foreground = true
+      activity.reset = true
+      this.settle(activity)
+    }
+  }
+
+  async pushBackground(data: backend.AudioActivity, whiteList: Program[]) {
+    const { path, state } = data
+    const exist = this.contain(path)
+    if (!exist) {
+      if (state == 'Active') {
+        const activity = (await this.create(data, true, whiteList))!
+        this.list.push(activity)
       }
     }
     else {
-      const activity = await this.create(data, whiteList)
-      this.background.push(activity)
+      if (state == 'Inactive' || state == 'Expired') {
+        const activity = this.find(path)!
+        activity.background = false
+        this.settle(activity)
+      }
     }
   }
 
-  async create(activity: backend.Activity, whiteList: Program[]) {
-    const programId = whiteList.find(i => isPathEqual(i.path, activity.path))!.id
-    const { lastInsertId } = await createActivity({
-      startTime: activity.time,
-      endTime: activity.time,
-      programId,
+  async create(data: backend.Activity, background: boolean, whiteList: Program[]) {
+    const program = whiteList.find(i => isPathEqual(i.path, data.path))
+    if (!program)
+      return
+
+    const time = Date.now()
+    const { lastInsertId: id } = await createActivity({
+      startTime: time,
+      endTime: time,
+      programId: program.id,
     })
-    const timer = new Timer(1000 * 60, () => {
-      updateActivity(lastInsertId, {
-        endTime: Date.now(),
-      })
-    })
-    timer.start()
-    return {
-      id: lastInsertId,
-      start: activity.time,
-      end: activity.time,
-      path: activity.path,
-      timer,
+    const activity: Activity = {
+      id,
+      start: time,
+      end: time,
+      path: data.path,
+      foreground: !background,
+      background,
+      reset: false,
+      timer: new Timer(1000 * 10, () => {
+        if (activity.background)
+          return
+        updateActivity(id, {
+          endTime: Date.now(),
+        })
+        this.clear(activity)
+      }),
     }
+    if (!background)
+      activity.timer.timeout()
+
+    return activity
+  }
+
+  clear(activity: Activity) {
+    const index = this.list.findIndex(i => i.id == activity.id)
+    if (index != -1)
+      this.list.splice(index, 1)
+  }
+
+  settle(activity: Activity) {
+    if (activity.reset) {
+      activity.timer.reset()
+      activity.reset = false
+    }
+    if (!(activity.foreground || activity.background))
+      activity.timer.end()
   }
 
   activate() {
-    this.foreground?.timer.reset()
+    const foreground = this.list.find(i => i.foreground)
+    foreground?.timer.reset()
   }
 
   close() {
-    this.foreground?.timer.cancel()
-    for (const activity of this.background)
-      activity.timer.cancel()
-    this.foreground = null
-    this.background = []
+    for (const activity of this.list) {
+      activity.background = false
+      activity.foreground = false
+      this.settle(activity)
+    }
+  }
+
+  record() {
+    for (const activity of this.list) {
+      updateActivity(activity.id, {
+        endTime: Date.now(),
+      })
+    }
   }
 }
 
@@ -99,17 +182,19 @@ export const useActivity = defineStore('activity', () => {
 
   const watcher = new Watcher()
 
-  listen('program-activity', async (event: Event<backend.Activity>) => {
-    const { payload } = event
-
-    const program = monitor.whiteList.find(i => isPathEqual(i.path, payload.path))
-    if (!program)
-      return
-
-    watcher.push(payload, 'foreground', monitor.whiteList)
+  listen('window-activity', async (event: Event<backend.Activity>) => {
+    watcher.pushForeground(event.payload, monitor.whiteList)
   })
 
-  listen('program-activity-activate', () => watcher.activate())
+  listen('audio-activity', (event: Event<backend.AudioActivity>) => {
+    const exist = monitor.whiteList.some(i => isPathEqual(i.path, event.payload.path))
+    if (!exist)
+      return
+
+    watcher.pushBackground(event.payload, monitor.whiteList)
+  })
+
+  listen('window-activate', () => watcher.activate())
 
   whenever(() => monitor.filtering, () => watcher.close())
 })
