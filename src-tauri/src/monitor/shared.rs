@@ -29,3 +29,7 @@ pub struct AudioActivity {
     pub state: SessionState,
     pub path: String,
 }
+
+pub trait AudioContext {
+    fn is_active(&self, path: String) -> bool;
+}

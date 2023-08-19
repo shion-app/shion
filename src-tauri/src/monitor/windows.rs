@@ -6,11 +6,11 @@ use std::os::windows::ffi::OsStrExt;
 use std::path::Path;
 use std::ptr;
 use std::ptr::null_mut;
+use std::sync::Arc;
 use std::{mem, thread};
 
 use image::{ImageBuffer, ImageFormat, Rgba};
-use nodio_win32::SessionState;
-use nodio_win32::{AudioSessionEvent, Win32Context};
+use nodio_win32::{AudioSessionEvent, RwLock, SessionState, Win32Context};
 use winapi::shared::minwindef::DWORD;
 use winapi::shared::minwindef::LPCVOID;
 use winapi::shared::minwindef::LPVOID;
@@ -46,8 +46,8 @@ use winapi::um::winuser::{
 };
 use winapi::um::winver::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW};
 
-use super::shared::WatchAudioOption;
-use super::shared::{Program, WatchWindowOption};
+use super::shared::{AudioContext, Program, WatchAudioOption, WatchWindowOption};
+use super::AUDIO_CONTEXT;
 
 thread_local! {
     static WINDOW: RefCell<Option<Box<dyn Fn(Program) -> ()>>> = RefCell::new(None);
@@ -359,16 +359,28 @@ fn watch_input(window: WatchWindowOption) {
     unsafe { UnhookWinEvent(hook) };
 }
 
+struct Audio {
+    context: Arc<RwLock<Win32Context>>,
+}
+
+impl AudioContext for Audio {
+    fn is_active(&self, path: String) -> bool {
+        self.context.read().is_session_active(path)
+    }
+}
+
 fn watch_audio<T>(audio: T)
 where
     T: Fn(SessionState, String) + Send + Sync + 'static,
 {
-    Win32Context::new(move |event, name| match event {
+    let context = Win32Context::new(move |event, name| match event {
         AudioSessionEvent::StateChange(state) => {
             audio(state, name);
         }
         _ => {}
     });
+
+    unsafe { AUDIO_CONTEXT = Some(Box::new(Audio { context })) };
     loop {}
 }
 

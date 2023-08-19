@@ -17,6 +17,7 @@ use tauri_plugin_sql::{Migration, MigrationKind};
 use shion::monitor::{
     self,
     shared::{Activity, AudioActivity, Program, WatchOption},
+    AUDIO_CONTEXT,
 };
 
 #[derive(Clone, serde::Serialize)]
@@ -43,6 +44,11 @@ fn toggle_filter_program(data: bool) {
 #[tauri::command]
 fn get_image_by_path(path: String) -> Vec<u8> {
     monitor::get_image_by_path(path)
+}
+
+#[tauri::command]
+fn is_audio_active(path: String) -> bool {
+    unsafe { AUDIO_CONTEXT.as_ref().unwrap().is_active(path) }
 }
 
 fn main() {
@@ -106,7 +112,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             update_tray_menu,
             toggle_filter_program,
-            get_image_by_path
+            get_image_by_path,
+            is_audio_active
         ])
         .setup(|app| {
             let app_handle = Arc::new(app.handle());

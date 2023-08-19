@@ -1993,9 +1993,9 @@ checksum = "ece97ea872ece730aed82664c424eb4c8291e1ff2480247ccf7409044bc6479f"
 
 [[package]]
 name = "lock_api"
-version = "0.4.9"
+version = "0.4.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "435011366fe56583b16cf956f9df0095b405b82d76425bc8981c0e22e60ec4df"
+checksum = "c1cc9717a20b1bb222f333e6a92fd32f7d8a18ddc5a3191a11af45dcbf4dcd16"
 dependencies = [
  "autocfg",
  "scopeguard",
@@ -2235,7 +2235,7 @@ dependencies = [
 [[package]]
 name = "nodio-core"
 version = "0.1.0"
-source = "git+https://github.com/hanaTsuk1/nodio#cf7ae3932704d49dbb7ed85335ab03ef2e9fa9b6"
+source = "git+https://github.com/hanaTsuk1/nodio#0726a7989db7d1b737346ee8598499db652ed520"
 dependencies = [
  "serde",
  "serde_json",
@@ -2245,7 +2245,7 @@ dependencies = [
 [[package]]
 name = "nodio-win32"
 version = "0.1.0"
-source = "git+https://github.com/hanaTsuk1/nodio#cf7ae3932704d49dbb7ed85335ab03ef2e9fa9b6"
+source = "git+https://github.com/hanaTsuk1/nodio#0726a7989db7d1b737346ee8598499db652ed520"
 dependencies = [
  "log",
  "nodio-core",

@@ -4,12 +4,14 @@ mod windows;
 use std::cell::RefCell;
 
 use rdev::{listen, Event, EventType};
-use shared::WatchOption;
+use shared::{AudioContext, WatchOption};
 
 thread_local! {
     static MOUSE: RefCell<Option<Box<dyn FnMut() -> ()>>> = RefCell::new(None);
     static KEYBOARD: RefCell<Option<Box<dyn FnMut() -> ()>>> = RefCell::new(None);
 }
+
+pub static mut AUDIO_CONTEXT: Option<Box<dyn AudioContext>> = None;
 
 fn throttle<F>(func: F, limit: u64) -> impl FnMut()
 where
