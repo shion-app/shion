@@ -4,6 +4,7 @@ import { listen } from '@tauri-apps/api/event'
 import type * as backend from '@interfaces/backend'
 import type { Program } from '@interfaces/index'
 import { invoke } from '@tauri-apps/api'
+import { debug } from 'tauri-plugin-log-api'
 
 interface Activity {
   id: number
@@ -97,6 +98,7 @@ class Watcher {
 
   async pushBackground(data: backend.AudioActivity, whiteList: Program[]) {
     const { path, state } = data
+    debug(`Audio activity path: ${path}, state: ${state}`)
     const exist = this.contain(path)
     if (!exist) {
       if (state == 'Active') {
@@ -126,21 +128,24 @@ class Watcher {
       endTime: time,
       programId: program.id,
     })
+    const { path } = data
     if (!background) {
       background = await invoke('is_audio_active', {
-        path: data.path,
+        path,
       })
     }
+    debug(`Create activity path: ${path}, background: ${background}`)
     const activity: Activity = {
       id,
       start: time,
       end: time,
-      path: data.path,
+      path,
       foreground: !background,
       background,
       timer: new Timer(1000 * 60, () => {
         if (activity.background)
           return
+        debug(`Delete activity path: ${path}`)
         updateActivity(id, {
           endTime: Date.now(),
         })
@@ -175,9 +180,13 @@ class Watcher {
 
   async checkAudioStatus() {
     for (const activity of this.list) {
-      activity.background = await invoke('is_audio_active', {
+      const active = await invoke<boolean>('is_audio_active', {
         path: activity.path,
       })
+      if (active != activity.background)
+        debug(`Activity path: ${activity.path}, state (${activity.background} => ${active})`)
+
+      activity.background = active
     }
   }
 }
