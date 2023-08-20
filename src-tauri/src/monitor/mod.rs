@@ -63,11 +63,6 @@ pub fn run(option: WatchOption) {
     }
 }
 
-pub fn get_image_by_path(path: String) -> Vec<u8> {
-    #[cfg(windows)]
-    windows::get_image_by_path(path)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
