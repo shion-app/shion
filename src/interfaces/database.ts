@@ -59,3 +59,10 @@ export interface Activity {
   endTime: number
   programId: number
 }
+
+export interface RecentActivity {
+  date: string
+  name: string
+  color: string
+  totalTime: number
+}

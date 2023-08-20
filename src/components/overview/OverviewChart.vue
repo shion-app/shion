@@ -2,15 +2,16 @@
 import type { EChartsOption } from 'echarts'
 import { subDays } from 'date-fns'
 
-import type { RecentNote } from '@interfaces/index'
+import type { RecentActivity, RecentNote } from '@interfaces/index'
 
 const props = defineProps<{
-  list: Array<RecentNote>
+  noteList: Array<RecentNote>
+  activityList: Array<RecentActivity>
   day: number
   chartMode: 'plan' | 'label'
 }>()
 
-const { list, day } = toRefs(props)
+const { noteList, day, activityList } = toRefs(props)
 
 const legendHeight = ref(30)
 const chartRef = ref()
@@ -21,16 +22,16 @@ const LEGEND_MARGIN_BOTTOM = 10
 const option = computed(() => {
   const xAxis = new Array(day.value).fill(0).map((_, i) => format(subDays(new Date(), i), 'yyyy-MM-dd')).reverse()
 
-  const planList = [...new Set(list.value.map(({ planName }) => planName))]
+  const planList = [...new Set(noteList.value.map(({ planName }) => planName))]
 
   const planData = planList.map((name) => {
     return {
       name,
       type: 'bar',
       stack: 'plan',
-      data: xAxis.map(date => list.value.filter(i => i.planName == name && date == i.date).reduce((acc, cur) => acc += cur.totalTime, 0)),
+      data: xAxis.map(date => noteList.value.filter(i => i.planName == name && date == i.date).reduce((acc, cur) => acc += cur.totalTime, 0)),
       itemStyle: {
-        color: list.value.find(i => i.planName == name)!.planColor,
+        color: noteList.value.find(i => i.planName == name)!.planColor,
       },
       emphasis: {
         focus: 'series',
@@ -38,16 +39,33 @@ const option = computed(() => {
     }
   })
 
-  const labelList = [...new Set(list.value.map(({ labelName }) => labelName))]
+  const labelList = [...new Set(noteList.value.map(({ labelName }) => labelName))]
 
   const labelData = labelList.map((name) => {
     return {
       name,
       type: 'bar',
       stack: 'label',
-      data: xAxis.map(date => list.value.filter(i => i.labelName == name && date == i.date).reduce((acc, cur) => acc += cur.totalTime, 0)),
+      data: xAxis.map(date => noteList.value.filter(i => i.labelName == name && date == i.date).reduce((acc, cur) => acc += cur.totalTime, 0)),
       itemStyle: {
-        color: list.value.find(i => i.labelName == name)!.labelColor,
+        color: noteList.value.find(i => i.labelName == name)!.labelColor,
+      },
+      emphasis: {
+        focus: 'series',
+      },
+    }
+  })
+
+  const programList = [...new Set(activityList.value.map(({ name }) => name))]
+
+  const programData = programList.map((name) => {
+    return {
+      name,
+      type: 'bar',
+      stack: props.chartMode == 'plan' ? 'plan' : 'label',
+      data: xAxis.map(date => activityList.value.filter(i => i.name == name && date == i.date).reduce((acc, cur) => acc += cur.totalTime, 0)),
+      itemStyle: {
+        color: activityList.value.find(i => i.name == name)!.color,
       },
       emphasis: {
         focus: 'series',
@@ -92,7 +110,7 @@ const option = computed(() => {
         },
       },
     ],
-    series: props.chartMode == 'plan' ? planData : labelData,
+    series: [...(props.chartMode == 'plan' ? planData : labelData), ...programData],
   } as EChartsOption
 })
 

@@ -1,14 +1,24 @@
 <script setup lang="ts">
-import type { RecentNote } from '@interfaces/database'
+import type { RecentActivity, RecentNote } from '@interfaces/database'
 
-const list = ref<Array<RecentNote>>([])
+const noteList = ref<Array<RecentNote>>([])
+const activityList = ref<Array<RecentActivity>>([])
 const chartRange = ref<'month' | 'week'>('week')
 const chartMode = ref<'plan' | 'label'>('plan')
 
 const day = computed(() => chartRange.value == 'week' ? 7 : 31)
 
 async function refresh() {
-  list.value = await selectRecentNote(day.value)
+  refreshNote()
+  refreshActivity()
+}
+
+async function refreshNote() {
+  noteList.value = await selectRecentNote(day.value)
+}
+
+async function refreshActivity() {
+  activityList.value = await selectRecentActivity(day.value)
 }
 
 watch(chartRange, refresh, {
@@ -18,7 +28,7 @@ watch(chartRange, refresh, {
 
 <template>
   <div h-full relative overflow-hidden>
-    <template v-if="list.length">
+    <template v-if="noteList.length">
       <div absolute z-1 flex w-full p-2 space-x-2>
         <div flex-1 />
         <a-radio-group v-model:value="chartRange" size="small">
@@ -54,7 +64,7 @@ watch(chartRange, refresh, {
           </a-radio-button>
         </a-radio-group>
       </div>
-      <OverviewChart :list="list" :chart-mode="chartMode" :day="day" />
+      <OverviewChart :note-list="noteList" :activity-list="activityList" :chart-mode="chartMode" :day="day" />
     </template>
     <a-empty v-else h-full flex flex-col justify-center :description="$t('overview.empty')" />
   </div>

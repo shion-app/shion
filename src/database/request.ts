@@ -4,7 +4,7 @@ import { camelCase } from 'camel-case'
 import { error } from 'tauri-plugin-log-api'
 
 import { i18n } from '@locales/index'
-import type { Activity, Label, Note, Plan, Program, RecentNote, SyncLog, TableName } from '@interfaces/index'
+import type { Activity, Label, Note, Plan, Program, RecentActivity, RecentNote, SyncLog, TableName } from '@interfaces/index'
 import { startOfDay, subDays } from 'date-fns'
 
 const PATH = `sqlite:data${import.meta.env.TAURI_DEBUG ? '-dev' : ''}.db`
@@ -289,4 +289,22 @@ export function createActivity(data: CreateActivity) {
 
 export function updateActivity(id: number, data: Partial<CreateActivity>) {
   return update('activity', id, data)
+}
+
+export function selectRecentActivity(range: number) {
+  return select<Array<RecentActivity>>(`
+    SELECT
+        sum(activity.end_time - activity.start_time) AS total_time,
+        date(activity.start_time / 1000, 'unixepoch') AS date,
+        program.description as name,
+        program.color AS label_name
+    FROM activity,
+        program
+    WHERE activity.deleted_at = 0 AND
+          activity.program_id = program.id AND
+          activity.start_time >= ${startOfDay(subDays(new Date(), range - 1)).getTime()} AND
+          activity.start_time <= ${new Date().getTime()}
+    GROUP BY activity.program_id,
+              date(activity.start_time / 1000, 'unixepoch')
+    ORDER BY activity.start_time DESC;`)
 }
