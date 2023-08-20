@@ -3,6 +3,7 @@ import { listen } from '@tauri-apps/api/event'
 
 import type * as backend from '@interfaces/backend'
 import type { Program } from '@interfaces/index'
+import { invoke } from '@tauri-apps/api'
 
 interface Activity {
   id: number
@@ -11,7 +12,6 @@ interface Activity {
   path: string
   foreground: boolean
   background: boolean
-  reset: boolean
   timer: Timer
 }
 
@@ -49,13 +49,18 @@ class Timer {
 
 class Watcher {
   list: Activity[] = []
-  timer: Timer
+  recordTimer: Timer
+  audioTimer: Timer
 
   constructor() {
-    this.timer = new Timer(1000 * 60, () => {
+    this.recordTimer = new Timer(1000 * 60, () => {
       this.record()
     })
-    this.timer.interval()
+    this.recordTimer.interval()
+    this.audioTimer = new Timer(1000 * 10, () => {
+      this.checkAudioStatus()
+    })
+    this.audioTimer.interval()
   }
 
   contain(path: string) {
@@ -68,12 +73,15 @@ class Watcher {
 
   async pushForeground(data: backend.Activity, whiteList: Program[]) {
     const { path } = data
-    const exist = this.contain(path)
     const foreground = this.list.find(i => i.foreground)
     if (foreground) {
+      if (isPathEqual(path, foreground.path))
+        return
+
       foreground.foreground = false
       this.settle(foreground)
     }
+    const exist = this.contain(path)
     if (!exist) {
       const activity = await this.create(data, false, whiteList)
       if (!activity)
@@ -83,8 +91,7 @@ class Watcher {
     else {
       const activity = this.find(path)!
       activity.foreground = true
-      activity.reset = true
-      this.settle(activity)
+      activity.timer.reset()
     }
   }
 
@@ -93,7 +100,9 @@ class Watcher {
     const exist = this.contain(path)
     if (!exist) {
       if (state == 'Active') {
-        const activity = (await this.create(data, true, whiteList))!
+        const activity = (await this.create(data, true, whiteList))
+        if (!activity)
+          return
         this.list.push(activity)
       }
     }
@@ -117,6 +126,11 @@ class Watcher {
       endTime: time,
       programId: program.id,
     })
+    if (!background) {
+      background = await invoke('is_audio_active', {
+        path: data.path,
+      })
+    }
     const activity: Activity = {
       id,
       start: time,
@@ -124,14 +138,15 @@ class Watcher {
       path: data.path,
       foreground: !background,
       background,
-      reset: false,
-      timer: new Timer(1000 * 10, () => {
+      timer: new Timer(1000 * 60, () => {
         if (activity.background)
           return
         updateActivity(id, {
           endTime: Date.now(),
         })
-        this.clear(activity)
+        const index = this.list.findIndex(i => i.id == activity.id)
+        if (index != -1)
+          this.list.splice(index, 1)
       }),
     }
     if (!background)
@@ -140,17 +155,7 @@ class Watcher {
     return activity
   }
 
-  clear(activity: Activity) {
-    const index = this.list.findIndex(i => i.id == activity.id)
-    if (index != -1)
-      this.list.splice(index, 1)
-  }
-
   settle(activity: Activity) {
-    if (activity.reset) {
-      activity.timer.reset()
-      activity.reset = false
-    }
     if (!(activity.foreground || activity.background))
       activity.timer.end()
   }
@@ -160,18 +165,18 @@ class Watcher {
     foreground?.timer.reset()
   }
 
-  close() {
-    for (const activity of this.list) {
-      activity.background = false
-      activity.foreground = false
-      this.settle(activity)
-    }
-  }
-
   record() {
     for (const activity of this.list) {
       updateActivity(activity.id, {
         endTime: Date.now(),
+      })
+    }
+  }
+
+  async checkAudioStatus() {
+    for (const activity of this.list) {
+      activity.background = await invoke('is_audio_active', {
+        path: activity.path,
       })
     }
   }
@@ -187,14 +192,8 @@ export const useActivity = defineStore('activity', () => {
   })
 
   listen('audio-activity', (event: Event<backend.AudioActivity>) => {
-    const exist = monitor.whiteList.some(i => isPathEqual(i.path, event.payload.path))
-    if (!exist)
-      return
-
     watcher.pushBackground(event.payload, monitor.whiteList)
   })
 
   listen('window-activate', () => watcher.activate())
-
-  whenever(() => monitor.filtering, () => watcher.close())
 })

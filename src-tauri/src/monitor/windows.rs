@@ -37,7 +37,7 @@ use winapi::um::winuser::GetDesktopWindow;
 use winapi::um::winuser::GetMessageW;
 use winapi::um::winuser::GetWindowThreadProcessId;
 use winapi::um::winuser::ReleaseDC;
-use winapi::um::winuser::EVENT_SYSTEM_FOREGROUND;
+use winapi::um::winuser::EVENT_SYSTEM_CAPTURESTART;
 use winapi::um::winuser::ICONINFO;
 use winapi::um::winuser::MSG;
 use winapi::um::winuser::{
@@ -62,9 +62,9 @@ unsafe extern "system" fn handle_event(
     _: DWORD,
     _: DWORD,
 ) {
-    let is_switch_window = event == EVENT_SYSTEM_FOREGROUND;
+    let is_click_window = event == EVENT_SYSTEM_CAPTURESTART;
 
-    if !is_switch_window {
+    if !is_click_window {
         return;
     }
 
@@ -330,8 +330,8 @@ fn watch_input(window: WatchWindowOption) {
 
     let hook = unsafe {
         SetWinEventHook(
-            EVENT_SYSTEM_FOREGROUND,
-            EVENT_SYSTEM_FOREGROUND,
+            EVENT_SYSTEM_CAPTURESTART,
+            EVENT_SYSTEM_CAPTURESTART,
             ptr::null_mut(),
             Some(handle_event),
             0,
