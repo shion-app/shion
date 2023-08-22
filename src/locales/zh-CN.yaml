@@ -14,7 +14,6 @@ plan:
   update: 修改计划
   name: 名称
   color: 颜色
-  empty: 与其感慨路难行，不如马上出发
 label:
   create: 创建标签
   update: 修改标签
@@ -71,7 +70,6 @@ overview:
   month: 最近一个月
   plan: 计划
   label: 标签
-  empty: 这里没有丰碑，只有记录
 monitor:
   filterProgram: 筛选要监听的程序
   switchWindowTip: 切换到其他应用窗口，获取数据

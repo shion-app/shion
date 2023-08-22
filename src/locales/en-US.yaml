@@ -14,7 +14,6 @@ plan:
   update: Update plan
   name: Name
   color: Color
-  empty: Better to run than curse the road
 label:
   create: Create Label
   update: Update Label
@@ -71,7 +70,6 @@ overview:
   month: Last month
   plan: Plan
   label: Label
-  empty: There are no monuments here, only records
 monitor:
   filterProgram: Filter Program to monitor
   switchWindowTip: Switch to another application window to get data

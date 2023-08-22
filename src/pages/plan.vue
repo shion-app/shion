@@ -103,7 +103,7 @@ refresh()
       </div>
     </div>
   </div>
-  <a-empty v-else h-full flex flex-col justify-center :description="$t('plan.empty')" />
+  <a-empty v-else h-full flex flex-col justify-center />
   <plan-form v-model:visible="planCreateVisible" v-model:model="planCreateModel" type="create" @refresh="refresh" />
   <plan-form v-model:visible="planUpdateVisible" type="update" :model="planUpdateModel" @refresh="refresh" />
 </template>
