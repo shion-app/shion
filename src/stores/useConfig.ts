@@ -1,11 +1,13 @@
 import { Store } from 'tauri-plugin-store-api'
 import { getVersion } from '@tauri-apps/api/app'
 import { invoke } from '@tauri-apps/api'
+import { disable, enable } from 'tauri-plugin-autostart-api'
 
 interface Config {
   version: string
   locale: 'zh-CN' | 'en-US'
   checkUpdate: boolean
+  autostart: boolean
 }
 
 const PATH = `config${import.meta.env.TAURI_DEBUG ? '-dev' : ''}.json`
@@ -21,6 +23,7 @@ export const useConfig = defineStore('config', () => {
       version: await getVersion(),
       locale: 'en-US',
       checkUpdate: false,
+      autostart: false,
     }
     const len = await store.length()
     if (len == 0)
@@ -68,6 +71,14 @@ export const useConfig = defineStore('config', () => {
         quit: t('tray.quit'),
       },
     })
+  })
+
+  watch(() => config.value.autostart, (v) => {
+    if (v)
+      enable()
+
+    else
+      disable()
   })
 
   return {

@@ -22,6 +22,7 @@
     "echarts": "^5.4.2",
     "pinia": "^2.0.34",
     "snake-case": "^3.0.4",
+    "tauri-plugin-autostart-api": "github:tauri-apps/tauri-plugin-autostart#v1",
     "tauri-plugin-log-api": "github:tauri-apps/tauri-plugin-log#v1",
     "tauri-plugin-sql-api": "github:tauri-apps/tauri-plugin-sql#v1",
     "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#v1",

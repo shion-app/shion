@@ -9,6 +9,7 @@ nav:
 config:
   locale: 语言
   checkUpdate: 检查更新
+  autostart: 开机启动
 plan:
   create: 创建计划
   update: 修改计划

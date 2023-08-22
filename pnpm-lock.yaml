@@ -31,6 +31,7 @@ specifiers:
   semver: ^7.5.0
   simple-git-hooks: ^2.8.1
   snake-case: ^3.0.4
+  tauri-plugin-autostart-api: github:tauri-apps/tauri-plugin-autostart#v1
   tauri-plugin-log-api: github:tauri-apps/tauri-plugin-log#v1
   tauri-plugin-sql-api: github:tauri-apps/tauri-plugin-sql#v1
   tauri-plugin-store-api: github:tauri-apps/tauri-plugin-store#v1
@@ -60,9 +61,10 @@ dependencies:
   echarts: 5.4.2
   pinia: 2.0.34_hmuptsblhheur2tugfgucj7gc4
   snake-case: 3.0.4
-  tauri-plugin-log-api: github.com/tauri-apps/tauri-plugin-log/fbbb126e6d7fba7a7e6772d33f99c0fb689f32b6
-  tauri-plugin-sql-api: github.com/tauri-apps/tauri-plugin-sql/f8125e517d9de2a567a2eaa14f7b1b32e456278b
-  tauri-plugin-store-api: github.com/tauri-apps/tauri-plugin-store/8a37f08e6c0b7781fc1f0e458f2d0ff18368ac75
+  tauri-plugin-autostart-api: github.com/tauri-apps/tauri-plugin-autostart/0e474395d4990587ad5c1db25ed23220fe11764f
+  tauri-plugin-log-api: github.com/tauri-apps/tauri-plugin-log/9075595196d5a66f8f3265d2aaf7e2ffeb4cb2ab
+  tauri-plugin-sql-api: github.com/tauri-apps/tauri-plugin-sql/b8fd19dac907cc8c3d78681cd4803a326b8b861e
+  tauri-plugin-store-api: github.com/tauri-apps/tauri-plugin-store/a65ce9bfb168a9a3cd7ed4102b9f22770cc3abfa
   vue: 3.2.47
   vue-echarts: 6.5.5_echarts@5.4.2+vue@3.2.47
   vue-i18n: 9.2.2_vue@3.2.47
@@ -956,8 +958,8 @@ packages:
     engines: {node: '>= 14'}
     dev: true
 
-  /@intlify/shared/9.3.0-beta.24:
-    resolution: {integrity: sha512-AKxJ8s7eKIQWkNaf4wyyoLRwf4puCuQgjSChlDJm5JBEt6T8HGgnYTJLRXu6LD/JACn3Qwu6hM/XRX1c9yvjmQ==}
+  /@intlify/shared/9.3.0-beta.26:
+    resolution: {integrity: sha512-RpCtfSYIg4tSskrazTr5+WCHyw6qpgwdIxC+x3nCnrPGxyk+en9FoSbadVfx/w7uDTdyhKslEw4d2+qhNc0s4Q==}
     engines: {node: '>= 16'}
     dev: true
 
@@ -977,7 +979,7 @@ packages:
         optional: true
     dependencies:
       '@intlify/bundle-utils': 5.5.0_vue-i18n@9.2.2
-      '@intlify/shared': 9.3.0-beta.24
+      '@intlify/shared': 9.3.0-beta.26
       '@rollup/pluginutils': 5.0.2
       '@vue/compiler-sfc': 3.2.47
       debug: 4.3.4
@@ -6015,24 +6017,32 @@ packages:
       tslib: 2.3.0
     dev: false
 
-  github.com/tauri-apps/tauri-plugin-log/fbbb126e6d7fba7a7e6772d33f99c0fb689f32b6:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-log/tar.gz/fbbb126e6d7fba7a7e6772d33f99c0fb689f32b6}
+  github.com/tauri-apps/tauri-plugin-autostart/0e474395d4990587ad5c1db25ed23220fe11764f:
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/0e474395d4990587ad5c1db25ed23220fe11764f}
+    name: tauri-plugin-autostart-api
+    version: 0.0.0
+    dependencies:
+      '@tauri-apps/api': 1.4.0
+    dev: false
+
+  github.com/tauri-apps/tauri-plugin-log/9075595196d5a66f8f3265d2aaf7e2ffeb4cb2ab:
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-log/tar.gz/9075595196d5a66f8f3265d2aaf7e2ffeb4cb2ab}
     name: tauri-plugin-log-api
     version: 0.0.0
     dependencies:
       '@tauri-apps/api': 1.4.0
     dev: false
 
-  github.com/tauri-apps/tauri-plugin-sql/f8125e517d9de2a567a2eaa14f7b1b32e456278b:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-sql/tar.gz/f8125e517d9de2a567a2eaa14f7b1b32e456278b}
+  github.com/tauri-apps/tauri-plugin-sql/b8fd19dac907cc8c3d78681cd4803a326b8b861e:
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-sql/tar.gz/b8fd19dac907cc8c3d78681cd4803a326b8b861e}
     name: tauri-plugin-sql-api
     version: 0.0.0
     dependencies:
       '@tauri-apps/api': 1.4.0
     dev: false
 
-  github.com/tauri-apps/tauri-plugin-store/8a37f08e6c0b7781fc1f0e458f2d0ff18368ac75:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/8a37f08e6c0b7781fc1f0e458f2d0ff18368ac75}
+  github.com/tauri-apps/tauri-plugin-store/a65ce9bfb168a9a3cd7ed4102b9f22770cc3abfa:
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/a65ce9bfb168a9a3cd7ed4102b9f22770cc3abfa}
     name: tauri-plugin-store-api
     version: 0.0.0
     dependencies:

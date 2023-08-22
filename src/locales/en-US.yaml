@@ -9,6 +9,7 @@ nav:
 config:
   locale: Language
   checkUpdate: Check update
+  autostart: Auto start
 plan:
   create: Create plan
   update: Update plan

@@ -21,6 +21,7 @@ tauri-plugin-sql = { git = "https://github.com/tauri-apps/plugins-workspace", br
 tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
+tauri-plugin-autostart = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 winapi = { version = "0.3.9", features = ["winnls", "winuser", "winver", "psapi", "shellapi"] }
 image = "0.24.6"
 rdev = "0.5.3"

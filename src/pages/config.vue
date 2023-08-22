@@ -47,6 +47,11 @@ const localeOptions: SelectProps['options'] = [
       >
         <a-switch v-model:checked="config.checkUpdate" />
       </a-form-item>
+      <a-form-item
+        :label="$t('config.autostart')"
+      >
+        <a-switch v-model:checked="config.autostart" />
+      </a-form-item>
     </a-form>
   </div>
 </template>

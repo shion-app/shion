@@ -11,6 +11,7 @@ use std::{
 };
 
 use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu};
+use tauri_plugin_autostart::MacosLauncher;
 use tauri_plugin_log::{LogTarget, TimezoneStrategy};
 use tauri_plugin_sql::{Migration, MigrationKind};
 
@@ -81,6 +82,10 @@ fn main() {
             let window = app.get_window("main").unwrap();
             window.show().unwrap();
         }))
+        .plugin(tauri_plugin_autostart::init(
+            MacosLauncher::LaunchAgent,
+            None,
+        ))
         .system_tray(system_tray)
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::DoubleClick { .. } => {
