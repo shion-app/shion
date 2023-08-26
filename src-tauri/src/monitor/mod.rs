@@ -56,7 +56,7 @@ pub fn run(option: WatchOption) {
     KEYBOARD.with(|f| *f.borrow_mut() = Some(Box::new(keyboard)));
 
     #[cfg(windows)]
-    windows::run(option.audio, option.window);
+    windows::run(option.audio, option.window, option.filter);
 
     if let Err(error) = listen(callback) {
         println!("Error: {:?}", error)
@@ -70,7 +70,8 @@ mod tests {
     #[test]
     fn watch() {
         run(WatchOption {
-            window: Box::new(|program| println!("{:#?}", program.path)),
+            window: Box::new(|program| println!("activity {:#?}", program.path)),
+            filter: Box::new(|program| println!("filter {:#?}", program.path)),
             mouse: Box::new(|| println!("mouse")),
             keyboard: Box::new(|| println!("keyboard")),
             audio: Box::new(|state, name| {

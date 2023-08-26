@@ -32,7 +32,6 @@ use winapi::um::wingdi::BI_RGB;
 use winapi::um::wingdi::DIB_RGB_COLORS;
 use winapi::um::winnt::PROCESS_QUERY_INFORMATION;
 use winapi::um::winnt::PROCESS_VM_READ;
-use winapi::um::winuser::CallNextHookEx;
 use winapi::um::winuser::GetDC;
 use winapi::um::winuser::GetDesktopWindow;
 use winapi::um::winuser::GetMessageW;
@@ -41,6 +40,7 @@ use winapi::um::winuser::ReleaseDC;
 use winapi::um::winuser::EVENT_SYSTEM_CAPTURESTART;
 use winapi::um::winuser::ICONINFO;
 use winapi::um::winuser::MSG;
+use winapi::um::winuser::{CallNextHookEx, EVENT_SYSTEM_FOREGROUND};
 use winapi::um::winuser::{
     DispatchMessageW, GetIconInfo, GetWindowTextLengthW, GetWindowTextW, SetWinEventHook,
     TranslateMessage, UnhookWinEvent, WINEVENT_OUTOFCONTEXT,
@@ -52,6 +52,7 @@ use super::AUDIO_CONTEXT;
 
 thread_local! {
     static WINDOW: RefCell<Option<Box<dyn Fn(Program) -> ()>>> = RefCell::new(None);
+    static FILTER: RefCell<Option<Box<dyn Fn(Program) -> ()>>> = RefCell::new(None);
 }
 
 unsafe extern "system" fn handle_event(
@@ -63,9 +64,11 @@ unsafe extern "system" fn handle_event(
     _: DWORD,
     _: DWORD,
 ) {
+    let is_switch_window = event == EVENT_SYSTEM_FOREGROUND;
+
     let is_click_window = event == EVENT_SYSTEM_CAPTURESTART;
 
-    if !is_click_window {
+    if !(is_switch_window || is_click_window) {
         return;
     }
 
@@ -93,11 +96,21 @@ unsafe extern "system" fn handle_event(
         icon: buffer,
     };
 
-    WINDOW.with(|i| {
-        if let Some(f) = &*i.borrow() {
-            f(program);
-        }
-    });
+    if is_switch_window {
+        FILTER.with(|i| {
+            if let Some(f) = &*i.borrow() {
+                f(program.clone());
+            }
+        });
+    }
+
+    if is_click_window {
+        WINDOW.with(|i| {
+            if let Some(f) = &*i.borrow() {
+                f(program);
+            }
+        });
+    }
 }
 
 fn to_u16(str: String) -> Vec<u16> {
@@ -326,12 +339,13 @@ pub fn get_image_by_path(appliaction_path: String) -> Vec<u8> {
     vec![]
 }
 
-fn watch_input(window: WatchWindowOption) {
+fn watch_input(window: WatchWindowOption, filter: WatchWindowOption) {
     WINDOW.with(|f| *f.borrow_mut() = Some(Box::new(window)));
+    FILTER.with(|f| *f.borrow_mut() = Some(Box::new(filter)));
 
     let hook = unsafe {
         SetWinEventHook(
-            EVENT_SYSTEM_CAPTURESTART,
+            EVENT_SYSTEM_FOREGROUND,
             EVENT_SYSTEM_CAPTURESTART,
             ptr::null_mut(),
             Some(handle_event),
@@ -387,11 +401,11 @@ where
     }
 }
 
-pub fn run(audio: WatchAudioOption, window: WatchWindowOption) {
+pub fn run(audio: WatchAudioOption, window: WatchWindowOption, filter: WatchWindowOption) {
     thread::spawn(|| {
         watch_audio(audio);
     });
     thread::spawn(|| {
-        watch_input(window);
+        watch_input(window, filter);
     });
 }

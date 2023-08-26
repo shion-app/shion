@@ -120,22 +120,23 @@ fn main() {
             let window = {
                 let app_handle = app_handle_clone.clone();
                 move |program: Program| {
+                    let activity = Activity { path: program.path };
+                    app_handle.emit_all("window-activity", activity).unwrap();
+                }
+            };
+            let filter = {
+                let app_handle = app_handle_clone.clone();
+                move |program: Program| {
                     let is_send_program = IS_SEND_PROGRAM.load(Relaxed);
                     if is_send_program {
                         app_handle.emit_all("filter-program", program).unwrap();
-                    } else {
-                        let activity = Activity { path: program.path };
-                        app_handle.emit_all("window-activity", activity).unwrap();
                     }
                 }
             };
             let mouse = {
                 let app_handle = app_handle_clone.clone();
                 move || {
-                    let is_send_program = IS_SEND_PROGRAM.load(Relaxed);
-                    if !is_send_program {
-                        app_handle.emit_all("window-activate", ()).unwrap();
-                    }
+                    app_handle.emit_all("window-activate", ()).unwrap();
                 }
             };
             let audio = {
@@ -150,6 +151,7 @@ fn main() {
             thread::spawn(|| {
                 monitor::run(WatchOption {
                     window: Box::new(window),
+                    filter: Box::new(filter),
                     mouse: Box::new(mouse.clone()),
                     keyboard: Box::new(mouse),
                     audio: Box::new(audio),
