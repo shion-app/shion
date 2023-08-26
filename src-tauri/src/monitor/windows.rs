@@ -7,6 +7,7 @@ use std::path::Path;
 use std::ptr;
 use std::ptr::null_mut;
 use std::sync::Arc;
+use std::time::Duration;
 use std::{mem, thread};
 
 use image::{ImageBuffer, ImageFormat, Rgba};
@@ -381,7 +382,9 @@ where
     });
 
     unsafe { AUDIO_CONTEXT = Some(Box::new(Audio { context })) };
-    loop {}
+    loop {
+        thread::sleep(Duration::from_millis(10))
+    }
 }
 
 pub fn run(audio: WatchAudioOption, window: WatchWindowOption) {
