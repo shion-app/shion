@@ -3,8 +3,11 @@ import { listen } from '@tauri-apps/api/event'
 
 import type * as backend from '@interfaces/backend'
 import type { Program } from '@interfaces/index'
-import { invoke } from '@tauri-apps/api'
 import { debug } from 'tauri-plugin-log-api'
+import { invoke } from '@tauri-apps/api'
+
+const RECORD_INTERVAL = 1000 * 60
+const INACTIVE_TIMEOUT = 1000 * 60
 
 interface Activity {
   id: number
@@ -48,20 +51,53 @@ class Timer {
   }
 }
 
+class Logger {
+  foreground = ''
+
+  pushForeground(path: string) {
+    if (path != this.foreground) {
+      debug(`Foreground path: ${path}`)
+      this.foreground = path
+    }
+  }
+
+  pushBackground(path: string, state: backend.AudioActivity['state']) {
+    debug(`Background path: ${path}, state: ${state}`)
+  }
+
+  create(path: string) {
+    debug(`Create activity path: ${path}`)
+  }
+
+  delete(path: string) {
+    debug(`Delete activity path: ${path}`)
+  }
+
+  reset(path: string) {
+    debug(`Reset activity path: ${path}`)
+  }
+}
+
 class Watcher {
   list: Activity[] = []
   recordTimer: Timer
-  audioTimer: Timer
+  logger = new Logger()
 
   constructor() {
-    this.recordTimer = new Timer(1000 * 60, () => {
+    this.recordTimer = new Timer(RECORD_INTERVAL, () => {
       this.record()
     })
     this.recordTimer.interval()
-    this.audioTimer = new Timer(1000 * 10, () => {
-      this.checkAudioStatus()
-    })
-    this.audioTimer.interval()
+  }
+
+  async initBackground(whiteList: Program[]) {
+    for (const { path } of whiteList) {
+      const active = await invoke('is_audio_active', {
+        path,
+      })
+      if (active)
+        this.pushBackground({ path, state: 'Active' }, whiteList)
+    }
   }
 
   contain(path: string) {
@@ -74,6 +110,7 @@ class Watcher {
 
   async pushForeground(data: backend.Activity, whiteList: Program[]) {
     const { path } = data
+    this.logger.pushForeground(path)
     const foreground = this.list.find(i => i.foreground)
     if (foreground) {
       if (isPathEqual(path, foreground.path))
@@ -98,7 +135,7 @@ class Watcher {
 
   async pushBackground(data: backend.AudioActivity, whiteList: Program[]) {
     const { path, state } = data
-    debug(`Audio activity path: ${path}, state: ${state}`)
+    this.logger.pushBackground(path, state)
     const exist = this.contain(path)
     if (!exist) {
       if (state == 'Active') {
@@ -109,8 +146,11 @@ class Watcher {
       }
     }
     else {
-      if (state == 'Inactive' || state == 'Expired') {
-        const activity = this.find(path)!
+      const activity = this.find(path)!
+      if (state == 'Active') {
+        activity.background = true
+      }
+      else {
         activity.background = false
         this.settle(activity)
       }
@@ -129,12 +169,8 @@ class Watcher {
       programId: program.id,
     })
     const { path } = data
-    if (!background) {
-      background = await invoke('is_audio_active', {
-        path,
-      })
-    }
-    debug(`Create activity path: ${path}, background: ${background}`)
+    this.logger.create(path)
+
     const activity: Activity = {
       id,
       start: time,
@@ -142,10 +178,10 @@ class Watcher {
       path,
       foreground: !background,
       background,
-      timer: new Timer(1000 * 60, () => {
+      timer: new Timer(INACTIVE_TIMEOUT, () => {
         if (activity.background)
           return
-        debug(`Delete activity path: ${path}`)
+        this.logger.delete(path)
         updateActivity(id, {
           endTime: Date.now(),
         })
@@ -177,24 +213,16 @@ class Watcher {
       })
     }
   }
-
-  async checkAudioStatus() {
-    for (const activity of this.list) {
-      const active = await invoke<boolean>('is_audio_active', {
-        path: activity.path,
-      })
-      if (active != activity.background)
-        debug(`Activity path: ${activity.path}, state (${activity.background} => ${active})`)
-
-      activity.background = active
-    }
-  }
 }
 
 export const useActivity = defineStore('activity', () => {
   const monitor = useMonitor()
 
   const watcher = new Watcher()
+
+  watchOnce(() => monitor.whiteList.length, () => {
+    watcher.initBackground(monitor.whiteList)
+  })
 
   listen('window-activity', async (event: Event<backend.Activity>) => {
     watcher.pushForeground(event.payload, monitor.whiteList)
