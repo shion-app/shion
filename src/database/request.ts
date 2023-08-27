@@ -296,8 +296,8 @@ export function selectRecentActivity(range: number) {
     SELECT
         sum(activity.end_time - activity.start_time) AS total_time,
         date(activity.start_time / 1000, 'unixepoch') AS date,
-        program.description as name,
-        program.color AS label_name
+        program.description AS name,
+        program.color
     FROM activity,
         program
     WHERE activity.deleted_at = 0 AND

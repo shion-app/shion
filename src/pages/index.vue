@@ -7,6 +7,7 @@ const chartRange = ref<'month' | 'week'>('week')
 const chartMode = ref<'plan' | 'label'>('plan')
 
 const day = computed(() => chartRange.value == 'week' ? 7 : 31)
+const isShowChart = computed(() => noteList.value.length > 0 || activityList.value.length > 0)
 
 async function refresh() {
   refreshNote()
@@ -28,7 +29,7 @@ watch(chartRange, refresh, {
 
 <template>
   <div h-full relative overflow-hidden>
-    <template v-if="noteList.length">
+    <template v-if="isShowChart">
       <div absolute z-1 flex w-full p-2 space-x-2>
         <div flex-1 />
         <a-radio-group v-model:value="chartRange" size="small">
