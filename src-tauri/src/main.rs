@@ -117,13 +117,6 @@ fn main() {
         .setup(|app| {
             let app_handle = Arc::new(app.handle());
             let app_handle_clone = app_handle.clone();
-            let window = {
-                let app_handle = app_handle_clone.clone();
-                move |program: Program| {
-                    let activity = Activity { path: program.path };
-                    app_handle.emit_all("window-activity", activity).unwrap();
-                }
-            };
             let filter = {
                 let app_handle = app_handle_clone.clone();
                 move |program: Program| {
@@ -152,7 +145,6 @@ fn main() {
 
             thread::spawn(|| {
                 monitor::run(WatchOption {
-                    window: Box::new(window),
                     filter: Box::new(filter),
                     mouse: Box::new(mouse.clone()),
                     keyboard: Box::new(mouse),

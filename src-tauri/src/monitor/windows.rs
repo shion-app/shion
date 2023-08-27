@@ -36,7 +36,6 @@ use winapi::um::winuser::GetDesktopWindow;
 use winapi::um::winuser::GetMessageW;
 use winapi::um::winuser::GetWindowThreadProcessId;
 use winapi::um::winuser::ReleaseDC;
-use winapi::um::winuser::EVENT_SYSTEM_CAPTURESTART;
 use winapi::um::winuser::ICONINFO;
 use winapi::um::winuser::MSG;
 use winapi::um::winuser::{CallNextHookEx, EVENT_SYSTEM_FOREGROUND};
@@ -47,11 +46,10 @@ use winapi::um::winuser::{
 use winapi::um::winuser::{GetCursorPos, GetDC, GetForegroundWindow, WindowFromPoint};
 use winapi::um::winver::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW};
 
-use super::shared::{AudioContext, Program, WatchAudioOption, WatchWindowOption};
+use super::shared::{AudioContext, FilterWindowOption, Program, WatchAudioOption};
 use super::AUDIO_CONTEXT;
 
 thread_local! {
-    static WINDOW: RefCell<Option<Box<dyn Fn(Program) -> ()>>> = RefCell::new(None);
     static FILTER: RefCell<Option<Box<dyn Fn(Program) -> ()>>> = RefCell::new(None);
 }
 
@@ -66,9 +64,7 @@ unsafe extern "system" fn handle_event(
 ) {
     let is_switch_window = event == EVENT_SYSTEM_FOREGROUND;
 
-    let is_click_window = event == EVENT_SYSTEM_CAPTURESTART;
-
-    if !(is_switch_window || is_click_window) {
+    if !is_switch_window {
         return;
     }
 
@@ -100,14 +96,6 @@ unsafe extern "system" fn handle_event(
         FILTER.with(|i| {
             if let Some(f) = &*i.borrow() {
                 f(program.clone());
-            }
-        });
-    }
-
-    if is_click_window {
-        WINDOW.with(|i| {
-            if let Some(f) = &*i.borrow() {
-                f(program);
             }
         });
     }
@@ -357,14 +345,13 @@ pub fn get_foreground_application_path() -> Option<String> {
     get_application_path(hwnd)
 }
 
-fn watch_input(window: WatchWindowOption, filter: WatchWindowOption) {
-    WINDOW.with(|f| *f.borrow_mut() = Some(Box::new(window)));
+fn watch_input(filter: FilterWindowOption) {
     FILTER.with(|f| *f.borrow_mut() = Some(Box::new(filter)));
 
     let hook = unsafe {
         SetWinEventHook(
             EVENT_SYSTEM_FOREGROUND,
-            EVENT_SYSTEM_CAPTURESTART,
+            EVENT_SYSTEM_FOREGROUND,
             ptr::null_mut(),
             Some(handle_event),
             0,
@@ -419,11 +406,11 @@ where
     }
 }
 
-pub fn run(audio: WatchAudioOption, window: WatchWindowOption, filter: WatchWindowOption) {
+pub fn run(audio: WatchAudioOption, filter: FilterWindowOption) {
     thread::spawn(|| {
         watch_audio(audio);
     });
     thread::spawn(|| {
-        watch_input(window, filter);
+        watch_input(filter);
     });
 }

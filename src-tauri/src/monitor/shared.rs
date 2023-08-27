@@ -8,13 +8,12 @@ pub struct Program {
     pub icon: Vec<u8>,
 }
 
-pub type WatchWindowOption = Box<dyn Fn(Program) + Send>;
+pub type FilterWindowOption = Box<dyn Fn(Program) + Send>;
 
 pub type WatchAudioOption = Box<dyn Fn(SessionState, String) + Send + Sync + 'static>;
 
 pub struct WatchOption {
-    pub window: WatchWindowOption,
-    pub filter: WatchWindowOption,
+    pub filter: FilterWindowOption,
     pub mouse: Box<dyn Fn(String) -> ()>,
     pub keyboard: Box<dyn Fn(String) -> ()>,
     pub audio: WatchAudioOption,
