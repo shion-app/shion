@@ -20,11 +20,13 @@ where
     F: FnMut(String) + 'static,
 {
     let mut last_call = std::time::Instant::now() - std::time::Duration::from_millis(limit);
+    let mut last_path = String::new();
     let mut func = Box::new(func);
     move |path| {
-        if last_call.elapsed().as_millis() as u64 >= limit {
-            func(path);
+        if last_call.elapsed().as_millis() as u64 >= limit || path != last_path {
+            func(path.clone());
             last_call = std::time::Instant::now();
+            last_path = path.clone();
         }
     }
 }
@@ -40,10 +42,7 @@ fn callback(event: Event) {
                 }
             });
         }
-        EventType::ButtonPress(_)
-        | EventType::ButtonRelease(_)
-        | EventType::MouseMove { .. }
-        | EventType::Wheel { .. } => {
+        EventType::ButtonPress(_) | EventType::ButtonRelease(_) | EventType::Wheel { .. } => {
             MOUSE.with(|i| {
                 if let Some(f) = i.borrow_mut().as_mut() {
                     if let Some(path) = get_mouse_area_application_path() {
@@ -52,6 +51,7 @@ fn callback(event: Event) {
                 }
             });
         }
+        EventType::MouseMove { .. } => {}
     };
 }
 
