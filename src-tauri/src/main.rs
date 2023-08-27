@@ -135,15 +135,17 @@ fn main() {
             };
             let mouse = {
                 let app_handle = app_handle_clone.clone();
-                move || {
-                    app_handle.emit_all("window-activate", ()).unwrap();
+                move |path| {
+                    app_handle
+                        .emit_all("window-activate", Activity { path })
+                        .unwrap();
                 }
             };
             let audio = {
                 let app_handle = app_handle_clone.clone();
-                move |state, name| {
+                move |state, path| {
                     app_handle
-                        .emit_all("audio-activity", AudioActivity { state, path: name })
+                        .emit_all("audio-activity", AudioActivity { state, path })
                         .unwrap();
                 }
             };

@@ -18,8 +18,8 @@ use winapi::shared::minwindef::LPVOID;
 use winapi::shared::minwindef::MAX_PATH;
 use winapi::shared::minwindef::WORD;
 use winapi::shared::ntdef::LONG;
-use winapi::shared::windef::HICON__;
 use winapi::shared::windef::HWND;
+use winapi::shared::windef::{HICON__, POINT};
 use winapi::um::handleapi::CloseHandle;
 use winapi::um::processthreadsapi::OpenProcess;
 use winapi::um::psapi::{EnumProcessModulesEx, GetModuleFileNameExW};
@@ -32,7 +32,6 @@ use winapi::um::wingdi::BI_RGB;
 use winapi::um::wingdi::DIB_RGB_COLORS;
 use winapi::um::winnt::PROCESS_QUERY_INFORMATION;
 use winapi::um::winnt::PROCESS_VM_READ;
-use winapi::um::winuser::GetDC;
 use winapi::um::winuser::GetDesktopWindow;
 use winapi::um::winuser::GetMessageW;
 use winapi::um::winuser::GetWindowThreadProcessId;
@@ -45,6 +44,7 @@ use winapi::um::winuser::{
     DispatchMessageW, GetIconInfo, GetWindowTextLengthW, GetWindowTextW, SetWinEventHook,
     TranslateMessage, UnhookWinEvent, WINEVENT_OUTOFCONTEXT,
 };
+use winapi::um::winuser::{GetCursorPos, GetDC, GetForegroundWindow, WindowFromPoint};
 use winapi::um::winver::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW};
 
 use super::shared::{AudioContext, Program, WatchAudioOption, WatchWindowOption};
@@ -332,11 +332,29 @@ fn get_image_buffer(icon_handle: *mut HICON__) -> Vec<u8> {
     buffer
 }
 
-pub fn get_image_by_path(appliaction_path: String) -> Vec<u8> {
+fn get_image_by_path(appliaction_path: String) -> Vec<u8> {
     if let Some(handle) = get_icon_handle(appliaction_path) {
         return get_image_buffer(handle);
     }
     vec![]
+}
+
+pub fn get_mouse_area_application_path() -> Option<String> {
+    let mut point = POINT { x: 0, y: 0 };
+    unsafe {
+        GetCursorPos(&mut point);
+    }
+    let mut hwnd: HWND = std::ptr::null_mut();
+    unsafe {
+        hwnd = WindowFromPoint(point);
+    }
+    get_application_path(hwnd)
+}
+
+pub fn get_foreground_application_path() -> Option<String> {
+    let mut hwnd: HWND = std::ptr::null_mut();
+    unsafe { hwnd = GetForegroundWindow() }
+    get_application_path(hwnd)
 }
 
 fn watch_input(window: WatchWindowOption, filter: WatchWindowOption) {

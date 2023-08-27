@@ -8,7 +8,6 @@ export interface Activity {
   path: string
 }
 
-export interface AudioActivity {
+export interface AudioActivity extends Activity {
   state: 'Active' | 'Inactive' | 'Expired'
-  path: string
 }

@@ -201,11 +201,6 @@ class Watcher {
       activity.timer.end()
   }
 
-  activate() {
-    const foreground = this.list.find(i => i.foreground)
-    foreground?.timer.reset()
-  }
-
   record() {
     for (const activity of this.list) {
       updateActivity(activity.id, {
@@ -224,13 +219,9 @@ export const useActivity = defineStore('activity', () => {
     watcher.initBackground(monitor.whiteList)
   })
 
-  listen('window-activity', async (event: Event<backend.Activity>) => {
-    watcher.pushForeground(event.payload, monitor.whiteList)
-  })
+  listen('window-activity', (event: Event<backend.Activity>) => watcher.pushForeground(event.payload, monitor.whiteList))
 
-  listen('audio-activity', (event: Event<backend.AudioActivity>) => {
-    watcher.pushBackground(event.payload, monitor.whiteList)
-  })
+  listen('audio-activity', (event: Event<backend.AudioActivity>) => watcher.pushBackground(event.payload, monitor.whiteList))
 
-  listen('window-activate', () => watcher.activate())
+  listen('window-activate', (event: Event<backend.Activity>) => watcher.pushForeground(event.payload, monitor.whiteList))
 })

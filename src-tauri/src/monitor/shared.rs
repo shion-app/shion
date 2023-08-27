@@ -15,8 +15,8 @@ pub type WatchAudioOption = Box<dyn Fn(SessionState, String) + Send + Sync + 'st
 pub struct WatchOption {
     pub window: WatchWindowOption,
     pub filter: WatchWindowOption,
-    pub mouse: Box<dyn Fn() -> ()>,
-    pub keyboard: Box<dyn Fn() -> ()>,
+    pub mouse: Box<dyn Fn(String) -> ()>,
+    pub keyboard: Box<dyn Fn(String) -> ()>,
     pub audio: WatchAudioOption,
 }
 

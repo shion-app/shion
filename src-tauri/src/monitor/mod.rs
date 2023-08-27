@@ -6,22 +6,24 @@ use std::cell::RefCell;
 use rdev::{listen, Event, EventType};
 use shared::{AudioContext, WatchOption};
 
+use windows::{get_foreground_application_path, get_mouse_area_application_path};
+
 thread_local! {
-    static MOUSE: RefCell<Option<Box<dyn FnMut() -> ()>>> = RefCell::new(None);
-    static KEYBOARD: RefCell<Option<Box<dyn FnMut() -> ()>>> = RefCell::new(None);
+    static MOUSE: RefCell<Option<Box<dyn FnMut(String) -> ()>>> = RefCell::new(None);
+    static KEYBOARD: RefCell<Option<Box<dyn FnMut(String) -> ()>>> = RefCell::new(None);
 }
 
 pub static mut AUDIO_CONTEXT: Option<Box<dyn AudioContext>> = None;
 
-fn throttle<F>(func: F, limit: u64) -> impl FnMut()
+fn throttle<F>(func: F, limit: u64) -> impl FnMut(String)
 where
-    F: FnMut() + 'static,
+    F: FnMut(String) + 'static,
 {
     let mut last_call = std::time::Instant::now() - std::time::Duration::from_millis(limit);
     let mut func = Box::new(func);
-    move || {
+    move |path| {
         if last_call.elapsed().as_millis() as u64 >= limit {
-            func();
+            func(path);
             last_call = std::time::Instant::now();
         }
     }
@@ -32,7 +34,9 @@ fn callback(event: Event) {
         EventType::KeyPress(_) | EventType::KeyRelease(_) => {
             KEYBOARD.with(|i| {
                 if let Some(f) = i.borrow_mut().as_mut() {
-                    f();
+                    if let Some(path) = get_foreground_application_path() {
+                        f(path);
+                    }
                 }
             });
         }
@@ -42,7 +46,9 @@ fn callback(event: Event) {
         | EventType::Wheel { .. } => {
             MOUSE.with(|i| {
                 if let Some(f) = i.borrow_mut().as_mut() {
-                    f();
+                    if let Some(path) = get_mouse_area_application_path() {
+                        f(path);
+                    }
                 }
             });
         }
@@ -55,7 +61,6 @@ pub fn run(option: WatchOption) {
     MOUSE.with(|f| *f.borrow_mut() = Some(Box::new(mouse)));
     KEYBOARD.with(|f| *f.borrow_mut() = Some(Box::new(keyboard)));
 
-    #[cfg(windows)]
     windows::run(option.audio, option.window, option.filter);
 
     if let Err(error) = listen(callback) {
@@ -72,11 +77,11 @@ mod tests {
         run(WatchOption {
             window: Box::new(|program| println!("activity {:#?}", program.path)),
             filter: Box::new(|program| println!("filter {:#?}", program.path)),
-            mouse: Box::new(|| println!("mouse")),
-            keyboard: Box::new(|| println!("keyboard")),
+            mouse: Box::new(|path| println!("mouse {}", path)),
+            keyboard: Box::new(|path| println!("keyboard {}", path)),
             audio: Box::new(|state, name| {
                 println!("{:?}", state);
-                println!("{:?}", name);
+                println!("{}", name);
             }),
         });
     }
