@@ -1,10 +1,11 @@
 import type { Event } from '@tauri-apps/api/event'
 import { listen } from '@tauri-apps/api/event'
+import { debug } from 'tauri-plugin-log-api'
+import { invoke } from '@tauri-apps/api'
+import PQueue from 'p-queue'
 
 import type * as backend from '@interfaces/backend'
 import type { Program } from '@interfaces/index'
-import { debug } from 'tauri-plugin-log-api'
-import { invoke } from '@tauri-apps/api'
 
 const RECORD_INTERVAL = 1000 * 60
 const INACTIVE_TIMEOUT = 1000 * 60
@@ -176,6 +177,7 @@ class Watcher {
       foreground: !background,
       background,
       timer: new Timer(INACTIVE_TIMEOUT, () => {
+        activity.foreground = false
         if (activity.background)
           return
         this.logger.delete(path)
@@ -212,11 +214,13 @@ export const useActivity = defineStore('activity', () => {
 
   const watcher = new Watcher()
 
+  const queue = new PQueue({ concurrency: 1 })
+
   watchOnce(() => monitor.whiteList.length, () => {
     watcher.initBackground(monitor.whiteList)
   })
 
-  listen('audio-activity', (event: Event<backend.AudioActivity>) => watcher.pushBackground(event.payload, monitor.whiteList))
+  listen('audio-activity', (event: Event<backend.AudioActivity>) => queue.add(() => watcher.pushBackground(event.payload, monitor.whiteList)))
 
-  listen('window-activate', (event: Event<backend.Activity>) => watcher.pushForeground(event.payload, monitor.whiteList))
+  listen('window-activate', (event: Event<backend.Activity>) => queue.add(() => watcher.pushForeground(event.payload, monitor.whiteList)))
 })

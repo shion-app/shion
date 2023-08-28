@@ -20,6 +20,7 @@
     "classnames": "^2.3.2",
     "date-fns": "^2.29.3",
     "echarts": "^5.4.2",
+    "p-queue": "^7.3.4",
     "pinia": "^2.0.34",
     "snake-case": "^3.0.4",
     "tauri-plugin-autostart-api": "github:tauri-apps/tauri-plugin-autostart#v1",
