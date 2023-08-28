@@ -112,10 +112,7 @@ class Watcher {
     const { path } = data
     this.logger.pushForeground(path)
     const foreground = this.list.find(i => i.foreground)
-    if (foreground) {
-      if (isPathEqual(path, foreground.path))
-        return
-
+    if (foreground && !isPathEqual(path, foreground.path)) {
       foreground.foreground = false
       this.settle(foreground)
     }
