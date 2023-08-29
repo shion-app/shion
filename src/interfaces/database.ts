@@ -15,17 +15,7 @@ export interface Note {
   planId: number
   labelId: number
   label: Label
-}
-
-export interface RecentNote {
-  planId: number
-  labelId: number
-  planName: string
-  labelName: string
-  planColor: string
-  labelColor: string
-  date: string
-  totalTime: number
+  plan: Plan
 }
 
 export interface Label {
@@ -58,11 +48,5 @@ export interface Activity {
   startTime: number
   endTime: number
   programId: number
-}
-
-export interface RecentActivity {
-  date: string
-  name: string
-  color: string
-  totalTime: number
+  program: Program
 }

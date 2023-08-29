@@ -4,8 +4,7 @@ import { camelCase } from 'camel-case'
 import { error } from 'tauri-plugin-log-api'
 
 import { i18n } from '@locales/index'
-import type { Activity, Label, Note, Plan, Program, RecentActivity, RecentNote, SyncLog, TableName } from '@interfaces/index'
-import { startOfDay, subDays } from 'date-fns'
+import type { Activity, Label, Note, Plan, Program, SyncLog, TableName } from '@interfaces/index'
 
 const PATH = `sqlite:data${import.meta.env.TAURI_DEBUG ? '-dev' : ''}.db`
 
@@ -119,6 +118,21 @@ export function selectPlan() {
     ORDER BY [plan].id;
   `)
 }
+export async function selectPlanById(id: number) {
+  const plan = (await select<Array<Plan>>(`
+    SELECT [plan].*,
+        IFNULL(SUM(note.end_time - note.start_time), 0) AS totalTime
+      FROM [plan]
+          LEFT JOIN
+          note ON [plan].id = note.plan_id AND
+                  note.deleted_at = 0
+    WHERE [plan].deleted_at = 0 AND
+       [plan].id = ${id}
+    GROUP BY [plan].id
+    ORDER BY [plan].id;
+  `)).pop()
+  return plan
+}
 
 export function createNote(data: CreateNote) {
   return create('note', data)
@@ -132,6 +146,21 @@ export function removeNote(id: number) {
   return remove('note', id)
 }
 
+export async function selectNote(start: number, end: number) {
+  const noteList = await select<Array<Note>>(`
+    SELECT id, start_time, end_time, description, plan_id, label_id
+      FROM note
+    WHERE start_time > $1 AND
+      start_time < $2 AND
+      deleted_at = 0
+    ORDER BY start_time`, [start, end])
+  const labelList = (await Promise.all(noteList.map(({ labelId }) => selectLabelById(labelId))))
+  noteList.forEach((note, index) => note.label = labelList[index]!)
+  const planList = (await Promise.all(noteList.map(({ planId }) => selectPlanById(planId))))
+  noteList.forEach((note, index) => note.plan = planList[index]!)
+  return noteList
+}
+
 export async function selectNoteByPlanId(id: number, start: number, end: number) {
   const noteList = await select<Array<Note>>(`
     SELECT id, start_time, end_time, description, plan_id, label_id
@@ -143,6 +172,8 @@ export async function selectNoteByPlanId(id: number, start: number, end: number)
     ORDER BY start_time`, [start, end])
   const labelList = (await Promise.all(noteList.map(({ labelId }) => selectLabelById(labelId))))
   noteList.forEach((note, index) => note.label = labelList[index]!)
+  const planList = (await Promise.all(noteList.map(({ planId }) => selectPlanById(planId))))
+  noteList.forEach((note, index) => note.plan = planList[index]!)
   return noteList
 }
 
@@ -157,31 +188,9 @@ export async function selectNoteByLabelId(id: number, start: number, end: number
     ORDER BY start_time`, [start, end])
   const labelList = (await Promise.all(noteList.map(({ labelId }) => selectLabelById(labelId))))
   noteList.forEach((note, index) => note.label = labelList[index]!)
+  const planList = (await Promise.all(noteList.map(({ planId }) => selectPlanById(planId))))
+  noteList.forEach((note, index) => note.plan = planList[index]!)
   return noteList
-}
-
-export function selectRecentNote(range: number) {
-  return select<Array<RecentNote>>(`
-    SELECT note.plan_id,
-        note.label_id,
-        sum(note.end_time - note.start_time) AS total_time,
-        date(note.start_time / 1000, 'unixepoch') AS date,
-        [plan].name AS plan_name,
-        label.name AS label_name,
-        [plan].color AS plan_color,
-        label.color AS label_color
-    FROM note,
-        [plan],
-        label
-    WHERE note.deleted_at = 0 AND
-          note.plan_id = [plan].id AND
-          note.label_id = label.id AND
-          note.start_time >= ${startOfDay(subDays(new Date(), range - 1)).getTime()} AND
-          note.start_time <= ${new Date().getTime()}
-    GROUP BY note.plan_id,
-              note.label_id,
-              date(note.start_time / 1000, 'unixepoch')
-    ORDER BY note.start_time DESC;`)
 }
 
 export function createLabel(data: CreateLabel) {
@@ -283,28 +292,47 @@ export function selectProgram() {
   }))
 }
 
+export async function selectProgramById(id: number) {
+  const program = (await select<Array<Omit<Program, 'icon'> & {
+    icon: string
+  }>>(`
+    SELECT program.*,
+        IFNULL(SUM(activity.end_time - activity.start_time), 0) AS totalTime
+      FROM program
+          LEFT JOIN
+          activity ON program.id = activity.program_id AND
+                  activity.deleted_at = 0
+    WHERE program.deleted_at = 0 AND
+      program.id = ${id}
+    GROUP BY program.id
+    ORDER BY program.id;
+  `).then(list => list.map((i) => {
+    return {
+      ...i,
+      icon: i.icon.split(',').map(Number),
+    }
+  }))).pop()
+  return program
+}
+
+export async function selectActivity(start: number, end: number) {
+  const activityList = await select<Array<Activity>>(`
+    SELECT id, start_time, end_time, program_id
+      FROM activity
+    WHERE start_time > $1 AND
+      start_time < $2 AND
+      deleted_at = 0
+    ORDER BY start_time`, [start, end])
+
+  const programList = (await Promise.all(activityList.map(({ programId }) => selectProgramById(programId))))
+  activityList.forEach((activity, index) => activity.program = programList[index]!)
+  return activityList
+}
+
 export function createActivity(data: CreateActivity) {
   return create('activity', data)
 }
 
 export function updateActivity(id: number, data: Partial<CreateActivity>) {
   return update('activity', id, data)
-}
-
-export function selectRecentActivity(range: number) {
-  return select<Array<RecentActivity>>(`
-    SELECT
-        sum(activity.end_time - activity.start_time) AS total_time,
-        date(activity.start_time / 1000, 'unixepoch') AS date,
-        program.description AS name,
-        program.color
-    FROM activity,
-        program
-    WHERE activity.deleted_at = 0 AND
-          activity.program_id = program.id AND
-          activity.start_time >= ${startOfDay(subDays(new Date(), range - 1)).getTime()} AND
-          activity.start_time <= ${new Date().getTime()}
-    GROUP BY activity.program_id,
-              date(activity.start_time / 1000, 'unixepoch')
-    ORDER BY activity.start_time DESC;`)
 }

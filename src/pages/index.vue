@@ -1,28 +1,44 @@
 <script setup lang="ts">
-import type { RecentActivity, RecentNote } from '@interfaces/database'
+import { endOfDay, subDays } from 'date-fns'
 
-const noteList = ref<Array<RecentNote>>([])
-const activityList = ref<Array<RecentActivity>>([])
-const chartRange = ref<'month' | 'week'>('week')
-const chartMode = ref<'plan' | 'label'>('plan')
+import type { Activity, Note } from '@interfaces/index'
 
-const day = computed(() => chartRange.value == 'week' ? 7 : 31)
+const noteList = ref<Array<Note>>([])
+const activityList = ref<Array<Activity>>([])
+const range = ref<'month' | 'week'>('week')
+const mode = ref<'plan' | 'label'>('plan')
+const unit = ref<'date' | 'hour'>('date')
+
+const day = computed(() => range.value == 'week' ? 7 : 31)
 const isShowChart = computed(() => noteList.value.length > 0 || activityList.value.length > 0)
+const isShowRangeRadio = computed(() => unit.value == 'date')
 
 async function refresh() {
   refreshNote()
   refreshActivity()
 }
 
+function transformDayToRange(day: number, date = new Date()) {
+  const start = endOfDay(subDays(date, day)).getTime()
+  const end = endOfDay(date).getTime()
+  return [start, end]
+}
+
 async function refreshNote() {
-  noteList.value = await selectRecentNote(day.value)
+  const [start, end] = transformDayToRange(day.value)
+  noteList.value = await selectNote(start, end)
 }
 
 async function refreshActivity() {
-  activityList.value = await selectRecentActivity(day.value)
+  const [start, end] = transformDayToRange(day.value)
+  activityList.value = await selectActivity(start, end)
 }
 
-watch(chartRange, refresh, {
+function returnPrev() {
+  unit.value = 'date'
+}
+
+watch(range, refresh, {
   immediate: true,
 })
 </script>
@@ -31,8 +47,13 @@ watch(chartRange, refresh, {
   <div h-full relative overflow-hidden>
     <template v-if="isShowChart">
       <div absolute z-1 flex w-full p-2 space-x-2>
+        <div v-if="unit == 'hour'">
+          <a-button type="primary" shape="round" size="small" @click="returnPrev">
+            <div i-mdi:arrow-left text-4 />
+          </a-button>
+        </div>
         <div flex-1 />
-        <a-radio-group v-model:value="chartRange" size="small">
+        <a-radio-group v-if="isShowRangeRadio" v-model:value="range" size="small">
           <a-radio-button value="week">
             <a-tooltip :title="$t('overview.week')">
               <div h-full flex items-center>
@@ -48,7 +69,7 @@ watch(chartRange, refresh, {
             </a-tooltip>
           </a-radio-button>
         </a-radio-group>
-        <a-radio-group v-model:value="chartMode" size="small">
+        <a-radio-group v-model:value="mode" size="small">
           <a-radio-button value="plan">
             <a-tooltip :title="$t('overview.plan')">
               <div h-full flex items-center>
@@ -65,7 +86,7 @@ watch(chartRange, refresh, {
           </a-radio-button>
         </a-radio-group>
       </div>
-      <OverviewChart :note-list="noteList" :activity-list="activityList" :chart-mode="chartMode" :day="day" />
+      <OverviewChart v-model:unit="unit" :note-list="noteList" :activity-list="activityList" :mode="mode" :day="day" />
     </template>
     <a-empty v-else h-full flex flex-col justify-center />
   </div>

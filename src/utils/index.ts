@@ -5,7 +5,7 @@ import { i18n } from '@locales/index'
 
 export * from './path'
 
-function complement(num: number) {
+export function complement(num: number) {
   return num < 10 ? `0${num}` : `${num}`
 }
 

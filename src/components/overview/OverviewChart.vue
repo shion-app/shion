@@ -1,37 +1,82 @@
 <script setup lang="ts">
 import type { EChartsOption } from 'echarts'
-import { subDays } from 'date-fns'
+import { addDays, isSameDay, isSameHour, startOfDay, startOfHour, subDays } from 'date-fns'
 
-import type { RecentActivity, RecentNote } from '@interfaces/index'
+import type { Activity, Note } from '@interfaces/index'
 
 const props = defineProps<{
-  noteList: Array<RecentNote>
-  activityList: Array<RecentActivity>
+  noteList: Array<Note>
+  activityList: Array<Activity>
   day: number
-  chartMode: 'plan' | 'label'
+  mode: 'plan' | 'label'
+  unit: 'date' | 'hour'
 }>()
 
 const { noteList, day, activityList } = toRefs(props)
 
+const { unit: unitVModel } = useVModels(props)
+
 const legendHeight = ref(30)
 const chartRef = ref()
+const selectedDate = ref('')
 
 const TITLE_HEIGHT = 30
 const LEGEND_MARGIN_BOTTOM = 10
 
-const option = computed(() => {
-  const xAxis = new Array(day.value).fill(0).map((_, i) => format(subDays(new Date(), i), 'yyyy-MM-dd')).reverse()
+interface TimeRange {
+  startTime: number
+  endTime: number
+}
 
-  const planList = [...new Set(noteList.value.map(({ planName }) => planName))]
+function splitByHour<T extends TimeRange>(list: T[]) {
+  return list.flatMap((data) => {
+    const { startTime, endTime } = data
+    const startHour = new Date(startTime).getHours()
+    const endHour = isSameDay(startTime, endTime) ? new Date(endTime).getHours() : 23
+    const timeList: Array<number> = [startTime]
+    for (let i = startHour + 1; i <= endHour; i++) {
+      const date = startOfHour(new Date(startTime).setHours(i))
+      const time = date.getTime()
+      if (time > endTime)
+        break
+
+      else
+        timeList.push(time)
+    }
+    timeList.push(isSameDay(startTime, endTime) ? endTime : new Date(startOfDay(addDays(startTime, 1))).getTime())
+    const result: T[] = []
+    for (let i = 0; i < timeList.length - 1; i++) {
+      result.push(Object.assign({}, data, {
+        startTime: timeList[i],
+        endTime: timeList[i + 1],
+      }))
+    }
+    return result
+  })
+}
+
+function calcTotalTime(list: Array<TimeRange>) {
+  return list.reduce((acc, cur) => acc += cur.endTime - cur.startTime, 0)
+}
+
+const x = computed(() => unitVModel.value == 'date'
+  ? new Array(day.value).fill(0).map((_, i) => format(subDays(new Date(), i), 'yyyy-MM-dd')).reverse()
+  : new Array(24).fill(0).map((_, i) => `${i}`))
+
+const option = computed(() => {
+  const transformNoteList = unitVModel.value == 'date' ? noteList.value : splitByHour(noteList.value.filter(i => isSameDay(new Date(selectedDate.value), i.startTime)))
+  const transformactivityList = unitVModel.value == 'date' ? activityList.value : splitByHour(activityList.value.filter(i => isSameDay(new Date(selectedDate.value), i.startTime)))
+
+  const planList = [...new Set(transformNoteList.map(i => i.plan.name))]
 
   const planData = planList.map((name) => {
     return {
       name,
       type: 'bar',
       stack: 'plan',
-      data: xAxis.map(date => noteList.value.filter(i => i.planName == name && date == i.date).reduce((acc, cur) => acc += cur.totalTime, 0)),
+      data: x.value.map(time => calcTotalTime(transformNoteList.filter(i => i.plan.name == name && (unitVModel.value == 'date' ? isSameDay(new Date(time).getTime(), i.startTime) : isSameHour(new Date(selectedDate.value).setHours(Number(time)), i.startTime))))),
       itemStyle: {
-        color: noteList.value.find(i => i.planName == name)!.planColor,
+        color: transformNoteList.find(i => i.plan.name == name)!.plan.color,
       },
       emphasis: {
         focus: 'series',
@@ -39,16 +84,16 @@ const option = computed(() => {
     }
   })
 
-  const labelList = [...new Set(noteList.value.map(({ labelName }) => labelName))]
+  const labelList = [...new Set(transformNoteList.map(i => i.label.name))]
 
   const labelData = labelList.map((name) => {
     return {
       name,
       type: 'bar',
       stack: 'label',
-      data: xAxis.map(date => noteList.value.filter(i => i.labelName == name && date == i.date).reduce((acc, cur) => acc += cur.totalTime, 0)),
+      data: x.value.map(time => calcTotalTime(transformNoteList.filter(i => i.label.name == name && (unitVModel.value == 'date' ? isSameDay(new Date(time).getTime(), i.startTime) : isSameHour(new Date(selectedDate.value).setHours(Number(time)), i.startTime))))),
       itemStyle: {
-        color: noteList.value.find(i => i.labelName == name)!.labelColor,
+        color: transformNoteList.find(i => i.label.name == name)!.label.color,
       },
       emphasis: {
         focus: 'series',
@@ -56,22 +101,36 @@ const option = computed(() => {
     }
   })
 
-  const programList = [...new Set(activityList.value.map(({ name }) => name))]
+  const programList = [...new Set(transformactivityList.map(i => i.program.description))]
 
   const programData = programList.map((name) => {
     return {
       name,
       type: 'bar',
-      stack: props.chartMode == 'plan' ? 'plan' : 'label',
-      data: xAxis.map(date => activityList.value.filter(i => i.name == name && date == i.date).reduce((acc, cur) => acc += cur.totalTime, 0)),
+      stack: props.mode == 'plan' ? 'plan' : 'label',
+      data: x.value.map(time => calcTotalTime(transformactivityList.filter(i => i.program.description == name && (unitVModel.value == 'date' ? isSameDay(new Date(time).getTime(), i.startTime) : isSameHour(new Date(selectedDate.value).setHours(Number(time)), i.startTime))))),
       itemStyle: {
-        color: activityList.value.find(i => i.name == name)!.color,
+        color: transformactivityList.find(i => i.program.description == name)!.program.color,
       },
       emphasis: {
         focus: 'series',
       },
     }
   })
+
+  const xAxis = unitVModel.value == 'date'
+    ? [
+        {
+          type: 'category',
+          data: x.value.map(i => format(new Date(i), 'MM-dd')),
+        },
+      ]
+    : [
+        {
+          type: 'category',
+          data: x.value.map(i => complement(Number(i))),
+        },
+      ]
 
   return {
     tooltip: {
@@ -96,12 +155,7 @@ const option = computed(() => {
       top: legendHeight.value + TITLE_HEIGHT + LEGEND_MARGIN_BOTTOM,
       containLabel: true,
     },
-    xAxis: [
-      {
-        type: 'category',
-        data: xAxis.map(i => format(new Date(i), 'MM-dd')),
-      },
-    ],
+    xAxis,
     yAxis: [
       {
         type: 'value',
@@ -110,7 +164,7 @@ const option = computed(() => {
         },
       },
     ],
-    series: [...(props.chartMode == 'plan' ? planData : labelData), ...programData],
+    series: [...(props.mode == 'plan' ? planData : labelData), ...programData],
   } as EChartsOption
 })
 
@@ -118,8 +172,20 @@ function handleChartRendered() {
   const { chart } = chartRef.value
   legendHeight.value = chart.getViewOfComponentModel(chart.getModel().getComponent('legend')).group.getBoundingRect().height
 }
+
+function handleChartClick(event) {
+  if (unitVModel.value == 'hour')
+    return
+
+  const { dataIndex } = event
+  selectedDate.value = x.value[dataIndex]
+  unitVModel.value = 'hour'
+}
 </script>
 
 <template>
-  <v-chart ref="chartRef" class="chart" :option="option" autoresize @rendered="handleChartRendered" />
+  <v-chart
+    ref="chartRef" class="chart" :option="option" autoresize @rendered="handleChartRendered"
+    @click="handleChartClick"
+  />
 </template>

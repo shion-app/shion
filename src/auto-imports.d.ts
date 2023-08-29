@@ -8,6 +8,7 @@ declare global {
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
+  const complement: typeof import('./utils/index')['complement']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
   const computedEager: typeof import('@vueuse/core')['computedEager']
@@ -116,13 +117,15 @@ declare global {
   const resolveComponent: typeof import('vue')['resolveComponent']
   const resolveRef: typeof import('@vueuse/core')['resolveRef']
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
+  const selectActivity: typeof import('./database/request')['selectActivity']
   const selectLabel: typeof import('./database/request')['selectLabel']
+  const selectNote: typeof import('./database/request')['selectNote']
   const selectNoteByLabelId: typeof import('./database/request')['selectNoteByLabelId']
   const selectNoteByPlanId: typeof import('./database/request')['selectNoteByPlanId']
   const selectPlan: typeof import('./database/request')['selectPlan']
+  const selectPlanById: typeof import('./database/request')['selectPlanById']
   const selectProgram: typeof import('./database/request')['selectProgram']
-  const selectRecentActivity: typeof import('./database/request')['selectRecentActivity']
-  const selectRecentNote: typeof import('./database/request')['selectRecentNote']
+  const selectProgramById: typeof import('./database/request')['selectProgramById']
   const selectUnsyncLog: typeof import('./database/request')['selectUnsyncLog']
   const setActivePinia: typeof import('pinia')['setActivePinia']
   const setLogSync: typeof import('./database/request')['setLogSync']
@@ -354,6 +357,7 @@ declare module 'vue' {
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
+    readonly complement: UnwrapRef<typeof import('./utils/index')['complement']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -462,13 +466,15 @@ declare module 'vue' {
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
+    readonly selectActivity: UnwrapRef<typeof import('./database/request')['selectActivity']>
     readonly selectLabel: UnwrapRef<typeof import('./database/request')['selectLabel']>
+    readonly selectNote: UnwrapRef<typeof import('./database/request')['selectNote']>
     readonly selectNoteByLabelId: UnwrapRef<typeof import('./database/request')['selectNoteByLabelId']>
     readonly selectNoteByPlanId: UnwrapRef<typeof import('./database/request')['selectNoteByPlanId']>
     readonly selectPlan: UnwrapRef<typeof import('./database/request')['selectPlan']>
+    readonly selectPlanById: UnwrapRef<typeof import('./database/request')['selectPlanById']>
     readonly selectProgram: UnwrapRef<typeof import('./database/request')['selectProgram']>
-    readonly selectRecentActivity: UnwrapRef<typeof import('./database/request')['selectRecentActivity']>
-    readonly selectRecentNote: UnwrapRef<typeof import('./database/request')['selectRecentNote']>
+    readonly selectProgramById: UnwrapRef<typeof import('./database/request')['selectProgramById']>
     readonly selectUnsyncLog: UnwrapRef<typeof import('./database/request')['selectUnsyncLog']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
     readonly setLogSync: UnwrapRef<typeof import('./database/request')['setLogSync']>
