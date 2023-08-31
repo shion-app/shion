@@ -48,6 +48,8 @@ type CreateLabel = Pick<Label, 'name' | 'planId' | 'color'>
 
 type CreateProgram = Pick<Program, 'description' | 'path' | 'icon' | 'color'>
 
+type UpdateProgram = Pick<Program, 'description' | 'color'>
+
 type CreateActivity = Pick<Activity, 'startTime' | 'endTime' | 'programId'>
 
 export async function execute(query: string, bindValues?: unknown[]) {
@@ -264,6 +266,10 @@ export function createProgram(data: CreateProgram) {
     ...data,
     icon: data.icon.join(', '),
   })
+}
+
+export function updateProgram(id: number, data: Partial<UpdateProgram>) {
+  return update('program', id, data)
 }
 
 export async function removeProgram(id: number) {

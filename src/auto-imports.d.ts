@@ -158,6 +158,7 @@ declare global {
   const updateLabel: typeof import('./database/request')['updateLabel']
   const updateNote: typeof import('./database/request')['updateNote']
   const updatePlan: typeof import('./database/request')['updatePlan']
+  const updateProgram: typeof import('./database/request')['updateProgram']
   const useActiveElement: typeof import('@vueuse/core')['useActiveElement']
   const useActivity: typeof import('./stores/useActivity')['useActivity']
   const useAnimate: typeof import('@vueuse/core')['useAnimate']
@@ -507,6 +508,7 @@ declare module 'vue' {
     readonly updateLabel: UnwrapRef<typeof import('./database/request')['updateLabel']>
     readonly updateNote: UnwrapRef<typeof import('./database/request')['updateNote']>
     readonly updatePlan: UnwrapRef<typeof import('./database/request')['updatePlan']>
+    readonly updateProgram: UnwrapRef<typeof import('./database/request')['updateProgram']>
     readonly useActiveElement: UnwrapRef<typeof import('@vueuse/core')['useActiveElement']>
     readonly useActivity: UnwrapRef<typeof import('./stores/useActivity')['useActivity']>
     readonly useAnimate: UnwrapRef<typeof import('@vueuse/core')['useAnimate']>

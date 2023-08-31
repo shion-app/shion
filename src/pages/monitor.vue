@@ -1,6 +1,8 @@
 <script lang="ts" setup>
-import type * as backend from '@interfaces/backend'
 import { Modal, message } from 'ant-design-vue'
+
+import type * as backend from '@interfaces/backend'
+import type { Program } from '@interfaces/database'
 
 const store = useMonitor()
 const { setMenu } = useMore()
@@ -9,6 +11,12 @@ const { t } = useI18n()
 
 const { getIconUrl, refresh } = store
 const { filtering, filterList, whiteList } = storeToRefs(store)
+
+const formVisible = ref(false)
+const formModel = ref({
+  description: '',
+  color: randomColor(),
+} as Program)
 
 async function handleCreateProgram(program: backend.Program) {
   const { description, path, icon } = program
@@ -30,15 +38,20 @@ async function handleSelect() {
   message.success(t('message.success'))
 }
 
-async function handleRemoveProgram(id: number) {
+async function handleRemove(program: Program) {
   Modal.confirm({
     title: t('modal.confirmDelete'),
     async onOk() {
-      await removeProgram(id)
+      await removeProgram(program.id)
       await refresh()
       message.success(t('message.success'))
     },
   })
+}
+
+function handleUpdate(program: Program) {
+  formVisible.value = true
+  Object.assign(formModel.value, program)
 }
 
 setMenu(() => [
@@ -58,7 +71,7 @@ refresh()
   <div h-full>
     <div v-if="whiteList.length" grid grid-cols-3 gap-6 p-4>
       <div
-        v-for="{ path, description, id, totalTime, color } in whiteList" :key="id"
+        v-for="program in whiteList" :key="program.id"
         p-4 flex space-x-4 items-center
         rounded-2
         bg-white
@@ -66,23 +79,36 @@ refresh()
         hover:shadow-xl
         transition-shadow
       >
-        <img :src="getIconUrl(path)" width="32" height="32" object-contain>
+        <img :src="getIconUrl(program.path)" width="32" height="32" object-contain>
         <div flex-1 min-w-0 space-y-2>
           <div flex justify-between>
-            <div :title="path">
-              {{ description }}
+            <div :title="program.path">
+              {{ program.description }}
             </div>
             <div
               w-3 h-3 rounded-full mr-1
               :style="{
-                backgroundColor: color,
+                backgroundColor: program.color,
               }"
             />
           </div>
           <div flex class="group">
-            <div>{{ formatHHmmss(totalTime) }}</div>
+            <div>{{ formatHHmmss(program.totalTime) }}</div>
             <div flex-1 />
-            <div i-mdi:delete-outline text-6 cursor-pointer op-0 group-hover-op-100 transition-opacity-400 @click="handleRemoveProgram(id)" />
+            <div flex op-0 group-hover-op-100 transition-opacity-400 space-x-2>
+              <a-tooltip placement="bottom">
+                <template #title>
+                  <span>{{ $t('button.update') }}</span>
+                </template>
+                <div i-mdi:file-edit-outline text-5 cursor-pointer @click.stop="handleUpdate(program)" />
+              </a-tooltip>
+              <a-tooltip placement="bottom">
+                <template #title>
+                  <span>{{ $t('button.remove') }}</span>
+                </template>
+                <div i-mdi:delete-outline text-5 cursor-pointer @click.stop="handleRemove(program)" />
+              </a-tooltip>
+            </div>
           </div>
         </div>
       </div>
@@ -123,5 +149,6 @@ refresh()
         <a-empty h-full flex flex-col justify-center :description="$t('monitor.switchWindowTip')" />
       </template>
     </a-modal>
+    <program-form v-model:visible="formVisible" v-model:model="formModel" @refresh="refresh" />
   </div>
 </template>

@@ -74,6 +74,10 @@ overview:
 monitor:
   filterProgram: 筛选要监听的程序
   switchWindowTip: 切换到其他应用窗口，获取数据
+program:
+  update: 更新程序
+  description: 名称
+  color: 颜色
 activity:
   idle: 空闲
   detail: 展开日志

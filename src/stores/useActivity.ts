@@ -215,8 +215,18 @@ export const useActivity = defineStore('activity', () => {
   const queue = new PQueue({ concurrency: 1 })
 
   watchArray(() => monitor.whiteList, async (_, __, added, removed) => {
+    const updatePropertyList: number[] = []
+    for (const p1 of added) {
+      for (const p2 of removed) {
+        if (p1.id == p2.id)
+          updatePropertyList.push(p1.id)
+      }
+    }
     if (added.length) {
-      for (const { path } of added) {
+      for (const { path, id } of added) {
+        if (updatePropertyList.includes(id))
+          continue
+
         const active = await invoke('is_audio_active', {
           path,
         })
@@ -225,8 +235,11 @@ export const useActivity = defineStore('activity', () => {
       }
     }
     if (removed.length) {
-      for (const { path } of removed)
+      for (const { path, id } of removed) {
+        if (updatePropertyList.includes(id))
+          continue
         watcher.end(path)
+      }
     }
   })
 

@@ -74,6 +74,10 @@ overview:
 monitor:
   filterProgram: Filter Program to monitor
   switchWindowTip: Switch to another application window to get data
+program:
+  update: Update program
+  description: Name
+  color: Color
 activity:
   idle: Idle
   detail: Open log
