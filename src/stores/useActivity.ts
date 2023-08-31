@@ -91,21 +91,11 @@ class Watcher {
     this.recordTimer.interval()
   }
 
-  async initBackground(whiteList: Program[]) {
-    for (const { path } of whiteList) {
-      const active = await invoke('is_audio_active', {
-        path,
-      })
-      if (active)
-        this.pushBackground({ path, state: 'Active' }, whiteList)
-    }
-  }
-
-  contain(path: string) {
+  private contain(path: string) {
     return this.list.some(i => isPathEqual(i.path, path))
   }
 
-  find(path: string) {
+  private find(path: string) {
     return this.list.find(i => isPathEqual(i.path, path))
   }
 
@@ -155,7 +145,7 @@ class Watcher {
     }
   }
 
-  async create(data: backend.Activity, background: boolean, whiteList: Program[]) {
+  private async create(data: backend.Activity, background: boolean, whiteList: Program[]) {
     const program = whiteList.find(i => isPathEqual(i.path, data.path))
     if (!program)
       return
@@ -195,16 +185,24 @@ class Watcher {
     return activity
   }
 
-  settle(activity: Activity) {
+  private settle(activity: Activity) {
     if (!(activity.foreground || activity.background))
       activity.timer.end()
   }
 
-  record() {
+  private record() {
     for (const activity of this.list) {
       updateActivity(activity.id, {
         endTime: Date.now(),
       })
+    }
+  }
+
+  end(path: string) {
+    const activity = this.find(path)
+    if (activity) {
+      activity.background = false
+      activity.timer.end()
     }
   }
 }
@@ -216,8 +214,20 @@ export const useActivity = defineStore('activity', () => {
 
   const queue = new PQueue({ concurrency: 1 })
 
-  watchOnce(() => monitor.whiteList.length, () => {
-    watcher.initBackground(monitor.whiteList)
+  watchArray(() => monitor.whiteList, async (_, __, added, removed) => {
+    if (added.length) {
+      for (const { path } of added) {
+        const active = await invoke('is_audio_active', {
+          path,
+        })
+        if (active)
+          queue.add(() => watcher.pushBackground({ path, state: 'Active' }, monitor.whiteList))
+      }
+    }
+    if (removed.length) {
+      for (const { path } of removed)
+        watcher.end(path)
+    }
   })
 
   listen('audio-activity', (event: Event<backend.AudioActivity>) => queue.add(() => watcher.pushBackground(event.payload, monitor.whiteList)))

@@ -34,9 +34,8 @@ async function handleRemoveProgram(id: number) {
   Modal.confirm({
     title: t('modal.confirmDelete'),
     async onOk() {
-      const index = whiteList.value.findIndex(i => i.id == id)
-      whiteList.value.splice(index, 1)
       await removeProgram(id)
+      await refresh()
       message.success(t('message.success'))
     },
   })
