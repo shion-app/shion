@@ -6,6 +6,7 @@ nav:
   monitor: 监听
   activity: 活动
   config: 设置
+  about: 关于
 config:
   locale: 语言
   checkUpdate: 检查更新
@@ -83,3 +84,6 @@ activity:
   detail: 展开日志
   line: 折线图
   bar: 柱状图
+about:
+  website: 网站
+  github: Github

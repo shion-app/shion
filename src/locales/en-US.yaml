@@ -6,6 +6,7 @@ nav:
   monitor: Monitor
   activity: Activity
   config: Config
+  about: About
 config:
   locale: Language
   checkUpdate: Check update
@@ -83,3 +84,6 @@ activity:
   detail: Open log
   line: Line chart
   bar: Bar chart
+about:
+  website: Website
+  github: Github

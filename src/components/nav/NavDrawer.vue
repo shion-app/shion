@@ -42,6 +42,11 @@ const menu = computed(() => [{
   key: 'config',
   tip: t('nav.config'),
   to: '/config',
+}, {
+  icon: 'i-mdi:information',
+  key: 'about',
+  tip: t('nav.about'),
+  to: '/about',
 }])
 
 const name = computed(() => route.name as string)
