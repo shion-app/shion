@@ -156,10 +156,10 @@ export async function selectNote(start: number, end: number) {
       start_time < $2 AND
       deleted_at = 0
     ORDER BY start_time`, [start, end])
-  const labelList = (await Promise.all(noteList.map(({ labelId }) => selectLabelById(labelId))))
-  noteList.forEach((note, index) => note.label = labelList[index]!)
-  const planList = (await Promise.all(noteList.map(({ planId }) => selectPlanById(planId))))
-  noteList.forEach((note, index) => note.plan = planList[index]!)
+  const labelList = (await Promise.all([...new Set(noteList.map(({ labelId }) => labelId))].map(id => selectLabelById(id))))
+  noteList.forEach(note => note.label = labelList.find(label => label!.id == note.labelId)!)
+  const planList = (await Promise.all([...new Set(noteList.map(({ planId }) => planId))].map(id => selectPlanById(id))))
+  noteList.forEach(note => note.plan = planList.find(plan => plan!.id == note.planId)!)
   return noteList
 }
 
@@ -172,10 +172,10 @@ export async function selectNoteByPlanId(id: number, start: number, end: number)
       plan_id = ${id} AND
       deleted_at = 0
     ORDER BY start_time`, [start, end])
-  const labelList = (await Promise.all(noteList.map(({ labelId }) => selectLabelById(labelId))))
-  noteList.forEach((note, index) => note.label = labelList[index]!)
-  const planList = (await Promise.all(noteList.map(({ planId }) => selectPlanById(planId))))
-  noteList.forEach((note, index) => note.plan = planList[index]!)
+  const labelList = (await Promise.all([...new Set(noteList.map(({ labelId }) => labelId))].map(id => selectLabelById(id))))
+  noteList.forEach(note => note.label = labelList.find(label => label!.id == note.labelId)!)
+  const planList = (await Promise.all([...new Set(noteList.map(({ planId }) => planId))].map(id => selectPlanById(id))))
+  noteList.forEach(note => note.plan = planList.find(plan => plan!.id == note.planId)!)
   return noteList
 }
 
@@ -188,10 +188,10 @@ export async function selectNoteByLabelId(id: number, start: number, end: number
       label_id = ${id} AND
       deleted_at = 0
     ORDER BY start_time`, [start, end])
-  const labelList = (await Promise.all(noteList.map(({ labelId }) => selectLabelById(labelId))))
-  noteList.forEach((note, index) => note.label = labelList[index]!)
-  const planList = (await Promise.all(noteList.map(({ planId }) => selectPlanById(planId))))
-  noteList.forEach((note, index) => note.plan = planList[index]!)
+  const labelList = (await Promise.all([...new Set(noteList.map(({ labelId }) => labelId))].map(id => selectLabelById(id))))
+  noteList.forEach(note => note.label = labelList.find(label => label!.id == note.labelId)!)
+  const planList = (await Promise.all([...new Set(noteList.map(({ planId }) => planId))].map(id => selectPlanById(id))))
+  noteList.forEach(note => note.plan = planList.find(plan => plan!.id == note.planId)!)
   return noteList
 }
 
@@ -330,8 +330,8 @@ export async function selectActivity(start: number, end: number) {
       deleted_at = 0
     ORDER BY start_time`, [start, end])
 
-  const programList = (await Promise.all(activityList.map(({ programId }) => selectProgramById(programId))))
-  activityList.forEach((activity, index) => activity.program = programList[index]!)
+  const programList = (await Promise.all([...new Set(activityList.map(({ programId }) => programId))].map(id => selectProgramById(id))))
+  activityList.forEach(activity => activity.program = programList.find(program => program!.id == activity.programId)!)
   return activityList
 }
 
