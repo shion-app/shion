@@ -1,21 +1,21 @@
-<p align="center">
+<div align="center">
   <a href="https://shion.app/" target="_blank">
     <img src="./src-tauri/icons/128x128@2x.png" alt="logo">
   </a>
-</p>
 
-<p align="center">
+![Tauri](https://img.shields.io/badge/tauri-%2324C8DB.svg?style=for-the-badge&logo=tauri&logoColor=%23FFFFFF)
+![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+
   <a href="./README.md">English</a>
-  <a href="./README-ZH.md">中文</a>
-</p>
+  中文
+</div>
 
 
 
-## 用处
+## 介绍
 
-> 记忆对于我们而言太过于脆弱
+> 曾经读过的一本书，弹过的一首曲子。也许在某个午后，翻开了它你依然能回忆起那股气息
 
-你可能需要记录一段时间，曾经读过的一本书，弹过的一首曲子。也许在某个午后，翻开了它你依然能回忆起那股气息
 
 
 
@@ -27,7 +27,14 @@
 
 
 
+## 截图
+
+![overview](docs/overview.png)
+
+
+
+
 ## 快速入门
 
-[文档入口](https://shion.app/zh/)
+[文档](https://shion.app/zh/)
 

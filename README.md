@@ -1,29 +1,36 @@
-<p align="center">
+<div align="center">
   <a href="https://shion.app/" target="_blank">
     <img src="./src-tauri/icons/128x128@2x.png" alt="logo">
   </a>
-</p>
 
-<p align="center">
-  <a href="./README.md">English</a>
+![Tauri](https://img.shields.io/badge/tauri-%2324C8DB.svg?style=for-the-badge&logo=tauri&logoColor=%23FFFFFF)
+![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+
+  English
   <a href="./README-ZH.md">中文</a>
-</p>
+</div>
 
 
 
-## Introduce
+## Introduction
 
-> Memory is too fragile for us
+> A book you have read or a song you have played. Maybe in a certain afternoon, you can still recall the smell when you open it
 
-You may need to record a book you have read and a song you have played over a period of time. Perhaps one afternoon, when you open it, you can still remember that breath
 
 
 
 ## Feature
 
-- [x] Manual recording of time, detailed classification of labels
+- [x] Manually record time and classify the labels in detail
 - [x] Chart and calendar display data
 - [x] Automatically record time and monitor program operation🚧
+
+
+
+
+## Screenshot
+
+![overview](docs/overview.png)
 
 
 
