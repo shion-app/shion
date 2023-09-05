@@ -9,6 +9,8 @@
     "preview": "vite preview",
     "lint:fix": "eslint . --fix",
     "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build -c src-tauri/tauri.conf.build.json",
     "release": "vue-tsc --noEmit && node scripts/release"
   },
   "dependencies": {

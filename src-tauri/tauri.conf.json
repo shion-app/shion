@@ -35,7 +35,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "hanaTsuk1.shion",
+      "identifier": "hanaTsuk1.shion.dev",
       "publisher": "hanaTsuk1",
       "targets": [
         "nsis",

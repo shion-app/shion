@@ -6,7 +6,7 @@ import { error } from 'tauri-plugin-log-api'
 import { i18n } from '@locales/index'
 import type { Activity, Label, Note, Plan, Program, SyncLog, TableName } from '@interfaces/index'
 
-const PATH = `sqlite:data${import.meta.env.TAURI_DEBUG ? '-dev' : ''}.db`
+const PATH = 'sqlite:data.db'
 
 const enum SqliteError {
   UNHANDLED = -1,

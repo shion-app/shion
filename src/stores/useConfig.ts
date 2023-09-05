@@ -10,7 +10,7 @@ interface Config {
   autostart: boolean
 }
 
-const PATH = `config${import.meta.env.TAURI_DEBUG ? '-dev' : ''}.json`
+const PATH = 'config.json'
 
 export const useConfig = defineStore('config', () => {
   const { locale, t } = useI18n()

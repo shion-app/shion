@@ -41,3 +41,4 @@ jobs:
           tagName: ${{ github.ref_name }}
           releaseName: v__VERSION__
           prerelease: ${{ contains(github.ref_name, '-') }}
+          args: -c src-tauri/tauri.conf.build.json
