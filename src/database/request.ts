@@ -152,7 +152,7 @@ export async function selectNote(start: number, end: number) {
   const noteList = await select<Array<Note>>(`
     SELECT id, start_time, end_time, description, plan_id, label_id
       FROM note
-    WHERE start_time > $1 AND
+    WHERE end_time > $1 AND
       start_time < $2 AND
       deleted_at = 0
     ORDER BY start_time`, [start, end])
@@ -167,7 +167,7 @@ export async function selectNoteByPlanId(id: number, start: number, end: number)
   const noteList = await select<Array<Note>>(`
     SELECT id, start_time, end_time, description, plan_id, label_id
       FROM note
-    WHERE start_time > $1 AND
+    WHERE end_time > $1 AND
       start_time < $2 AND
       plan_id = ${id} AND
       deleted_at = 0
@@ -183,7 +183,7 @@ export async function selectNoteByLabelId(id: number, start: number, end: number
   const noteList = await select<Array<Note>>(`
     SELECT id, start_time, end_time, description, plan_id, label_id
       FROM note
-    WHERE start_time > $1 AND
+    WHERE end_time > $1 AND
       start_time < $2 AND
       label_id = ${id} AND
       deleted_at = 0
@@ -325,7 +325,7 @@ export async function selectActivity(start: number, end: number) {
   const activityList = await select<Array<Activity>>(`
     SELECT id, start_time, end_time, program_id
       FROM activity
-    WHERE start_time > $1 AND
+    WHERE end_time > $1 AND
       start_time < $2 AND
       deleted_at = 0
     ORDER BY start_time`, [start, end])

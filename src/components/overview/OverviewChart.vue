@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { EChartsOption } from 'echarts'
-import { addDays, isSameDay, isSameHour, startOfDay, startOfHour, subDays } from 'date-fns'
+import { addDays, isAfter, isSameDay, isSameHour, startOfDay, startOfHour, subDays } from 'date-fns'
 
 import type { Activity, Note } from '@interfaces/index'
 
@@ -26,6 +26,30 @@ const LEGEND_MARGIN_BOTTOM = 10
 interface TimeRange {
   startTime: number
   endTime: number
+}
+
+function splitByDay<T extends TimeRange>(list: T[], range: [Date, Date]) {
+  return list.flatMap((data) => {
+    const { startTime, endTime } = data
+    const [startDate, endDate] = range
+    let start = isAfter(startTime, startDate) ? new Date(startTime) : startDate
+    const timeList: Array<number> = [start.getTime()]
+    start = startOfDay(addDays(start, 1))
+    while (isAfter(endTime, start)) {
+      timeList.push(start.getTime())
+      start = addDays(start, 1)
+    }
+
+    timeList.push(isAfter(endDate, endTime) ? endTime : endDate.getTime())
+    const result: T[] = []
+    for (let i = 0; i < timeList.length - 1; i++) {
+      result.push(Object.assign({}, data, {
+        startTime: timeList[i],
+        endTime: timeList[i + 1],
+      }))
+    }
+    return result
+  })
 }
 
 function splitByHour<T extends TimeRange>(list: T[]) {
@@ -64,8 +88,11 @@ const x = computed(() => unitVModel.value == 'date'
   : new Array(24).fill(0).map((_, i) => `${i}`))
 
 const option = computed(() => {
-  const transformNoteList = unitVModel.value == 'date' ? noteList.value : splitByHour(noteList.value.filter(i => isSameDay(new Date(selectedDate.value), i.startTime)))
-  const transformactivityList = unitVModel.value == 'date' ? activityList.value : splitByHour(activityList.value.filter(i => isSameDay(new Date(selectedDate.value), i.startTime)))
+  const range = [startOfDay(addDays(new Date(), 1 - day.value)), startOfDay(addDays(new Date(), 1))] as [Date, Date]
+  let transformNoteList = splitByDay(noteList.value, range)
+  let transformactivityList = splitByDay(activityList.value, range)
+  transformNoteList = unitVModel.value == 'date' ? transformNoteList : splitByHour(transformNoteList.filter(i => isSameDay(new Date(selectedDate.value), i.startTime)))
+  transformactivityList = unitVModel.value == 'date' ? transformactivityList : splitByHour(transformactivityList.filter(i => isSameDay(new Date(selectedDate.value), i.startTime)))
 
   const planList = [...new Set(transformNoteList.map(i => i.plan.name))]
 
