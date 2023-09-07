@@ -40,8 +40,8 @@ use winapi::um::winuser::ICONINFO;
 use winapi::um::winuser::MSG;
 use winapi::um::winuser::{CallNextHookEx, EVENT_SYSTEM_FOREGROUND};
 use winapi::um::winuser::{
-    DispatchMessageW, GetIconInfo, GetWindowTextLengthW, GetWindowTextW, SetWinEventHook,
-    TranslateMessage, UnhookWinEvent, WINEVENT_OUTOFCONTEXT,
+    DispatchMessageW, GetIconInfo, SetWinEventHook, TranslateMessage, UnhookWinEvent,
+    WINEVENT_OUTOFCONTEXT,
 };
 use winapi::um::winuser::{GetCursorPos, GetDC, GetForegroundWindow, WindowFromPoint};
 use winapi::um::winver::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW};
@@ -105,18 +105,18 @@ fn to_u16(str: String) -> Vec<u16> {
     OsStr::new(&str).encode_wide().chain(once(0)).collect()
 }
 
-fn get_application_title(hwnd: HWND) -> Option<String> {
-    let len = unsafe { GetWindowTextLengthW(hwnd) };
-    if len == 0 {
-        return None;
-    }
-    let mut title: Vec<u16> = vec![0; len as usize + 1];
-    let ret = unsafe { GetWindowTextW(hwnd, title.as_mut_ptr(), len + 1) };
-    if ret == 0 {
-        return None;
-    }
-    Some(String::from_utf16_lossy(&title[..ret as usize]))
-}
+// fn get_application_title(hwnd: HWND) -> Option<String> {
+//     let len = unsafe { GetWindowTextLengthW(hwnd) };
+//     if len == 0 {
+//         return None;
+//     }
+//     let mut title: Vec<u16> = vec![0; len as usize + 1];
+//     let ret = unsafe { GetWindowTextW(hwnd, title.as_mut_ptr(), len + 1) };
+//     if ret == 0 {
+//         return None;
+//     }
+//     Some(String::from_utf16_lossy(&title[..ret as usize]))
+// }
 
 fn get_application_path(hwnd: HWND) -> Option<String> {
     let mut process_id = 0;
@@ -332,6 +332,7 @@ pub fn get_mouse_area_application_path() -> Option<String> {
     unsafe {
         GetCursorPos(&mut point);
     }
+    #[allow(unused_assignments)]
     let mut hwnd: HWND = std::ptr::null_mut();
     unsafe {
         hwnd = WindowFromPoint(point);
@@ -340,6 +341,7 @@ pub fn get_mouse_area_application_path() -> Option<String> {
 }
 
 pub fn get_foreground_application_path() -> Option<String> {
+    #[allow(unused_assignments)]
     let mut hwnd: HWND = std::ptr::null_mut();
     unsafe { hwnd = GetForegroundWindow() }
     get_application_path(hwnd)
