@@ -54,10 +54,6 @@ fn main() {
         sql: include_str!("../migrations/20230413021540_create-table.sql"),
         kind: MigrationKind::Up,
     }];
-    let db_url = format!(
-        "sqlite:data{}.db",
-        if cfg!(debug_assertions) { "-dev" } else { "" }
-    );
 
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let tray_menu = SystemTrayMenu::new().add_item(quit);
@@ -66,7 +62,7 @@ fn main() {
     tauri::Builder::default()
         .plugin(
             tauri_plugin_sql::Builder::default()
-                .add_migrations(&db_url, migrations)
+                .add_migrations("sqlite:data.db", migrations)
                 .build(),
         )
         .plugin(tauri_plugin_store::Builder::default().build())
