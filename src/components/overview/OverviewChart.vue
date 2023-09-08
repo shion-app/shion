@@ -167,10 +167,12 @@ const option = computed(() => {
         type: 'shadow',
       },
       formatter(params) {
-        return params.filter(({ value }) => value != 0).sort((a, b) => b.value - a.value).map(({ marker, seriesName, value, componentIndex }) => {
+        const date = unitVModel.value == 'date' ? '' : selectedDate.value
+        const chart = params.filter(({ value }) => value != 0).sort((a, b) => b.value - a.value).map(({ marker, seriesName, value, componentIndex }) => {
           const opacity = [-1, componentIndex].includes(selectedComponentIndex.value) ? 1 : 0.3
           return `<div style="opacity: ${opacity}">${marker}  <span style="font-size:14px;color:#666;font-weight:400;margin-left:2px">${seriesName}</span>  <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatHHmmss(value)}</span></div>`
         }).join('')
+        return chart ? date + chart : ''
       },
     },
     legend: {
