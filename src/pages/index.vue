@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { endOfDay, subDays } from 'date-fns'
+import { appWindow } from '@tauri-apps/api/window'
+import { TauriEvent } from '@tauri-apps/api/event'
 
 import type { Activity, Note } from '@interfaces/index'
 
@@ -38,7 +40,15 @@ function returnPrev() {
   unit.value = 'date'
 }
 
-watch(range, refresh, {
+const refreshThrottle = useThrottleFn(refresh, 100)
+
+useTauriListen(TauriEvent.WINDOW_FOCUS, async () => {
+  const visible = await appWindow.isVisible()
+  if (visible)
+    refreshThrottle()
+})
+
+watch(range, refreshThrottle, {
   immediate: true,
 })
 </script>
