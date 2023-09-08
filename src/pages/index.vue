@@ -57,14 +57,14 @@ watch(range, refresh, {
           <a-radio-button value="week">
             <a-tooltip :title="$t('overview.week')">
               <div h-full flex items-center>
-                <div i-mdi:view-split-vertical text-4 />
+                <div i-mdi:calendar-week text-4 />
               </div>
             </a-tooltip>
           </a-radio-button>
           <a-radio-button value="month">
             <a-tooltip :title="$t('overview.month')">
               <div h-full flex items-center>
-                <div i-mdi:view-split-horizontal text-4 />
+                <div i-mdi:calendar-month text-4 />
               </div>
             </a-tooltip>
           </a-radio-button>
