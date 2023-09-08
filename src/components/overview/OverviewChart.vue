@@ -19,6 +19,7 @@ const { unit: unitVModel } = useVModels(props)
 const legendHeight = ref(30)
 const chartRef = ref()
 const selectedDate = ref('')
+const selectedComponentIndex = ref(-1)
 
 const TITLE_HEIGHT = 30
 const LEGEND_MARGIN_BOTTOM = 10
@@ -166,9 +167,10 @@ const option = computed(() => {
         type: 'shadow',
       },
       formatter(params) {
-        return params.filter(({ value }) => value != 0).sort((a, b) => b.value - a.value).map(({ marker, seriesName, value }) => {
-          return `${marker}  <span style="font-size:14px;color:#666;font-weight:400;margin-left:2px">${seriesName}</span>  <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatHHmmss(value)}</span>`
-        }).join('<br/>')
+        return params.filter(({ value }) => value != 0).sort((a, b) => b.value - a.value).map(({ marker, seriesName, value, componentIndex }) => {
+          const opacity = [-1, componentIndex].includes(selectedComponentIndex.value) ? 1 : 0.3
+          return `<div style="opacity: ${opacity}">${marker}  <span style="font-size:14px;color:#666;font-weight:400;margin-left:2px">${seriesName}</span>  <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatHHmmss(value)}</span></div>`
+        }).join('')
       },
     },
     legend: {
@@ -208,11 +210,22 @@ function handleChartClick(event) {
   selectedDate.value = x.value[dataIndex]
   unitVModel.value = 'hour'
 }
+
+function handleChartMouseOver(event) {
+  const { componentIndex } = event
+  selectedComponentIndex.value = componentIndex
+}
+
+function handleChartMouseOut() {
+  selectedComponentIndex.value = -1
+}
 </script>
 
 <template>
   <v-chart
     ref="chartRef" class="chart" :option="option" autoresize @rendered="handleChartRendered"
     @click="handleChartClick"
+    @mouseover="handleChartMouseOver"
+    @mouseout="handleChartMouseOut"
   />
 </template>
