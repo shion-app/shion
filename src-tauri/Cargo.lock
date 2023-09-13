@@ -2393,7 +2393,7 @@ dependencies = [
 [[package]]
 name = "nodio-core"
 version = "0.1.0"
-source = "git+https://github.com/hanaTsuk1/nodio#a488eb5730a0886060bc578144c7aa12658a4160"
+source = "git+https://github.com/hanaTsuk1/nodio#14dc43fde92fb2c1246e665c3d4ac65d4a7cbcf5"
 dependencies = [
  "serde",
  "serde_json",
@@ -2403,7 +2403,7 @@ dependencies = [
 [[package]]
 name = "nodio-win32"
 version = "0.1.0"
-source = "git+https://github.com/hanaTsuk1/nodio#a488eb5730a0886060bc578144c7aa12658a4160"
+source = "git+https://github.com/hanaTsuk1/nodio#14dc43fde92fb2c1246e665c3d4ac65d4a7cbcf5"
 dependencies = [
  "log",
  "nodio-core",
