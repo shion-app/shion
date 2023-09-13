@@ -10,7 +10,10 @@
   <a href="./README-ZH.md">中文</a>
 </div>
 
-
+> **Warning**
+> In the development, use with caution 🚧
+> 
+> Document is machine translated 🤖
 
 ## Introduction
 
