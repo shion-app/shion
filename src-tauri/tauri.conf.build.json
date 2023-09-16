@@ -1,6 +1,6 @@
 {
   "package": {
-    "productName": "Shion"
+    "productName": "shion"
   },
   "tauri": {
     "bundle": {
