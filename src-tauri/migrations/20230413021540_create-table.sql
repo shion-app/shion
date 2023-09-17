@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS program (
   icon BLOB NOT NULL,
   color TEXT NOT NULL,
   deleted_at TIMESTAMP DEFAULT 0,
-  UNIQUE (path, deleted_at)
+  UNIQUE (path, deleted_at),
+  UNIQUE (description, deleted_at)
 );
 
 CREATE TABLE IF NOT EXISTS activity (
