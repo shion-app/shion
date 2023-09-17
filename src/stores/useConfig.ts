@@ -1,7 +1,7 @@
 import { Store } from 'tauri-plugin-store-api'
 import { getVersion } from '@tauri-apps/api/app'
 import { invoke } from '@tauri-apps/api'
-import { disable, enable } from 'tauri-plugin-autostart-api'
+import { disable, enable, isEnabled } from 'tauri-plugin-autostart-api'
 
 interface Config {
   version: string
@@ -73,11 +73,12 @@ export const useConfig = defineStore('config', () => {
     })
   })
 
-  watch(() => config.value.autostart, (v) => {
+  watch(() => config.value.autostart, async (v) => {
+    const switched = await isEnabled()
     if (v)
       enable()
 
-    else
+    else if (switched)
       disable()
   })
 
