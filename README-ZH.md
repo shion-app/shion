@@ -28,9 +28,9 @@
 
 
 
-## 截图
+## 视频
 
-![overview](docs/overview.png)
+https://github.com/shion-app/shion/assets/101488209/a4fbf633-9938-4130-b0fc-1b39a15c7ec3
 
 
 
