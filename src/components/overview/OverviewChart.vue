@@ -211,6 +211,7 @@ function handleChartClick(event) {
   const { dataIndex } = event
   selectedDate.value = x.value[dataIndex]
   unitVModel.value = 'hour'
+  resetSelectedComponentIndex()
 }
 
 function handleChartMouseOver(event) {
@@ -218,8 +219,12 @@ function handleChartMouseOver(event) {
   selectedComponentIndex.value = componentIndex
 }
 
-function handleChartMouseOut() {
+function resetSelectedComponentIndex() {
   selectedComponentIndex.value = -1
+}
+
+function handleChartMouseOut() {
+  resetSelectedComponentIndex()
 }
 </script>
 
