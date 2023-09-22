@@ -4,7 +4,6 @@ const route = useRoute()
 const moreStore = useMore()
 const updateStore = useUpdate()
 const timeStore = useTime()
-// const { sync } = useSync()
 
 const { menu: moreMenu } = storeToRefs(moreStore)
 const { precent, downloading } = storeToRefs(updateStore)
@@ -90,14 +89,6 @@ const isShowTimer = computed(() => timerRunning.value && name.value != 'time')
             <a-progress :percent="precent" size="small" :show-info="false" trail-color="#dbdbdb" />
           </div>
         </a-tooltip>
-        <!-- <a-tooltip>
-          <template #title>
-            <span>{{ $t('sync.title') }}</span>
-          </template>
-          <div>
-            <div i-mdi:sync text-5 @click="sync" />
-          </div>
-        </a-tooltip> -->
         <a-tooltip v-if="isShowTimer">
           <template #title>
             <span>{{ $t('timer.timing') }}</span>

@@ -4,7 +4,7 @@ import { camelCase } from 'camel-case'
 import { error } from 'tauri-plugin-log-api'
 
 import { i18n } from '@locales/index'
-import type { Activity, Label, Note, Plan, Program, SyncLog, TableName } from '@interfaces/index'
+import type { Activity, Label, Note, Plan, Program, TableName } from '@interfaces/index'
 
 const PATH = 'sqlite:data.db'
 
@@ -236,25 +236,6 @@ async function selectLabelById(id: number) {
     ORDER BY label.id;
   `)).pop()
   return label
-}
-
-export function getLastSyncId() {
-  return select<Array<Pick<SyncLog, 'id'>>>(`
-    SELECT MAX(id) AS id
-      FROM sync_log
-    WHERE id IN (
-      SELECT id
-        FROM sync_log
-      WHERE sync = 1
-    )`).then(i => i.pop()?.id || 0)
-}
-
-export function selectUnsyncLog() {
-  return select<Array<SyncLog>>('SELECT * FROM sync_log WHERE sync = 0 ORDER BY id')
-}
-
-export function setLogSync() {
-  return execute('UPDATE sync_log SET sync = 1 WHERE sync = 0')
 }
 
 export function resetTableAutoIncrementId(tableName: string) {

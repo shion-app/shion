@@ -62,8 +62,6 @@ updater:
   content: The new version {version} has been released. Are you sure to update it?
   checkUpdate: An error occurred while pulling the latest version
   error: An error occurred while updating
-sync:
-  title: Sync data
 timer:
   countdown: The countdown has reached the target time
   timing: Timing

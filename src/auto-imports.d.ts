@@ -53,7 +53,6 @@ declare global {
   const getActivePinia: typeof import('pinia')['getActivePinia']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
-  const getLastSyncId: typeof import('./database/request')['getLastSyncId']
   const getRangeOfMonth: typeof import('./utils/index')['getRangeOfMonth']
   const h: typeof import('vue')['h']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
@@ -126,9 +125,7 @@ declare global {
   const selectPlanById: typeof import('./database/request')['selectPlanById']
   const selectProgram: typeof import('./database/request')['selectProgram']
   const selectProgramById: typeof import('./database/request')['selectProgramById']
-  const selectUnsyncLog: typeof import('./database/request')['selectUnsyncLog']
   const setActivePinia: typeof import('pinia')['setActivePinia']
-  const setLogSync: typeof import('./database/request')['setLogSync']
   const setMapStoreSuffix: typeof import('pinia')['setMapStoreSuffix']
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
@@ -294,7 +291,6 @@ declare global {
   const useStyleTag: typeof import('@vueuse/core')['useStyleTag']
   const useSupported: typeof import('@vueuse/core')['useSupported']
   const useSwipe: typeof import('@vueuse/core')['useSwipe']
-  const useSync: typeof import('./hooks/useSync')['useSync']
   const useTauriListen: typeof import('./hooks/useTauriListen')['useTauriListen']
   const useTemplateRefsList: typeof import('@vueuse/core')['useTemplateRefsList']
   const useTextDirection: typeof import('@vueuse/core')['useTextDirection']
@@ -404,7 +400,6 @@ declare module 'vue' {
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
-    readonly getLastSyncId: UnwrapRef<typeof import('./database/request')['getLastSyncId']>
     readonly getRangeOfMonth: UnwrapRef<typeof import('./utils/index')['getRangeOfMonth']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
@@ -477,9 +472,7 @@ declare module 'vue' {
     readonly selectPlanById: UnwrapRef<typeof import('./database/request')['selectPlanById']>
     readonly selectProgram: UnwrapRef<typeof import('./database/request')['selectProgram']>
     readonly selectProgramById: UnwrapRef<typeof import('./database/request')['selectProgramById']>
-    readonly selectUnsyncLog: UnwrapRef<typeof import('./database/request')['selectUnsyncLog']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
-    readonly setLogSync: UnwrapRef<typeof import('./database/request')['setLogSync']>
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
@@ -645,7 +638,6 @@ declare module 'vue' {
     readonly useStyleTag: UnwrapRef<typeof import('@vueuse/core')['useStyleTag']>
     readonly useSupported: UnwrapRef<typeof import('@vueuse/core')['useSupported']>
     readonly useSwipe: UnwrapRef<typeof import('@vueuse/core')['useSwipe']>
-    readonly useSync: UnwrapRef<typeof import('./hooks/useSync')['useSync']>
     readonly useTauriListen: UnwrapRef<typeof import('./hooks/useTauriListen')['useTauriListen']>
     readonly useTemplateRefsList: UnwrapRef<typeof import('@vueuse/core')['useTemplateRefsList']>
     readonly useTextDirection: UnwrapRef<typeof import('@vueuse/core')['useTextDirection']>

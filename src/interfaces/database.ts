@@ -1,4 +1,4 @@
-export type TableName = 'plan' | 'note' | 'label' | 'sync_log' | 'program' | 'activity'
+export type TableName = 'plan' | 'note' | 'label' | 'program' | 'activity'
 
 export interface Plan {
   id: number
@@ -24,14 +24,6 @@ export interface Label {
   color: string
   planId: number
   totalTime: number
-}
-
-export interface SyncLog {
-  id: number
-  tableName: Exclude<TableName, 'sync_log'>
-  type: 'insert' | 'update'
-  data: string
-  sync: boolean
 }
 
 export interface Program {
