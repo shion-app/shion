@@ -51,7 +51,7 @@ fn main() {
     let migrations = vec![Migration {
         version: 1,
         description: "create table",
-        sql: include_str!("../migrations/20230413021540_create-table.sql"),
+        sql: include_str!("../../prisma/migrations/20230923052127_/migration.sql"),
         kind: MigrationKind::Up,
     }];
 

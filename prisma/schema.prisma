@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator kysely {
+  provider  = "prisma-kysely"
+  camelCase = true
+  output = "../src/modules/database"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./database/data.db"
+}
+
+model Plan {
+  id         Int      @id @default(autoincrement())
+  name       String
+  color      String
+  sort       Int
+  deleted_at Int      @default(0)
+  labels     Label[]
+  records    Record[]
+
+  @@unique([name, deleted_at])
+  @@unique([color, deleted_at])
+  @@map("plan")
+}
+
+model Label {
+  id         Int      @id @default(autoincrement())
+  name       String
+  color      String
+  sort       Int
+  plan_id    Int
+  deleted_at Int      @default(0)
+  plan       Plan     @relation(fields: [plan_id], references: [id])
+  records    Record[]
+
+  @@unique([name, deleted_at])
+  @@unique([color, deleted_at])
+  @@map("label")
+}
+
+model Record {
+  id         Int   @id @default(autoincrement())
+  start      Int
+  end        Int
+  plan_id    Int
+  label_id   Int
+  deleted_at Int   @default(0)
+  plan       Plan  @relation(fields: [plan_id], references: [id])
+  label      Label @relation(fields: [label_id], references: [id])
+
+  @@map("record")
+}
+
+model Program {
+  id         Int        @id @default(autoincrement())
+  name       String
+  color      String
+  path       String
+  icon       String
+  sort       Int
+  deleted_at Int        @default(0)
+  activities Activity[]
+
+  @@unique([name, deleted_at])
+  @@unique([color, deleted_at])
+  @@unique([path, deleted_at])
+  @@map("program")
+}
+
+model Activity {
+  id         Int     @id @default(autoincrement())
+  start      Int
+  end        Int
+  program_id Int
+  deleted_at Int     @default(0)
+  program    Program @relation(fields: [program_id], references: [id])
+
+  @@map("activity")
+}
