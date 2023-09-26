@@ -1,41 +1,57 @@
-import type { Generated, Insertable, Kysely, Selectable, Updateable } from 'kysely'
-import type { } from '../db'
-import { select } from '../db'
-import type { DB } from '../types'
+import type { Insertable, Kysely, Updateable } from 'kysely'
+import type { DB } from '../transform-types'
 
-interface Table {
-  id: Generated<number>
-  deletedAt: Generated<number>
-}
+type TableName = keyof DB
 
-export class Model<T extends Table = Table> {
-  #kysely: Kysely<DB>
-  table!: keyof DB
+type FindKeys<T, U> = {
+  [K in keyof T]: T[K] extends U ? K : never;
+}[keyof T]
+
+export class Model<T extends DB[TableName]> {
+  protected kysely: Kysely<DB>
+  table!: TableName
 
   constructor(kysely: Kysely<DB>) {
-    this.#kysely = kysely
+    this.kysely = kysely
   }
 
-  insert(value: Insertable<T>) {
-    return this.#kysely.insertInto(this.table).values(value)
+  insert(@set value: Insertable<T>) {
+    return this.kysely.insertInto(this.table).values(value)
   }
 
-  update(id: number, value: Updateable<T>) {
-    return this.#kysely.updateTable(this.table).set(value).where('id', '=', id)
+  update(id: number, @set value: Updateable<T>) {
+    return this.kysely.updateTable(this.table).set(value).where('id', '=', id)
   }
 
   remove(id: number) {
-    return this.#kysely.updateTable(this.table).set({
+    return this.kysely.updateTable(this.table).set({
       deletedAt: Date.now(),
     }).where('id', '=', id)
   }
 
-  @select()
-  select(value?: Partial<Pick<Selectable<Table>, 'id'>>) {
-    let query = this.#kysely.selectFrom(this.table)
+  @get
+  select(value?: { id?: number }) {
+    let query = this.kysely.selectFrom(this.table)
     if (value && value.id)
       query = query.where('id', '=', value.id)
 
-    return query.selectAll()
+    return query.selectAll(this.table as FindKeys<DB, T>)
+  }
+}
+
+export function get(target, propertyKey, descriptor) {
+  descriptor.value.__getFlag = true
+}
+
+export function set(target, propertyKey, parameterIndex) {
+  target[propertyKey].__setIndex = parameterIndex
+}
+
+export function injectModel<E, V>(options?: {
+  set(value: V): E
+  get(entity: E): V
+}) {
+  return (target) => {
+    target.__transform = options
   }
 }

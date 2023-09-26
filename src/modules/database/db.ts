@@ -16,9 +16,8 @@ import Database from 'tauri-plugin-sql-api'
 import { camelCase } from 'camel-case'
 
 import { i18n } from '@locales/index'
-import type { DB } from './types'
+import type { DB } from './transform-types'
 import { Program } from './models/program'
-import type { Model } from './models/model'
 
 type IsSelectQueryBuilder<T> = T extends SelectQueryBuilder<any, any, any> ? true : false
 
@@ -26,7 +25,7 @@ type IsQueryBuilder<T> = T extends {
   compile(): any
 } ? true : false
 
-type Transform<T extends Model> =
+type Transform<T> =
   {
     [K in keyof T]:
     T[K] extends (...args: any) => any
@@ -37,7 +36,7 @@ type Transform<T extends Model> =
             ? InferResult<ReturnType<ReturnType<T[K]>['compile']>>
             : Promise<QueryResult>>
           : never
-      : never
+      : T[K]
   }
 
 const kysely = new Kysely<DB>({
@@ -57,33 +56,45 @@ const enum SqliteError {
   SQLITE_CONSTRAINT_UNIQUE = 2067,
 }
 
-function createDatabase<U extends Record<string, Model>>(database: Database, models: U) {
-  class KyselyDatabase<M extends object> {
+function createDatabase<U extends Record<string, object>>(database: Database, models: U) {
+  class KyselyDatabase<M extends Record<string, object>> {
     #database: Database
-    #models: M
 
     constructor(database: Database, models: M) {
-      this.#models = models
       this.#database = database
-      for (const modelKey of Object.keys(models)) {
+      for (const modelKey in models) {
         const obj = {
-          [modelKey]: {},
+          [modelKey]: new Proxy(models[modelKey], {
+            get: (target, p) => {
+              if (typeof target[p] === 'function') {
+                return (...args) => {
+                  const fn = target[p]
+                  const { __transform } = target.constructor as any
+                  const { __setIndex, __getFlag } = fn as any
+                  if (__transform && typeof __setIndex == 'number')
+                    args[__setIndex] = __transform.set(args[__setIndex])
+
+                  const query = fn.apply(target, args).compile()
+                  if (__getFlag) {
+                    return this.#select(query).then((result) => {
+                      if (__transform)
+                        return (result as unknown[]).map(i => __transform.get(i))
+
+                      else
+                        return result
+                    })
+                  }
+
+                  return this.#execute(query)
+                }
+              }
+              else {
+                return target[p]
+              }
+            },
+          }),
         }
         Object.assign(this, obj)
-        const list = Object.getOwnPropertyNames(Object.getPrototypeOf(models[modelKey])).filter(name => name !== 'constructor')
-        for (const fnKey of list) {
-          Object.assign(obj[modelKey], {
-            [fnKey]: (...args) => {
-              const model = this.#models[modelKey] as Model
-              const fn = model[fnKey]
-              const query = fn.call(model, args).compile()
-              if ((fn as any).select)
-                return this.#select(query)
-
-              return this.#execute(query)
-            },
-          })
-        }
       }
     }
 
@@ -134,9 +145,3 @@ const database = await Database.load('sqlite:data.db')
 export const db = createDatabase(database, {
   program: new Program(kysely),
 })
-
-export function select() {
-  return (_, __, descriptor) => {
-    descriptor.value.select = true
-  }
-}
