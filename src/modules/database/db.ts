@@ -16,8 +16,11 @@ import Database from 'tauri-plugin-sql-api'
 import { camelCase } from 'camel-case'
 
 import { i18n } from '@locales/index'
+import camelcaseKeys from 'camelcase-keys'
 import type { DB } from './transform-types'
 import { Program } from './models/program'
+import { Activity } from './models/activity'
+import type { InjectModelOptions } from './models/model'
 
 type IsSelectQueryBuilder<T> = T extends SelectQueryBuilder<any, any, any> ? true : false
 
@@ -56,6 +59,25 @@ const enum SqliteError {
   SQLITE_CONSTRAINT_UNIQUE = 2067,
 }
 
+function transformResult(constructor: { __transform?: InjectModelOptions }, obj: object | object[]) {
+  const { __transform } = constructor
+  if (!__transform)
+    return obj
+  if (__transform.get) {
+    if (Array.isArray(obj))
+      obj.forEach(i => Object.assign(i, __transform.get!(i)))
+
+    else
+      Object.assign(obj, __transform.get(obj))
+  }
+  for (const key in __transform.relation) {
+    obj[key] = JSON.parse(obj[key])
+    transformResult(__transform.relation[key], obj[key])
+  }
+
+  return obj
+}
+
 function createDatabase<U extends Record<string, object>>(database: Database, models: U) {
   class KyselyDatabase<M extends Record<string, object>> {
     #database: Database
@@ -72,17 +94,19 @@ function createDatabase<U extends Record<string, object>>(database: Database, mo
                   const { __transform } = target.constructor as any
                   const { __setIndex, __getFlag } = fn as any
                   if (__transform && typeof __setIndex == 'number')
-                    args[__setIndex] = __transform.set(args[__setIndex])
+                    Object.assign(args[__setIndex], __transform.set(args[__setIndex]))
 
                   const query = fn.apply(target, args).compile()
                   if (__getFlag) {
                     return this.#select(query).then((result) => {
                       if (__transform)
-                        return (result as unknown[]).map(i => __transform.get(i))
+                        return (result as object[]).map(i => transformResult(target.constructor as any, i))
 
                       else
                         return result
-                    })
+                    }).then(result => camelcaseKeys(result, {
+                      deep: true,
+                    }))
                   }
 
                   return this.#execute(query)
@@ -131,9 +155,8 @@ function createDatabase<U extends Record<string, object>>(database: Database, mo
       }
     }
 
-    async #select<T extends CompiledQuery>(query: T) {
-      const result = await this.#database.select<InferResult<T>>(query.sql, query.parameters as unknown[])
-      return result.map(i => Object.fromEntries(Object.entries(i).map(([key, value]) => [camelCase(key), value]))) as InferResult<T>
+    #select<T extends CompiledQuery>(query: T) {
+      return this.#database.select<InferResult<T>>(query.sql, query.parameters as unknown[])
     }
   }
 
@@ -142,6 +165,9 @@ function createDatabase<U extends Record<string, object>>(database: Database, mo
 
 const database = await Database.load('sqlite:data.db')
 
+const program = new Program(kysely)
+
 export const db = createDatabase(database, {
-  program: new Program(kysely),
+  program,
+  activity: new Activity(kysely, program),
 })

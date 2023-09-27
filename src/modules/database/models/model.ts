@@ -1,3 +1,4 @@
+// import type { Insertable, Kysely, SelectQueryBuilder, Selectable, Updateable } from 'kysely'
 import type { Insertable, Kysely, Updateable } from 'kysely'
 import type { DB } from '../transform-types'
 
@@ -30,8 +31,17 @@ export class Model<T extends DB[TableName]> {
   }
 
   @get
+  protected selectByLooseType(value?: { id?: number }) {
+    let query = this.kysely.selectFrom(this.table).where('deletedAt', '=', 0)
+    if (value && value.id)
+      query = query.where('id', '=', value.id)
+
+    return query
+  }
+
+  @get
   select(value?: { id?: number }) {
-    let query = this.kysely.selectFrom(this.table)
+    let query = this.kysely.selectFrom(this.table).where('deletedAt', '=', 0)
     if (value && value.id)
       query = query.where('id', '=', value.id)
 
@@ -47,10 +57,13 @@ export function set(target, propertyKey, parameterIndex) {
   target[propertyKey].__setIndex = parameterIndex
 }
 
-export function injectModel<E, V>(options?: {
-  set(value: V): E
-  get(entity: E): V
-}) {
+export interface InjectModelOptions<E = any, V = any> {
+  set?: (value: V) => Partial<E>
+  get?: (entity: E) => Partial<V>
+  relation?: object
+}
+
+export function injectModel<E, V>(options?: InjectModelOptions<E, V>) {
   return (target) => {
     target.__transform = options
   }
