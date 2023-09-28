@@ -22,12 +22,10 @@ export class Activity extends Model<TransformActivity> {
 
   @get
   select(value?: { id?: number }) {
-    return super.select(value).select(
-      [
-        jsonObjectFrom(
-          this.program.select().whereRef('activity.programId', '=', 'program.id'),
-        ).as('program'),
-      ],
-    )
+    return this.selectByLooseType(value).select(
+      jsonObjectFrom(
+        this.program.select(),
+      ).as('program'),
+    ).selectAll(this.table)
   }
 }

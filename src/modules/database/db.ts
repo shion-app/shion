@@ -20,7 +20,6 @@ import camelcaseKeys from 'camelcase-keys'
 import type { DB } from './transform-types'
 import { Program } from './models/program'
 import { Activity } from './models/activity'
-import type { InjectModelOptions } from './models/model'
 
 type IsSelectQueryBuilder<T> = T extends SelectQueryBuilder<any, any, any> ? true : false
 
@@ -59,17 +58,13 @@ const enum SqliteError {
   SQLITE_CONSTRAINT_UNIQUE = 2067,
 }
 
-function transformResult(constructor: { __transform?: InjectModelOptions }, obj: object | object[]) {
+function transformResult(constructor, obj) {
   const { __transform } = constructor
   if (!__transform)
     return obj
-  if (__transform.get) {
-    if (Array.isArray(obj))
-      obj.forEach(i => Object.assign(i, __transform.get!(i)))
+  if (__transform.get)
+    Object.assign(obj, __transform.get(obj))
 
-    else
-      Object.assign(obj, __transform.get(obj))
-  }
   for (const key in __transform.relation) {
     obj[key] = JSON.parse(obj[key])
     transformResult(__transform.relation[key], obj[key])

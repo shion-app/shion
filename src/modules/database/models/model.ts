@@ -1,12 +1,7 @@
-// import type { Insertable, Kysely, SelectQueryBuilder, Selectable, Updateable } from 'kysely'
 import type { Insertable, Kysely, Updateable } from 'kysely'
 import type { DB } from '../transform-types'
 
 type TableName = keyof DB
-
-type FindKeys<T, U> = {
-  [K in keyof T]: T[K] extends U ? K : never;
-}[keyof T]
 
 export class Model<T extends DB[TableName]> {
   protected kysely: Kysely<DB>
@@ -32,20 +27,11 @@ export class Model<T extends DB[TableName]> {
 
   @get
   protected selectByLooseType(value?: { id?: number }) {
-    let query = this.kysely.selectFrom(this.table).where('deletedAt', '=', 0)
+    let query = this.kysely.selectFrom(this.table).where(`${this.table}.deletedAt`, '=', 0)
     if (value && value.id)
-      query = query.where('id', '=', value.id)
+      query = query.where(`${this.table}.id`, '=', value.id)
 
     return query
-  }
-
-  @get
-  select(value?: { id?: number }) {
-    let query = this.kysely.selectFrom(this.table).where('deletedAt', '=', 0)
-    if (value && value.id)
-      query = query.where('id', '=', value.id)
-
-    return query.selectAll(this.table as FindKeys<DB, T>)
   }
 }
 
@@ -57,13 +43,11 @@ export function set(target, propertyKey, parameterIndex) {
   target[propertyKey].__setIndex = parameterIndex
 }
 
-export interface InjectModelOptions<E = any, V = any> {
+export function injectModel<E, V>(options?: {
   set?: (value: V) => Partial<E>
   get?: (entity: E) => Partial<V>
-  relation?: object
-}
-
-export function injectModel<E, V>(options?: InjectModelOptions<E, V>) {
+  relation?: { [K in TableName]?: object }
+}) {
   return (target) => {
     target.__transform = options
   }
