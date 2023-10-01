@@ -4,7 +4,7 @@
 generator kysely {
   provider  = "prisma-kysely"
   camelCase = true
-  output = "../src/modules/database"
+  output    = "../src/modules/database"
 }
 
 datasource db {
@@ -13,13 +13,13 @@ datasource db {
 }
 
 model Plan {
-  id         Int      @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   name       String
   color      String
-  sort       Int
-  deleted_at Int      @default(0)
+  sort       Int     @default(0)
+  deleted_at Int     @default(0)
   labels     Label[]
-  records    Record[]
+  notes      Note[]
 
   @@unique([name, deleted_at])
   @@unique([color, deleted_at])
@@ -27,21 +27,21 @@ model Plan {
 }
 
 model Label {
-  id         Int      @id @default(autoincrement())
+  id         Int    @id @default(autoincrement())
   name       String
   color      String
-  sort       Int
+  sort       Int    @default(0)
   plan_id    Int
-  deleted_at Int      @default(0)
-  plan       Plan     @relation(fields: [plan_id], references: [id])
-  records    Record[]
+  deleted_at Int    @default(0)
+  plan       Plan   @relation(fields: [plan_id], references: [id])
+  notes      Note[]
 
   @@unique([name, deleted_at])
   @@unique([color, deleted_at])
   @@map("label")
 }
 
-model Record {
+model Note {
   id         Int   @id @default(autoincrement())
   start      Int
   end        Int
@@ -51,7 +51,7 @@ model Record {
   plan       Plan  @relation(fields: [plan_id], references: [id])
   label      Label @relation(fields: [label_id], references: [id])
 
-  @@map("record")
+  @@map("note")
 }
 
 model Program {
@@ -60,7 +60,7 @@ model Program {
   color      String
   path       String
   icon       String
-  sort       Int
+  sort       Int        @default(0)
   deleted_at Int        @default(0)
   activities Activity[]
 

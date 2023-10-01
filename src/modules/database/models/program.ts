@@ -1,4 +1,5 @@
 import { sql } from 'kysely'
+
 import type { Program as TransformProgram } from '../transform-types'
 import type { Program as OriginProgram } from '../types'
 import { Model, get, injectModel } from './model'
@@ -14,6 +15,15 @@ import { Model, get, injectModel } from './model'
 export class Program extends Model<TransformProgram> {
   table = 'program' as const
 
+  removeRelation(id: number) {
+    return sql`
+      BEGIN;
+      UPDATE program SET deleted_at = ${Date.now()} WHERE id = ${id};
+      UPDATE activity SET deleted_at = ${Date.now()} WHERE program_id = ${id};
+      COMMIT;
+    `
+  }
+
   @get
   select(value?: { id?: number }) {
     const query = this.selectByLooseType(value)
@@ -26,9 +36,9 @@ export class Program extends Model<TransformProgram> {
         'program.path',
         'program.sort',
         'program.deletedAt',
-        sql<number>`ifnull(sum(activity.end - activity.start), 0)`.as('totalTime'),
+        sql<number>`ifnull(sum(a.end - a.start), 0)`.as('totalTime'),
       ])
-      .leftJoin('activity', join => join.onRef('activity.programId', '=', 'program.id').on('activity.deletedAt', '=', 0))
+      .leftJoin('activity as a', join => join.onRef('a.programId', '=', 'program.id').on('a.deletedAt', '=', 0))
       .groupBy('program.id')
       .orderBy(['program.sort desc', 'program.id'])
   }

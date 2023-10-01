@@ -3,7 +3,7 @@ CREATE TABLE "plan" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
     "color" TEXT NOT NULL,
-    "sort" INTEGER NOT NULL,
+    "sort" INTEGER NOT NULL DEFAULT 0,
     "deleted_at" INTEGER NOT NULL DEFAULT 0
 );
 
@@ -12,22 +12,22 @@ CREATE TABLE "label" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
     "color" TEXT NOT NULL,
-    "sort" INTEGER NOT NULL,
+    "sort" INTEGER NOT NULL DEFAULT 0,
     "plan_id" INTEGER NOT NULL,
     "deleted_at" INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT "label_plan_id_fkey" FOREIGN KEY ("plan_id") REFERENCES "plan" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
-CREATE TABLE "record" (
+CREATE TABLE "note" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "start" INTEGER NOT NULL,
     "end" INTEGER NOT NULL,
     "plan_id" INTEGER NOT NULL,
     "label_id" INTEGER NOT NULL,
     "deleted_at" INTEGER NOT NULL DEFAULT 0,
-    CONSTRAINT "record_plan_id_fkey" FOREIGN KEY ("plan_id") REFERENCES "plan" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "record_label_id_fkey" FOREIGN KEY ("label_id") REFERENCES "label" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "note_plan_id_fkey" FOREIGN KEY ("plan_id") REFERENCES "plan" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "note_label_id_fkey" FOREIGN KEY ("label_id") REFERENCES "label" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -37,7 +37,7 @@ CREATE TABLE "program" (
     "color" TEXT NOT NULL,
     "path" TEXT NOT NULL,
     "icon" TEXT NOT NULL,
-    "sort" INTEGER NOT NULL,
+    "sort" INTEGER NOT NULL DEFAULT 0,
     "deleted_at" INTEGER NOT NULL DEFAULT 0
 );
 

@@ -14,17 +14,20 @@ import {
 import type { QueryResult } from 'tauri-plugin-sql-api'
 import Database from 'tauri-plugin-sql-api'
 import { camelCase } from 'camel-case'
+import camelcaseKeys from 'camelcase-keys'
 
 import { i18n } from '@locales/index'
-import camelcaseKeys from 'camelcase-keys'
 import type { DB } from './transform-types'
 import { Program } from './models/program'
 import { Activity } from './models/activity'
+import { Plan } from './models/plan'
+import { Label } from './models/label'
+import { Note } from './models/note'
 
 type IsSelectQueryBuilder<T> = T extends SelectQueryBuilder<any, any, any> ? true : false
 
 type IsQueryBuilder<T> = T extends {
-  compile(): any
+  compile(...args): any
 } ? true : false
 
 type Transform<T> =
@@ -36,7 +39,7 @@ type Transform<T> =
           ?
           Promise<IsSelectQueryBuilder<ReturnType<T[K]>> extends true
             ? InferResult<ReturnType<ReturnType<T[K]>['compile']>>
-            : Promise<QueryResult>>
+            : QueryResult>
           : never
       : T[K]
   }
@@ -73,7 +76,7 @@ function transformResult(constructor, obj) {
   return obj
 }
 
-function createDatabase<U extends Record<string, object>>(database: Database, models: U) {
+function createKyselyDatabase<U extends Record<string, object>>(database: Database, models: U) {
   class KyselyDatabase<M extends Record<string, object>> {
     #database: Database
 
@@ -161,8 +164,13 @@ function createDatabase<U extends Record<string, object>>(database: Database, mo
 const database = await Database.load('sqlite:data.db')
 
 const program = new Program(kysely)
+const plan = new Plan(kysely)
+const label = new Label(kysely)
 
-export const db = createDatabase(database, {
+export const db = createKyselyDatabase(database, {
   program,
   activity: new Activity(kysely, program),
+  plan,
+  label,
+  note: new Note(kysely, label, plan),
 })

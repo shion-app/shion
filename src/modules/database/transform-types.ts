@@ -1,7 +1,7 @@
 import type { ColumnType } from 'kysely'
 import type * as origin from './types'
 
-type Replace<T, U> = {
+type Replace<T, U extends { [K in keyof T]?: unknown }> = {
   [P in keyof T]: P extends keyof U ? U[P] : T[P];
 }
 
@@ -11,12 +11,16 @@ export type Program = Replace<origin.Program, { icon: number[] }> & { totalTime:
 
 export type Activity = origin.Activity & { program: ColumnType<Program, never, never> }
 
-export { Label, Plan, Record } from './types'
+export type Label = origin.Label & { totalTime: TotalTime }
+
+export type Plan = origin.Plan & { totalTime: TotalTime }
+
+export type Note = origin.Note & { plan: ColumnType<Plan, never, never>; label: ColumnType<Label, never, never> }
 
 export interface DB {
   activity: Activity
-  label: origin.Label
-  plan: origin.Plan
+  label: Label
+  plan: Plan
   program: Program
-  record: origin.Record
+  note: Note
 }

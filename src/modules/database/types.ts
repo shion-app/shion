@@ -15,15 +15,23 @@ export interface Label {
   id: Generated<number>
   name: string
   color: string
-  sort: number
+  sort: Generated<number>
   planId: number
+  deletedAt: Generated<number>
+}
+export interface Note {
+  id: Generated<number>
+  start: number
+  end: number
+  planId: number
+  labelId: number
   deletedAt: Generated<number>
 }
 export interface Plan {
   id: Generated<number>
   name: string
   color: string
-  sort: number
+  sort: Generated<number>
   deletedAt: Generated<number>
 }
 export interface Program {
@@ -32,21 +40,13 @@ export interface Program {
   color: string
   path: string
   icon: string
-  sort: number
-  deletedAt: Generated<number>
-}
-export interface Record {
-  id: Generated<number>
-  start: number
-  end: number
-  planId: number
-  labelId: number
+  sort: Generated<number>
   deletedAt: Generated<number>
 }
 export interface DB {
   activity: Activity
   label: Label
+  note: Note
   plan: Plan
   program: Program
-  record: Record
 }
