@@ -12,7 +12,7 @@ import {
   SqliteQueryCompiler,
 } from 'kysely'
 import type { QueryResult } from 'tauri-plugin-sql-api'
-import Database from 'tauri-plugin-sql-api'
+import type Database from 'tauri-plugin-sql-api'
 import { camelCase } from 'camel-case'
 import camelcaseKeys from 'camelcase-keys'
 
@@ -23,6 +23,7 @@ import { Activity } from './models/activity'
 import { Plan } from './models/plan'
 import { Label } from './models/label'
 import { Note } from './models/note'
+export type { QueryResult } from 'tauri-plugin-sql-api'
 
 type IsSelectQueryBuilder<T> = T extends SelectQueryBuilder<any, any, any> ? true : false
 
@@ -76,11 +77,11 @@ function transformResult(constructor, obj) {
   return obj
 }
 
-function createKyselyDatabase<U extends Record<string, object>>(database: Database, models: U) {
+function createKyselyDatabase<U extends Record<string, object>>(database: DatabaseExecutor, models: U) {
   class KyselyDatabase<M extends Record<string, object>> {
-    #database: Database
+    #database: DatabaseExecutor
 
-    constructor(database: Database, models: M) {
+    constructor(database: DatabaseExecutor, models: M) {
       this.#database = database
       for (const modelKey in models) {
         const obj = {
@@ -139,6 +140,8 @@ function createKyselyDatabase<U extends Record<string, object>>(database: Databa
 
     #parseError(e) {
       const match = /\(code: (\d+)\)/.exec(e)!
+      if (!match)
+        return e as string
       const code = +match[1]
       const message = this.#parseMessage(code, e)
       return message
@@ -161,16 +164,20 @@ function createKyselyDatabase<U extends Record<string, object>>(database: Databa
   return new KyselyDatabase(database, models) as KyselyDatabase<U> & { [K in keyof U]: Transform<U[K]> }
 }
 
-const database = await Database.load('sqlite:data.db')
-
 const program = new Program(kysely)
+const activity = new Activity(kysely, program)
 const plan = new Plan(kysely)
 const label = new Label(kysely)
+const note = new Note(kysely, label, plan)
 
-export const db = createKyselyDatabase(database, {
-  program,
-  activity: new Activity(kysely, program),
-  plan,
-  label,
-  note: new Note(kysely, label, plan),
-})
+export function createKyselyDatabaseWithModels(database: DatabaseExecutor) {
+  return createKyselyDatabase(database, {
+    program,
+    activity,
+    plan,
+    label,
+    note,
+  })
+}
+
+export type DatabaseExecutor = Pick<Database, 'execute' | 'select'>
