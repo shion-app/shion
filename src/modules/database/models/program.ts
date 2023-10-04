@@ -15,15 +15,6 @@ import { Model, get, injectModel } from './model'
 export class Program extends Model<TransformProgram> {
   table = 'program' as const
 
-  removeRelation(id: number) {
-    return sql`
-      BEGIN;
-      UPDATE program SET deleted_at = ${Date.now()} WHERE id = ${id};
-      UPDATE activity SET deleted_at = ${Date.now()} WHERE program_id = ${id};
-      COMMIT;
-    `
-  }
-
   @get
   select(value?: { id?: number }) {
     const query = this.selectByLooseType(value)

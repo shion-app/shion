@@ -13,11 +13,11 @@ import { Program } from './program'
 export class Activity extends Model<TransformActivity> {
   table = 'activity' as const
 
-  program: Program
+  #program: Program
 
   constructor(kysely: Kysely<DB>, program: Program) {
     super(kysely)
-    this.program = program
+    this.#program = program
   }
 
   @get
@@ -30,7 +30,7 @@ export class Activity extends Model<TransformActivity> {
 
     return query.select(
       jsonObjectFrom(
-        this.program.select().whereRef('activity.programId', '=', 'program.id'),
+        this.#program.select().whereRef('activity.programId', '=', 'program.id'),
       ).as('program'),
     ).selectAll(this.table)
   }

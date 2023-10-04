@@ -15,13 +15,13 @@ import { Plan } from './plan'
 export class Note extends Model<TransformNote> {
   table = 'note' as const
 
-  label: Label
-  plan: Plan
+  #label: Label
+  #plan: Plan
 
   constructor(kysely: Kysely<DB>, label: Label, plan: Plan) {
     super(kysely)
-    this.label = label
-    this.plan = plan
+    this.#label = label
+    this.#plan = plan
   }
 
   @get
@@ -39,10 +39,10 @@ export class Note extends Model<TransformNote> {
     return query.select(
       [
         jsonObjectFrom(
-          this.label.select().whereRef('note.labelId', '=', 'label.id'),
+          this.#label.select().whereRef('note.labelId', '=', 'label.id'),
         ).as('label'),
         jsonObjectFrom(
-          this.plan.select().whereRef('note.planId', '=', 'plan.id'),
+          this.#plan.select().whereRef('note.planId', '=', 'plan.id'),
         ).as('plan'),
       ],
     ).selectAll(this.table)

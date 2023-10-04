@@ -16,18 +16,12 @@ declare global {
   const computedWithControl: typeof import('@vueuse/core')['computedWithControl']
   const controlledComputed: typeof import('@vueuse/core')['controlledComputed']
   const controlledRef: typeof import('@vueuse/core')['controlledRef']
-  const create: typeof import('./database/request')['create']
-  const createActivity: typeof import('./database/request')['createActivity']
   const createApp: typeof import('vue')['createApp']
   const createEventHook: typeof import('@vueuse/core')['createEventHook']
   const createGlobalState: typeof import('@vueuse/core')['createGlobalState']
   const createIconBlob: typeof import('./utils/index')['createIconBlob']
   const createInjectionState: typeof import('@vueuse/core')['createInjectionState']
-  const createLabel: typeof import('./database/request')['createLabel']
-  const createNote: typeof import('./database/request')['createNote']
   const createPinia: typeof import('pinia')['createPinia']
-  const createPlan: typeof import('./database/request')['createPlan']
-  const createProgram: typeof import('./database/request')['createProgram']
   const createReactiveFn: typeof import('@vueuse/core')['createReactiveFn']
   const createReusableTemplate: typeof import('@vueuse/core')['createReusableTemplate']
   const createSharedComposable: typeof import('@vueuse/core')['createSharedComposable']
@@ -42,7 +36,6 @@ declare global {
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const effectScope: typeof import('vue')['effectScope']
   const excludeKeys: typeof import('./utils/index')['excludeKeys']
-  const execute: typeof import('./database/request')['execute']
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const extractTime: typeof import('./utils/index')['extractTime']
   const format: typeof import('./utils/index')['format']
@@ -108,23 +101,9 @@ declare global {
   const refDefault: typeof import('@vueuse/core')['refDefault']
   const refThrottled: typeof import('@vueuse/core')['refThrottled']
   const refWithControl: typeof import('@vueuse/core')['refWithControl']
-  const removeLabel: typeof import('./database/request')['removeLabel']
-  const removeNote: typeof import('./database/request')['removeNote']
-  const removePlan: typeof import('./database/request')['removePlan']
-  const removeProgram: typeof import('./database/request')['removeProgram']
-  const resetTableAutoIncrementId: typeof import('./database/request')['resetTableAutoIncrementId']
   const resolveComponent: typeof import('vue')['resolveComponent']
   const resolveRef: typeof import('@vueuse/core')['resolveRef']
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
-  const selectActivity: typeof import('./database/request')['selectActivity']
-  const selectLabel: typeof import('./database/request')['selectLabel']
-  const selectNote: typeof import('./database/request')['selectNote']
-  const selectNoteByLabelId: typeof import('./database/request')['selectNoteByLabelId']
-  const selectNoteByPlanId: typeof import('./database/request')['selectNoteByPlanId']
-  const selectPlan: typeof import('./database/request')['selectPlan']
-  const selectPlanById: typeof import('./database/request')['selectPlanById']
-  const selectProgram: typeof import('./database/request')['selectProgram']
-  const selectProgramById: typeof import('./database/request')['selectProgramById']
   const setActivePinia: typeof import('pinia')['setActivePinia']
   const setMapStoreSuffix: typeof import('pinia')['setMapStoreSuffix']
   const shallowReactive: typeof import('vue')['shallowReactive']
@@ -150,12 +129,6 @@ declare global {
   const unref: typeof import('vue')['unref']
   const unrefElement: typeof import('@vueuse/core')['unrefElement']
   const until: typeof import('@vueuse/core')['until']
-  const update: typeof import('./database/request')['update']
-  const updateActivity: typeof import('./database/request')['updateActivity']
-  const updateLabel: typeof import('./database/request')['updateLabel']
-  const updateNote: typeof import('./database/request')['updateNote']
-  const updatePlan: typeof import('./database/request')['updatePlan']
-  const updateProgram: typeof import('./database/request')['updateProgram']
   const useActiveElement: typeof import('@vueuse/core')['useActiveElement']
   const useActivity: typeof import('./stores/useActivity')['useActivity']
   const useAnimate: typeof import('@vueuse/core')['useAnimate']
@@ -363,18 +336,12 @@ declare module 'vue' {
     readonly computedWithControl: UnwrapRef<typeof import('@vueuse/core')['computedWithControl']>
     readonly controlledComputed: UnwrapRef<typeof import('@vueuse/core')['controlledComputed']>
     readonly controlledRef: UnwrapRef<typeof import('@vueuse/core')['controlledRef']>
-    readonly create: UnwrapRef<typeof import('./database/request')['create']>
-    readonly createActivity: UnwrapRef<typeof import('./database/request')['createActivity']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createEventHook: UnwrapRef<typeof import('@vueuse/core')['createEventHook']>
     readonly createGlobalState: UnwrapRef<typeof import('@vueuse/core')['createGlobalState']>
     readonly createIconBlob: UnwrapRef<typeof import('./utils/index')['createIconBlob']>
     readonly createInjectionState: UnwrapRef<typeof import('@vueuse/core')['createInjectionState']>
-    readonly createLabel: UnwrapRef<typeof import('./database/request')['createLabel']>
-    readonly createNote: UnwrapRef<typeof import('./database/request')['createNote']>
     readonly createPinia: UnwrapRef<typeof import('pinia')['createPinia']>
-    readonly createPlan: UnwrapRef<typeof import('./database/request')['createPlan']>
-    readonly createProgram: UnwrapRef<typeof import('./database/request')['createProgram']>
     readonly createReactiveFn: UnwrapRef<typeof import('@vueuse/core')['createReactiveFn']>
     readonly createReusableTemplate: UnwrapRef<typeof import('@vueuse/core')['createReusableTemplate']>
     readonly createSharedComposable: UnwrapRef<typeof import('@vueuse/core')['createSharedComposable']>
@@ -389,7 +356,6 @@ declare module 'vue' {
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly excludeKeys: UnwrapRef<typeof import('./utils/index')['excludeKeys']>
-    readonly execute: UnwrapRef<typeof import('./database/request')['execute']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly extractTime: UnwrapRef<typeof import('./utils/index')['extractTime']>
     readonly format: UnwrapRef<typeof import('./utils/index')['format']>
@@ -455,23 +421,9 @@ declare module 'vue' {
     readonly refDefault: UnwrapRef<typeof import('@vueuse/core')['refDefault']>
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
-    readonly removeLabel: UnwrapRef<typeof import('./database/request')['removeLabel']>
-    readonly removeNote: UnwrapRef<typeof import('./database/request')['removeNote']>
-    readonly removePlan: UnwrapRef<typeof import('./database/request')['removePlan']>
-    readonly removeProgram: UnwrapRef<typeof import('./database/request')['removeProgram']>
-    readonly resetTableAutoIncrementId: UnwrapRef<typeof import('./database/request')['resetTableAutoIncrementId']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
-    readonly selectActivity: UnwrapRef<typeof import('./database/request')['selectActivity']>
-    readonly selectLabel: UnwrapRef<typeof import('./database/request')['selectLabel']>
-    readonly selectNote: UnwrapRef<typeof import('./database/request')['selectNote']>
-    readonly selectNoteByLabelId: UnwrapRef<typeof import('./database/request')['selectNoteByLabelId']>
-    readonly selectNoteByPlanId: UnwrapRef<typeof import('./database/request')['selectNoteByPlanId']>
-    readonly selectPlan: UnwrapRef<typeof import('./database/request')['selectPlan']>
-    readonly selectPlanById: UnwrapRef<typeof import('./database/request')['selectPlanById']>
-    readonly selectProgram: UnwrapRef<typeof import('./database/request')['selectProgram']>
-    readonly selectProgramById: UnwrapRef<typeof import('./database/request')['selectProgramById']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
@@ -497,12 +449,6 @@ declare module 'vue' {
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly unrefElement: UnwrapRef<typeof import('@vueuse/core')['unrefElement']>
     readonly until: UnwrapRef<typeof import('@vueuse/core')['until']>
-    readonly update: UnwrapRef<typeof import('./database/request')['update']>
-    readonly updateActivity: UnwrapRef<typeof import('./database/request')['updateActivity']>
-    readonly updateLabel: UnwrapRef<typeof import('./database/request')['updateLabel']>
-    readonly updateNote: UnwrapRef<typeof import('./database/request')['updateNote']>
-    readonly updatePlan: UnwrapRef<typeof import('./database/request')['updatePlan']>
-    readonly updateProgram: UnwrapRef<typeof import('./database/request')['updateProgram']>
     readonly useActiveElement: UnwrapRef<typeof import('@vueuse/core')['useActiveElement']>
     readonly useActivity: UnwrapRef<typeof import('./stores/useActivity')['useActivity']>
     readonly useAnimate: UnwrapRef<typeof import('@vueuse/core')['useAnimate']>

@@ -5,15 +5,6 @@ import { Model, get } from './model'
 export class Label extends Model<TransformLabel> {
   table = 'label' as const
 
-  removeRelation(id: number) {
-    return sql`
-      BEGIN;
-      UPDATE label SET deleted_at = ${Date.now()} WHERE id = ${id};
-      UPDATE note SET deleted_at = ${Date.now()} WHERE plan_id = ${id};
-      COMMIT;
-    `
-  }
-
   @get
   select(value?: { id?: number }) {
     const query = this.selectByLooseType(value)

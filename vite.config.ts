@@ -1,6 +1,5 @@
 import { resolve } from 'node:path'
 
-import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import AutoImport from 'unplugin-auto-import/vite'
@@ -13,6 +12,7 @@ import Pages from 'vite-plugin-pages'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { AndDesignVueResolve, createStyleImportPlugin } from 'vite-plugin-style-import'
+import { defineConfig } from 'vitest/config'
 
 import minifyLocale from './plugins/minify-date-fns-locale'
 
@@ -21,7 +21,7 @@ import minifyLocale from './plugins/minify-date-fns-locale'
 //   process.env.TAURI_PLATFORM === "ios";
 
 // https://vitejs.dev/config/
-export default defineConfig(async () => ({
+export default defineConfig({
   plugins: [
     vue(),
     VueI18nPlugin({
@@ -93,4 +93,9 @@ export default defineConfig(async () => ({
     // produce sourcemaps for debug builds
     sourcemap: !!process.env.TAURI_DEBUG,
   },
-}))
+  test: {
+    coverage: {
+      reporter: ['html-spa'],
+    },
+  },
+})
