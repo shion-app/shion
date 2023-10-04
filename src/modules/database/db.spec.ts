@@ -39,6 +39,9 @@ const executor: DatabaseExecutor = {
       rowsAffected: changes,
     })
   },
+  handleError(e: InstanceType<Database.SqliteError>) {
+    return e.message
+  },
 }
 
 beforeAll(init)

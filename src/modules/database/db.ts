@@ -13,10 +13,8 @@ import {
 } from 'kysely'
 import type { QueryResult } from 'tauri-plugin-sql-api'
 import type Database from 'tauri-plugin-sql-api'
-import { camelCase } from 'camel-case'
 import camelcaseKeys from 'camelcase-keys'
 
-import { i18n } from '@locales/index'
 import type { DB } from './transform-types'
 import { Program } from './models/program'
 import { Activity } from './models/activity'
@@ -57,11 +55,6 @@ const kysely = new Kysely<DB>({
   ],
 })
 
-const enum SqliteError {
-  UNHANDLED = -1,
-  SQLITE_CONSTRAINT_UNIQUE = 2067,
-}
-
 function transformResult(constructor, obj) {
   const { __transform } = constructor
   if (!__transform)
@@ -77,12 +70,12 @@ function transformResult(constructor, obj) {
   return obj
 }
 
-function createKyselyDatabase<U extends Record<string, object>>(database: DatabaseExecutor, models: U) {
+function createKyselyDatabase<U extends Record<string, object>>(executor: DatabaseExecutor, models: U) {
   class KyselyDatabase<M extends Record<string, object>> {
-    #database: DatabaseExecutor
+    #executor: DatabaseExecutor
 
-    constructor(database: DatabaseExecutor, models: M) {
-      this.#database = database
+    constructor(executor: DatabaseExecutor, models: M) {
+      this.#executor = executor
       for (const modelKey in models) {
         const obj = {
           [modelKey]: new Proxy(models[modelKey], {
@@ -121,47 +114,21 @@ function createKyselyDatabase<U extends Record<string, object>>(database: Databa
       }
     }
 
-    #parseMessage(code: SqliteError, error: string) {
-      switch (code) {
-        case SqliteError.SQLITE_CONSTRAINT_UNIQUE: {
-          const match = /UNIQUE constraint failed:(.*)/.exec(error)!
-          const uniqueKeyList = match[1].split(',').map(i => i.trim().split('.')[1]).filter(i => i != 'deleted_at').map(i => camelCase(i))
-          // @ts-expect-error: Type instantiation is excessively deep and possibly infinite.ts(2589)
-          return i18n.global.t('error.unique', {
-            field: uniqueKeyList.join(', '),
-          })
-        }
-        default:
-          return i18n.global.t('error.unhandle', {
-            error,
-          })
-      }
-    }
-
-    #parseError(e) {
-      const match = /\(code: (\d+)\)/.exec(e)!
-      if (!match)
-        return e as string
-      const code = +match[1]
-      const message = this.#parseMessage(code, e)
-      return message
-    }
-
     async #execute<T extends CompiledQuery>(query: T) {
       try {
-        return await this.#database.execute(query.sql, query.parameters as unknown[])
+        return await this.#executor.execute(query.sql, query.parameters as unknown[])
       }
       catch (error) {
-        throw this.#parseError(error)
+        throw this.#executor.handleError(error)
       }
     }
 
     #select<T extends CompiledQuery>(query: T) {
-      return this.#database.select<InferResult<T>>(query.sql, query.parameters as unknown[])
+      return this.#executor.select<InferResult<T>>(query.sql, query.parameters as unknown[])
     }
   }
 
-  return new KyselyDatabase(database, models) as KyselyDatabase<U> & { [K in keyof U]: Transform<U[K]> }
+  return new KyselyDatabase(executor, models) as KyselyDatabase<U> & { [K in keyof U]: Transform<U[K]> }
 }
 
 const program = new Program(kysely)
@@ -170,8 +137,8 @@ const plan = new Plan(kysely)
 const label = new Label(kysely)
 const note = new Note(kysely, label, plan)
 
-export function createKyselyDatabaseWithModels(database: DatabaseExecutor) {
-  return createKyselyDatabase(database, {
+export function createKyselyDatabaseWithModels(executor: DatabaseExecutor) {
+  return createKyselyDatabase(executor, {
     program,
     activity,
     plan,
@@ -180,4 +147,6 @@ export function createKyselyDatabaseWithModels(database: DatabaseExecutor) {
   })
 }
 
-export type DatabaseExecutor = Pick<Database, 'execute' | 'select'>
+export type DatabaseExecutor = Pick<Database, 'execute' | 'select'> & {
+  handleError(err: unknown): string
+}
