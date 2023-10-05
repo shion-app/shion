@@ -95,7 +95,7 @@ export default defineConfig({
   },
   test: {
     coverage: {
-      reporter: ['html-spa'],
+      reporter: ['html-spa', 'json-summary'],
     },
   },
 })

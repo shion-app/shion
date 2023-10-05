@@ -5,6 +5,7 @@
 
 ![Tauri](https://img.shields.io/badge/tauri-%2324C8DB.svg?style=for-the-badge&logo=tauri&logoColor=%23FFFFFF)
 ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+![Statements](https://img.shields.io/badge/statements-98.55%25-brightgreen.svg?style=for-the-badge)
 
   <a href="./README.md">English</a>
   中文
