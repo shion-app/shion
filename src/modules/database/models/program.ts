@@ -15,6 +15,15 @@ import { Model, get, injectModel } from './model'
 export class Program extends Model<TransformProgram> {
   table = 'program' as const
 
+  removeRelation(id: number) {
+    return this.transaction().execute(async (trx) => {
+      await trx.program.remove(id)
+      await trx.activity.removeBy({
+        programId: id,
+      })
+    })
+  }
+
   @get
   select(value?: { id?: number }) {
     const query = this.selectByLooseType(value)

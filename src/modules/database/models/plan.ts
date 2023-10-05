@@ -5,6 +5,18 @@ import { Model, get } from './model'
 export class Plan extends Model<TransformPlan> {
   table = 'plan' as const
 
+  removeRelation(id: number) {
+    return this.transaction().execute(async (trx) => {
+      await trx.plan.remove(id)
+      await trx.label.removeBy({
+        planId: id,
+      })
+      await trx.note.removeBy({
+        planId: id,
+      })
+    })
+  }
+
   @get
   select(value?: { id?: number }) {
     const query = this.selectByLooseType(value)

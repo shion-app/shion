@@ -5,6 +5,25 @@ import { Model, get } from './model'
 export class Label extends Model<TransformLabel> {
   table = 'label' as const
 
+  removeRelation(id: number) {
+    return this.transaction().execute(async (trx) => {
+      await trx.label.remove(id)
+      await trx.note.removeBy({
+        labelId: id,
+      })
+    })
+  }
+
+  removeBy(value: { planId?: number }) {
+    let query = this.kysely.updateTable(this.table).set({
+      deletedAt: Date.now(),
+    })
+    if (value.planId)
+      query = query.where('planId', '=', value.planId)
+
+    return query
+  }
+
   @get
   select(value?: { id?: number }) {
     const query = this.selectByLooseType(value)

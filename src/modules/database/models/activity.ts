@@ -20,6 +20,16 @@ export class Activity extends Model<TransformActivity> {
     this.#program = program
   }
 
+  removeBy(value: { programId?: number }) {
+    let query = this.kysely.updateTable(this.table).set({
+      deletedAt: Date.now(),
+    })
+    if (value.programId)
+      query = query.where('programId', '=', value.programId)
+
+    return query
+  }
+
   @get
   select(value?: { id?: number; start?: number; end?: number }) {
     let query = this.selectByLooseType(value)

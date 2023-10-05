@@ -24,6 +24,18 @@ export class Note extends Model<TransformNote> {
     this.#plan = plan
   }
 
+  removeBy(value: { planId?: number; labelId?: number }) {
+    let query = this.kysely.updateTable(this.table).set({
+      deletedAt: Date.now(),
+    })
+    if (value.planId)
+      query = query.where('planId', '=', value.planId)
+    if (value.labelId)
+      query = query.where('labelId', '=', value.labelId)
+
+    return query
+  }
+
   @get
   select(value?: { id?: number; start?: number; end?: number; planId?: number; labelId?: number }) {
     let query = this.selectByLooseType(value)

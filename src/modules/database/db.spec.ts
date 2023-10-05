@@ -164,6 +164,13 @@ describe('plan', () => {
       ]
     `)
   })
+
+  it('remove relation', async () => {
+    await db.plan.removeRelation(1)
+    expect((await db.plan.select()).length).toBe(0)
+    expect((await db.label.select()).length).toBe(0)
+    expect((await db.note.select()).length).toBe(0)
+  })
 })
 
 describe('label', () => {
@@ -195,6 +202,12 @@ describe('label', () => {
         },
       ]
     `)
+  })
+
+  it('remove relation', async () => {
+    await db.label.removeRelation(1)
+    expect((await db.label.select()).length).toBe(1)
+    expect((await db.note.select()).length).toBe(0)
   })
 })
 
@@ -291,6 +304,12 @@ describe('program', () => {
         },
       ]
     `)
+  })
+
+  it('remove relation', async () => {
+    await db.program.removeRelation(1)
+    expect((await db.program.select()).length).toBe(0)
+    expect((await db.activity.select()).length).toBe(0)
   })
 })
 
