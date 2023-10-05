@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
 
 import Database from 'better-sqlite3'
-import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import { createKyselyDatabaseWithModels } from './db'
 import type { DatabaseExecutor, QueryResult } from './db'
@@ -39,12 +39,12 @@ const executor: DatabaseExecutor = {
       rowsAffected: changes,
     })
   },
-  handleError(e: InstanceType<Database.SqliteError>) {
-    return e.message
+  handleError(e: InstanceType<Database.SqliteError> | string) {
+    return typeof e == 'string' ? e : e.message
   },
 }
 
-beforeAll(init)
+beforeEach(reset)
 
 const db = createKyselyDatabaseWithModels(executor)
 
@@ -62,7 +62,11 @@ describe('model', () => {
   })
 
   it('update', async () => {
-    await db.plan.update(1, {
+    const { lastInsertId } = await db.plan.insert({
+      name: 'plan1',
+      color: '#ffffff',
+    })
+    await db.plan.update(lastInsertId, {
       name: 'plan2',
     })
     const [plan] = await db.plan.select({
@@ -72,7 +76,11 @@ describe('model', () => {
   })
 
   it('remove', async () => {
-    await db.plan.remove(1)
+    const { lastInsertId } = await db.plan.insert({
+      name: 'plan1',
+      color: '#ffffff',
+    })
+    await db.plan.remove(lastInsertId)
     const list = await db.plan.select()
     expect(list.length).toBe(0)
   })
@@ -145,10 +153,7 @@ async function createActivityData() {
 }
 
 describe('plan', () => {
-  beforeEach(async () => {
-    reset()
-    await createNoteData()
-  })
+  beforeEach(createNoteData)
 
   it('select all', async () => {
     expect(await db.plan.select()).toMatchInlineSnapshot(`
@@ -174,10 +179,7 @@ describe('plan', () => {
 })
 
 describe('label', () => {
-  beforeEach(async () => {
-    reset()
-    await createNoteData()
-  })
+  beforeEach(createNoteData)
 
   it('select all', async () => {
     expect(await db.label.select()).toMatchInlineSnapshot(`
@@ -212,10 +214,7 @@ describe('label', () => {
 })
 
 describe('note', () => {
-  beforeEach(async () => {
-    reset()
-    await createNoteData()
-  })
+  beforeEach(createNoteData)
 
   it('select by start and end', async () => {
     expect(await db.note.select({
@@ -276,13 +275,19 @@ describe('note', () => {
       ]
     `)
   })
+
+  it('select by planId or labelId', async () => {
+    expect((await db.note.select({
+      planId: 1,
+    })).length).toBe(2)
+    expect((await db.note.select({
+      labelId: 2,
+    })).length).toBe(0)
+  })
 })
 
 describe('program', () => {
-  beforeEach(async () => {
-    reset()
-    await createActivityData()
-  })
+  beforeEach(createActivityData)
 
   it('select all', async () => {
     expect(await db.program.select()).toMatchInlineSnapshot(`
@@ -314,10 +319,7 @@ describe('program', () => {
 })
 
 describe('activity', () => {
-  beforeEach(async () => {
-    reset()
-    await createActivityData()
-  })
+  beforeEach(createActivityData)
 
   it('select by start and end', async () => {
     expect(await db.activity.select({
@@ -372,4 +374,19 @@ describe('activity', () => {
       ]
     `)
   })
+})
+
+describe('rest', () => {
+  it('property', () => {
+    expect(db.activity.table).toBe('activity')
+  })
+
+  // TODO: test case
+  // it('rollback', () => {
+
+  // })
+
+  // it('error message', () => {
+
+  // })
 })
