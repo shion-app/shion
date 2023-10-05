@@ -24,9 +24,10 @@ import { Note } from './models/note'
 export type { QueryResult } from 'tauri-plugin-sql-api'
 
 type IsSelectQueryBuilder<T> = T extends SelectQueryBuilder<any, any, any> ? true : false
+type IsTransactionQueryBuilder<T> = T extends TransactionQueryBuilder<any, any> ? true : false
 
 type IsQueryBuilder<T> = T extends {
-  compile(...args): any
+  compile(): any
 } ? true : false
 
 type Transform<T> =
@@ -36,9 +37,13 @@ type Transform<T> =
       ? (...args: Parameters<T[K]>) =>
         IsQueryBuilder<ReturnType<T[K]>> extends true
           ?
-          Promise<IsSelectQueryBuilder<ReturnType<T[K]>> extends true
-            ? InferResult<ReturnType<ReturnType<T[K]>['compile']>>
-            : QueryResult>
+          Promise<
+            IsSelectQueryBuilder<ReturnType<T[K]>> extends true
+              ? InferResult<ReturnType<ReturnType<T[K]>['compile']>>
+              : IsTransactionQueryBuilder<ReturnType<T[K]>> extends true
+                ? Awaited<ReturnType<ReturnType<ReturnType<T[K]>['compile']>>>
+                : QueryResult
+            >
           : never
       : T[K]
   }
@@ -88,9 +93,14 @@ function createKyselyDatabase<U extends Record<string, object>>(executor: Databa
                   if (__transform && __transform.set && typeof __setIndex == 'number')
                     Object.assign(args[__setIndex], __transform.set(args[__setIndex]))
 
-                  const query = fn.apply(target, args).compile()
+                  const query = fn.apply(target, args)
+                  const CompiledQuery = query.compile()
+
+                  if (query instanceof TransactionQueryBuilder)
+                    return this.#executeTransaction(CompiledQuery as any)
+
                   if (__getFlag) {
-                    return this.#select(query).then((result) => {
+                    return this.#select(CompiledQuery).then((result) => {
                       if (__transform)
                         return (result as object[]).map(i => transformResult(target.constructor as any, i))
 
@@ -101,7 +111,7 @@ function createKyselyDatabase<U extends Record<string, object>>(executor: Databa
                     }))
                   }
 
-                  return this.#execute(query)
+                  return this.#execute(CompiledQuery)
                 }
               }
               else {
@@ -126,9 +136,35 @@ function createKyselyDatabase<U extends Record<string, object>>(executor: Databa
     #select<T extends CompiledQuery>(query: T) {
       return this.#executor.select<InferResult<T>>(query.sql, query.parameters as unknown[])
     }
-  }
 
-  return new KyselyDatabase(executor, models) as KyselyDatabase<U> & { [K in keyof U]: Transform<U[K]> }
+    async #executeTransaction(callback: (trx) => Promise<unknown>) {
+      try {
+        await this.#executor.execute('begin')
+        const result = await callback(this)
+        await this.#executor.execute('commit')
+        return result
+      }
+      catch (error) {
+        await this.#executor.execute('rollback')
+        throw this.#executor.handleError(error)
+      }
+    }
+  }
+  return new KyselyDatabase(executor, models) as KyselyDatabase<U> & Executor<U>
+}
+
+export class TransactionBuilder<T> {
+  execute<U>(callback: (trx: T) => Promise<U>) {
+    return new TransactionQueryBuilder<T, U>(callback)
+  }
+}
+
+export class TransactionQueryBuilder<T, U> {
+  constructor(private callback: (trx: T) => Promise<U>) {}
+
+  compile() {
+    return this.callback
+  }
 }
 
 const program = new Program(kysely)
@@ -136,15 +172,18 @@ const activity = new Activity(kysely, program)
 const plan = new Plan(kysely)
 const label = new Label(kysely)
 const note = new Note(kysely, label, plan)
+const models = {
+  program,
+  activity,
+  plan,
+  label,
+  note,
+}
+
+export type Executor<U = typeof models> = { [K in keyof U]: Transform<U[K]> }
 
 export function createKyselyDatabaseWithModels(executor: DatabaseExecutor) {
-  return createKyselyDatabase(executor, {
-    program,
-    activity,
-    plan,
-    label,
-    note,
-  })
+  return createKyselyDatabase(executor, models)
 }
 
 export type DatabaseExecutor = Pick<Database, 'execute' | 'select'> & {

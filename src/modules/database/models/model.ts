@@ -1,5 +1,7 @@
 import type { Insertable, Kysely, Updateable } from 'kysely'
 import type { DB } from '../transform-types'
+import type { Executor } from '../db'
+import { TransactionBuilder } from '../db'
 
 type TableName = keyof DB
 
@@ -9,6 +11,10 @@ export class Model<T extends DB[TableName]> {
 
   constructor(kysely: Kysely<DB>) {
     this.kysely = kysely
+  }
+
+  protected transaction() {
+    return new TransactionBuilder<Executor>()
   }
 
   insert(@set value: Insertable<T>) {
