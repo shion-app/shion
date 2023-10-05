@@ -50,7 +50,7 @@ export function set(target, propertyKey, parameterIndex) {
 }
 
 export function injectModel<E, V>(options?: {
-  set?: (value: V) => Partial<E>
+  set?: (value: Partial<V>) => Partial<E>
   get?: (entity: E) => Partial<V>
   relation?: { [K in TableName]?: object }
 }) {

@@ -6,7 +6,7 @@ import { Model, get, injectModel } from './model'
 
 @injectModel<OriginProgram, TransformProgram>({
   set: v => ({
-    icon: v.icon.join(','),
+    icon: v.icon?.join(','),
   }),
   get: e => ({
     icon: e.icon.split(',').map(Number),
