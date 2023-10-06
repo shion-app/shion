@@ -2,11 +2,11 @@
 import { message } from 'ant-design-vue'
 import { RangePicker } from 'ant-design-vue/es/date-picker/date-fns'
 
-import type { Note } from '@interfaces/index'
+import { type SelectNote, db } from '@modules/database'
 
 const props = defineProps<{
   visible: boolean
-  model: Note
+  model: SelectNote
 }>()
 
 const emit = defineEmits(['refresh', 'update:visible'])
@@ -17,18 +17,18 @@ const { close } = useFormDialog(visibleVModel, vModel)
 
 const range = computed<[Date, Date]>({
   get() {
-    return [new Date(vModel.value.startTime), new Date(vModel.value.endTime)]
+    return [new Date(vModel.value.start), new Date(vModel.value.end)]
   },
   set([a, b]) {
-    vModel.value.startTime = a.getTime()
-    vModel.value.endTime = b.getTime()
+    vModel.value.start = a.getTime()
+    vModel.value.end = b.getTime()
   },
 })
 
 async function finish() {
-  const { startTime, endTime, description, id } = vModel.value
+  const { start, end, id } = vModel.value
   try {
-    await updateNote(id, { startTime, endTime, description })
+    await db.note.update(id, { start, end })
   }
   catch (error) {
     message.error(error as string)
@@ -50,9 +50,6 @@ async function finish() {
           :show-time="{ format: 'HH:mm' }"
           format="YYYY-MM-DD HH:mm"
         />
-      </a-form-item>
-      <a-form-item :label="$t('note.update.description')">
-        <a-textarea v-model:value="vModel.description" :auto-size="{ minRows: 2, maxRows: 5 }" />
       </a-form-item>
     </modal-form>
   </a-modal>

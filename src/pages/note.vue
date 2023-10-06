@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Note } from '@interfaces/index'
 import { Modal, message } from 'ant-design-vue'
-
 import { getDate, getMonth, getYear, isSameDay } from 'date-fns'
+
+import { type SelectNote, db } from '@modules/database'
 
 const { query } = useRoute()
 const { t } = useI18n()
@@ -14,30 +14,30 @@ const noteRange = {
   end: 0,
 }
 
-const noteList = ref<Array<Note>>([])
+const noteList = ref<Array<SelectNote>>([])
 const noteUpdateVisible = ref(false)
-const noteModel = ref({} as Note)
+const noteModel = ref({} as SelectNote)
 
 const calendarData = computed(() => {
   const map = new Map<string, {
     total: number
     colors: string[]
   }>()
-  noteList.value.forEach(({ startTime, endTime, label }) => {
-    const year = getYear(startTime)
-    const month = getMonth(startTime)
-    const date = getDate(startTime)
+  noteList.value.forEach(({ start, end, label }) => {
+    const year = getYear(start)
+    const month = getMonth(start)
+    const date = getDate(start)
     const time = `${year}-${month}-${date}`
     if (map.has(time)) {
       const { total, colors } = map.get(time)!
       map.set(time, {
-        total: total + endTime - startTime,
+        total: total + end - start,
         colors: [...new Set([...colors, label.color])],
       })
     }
     else {
       map.set(time, {
-        total: endTime - startTime,
+        total: end - start,
         colors: [label.color],
       })
     }
@@ -45,12 +45,12 @@ const calendarData = computed(() => {
   return map
 })
 const noteGroupList = computed(() => {
-  const list: Array<Array<Note>> = []
-  let group: Array<Note> = []
+  const list: Array<Array<SelectNote>> = []
+  let group: Array<SelectNote> = []
   for (const note of noteList.value) {
     if (group.length) {
       const last = group.at(-1)!
-      if (format(last.startTime, 'yyyy-MM-dd') == format(note.startTime, 'yyyy-MM-dd')) {
+      if (format(last.start, 'yyyy-MM-dd') == format(note.start, 'yyyy-MM-dd')) {
         group.push(note)
       }
       else {
@@ -69,10 +69,20 @@ const noteGroupList = computed(() => {
 const noteRef = useTemplateRefsList<HTMLElement>()
 
 async function refresh(start: number, end: number) {
-  if (planId !== undefined)
-    noteList.value = await selectNoteByPlanId(Number(planId), start, end)
-  if (labelId !== undefined)
-    noteList.value = await selectNoteByLabelId(Number(labelId), start, end)
+  if (planId !== undefined) {
+    noteList.value = await db.note.select({
+      start,
+      end,
+      planId: Number(planId),
+    })
+  }
+  if (labelId !== undefined) {
+    noteList.value = await db.note.select({
+      start,
+      end,
+      labelId: Number(labelId),
+    })
+  }
 }
 
 function handleRefresh(range: Array<number>) {
@@ -116,22 +126,22 @@ function slide(time: Date) {
   }
 }
 
-function getNote(list: Array<Note>) {
+function getNote(list: Array<SelectNote>) {
   return list[0]
 }
 
-function handleRemove(note: Note) {
+function handleRemove(note: SelectNote) {
   Modal.confirm({
     title: t('modal.confirmDelete'),
     async onOk() {
-      await removeNote(note.id)
+      await db.note.remove(note.id)
       message.success(t('message.success'))
       refresh(noteRange.start, noteRange.end)
     },
   })
 }
 
-function handleUpdate(note: Note) {
+function handleUpdate(note: SelectNote) {
   noteUpdateVisible.value = true
   Object.assign(noteModel.value, note)
 }
@@ -153,15 +163,15 @@ watchOnce(noteList, () => {
         <div
           v-for="group in noteGroupList" :key="group.map(i => i.id).join('-')"
           :ref="noteRef.set"
-          :data-year="getYear(getNote(group).startTime)"
-          :data-month="getMonth(getNote(group).startTime)"
-          :data-date="getDate(getNote(group).startTime)"
+          :data-year="getYear(getNote(group).start)"
+          :data-month="getMonth(getNote(group).start)"
+          :data-date="getDate(getNote(group).start)"
           p-4 bg-white rounded-4 space-y-2
         >
           <div flex items-center>
             <div i-mdi:calendar-text text-6 mr-2 />
             <div text-5>
-              {{ format(getNote(group).startTime, 'yyyy-MM-dd') }}
+              {{ format(getNote(group).start, 'yyyy-MM-dd') }}
             </div>
           </div>
           <div v-for="note in group" :key="note.id" flex class="group">
@@ -174,9 +184,8 @@ watchOnce(noteList, () => {
               <div>
                 {{ note.label.name }}
               </div>
-              <div>{{ format(note.startTime, 'HH : mm') }} - {{ format(note.endTime, 'HH : mm') }}</div>
-              <div>{{ spendTime(note.startTime, note.endTime) }}</div>
-              <div>{{ note.description }}</div>
+              <div>{{ format(note.start, 'HH : mm') }} - {{ format(note.end, 'HH : mm') }}</div>
+              <div>{{ spendTime(note.start, note.end) }}</div>
             </div>
             <div flex-1 />
             <div flex op-0 group-hover-op-100 transition-opacity-400 space-x-2 items-end>

@@ -35,7 +35,7 @@ export default defineConfig({
         'vue-router',
         'pinia',
       ],
-      dirs: ['./src/hooks/**', './src/database/**', './src/stores/**', './src/utils/**'],
+      dirs: ['./src/hooks/**', './src/stores/**', './src/utils/**'],
       vueTemplate: true,
       dts: 'src/auto-imports.d.ts',
     }),
@@ -49,7 +49,9 @@ export default defineConfig({
       dts: 'src/components.d.ts',
     }),
     Pages(),
-    tsconfigPaths(),
+    tsconfigPaths({
+      loose: true,
+    }),
     visualizer({
       filename: '.visualizer/index.html',
     }),

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { Plan } from '@interfaces/index'
 import { Modal, message } from 'ant-design-vue'
+import type { SelectPlan } from '@modules/database'
+import { db } from '@modules/database'
 
 const { setMenu } = useMore()
 const { t } = useI18n()
@@ -11,24 +12,24 @@ const planUpdateVisible = ref(false)
 const planCreateModel = ref({
   name: '',
   color: randomColor(),
-} as Plan)
-const planUpdateModel = ref({} as Plan)
-const list = ref<Array<Plan>>([])
+} as SelectPlan)
+const planUpdateModel = ref({} as SelectPlan)
+const list = ref<Array<SelectPlan>>([])
 
 async function refresh() {
-  list.value = await selectPlan()
+  list.value = await db.plan.select()
 }
 
-function handleUpdate(plan: Plan) {
+function handleUpdate(plan: SelectPlan) {
   planUpdateVisible.value = true
   Object.assign(planUpdateModel.value, plan)
 }
 
-function handleRemove(plan: Plan) {
+function handleRemove(plan: SelectPlan) {
   Modal.confirm({
     title: t('modal.confirmDelete'),
     async onOk() {
-      await removePlan(plan.id)
+      await db.plan.removeRelation(plan.id)
       message.success(t('message.success'))
       refresh()
     },

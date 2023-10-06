@@ -39,7 +39,6 @@ note:
   update:
     title: Update Note
     timeRange: Time range
-    description: Description
 modal:
   submit: Submit
   cancel: Cancel
@@ -75,7 +74,7 @@ monitor:
   switchWindowTip: Switch to another application window to get data
 program:
   update: Update program
-  description: Name
+  name: Name
   color: Color
 activity:
   idle: Idle

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { message } from 'ant-design-vue'
 
-import type { Program } from '@interfaces/index'
+import type { SelectProgram } from '@modules/database'
+import { db } from '@modules/database'
 
 const props = defineProps<{
   visible: boolean
-  model: Program
+  model: SelectProgram
 }>()
 
 const emit = defineEmits(['refresh', 'update:visible'])
@@ -15,9 +16,9 @@ const { t } = useI18n()
 const { close } = useFormDialog(visibleVModel, vModel)
 
 function update() {
-  const { description, id, color } = vModel.value
-  return updateProgram(id, {
-    description,
+  const { name, id, color } = vModel.value
+  return db.program.update(id, {
+    name,
     color,
   })
 }
@@ -39,8 +40,8 @@ async function finish() {
 <template>
   <a-modal v-model:visible="visibleVModel" :title="$t('program.update')" :footer="null">
     <modal-form v-model:model="vModel" @finish="finish" @cancel="close">
-      <a-form-item name="description" :label="$t('program.description')" :rules="[{ required: true }]">
-        <a-input v-model:value="vModel.description" />
+      <a-form-item name="name" :label="$t('program.name')" :rules="[{ required: true }]">
+        <a-input v-model:value="vModel.name" />
       </a-form-item>
       <a-form-item name="color" :label="$t('program.color')" :rules="[{ required: true }]">
         <input v-model="vModel.color" type="color">

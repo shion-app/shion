@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SelectProps } from 'ant-design-vue'
+import { db } from '@modules/database'
 
 const props = defineProps<{
   visible: boolean
@@ -31,7 +32,7 @@ const planOptions = ref<SelectProps['options']>([])
 const labelOptions = ref<SelectProps['options']>([])
 
 async function init() {
-  const plan = await selectPlan()
+  const plan = await db.plan.select()
   planOptions.value = plan.map(({ id, name }) => ({
     label: name,
     value: id,
@@ -42,9 +43,9 @@ async function finish() {
   const now = Date.now()
   const { planId, labelId, countdown, time } = model.value
 
-  const { lastInsertId: noteId } = await createNote({
-    startTime: now,
-    endTime: now,
+  const { lastInsertId: noteId } = await db.note.insert({
+    start: now,
+    end: now,
     planId: planId!,
     labelId: labelId!,
   })
@@ -68,7 +69,7 @@ watch(() => props.form, (v) => {
 })
 
 watch(() => model.value.planId, async (v) => {
-  const label = await selectLabel()
+  const label = await db.label.select()
   labelOptions.value = label.filter(i => i.planId == v).map(({ id, name }) => ({
     label: name,
     value: id,

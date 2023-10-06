@@ -88,7 +88,7 @@ unsafe extern "system" fn handle_event(
 
     let program = Program {
         path,
-        description,
+        name: description,
         icon: buffer,
     };
 

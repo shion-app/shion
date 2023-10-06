@@ -16,7 +16,8 @@
     "paths": {
       "@locales/*": ["src/locales/*"],
       "@interfaces/*": ["src/interfaces/*"],
-      "@assets/*": ["src/assets/*"]
+      "@assets/*": ["src/assets/*"],
+      "@modules/*": ["src/modules/*"]
     }
   },
   "include": [

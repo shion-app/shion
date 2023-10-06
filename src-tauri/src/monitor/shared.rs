@@ -4,7 +4,7 @@ use serde::Serialize;
 #[derive(Debug, Clone, Serialize)]
 pub struct Program {
     pub path: String,
-    pub description: String,
+    pub name: String,
     pub icon: Vec<u8>,
 }
 

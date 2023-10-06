@@ -1,6 +1,6 @@
 export interface Program {
   path: string
-  description: string
+  name: string
   icon: number[]
 }
 

@@ -3,10 +3,11 @@ import { endOfDay, subDays } from 'date-fns'
 import { appWindow } from '@tauri-apps/api/window'
 import { TauriEvent } from '@tauri-apps/api/event'
 
-import type { Activity, Note } from '@interfaces/index'
+import { type SelectActivity, type SelectNote } from '@modules/database'
+import { db } from '@modules/database'
 
-const noteList = ref<Array<Note>>([])
-const activityList = ref<Array<Activity>>([])
+const noteList = ref<Array<SelectNote>>([])
+const activityList = ref<Array<SelectActivity>>([])
 const range = ref<'month' | 'week'>('week')
 const mode = ref<'plan' | 'label'>('plan')
 const unit = ref<'date' | 'hour'>('date')
@@ -28,12 +29,16 @@ function transformDayToRange(day: number, date = new Date()) {
 
 async function refreshNote() {
   const [start, end] = transformDayToRange(day.value)
-  noteList.value = await selectNote(start, end)
+  noteList.value = await db.note.select({
+    start, end,
+  })
 }
 
 async function refreshActivity() {
   const [start, end] = transformDayToRange(day.value)
-  activityList.value = await selectActivity(start, end)
+  activityList.value = await db.activity.select({
+    start, end,
+  })
 }
 
 function returnPrev() {

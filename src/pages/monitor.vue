@@ -2,7 +2,7 @@
 import { Modal, message } from 'ant-design-vue'
 
 import type * as backend from '@interfaces/backend'
-import type { Program } from '@interfaces/database'
+import { type SelectProgram, db } from '@modules/database'
 
 const store = useMonitor()
 const { setMenu } = useMore()
@@ -14,17 +14,17 @@ const { filtering, filterList, whiteList } = storeToRefs(store)
 
 const formVisible = ref(false)
 const formModel = ref({
-  description: '',
+  name: '',
   color: randomColor(),
-} as Program)
+} as SelectProgram)
 
 async function handleCreateProgram(program: backend.Program) {
-  const { description, path, icon } = program
+  const { name, path, icon } = program
   const color = randomColor()
   const index = filterList.value.findIndex(i => i.path == path)
   filterList.value.splice(index, 1)
-  await createProgram({
-    description,
+  await db.program.insert({
+    name,
     path,
     icon,
     color,
@@ -38,18 +38,18 @@ async function handleSelect() {
   message.success(t('message.success'))
 }
 
-async function handleRemove(program: Program) {
+async function handleRemove(program: SelectProgram) {
   Modal.confirm({
     title: t('modal.confirmDelete'),
     async onOk() {
-      await removeProgram(program.id)
+      await db.program.removeRelation(program.id)
       await refresh()
       message.success(t('message.success'))
     },
   })
 }
 
-function handleUpdate(program: Program) {
+function handleUpdate(program: SelectProgram) {
   formVisible.value = true
   Object.assign(formModel.value, program)
 }
@@ -83,7 +83,7 @@ refresh()
         <div flex-1 min-w-0 space-y-2>
           <div flex justify-between>
             <div :title="program.path">
-              {{ program.description }}
+              {{ program.name }}
             </div>
             <div
               w-3 h-3 rounded-full mr-1
@@ -136,7 +136,7 @@ refresh()
             <img :src="getIconUrl(program.path)" width="32" height="32" object-contain>
             <div flex-1 min-w-0>
               <div>
-                {{ program.description }}
+                {{ program.name }}
               </div>
               <div truncate :title="program.path">
                 {{ program.path }}

@@ -2,11 +2,11 @@
 import type { EChartsOption } from 'echarts'
 import { addDays, isAfter, isSameDay, isSameHour, startOfDay, startOfHour, subDays } from 'date-fns'
 
-import type { Activity, Note } from '@interfaces/index'
+import type { SelectActivity, SelectNote } from '@modules/database'
 
 const props = defineProps<{
-  noteList: Array<Note>
-  activityList: Array<Activity>
+  noteList: Array<SelectNote>
+  activityList: Array<SelectActivity>
   day: number
   mode: 'plan' | 'label'
   unit: 'date' | 'hour'
@@ -25,28 +25,28 @@ const TITLE_HEIGHT = 30
 const LEGEND_MARGIN_BOTTOM = 10
 
 interface TimeRange {
-  startTime: number
-  endTime: number
+  start: number
+  end: number
 }
 
 function splitByDay<T extends TimeRange>(list: T[], range: [Date, Date]) {
   return list.flatMap((data) => {
-    const { startTime, endTime } = data
+    const { start, end } = data
     const [startDate, endDate] = range
-    let start = isAfter(startTime, startDate) ? new Date(startTime) : startDate
-    const timeList: Array<number> = [start.getTime()]
-    start = startOfDay(addDays(start, 1))
-    while (isAfter(endTime, start)) {
-      timeList.push(start.getTime())
-      start = addDays(start, 1)
+    let _start = isAfter(start, startDate) ? new Date(start) : startDate
+    const timeList: Array<number> = [_start.getTime()]
+    _start = startOfDay(addDays(_start, 1))
+    while (isAfter(end, _start)) {
+      timeList.push(_start.getTime())
+      _start = addDays(_start, 1)
     }
 
-    timeList.push(isAfter(endDate, endTime) ? endTime : endDate.getTime())
+    timeList.push(isAfter(endDate, end) ? end : endDate.getTime())
     const result: T[] = []
     for (let i = 0; i < timeList.length - 1; i++) {
       result.push(Object.assign({}, data, {
-        startTime: timeList[i],
-        endTime: timeList[i + 1],
+        start: timeList[i],
+        end: timeList[i + 1],
       }))
     }
     return result
@@ -55,25 +55,25 @@ function splitByDay<T extends TimeRange>(list: T[], range: [Date, Date]) {
 
 function splitByHour<T extends TimeRange>(list: T[]) {
   return list.flatMap((data) => {
-    const { startTime, endTime } = data
-    const startHour = new Date(startTime).getHours()
-    const endHour = isSameDay(startTime, endTime) ? new Date(endTime).getHours() : 23
-    const timeList: Array<number> = [startTime]
+    const { start, end } = data
+    const startHour = new Date(start).getHours()
+    const endHour = isSameDay(start, end) ? new Date(end).getHours() : 23
+    const timeList: Array<number> = [start]
     for (let i = startHour + 1; i <= endHour; i++) {
-      const date = startOfHour(new Date(startTime).setHours(i))
+      const date = startOfHour(new Date(start).setHours(i))
       const time = date.getTime()
-      if (time > endTime)
+      if (time > end)
         break
 
       else
         timeList.push(time)
     }
-    timeList.push(isSameDay(startTime, endTime) ? endTime : new Date(startOfDay(addDays(startTime, 1))).getTime())
+    timeList.push(isSameDay(start, end) ? end : new Date(startOfDay(addDays(start, 1))).getTime())
     const result: T[] = []
     for (let i = 0; i < timeList.length - 1; i++) {
       result.push(Object.assign({}, data, {
-        startTime: timeList[i],
-        endTime: timeList[i + 1],
+        start: timeList[i],
+        end: timeList[i + 1],
       }))
     }
     return result
@@ -81,7 +81,7 @@ function splitByHour<T extends TimeRange>(list: T[]) {
 }
 
 function calcTotalTime(list: Array<TimeRange>) {
-  return list.reduce((acc, cur) => acc += cur.endTime - cur.startTime, 0)
+  return list.reduce((acc, cur) => acc += cur.end - cur.start, 0)
 }
 
 const x = computed(() => unitVModel.value == 'date'
@@ -92,8 +92,8 @@ const option = computed(() => {
   const range = [startOfDay(addDays(new Date(), 1 - day.value)), startOfDay(addDays(new Date(), 1))] as [Date, Date]
   let transformNoteList = splitByDay(noteList.value, range)
   let transformactivityList = splitByDay(activityList.value, range)
-  transformNoteList = unitVModel.value == 'date' ? transformNoteList : splitByHour(transformNoteList.filter(i => isSameDay(new Date(selectedDate.value), i.startTime)))
-  transformactivityList = unitVModel.value == 'date' ? transformactivityList : splitByHour(transformactivityList.filter(i => isSameDay(new Date(selectedDate.value), i.startTime)))
+  transformNoteList = unitVModel.value == 'date' ? transformNoteList : splitByHour(transformNoteList.filter(i => isSameDay(new Date(selectedDate.value), i.start)))
+  transformactivityList = unitVModel.value == 'date' ? transformactivityList : splitByHour(transformactivityList.filter(i => isSameDay(new Date(selectedDate.value), i.start)))
 
   const planList = [...new Set(transformNoteList.map(i => i.plan.name))]
 
@@ -102,7 +102,7 @@ const option = computed(() => {
       name,
       type: 'bar',
       stack: 'plan',
-      data: x.value.map(time => calcTotalTime(transformNoteList.filter(i => i.plan.name == name && (unitVModel.value == 'date' ? isSameDay(new Date(time).getTime(), i.startTime) : isSameHour(new Date(selectedDate.value).setHours(Number(time)), i.startTime))))),
+      data: x.value.map(time => calcTotalTime(transformNoteList.filter(i => i.plan.name == name && (unitVModel.value == 'date' ? isSameDay(new Date(time).getTime(), i.start) : isSameHour(new Date(selectedDate.value).setHours(Number(time)), i.start))))),
       itemStyle: {
         color: transformNoteList.find(i => i.plan.name == name)!.plan.color,
       },
@@ -119,7 +119,7 @@ const option = computed(() => {
       name,
       type: 'bar',
       stack: 'label',
-      data: x.value.map(time => calcTotalTime(transformNoteList.filter(i => i.label.name == name && (unitVModel.value == 'date' ? isSameDay(new Date(time).getTime(), i.startTime) : isSameHour(new Date(selectedDate.value).setHours(Number(time)), i.startTime))))),
+      data: x.value.map(time => calcTotalTime(transformNoteList.filter(i => i.label.name == name && (unitVModel.value == 'date' ? isSameDay(new Date(time).getTime(), i.start) : isSameHour(new Date(selectedDate.value).setHours(Number(time)), i.start))))),
       itemStyle: {
         color: transformNoteList.find(i => i.label.name == name)!.label.color,
       },
@@ -129,16 +129,16 @@ const option = computed(() => {
     }
   })
 
-  const programList = [...new Set(transformactivityList.map(i => i.program.description))]
+  const programList = [...new Set(transformactivityList.map(i => i.program.name))]
 
   const programData = programList.map((name) => {
     return {
       name,
       type: 'bar',
       stack: props.mode == 'plan' ? 'plan' : 'label',
-      data: x.value.map(time => calcTotalTime(transformactivityList.filter(i => i.program.description == name && (unitVModel.value == 'date' ? isSameDay(new Date(time).getTime(), i.startTime) : isSameHour(new Date(selectedDate.value).setHours(Number(time)), i.startTime))))),
+      data: x.value.map(time => calcTotalTime(transformactivityList.filter(i => i.program.name == name && (unitVModel.value == 'date' ? isSameDay(new Date(time).getTime(), i.start) : isSameHour(new Date(selectedDate.value).setHours(Number(time)), i.start))))),
       itemStyle: {
-        color: transformactivityList.find(i => i.program.description == name)!.program.color,
+        color: transformactivityList.find(i => i.program.name == name)!.program.color,
       },
       emphasis: {
         focus: 'series',

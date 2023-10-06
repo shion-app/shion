@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import type { Label } from '@interfaces/index'
 import type { SelectProps } from 'ant-design-vue'
 import { message } from 'ant-design-vue'
+
+import { type SelectLabel, db } from '@modules/database'
 
 const props = defineProps<{
   type: 'create' | 'update'
   visible: boolean
-  model: Label
+  model: SelectLabel
 }>()
 
 const emit = defineEmits(['refresh', 'update:visible'])
@@ -23,7 +24,7 @@ const request = computed(() => isCreate.value ? create : update)
 
 function create() {
   const { name, planId, color } = vModel.value
-  return createLabel({
+  return db.label.insert({
     name,
     planId,
     color,
@@ -32,7 +33,7 @@ function create() {
 
 function update() {
   const { name, id, planId, color } = vModel.value
-  return updateLabel(id, {
+  return db.label.update(id, {
     name,
     planId,
     color,
@@ -53,7 +54,7 @@ async function finish() {
 }
 
 async function init() {
-  planOptions.value = (await selectPlan()).map(({ id, name }) => ({
+  planOptions.value = (await db.plan.select()).map(({ id, name }) => ({
     label: name,
     value: id,
   }))

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { message } from 'ant-design-vue'
 
+import { db } from '@modules/database'
+
 const store = useTime()
 const { t } = useI18n()
 
@@ -18,8 +20,8 @@ async function create({
   countdown: boolean
   time: number
 }) {
-  start(countdown, time, () => updateNote(noteId, {
-    endTime: Date.now(),
+  start(countdown, time, () => db.note.update(noteId, {
+    end: Date.now(),
   }))
 }
 

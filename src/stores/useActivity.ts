@@ -5,7 +5,7 @@ import { invoke } from '@tauri-apps/api'
 import PQueue from 'p-queue'
 
 import type * as backend from '@interfaces/backend'
-import type { Program } from '@interfaces/index'
+import { type SelectProgram, db } from '@modules/database'
 
 const RECORD_INTERVAL = 1000 * 60
 const INACTIVE_TIMEOUT = 1000 * 60
@@ -99,7 +99,7 @@ class Watcher {
     return this.list.find(i => isPathEqual(i.path, path))
   }
 
-  async pushForeground(data: backend.Activity, whiteList: Program[]) {
+  async pushForeground(data: backend.Activity, whiteList: SelectProgram[]) {
     const { path } = data
     this.logger.pushForeground(path)
     const foreground = this.list.find(i => i.foreground)
@@ -121,7 +121,7 @@ class Watcher {
     }
   }
 
-  async pushBackground(data: backend.AudioActivity, whiteList: Program[]) {
+  async pushBackground(data: backend.AudioActivity, whiteList: SelectProgram[]) {
     const { path, state } = data
     this.logger.pushBackground(path, state)
     const exist = this.contain(path)
@@ -145,15 +145,15 @@ class Watcher {
     }
   }
 
-  private async create(data: backend.Activity, background: boolean, whiteList: Program[]) {
+  private async create(data: backend.Activity, background: boolean, whiteList: SelectProgram[]) {
     const program = whiteList.find(i => isPathEqual(i.path, data.path))
     if (!program)
       return
 
     const time = Date.now()
-    const { lastInsertId: id } = await createActivity({
-      startTime: time,
-      endTime: time,
+    const { lastInsertId: id } = await db.activity.insert({
+      start: time,
+      end: time,
       programId: program.id,
     })
     const { path } = data
@@ -171,8 +171,8 @@ class Watcher {
         if (activity.background)
           return
         this.logger.delete(path)
-        updateActivity(id, {
-          endTime: Date.now(),
+        db.activity.update(id, {
+          end: Date.now(),
         })
         const index = this.list.findIndex(i => i.id == activity.id)
         if (index != -1)
@@ -192,8 +192,8 @@ class Watcher {
 
   private record() {
     for (const activity of this.list) {
-      updateActivity(activity.id, {
-        endTime: Date.now(),
+      db.activity.update(activity.id, {
+        end: Date.now(),
       })
     }
   }

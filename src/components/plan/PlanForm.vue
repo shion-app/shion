@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { message } from 'ant-design-vue'
-
-import type { Plan } from '@interfaces/index'
+import { type SelectPlan, db } from '@modules/database'
 
 const props = defineProps<{
   type: 'create' | 'update'
   visible: boolean
-  model: Plan
+  model: SelectPlan
 }>()
 
 const emit = defineEmits(['refresh', 'update:visible'])
@@ -21,7 +20,7 @@ const request = computed(() => isCreate.value ? create : update)
 
 function create() {
   const { name, color } = vModel.value
-  return createPlan({
+  return db.plan.insert({
     name,
     color,
   })
@@ -29,7 +28,7 @@ function create() {
 
 function update() {
   const { name, id, color } = vModel.value
-  return updatePlan(id, {
+  return db.plan.update(id, {
     name,
     color,
   })

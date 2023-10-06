@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { Label, Plan } from '@interfaces/index'
 import { Modal, message } from 'ant-design-vue'
+import { type SelectLabel, type SelectPlan, db } from '@modules/database'
 
 const { setMenu } = useMore()
 const timeStore = useTime()
@@ -17,16 +17,16 @@ const labelCreateModel = ref({
   name: '',
   planId: undefined,
   color: randomColor(),
-} as unknown as Label)
-const labelUpdateModel = ref({} as Label)
+} as unknown as SelectLabel)
+const labelUpdateModel = ref({} as SelectLabel)
 const noteBeforeCreateForm = ref({
   planId: 0,
   labelId: 0,
 })
-const labelList = ref<Array<Label>>([])
-const planList = ref<Array<Plan>>([])
+const labelList = ref<Array<SelectLabel>>([])
+const planList = ref<Array<SelectPlan>>([])
 const labelGroup = computed(() => {
-  const map = new Map<number, Array<Label>>()
+  const map = new Map<number, Array<SelectLabel>>()
   for (const label of labelList.value) {
     if (!map.has(label.planId))
       map.set(label.planId, [])
@@ -39,19 +39,19 @@ const labelGroup = computed(() => {
 })
 
 async function refresh() {
-  [labelList.value, planList.value] = await Promise.all([selectLabel(), selectPlan()])
+  [labelList.value, planList.value] = await Promise.all([db.label.select(), db.plan.select()])
 }
 
-function handleUpdate(label: Label) {
+function handleUpdate(label: SelectLabel) {
   labelUpdateVisible.value = true
   Object.assign(labelUpdateModel.value, label)
 }
 
-function handleRemove(label: Label) {
+function handleRemove(label: SelectLabel) {
   Modal.confirm({
     title: t('modal.confirmDelete'),
     async onOk() {
-      await removeLabel(label.id)
+      await db.label.removeRelation(label.id)
       message.success(t('message.success'))
       refresh()
     },
@@ -67,7 +67,7 @@ function viewNote(labelId: number) {
   })
 }
 
-async function handleStart(label: Label) {
+async function handleStart(label: SelectLabel) {
   noteBeforeCreateVisible.value = true
   noteBeforeCreateForm.value = {
     labelId: 0,
@@ -89,8 +89,8 @@ async function create({
   countdown: boolean
   time: number
 }) {
-  start(countdown, time, () => updateNote(noteId, {
-    endTime: Date.now(),
+  start(countdown, time, () => db.note.update(noteId, {
+    end: Date.now(),
   }))
   router.push('/time')
 }

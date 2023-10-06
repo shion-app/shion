@@ -5,5 +5,3 @@ export interface Menu {
   children?: Array<Menu>
   click?: Function
 }
-
-export * from './database'
