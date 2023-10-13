@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { message } from 'ant-design-vue'
 
-import type { SelectProgram } from '@modules/database'
+import type { DatabaseError, SelectProgram } from '@modules/database'
 import { db } from '@modules/database'
 
 const props = defineProps<{
@@ -28,8 +28,7 @@ async function finish() {
     await update()
   }
   catch (error) {
-    message.error(error as string)
-    return
+    return message.error((error as DatabaseError).message)
   }
   close()
   emit('refresh')

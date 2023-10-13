@@ -2,7 +2,8 @@
 import type { SelectProps } from 'ant-design-vue'
 import { message } from 'ant-design-vue'
 
-import { type SelectLabel, db } from '@modules/database'
+import { db } from '@modules/database'
+import type { DatabaseError, SelectLabel } from '@modules/database'
 
 const props = defineProps<{
   type: 'create' | 'update'
@@ -45,8 +46,7 @@ async function finish() {
     await request.value()
   }
   catch (error) {
-    message.error(error as string)
-    return
+    return message.error((error as DatabaseError).message)
   }
   close()
   emit('refresh')

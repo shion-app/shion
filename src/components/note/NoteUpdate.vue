@@ -2,7 +2,8 @@
 import { message } from 'ant-design-vue'
 import { RangePicker } from 'ant-design-vue/es/date-picker/date-fns'
 
-import { type SelectNote, db } from '@modules/database'
+import { db } from '@modules/database'
+import type { DatabaseError, SelectNote } from '@modules/database'
 
 const props = defineProps<{
   visible: boolean
@@ -31,8 +32,7 @@ async function finish() {
     await db.note.update(id, { start, end })
   }
   catch (error) {
-    message.error(error as string)
-    return
+    return message.error((error as DatabaseError).message)
   }
   close()
   emit('refresh')

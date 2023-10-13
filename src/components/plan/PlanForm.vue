@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { message } from 'ant-design-vue'
-import { type SelectPlan, db } from '@modules/database'
+import { db } from '@modules/database'
+import type { DatabaseError, SelectPlan } from '@modules/database'
 
 const props = defineProps<{
   type: 'create' | 'update'
@@ -39,8 +40,8 @@ async function finish() {
     await request.value()
   }
   catch (error) {
-    message.error(error as string)
-    return
+    // TODO: message
+    return message.error((error as DatabaseError).message)
   }
   close()
   emit('refresh')
