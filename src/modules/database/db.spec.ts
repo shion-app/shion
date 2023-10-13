@@ -5,7 +5,7 @@ import { dirname, resolve } from 'node:path'
 import Database from 'better-sqlite3'
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { createKyselyDatabaseWithModels } from './db'
+import { DatabaseError, SqliteErrorEnum, createKyselyDatabaseWithModels, findSqliteMessageFields } from './db'
 import type { DatabaseExecutor, QueryResult } from './db'
 
 let sqlite = new Database(':memory:')
@@ -39,8 +39,9 @@ const executor: DatabaseExecutor = {
       rowsAffected: changes,
     })
   },
-  handleError(e: InstanceType<Database.SqliteError> | string) {
-    return typeof e == 'string' ? e : e.message
+  handleError(e: InstanceType<Database.SqliteError>) {
+    const fields = findSqliteMessageFields(e.message)
+    return new DatabaseError(e.message, SqliteErrorEnum[e.code] || SqliteErrorEnum.RAW, fields)
   },
 }
 

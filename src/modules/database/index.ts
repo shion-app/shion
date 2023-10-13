@@ -3,8 +3,9 @@ import { error } from 'tauri-plugin-log-api'
 import type { Selectable } from 'kysely'
 
 import type { DatabaseExecutor } from './db'
-import { createKyselyDatabaseWithModels } from './db'
+import { DatabaseError, SqliteErrorEnum, createKyselyDatabaseWithModels, findSqliteMessageFields } from './db'
 import type { Activity, Label, Note, Plan, Program } from './transform-types'
+export { DatabaseError } from './db'
 
 const database = await Database.load('sqlite:data.db')
 
@@ -17,8 +18,13 @@ const executor: DatabaseExecutor = {
   },
   handleError(err: string) {
     error(err)
-    // TODO: format error
-    return err
+
+    const match = err.match(/\(code: (\d+)\) (.+)/)
+    const code = match?.[1] || SqliteErrorEnum.RAW
+    const detail = match?.[2].trim() || ''
+    const fields = findSqliteMessageFields(detail)
+
+    return new DatabaseError(detail, Number(code), fields)
   },
 }
 

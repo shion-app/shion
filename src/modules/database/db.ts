@@ -14,6 +14,7 @@ import {
 import type { QueryResult } from 'tauri-plugin-sql-api'
 import type Database from 'tauri-plugin-sql-api'
 import camelcaseKeys from 'camelcase-keys'
+import { camelCase } from 'camel-case'
 
 import type { DB } from './transform-types'
 import { Program } from './models/program'
@@ -146,7 +147,7 @@ function createKyselyDatabase<U extends Record<string, object>>(executor: Databa
       }
       catch (error) {
         await this.#executor.execute('rollback')
-        throw this.#executor.handleError(error)
+        throw error
       }
     }
   }
@@ -186,6 +187,35 @@ export function createKyselyDatabaseWithModels(executor: DatabaseExecutor) {
   return createKyselyDatabase(executor, models)
 }
 
+export enum SqliteErrorEnum {
+  RAW = -1,
+  SQLITE_CONSTRAINT_UNIQUE = 2067,
+}
+
+export class DatabaseError extends Error {
+  code: number
+  fields: string[]
+
+  constructor(message: string, code: number, fields: string[]) {
+    super(message)
+    this.name = 'DatabaseError'
+    this.code = code
+    this.fields = fields
+  }
+}
+
 export type DatabaseExecutor = Pick<Database, 'execute' | 'select'> & {
-  handleError(err: unknown): string
+  handleError(err: unknown): DatabaseError
+}
+
+export function findSqliteMessageFields(message: string) {
+  const regex = /[a-zA-Z0-9]+\.([a-zA-Z0-9_]+)/g
+  let match: RegExpExecArray | null
+  const fields: string[] = []
+  match = regex.exec(message)
+  while (match !== null) {
+    fields.push(match[1])
+    match = regex.exec(message)
+  }
+  return fields.map(v => camelCase(v))
 }
