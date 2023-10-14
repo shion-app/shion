@@ -24,6 +24,18 @@
       },
       "shell": {
         "open": true
+      },
+      "fs": {
+        "writeFile": true,
+        "createDir": true,
+        "scope": ["$APPDATA/**"]
+      },
+      "path": {
+        "all": true
+      },
+      "protocol": {
+        "asset": true,
+        "assetScope": ["$APPDATA/**"]
       }
     },
     "bundle": {
@@ -57,7 +69,7 @@
       "menuOnLeftClick": false
     },
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; img-src 'self' asset: https://asset.localhost"
     },
     "updater": {
       "active": true,
@@ -74,7 +86,8 @@
         "center": true,
         "title": "shion",
         "width": 1056,
-        "height": 594
+        "height": 594,
+        "fileDropEnabled": false
       }
     ]
   }

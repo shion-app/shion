@@ -13,6 +13,7 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { AndDesignVueResolve, createStyleImportPlugin } from 'vite-plugin-style-import'
 import { defineConfig } from 'vitest/config'
+import transformerDirectives from '@unocss/transformer-directives'
 
 import minifyLocale from './plugins/minify-date-fns-locale'
 
@@ -41,6 +42,7 @@ export default defineConfig({
     }),
     Unocss({
       presets: [presetUno(), presetAttributify(), presetIcons()],
+      transformers: [transformerDirectives()],
     }),
     Components({
       resolvers: [AntDesignVueResolver({

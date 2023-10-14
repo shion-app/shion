@@ -34,6 +34,7 @@ declare module '@vue/runtime-core' {
     Calendar: typeof import('./components/note/Calendar.vue')['default']
     Display: typeof import('./components/time/Display.vue')['default']
     LabelForm: typeof import('./components/label/LabelForm.vue')['default']
+    MilkdownEditor: typeof import('./components/shared/MilkdownEditor.vue')['default']
     ModalForm: typeof import('./components/shared/ModalForm.vue')['default']
     NavDrawer: typeof import('./components/nav/NavDrawer.vue')['default']
     NoteBeforeCreate: typeof import('./components/note/NoteBeforeCreate.vue')['default']
