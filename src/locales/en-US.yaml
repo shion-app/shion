@@ -7,6 +7,7 @@ nav:
   activity: Activity
   config: Config
   about: About
+  moment: Moment
 config:
   locale: Language
   checkUpdate: Check update
@@ -84,3 +85,18 @@ activity:
 about:
   website: Website
   github: Github
+moment:
+  create: Record the moment
+  inputTitle: Input title
+  submit: Submit
+  tip:
+    emptyTitle: Need to input title
+  editor:
+    uodo: Uodo
+    redo: Redo
+    bold: Bold
+    italic: Italic
+    listBulleted: List bulleted
+    listNumbered: List numbered
+    quote: Quote
+    create: Create

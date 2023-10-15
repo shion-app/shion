@@ -4,7 +4,7 @@ import type { Selectable } from 'kysely'
 
 import type { DatabaseExecutor } from './db'
 import { DatabaseError, SqliteErrorEnum, createKyselyDatabaseWithModels, findSqliteMessageFields } from './db'
-import type { Activity, Label, Note, Plan, Program } from './transform-types'
+import type { Activity, Label, Moment, Note, Plan, Program } from './transform-types'
 export { DatabaseError } from './db'
 
 const database = await Database.load('sqlite:data.db')
@@ -35,3 +35,4 @@ export type SelectActivity = Selectable<Activity>
 export type SelectPlan = Selectable<Plan>
 export type SelectLabel = Selectable<Label>
 export type SelectNote = Selectable<Note>
+export type SelectMoment = Selectable<Moment>

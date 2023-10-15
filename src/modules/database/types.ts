@@ -19,6 +19,13 @@ export interface Label {
   planId: number
   deletedAt: Generated<number>
 }
+export interface Moment {
+  id: Generated<number>
+  time: number
+  title: string
+  content: string
+  deletedAt: Generated<number>
+}
 export interface Note {
   id: Generated<number>
   start: number
@@ -46,6 +53,7 @@ export interface Program {
 export interface DB {
   activity: Activity
   label: Label
+  moment: Moment
   note: Note
   plan: Plan
   program: Program

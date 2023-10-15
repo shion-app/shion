@@ -37,6 +37,11 @@ const menu = computed(() => [{
   tip: t('nav.monitor'),
   to: '/monitor',
 }, {
+  icon: 'i-mdi:lightning-bolt',
+  key: 'moment',
+  tip: t('nav.moment'),
+  to: '/moment',
+}, {
   icon: 'i-mdi:cog',
   key: 'config',
   tip: t('nav.config'),

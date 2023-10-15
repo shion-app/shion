@@ -17,10 +17,13 @@ export type Plan = origin.Plan & { totalTime: TotalTime }
 
 export type Note = origin.Note & { plan: ColumnType<Plan, never, never>; label: ColumnType<Label, never, never> }
 
+export type Moment = origin.Moment
+
 export interface DB {
   activity: Activity
   label: Label
   plan: Plan
   program: Program
   note: Note
+  moment: Moment
 }

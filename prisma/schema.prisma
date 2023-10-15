@@ -80,3 +80,14 @@ model Activity {
 
   @@map("activity")
 }
+
+model Moment {
+  id         Int    @id @default(autoincrement())
+  time       Int
+  title      String
+  content    String
+  deleted_at Int    @default(0)
+
+  @@unique([title, deleted_at])
+  @@map("moment")
+}

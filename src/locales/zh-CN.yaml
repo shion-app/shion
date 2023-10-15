@@ -7,6 +7,7 @@ nav:
   activity: 活动
   config: 设置
   about: 关于
+  moment: 瞬间
 config:
   locale: 语言
   checkUpdate: 检查更新
@@ -84,3 +85,17 @@ activity:
 about:
   website: 网站
   github: Github
+moment:
+  create: 记录下瞬间
+  inputTitle: 输入标题
+  submit: 提交
+  tip:
+    emptyTitle: 需要输入标题
+  editor:
+    uodo: 撤销
+    redo: 重做
+    bold: 加粗
+    italic: 斜体
+    listBulleted: 列表
+    listNumbered: 有序列表
+    quote: 引用

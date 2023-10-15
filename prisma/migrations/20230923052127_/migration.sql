@@ -51,6 +51,15 @@ CREATE TABLE "activity" (
     CONSTRAINT "activity_program_id_fkey" FOREIGN KEY ("program_id") REFERENCES "program" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+-- CreateTable
+CREATE TABLE "moment" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "time" INTEGER NOT NULL,
+    "title" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "deleted_at" INTEGER NOT NULL DEFAULT 0
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "plan_name_deleted_at_key" ON "plan"("name", "deleted_at");
 
@@ -71,3 +80,6 @@ CREATE UNIQUE INDEX "program_color_deleted_at_key" ON "program"("color", "delete
 
 -- CreateIndex
 CREATE UNIQUE INDEX "program_path_deleted_at_key" ON "program"("path", "deleted_at");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "moment_title_deleted_at_key" ON "moment"("title", "deleted_at");
