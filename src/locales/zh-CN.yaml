@@ -89,6 +89,7 @@ moment:
   create: 记录下瞬间
   inputTitle: 输入标题
   submit: 提交
+  edit: 编辑
   tip:
     emptyTitle: 需要输入标题
   editor:

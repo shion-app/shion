@@ -89,6 +89,7 @@ moment:
   create: Record the moment
   inputTitle: Input title
   submit: Submit
+  edit: Edit
   tip:
     emptyTitle: Need to input title
   editor:

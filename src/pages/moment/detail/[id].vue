@@ -2,6 +2,7 @@
 import { MilkdownProvider } from '@milkdown/vue'
 
 import { type SelectMoment, db } from '@modules/database'
+import { isThisYear } from 'date-fns'
 
 const props = defineProps<{
   id: string
@@ -9,6 +10,10 @@ const props = defineProps<{
 
 const detail = ref<SelectMoment>()
 const content = computed(() => detail.value?.content || '')
+const time = computed(() =>
+  detail.value
+    ? isThisYear(detail.value.time) ? format(detail.value.time, 'MM-dd') : format(detail.value.time, 'yyyy-MM-dd')
+    : '')
 
 async function init() {
   const [moment] = await db.moment.select({
@@ -21,6 +26,13 @@ init()
 </script>
 
 <template>
+  <div flex px-6 py-2 items-center>
+    <div text-6>
+      {{ detail?.title }}
+    </div>
+    <div flex-1 />
+    <div>{{ time }}</div>
+  </div>
   <MilkdownProvider>
     <MilkdownEditor :content="content" :editable="false" />
   </MilkdownProvider>

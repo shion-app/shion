@@ -22,7 +22,47 @@ const props = withDefaults(defineProps<{
   editable: true,
 })
 
+const { t } = useI18n()
+
 const { content: contentVModel } = useVModels(props)
+
+const utils = computed(() => [
+  {
+    icon: 'i-mdi:undo',
+    tip: t('moment.editor.uodo'),
+    handler: () => call(undoCommand.key),
+  },
+  {
+    icon: 'i-mdi:redo',
+    tip: t('moment.editor.redo'),
+    handler: () => call(redoCommand.key),
+  },
+  {
+    icon: 'i-mdi:format-bold',
+    tip: t('moment.editor.bold'),
+    handler: () => call(toggleStrongCommand.key),
+  },
+  {
+    icon: 'i-mdi:format-italic',
+    tip: t('moment.editor.italic'),
+    handler: () => call(toggleEmphasisCommand.key),
+  },
+  {
+    icon: 'i-mdi:format-list-bulleted',
+    tip: t('moment.editor.listBulleted'),
+    handler: () => call(wrapInBulletListCommand.key),
+  },
+  {
+    icon: 'i-mdi:format-list-numbered',
+    tip: t('moment.editor.listNumbered'),
+    handler: () => call(wrapInOrderedListCommand.key),
+  },
+  {
+    icon: 'i-mdi:format-quote-close',
+    tip: t('moment.editor.quote'),
+    handler: () => call(wrapInBlockquoteCommand.key),
+  },
+])
 
 const uploader: Uploader = async (files, schema) => {
   const images: File[] = []
@@ -102,20 +142,16 @@ watchOnce(() => props.content, v =>
 </script>
 
 <template>
-  <div v-if="$props.editable" flex border-b p-2>
-    <div text-6 cursor-pointer i-mdi:undo @click="call(undoCommand.key)" />
-    <div text-6 cursor-pointer i-mdi:redo @click="call(redoCommand.key)" />
-    <div text-6 cursor-pointer i-mdi:format-bold @click="call(toggleStrongCommand.key)" />
-    <div text-6 cursor-pointer i-mdi:format-italic @click="call(toggleEmphasisCommand.key)" />
-    <div text-6 cursor-pointer i-mdi:format-list-bulleted @click="call(wrapInBulletListCommand.key)" />
-    <div text-6 cursor-pointer i-mdi:format-list-numbered @click="call(wrapInOrderedListCommand.key)" />
-    <div text-6 cursor-pointer i-mdi:format-quote-close @click="call(wrapInBlockquoteCommand.key)" />
+  <div v-if="$props.editable" flex border-b px-6 py-2 space-x-2>
+    <a-tooltip v-for="{ icon, tip, handler } in utils" :key="icon" placement="bottom" :title="tip">
+      <div text-6 cursor-pointer :class="icon" @click="handler" />
+    </a-tooltip>
   </div>
-  <Milkdown />
+  <Milkdown flex-1 overflow-y-auto />
 </template>
 
 <style>
 .milkdown {
-  @apply  p-8 mx-4 h-full overflow-y-auto;
+  @apply  p-6 h-full overflow-y-auto text-4;
 }
 </style>
