@@ -17,7 +17,7 @@ const { title: titleVModel, content: contentVModel } = useVModels(props)
     <div flex px-6 py-2 items-center>
       <a-input
         v-model:value="titleVModel" :placeholder="$t('moment.inputTitle')" size="large"
-        class="w-[500px]! border-0!  bg-transparent! border-transparent! shadow-none! text-6! rounded-none!"
+        class="w-[500px]! border-0! p-0! bg-transparent! border-transparent! shadow-none! text-6! rounded-none!"
       />
       <div flex-1 />
       <a-button type="primary" @click="$emit('submit')">

@@ -39,7 +39,7 @@ init()
     <template v-if="list.length">
       <div
         v-for="{ title, time, id } in list" :key="id"
-        flex cursor-pointer px-20 py-4 hover:bg-gray-300 bg-transparent transition
+        flex cursor-pointer px-4 py-2 hover:bg-gray-300 bg-transparent transition
         class="group"
         @click="viewDetail(id)"
       >

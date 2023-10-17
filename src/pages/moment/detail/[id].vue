@@ -26,14 +26,16 @@ init()
 </script>
 
 <template>
-  <div flex px-6 py-2 items-center>
-    <div text-6>
-      {{ detail?.title }}
+  <div h-full flex flex-col>
+    <div flex px-6 py-2 items-center>
+      <div text-6>
+        {{ detail?.title }}
+      </div>
+      <div flex-1 />
+      <div>{{ time }}</div>
     </div>
-    <div flex-1 />
-    <div>{{ time }}</div>
+    <MilkdownProvider>
+      <MilkdownEditor :content="content" :editable="false" />
+    </MilkdownProvider>
   </div>
-  <MilkdownProvider>
-    <MilkdownEditor :content="content" :editable="false" />
-  </MilkdownProvider>
 </template>

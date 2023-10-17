@@ -39,7 +39,7 @@ async function handleSubmit() {
     })
   }
   catch (error) {
-    message.error((error as DatabaseError).message)
+    return message.error((error as DatabaseError).message)
   }
 
   message.success(t('message.success'))
