@@ -34,7 +34,6 @@ declare module '@vue/runtime-core' {
     ATooltip: typeof import('ant-design-vue/es')['Tooltip']
     Calendar: typeof import('./components/note/Calendar.vue')['default']
     Display: typeof import('./components/time/Display.vue')['default']
-    Edit: typeof import('./components/moment/edit.vue')['default']
     LabelForm: typeof import('./components/label/LabelForm.vue')['default']
     MilkdownEditor: typeof import('./components/shared/MilkdownEditor.vue')['default']
     ModalForm: typeof import('./components/shared/ModalForm.vue')['default']
