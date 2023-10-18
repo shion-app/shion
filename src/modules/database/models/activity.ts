@@ -1,5 +1,5 @@
-import { jsonObjectFrom } from 'kysely/helpers/sqlite'
 import { type Kysely } from 'kysely'
+import { jsonBuildObject } from 'kysely/helpers/sqlite'
 
 import type { DB, Activity as TransformActivity } from '../transform-types'
 import { Model, get, injectModel } from './model'
@@ -32,16 +32,25 @@ export class Activity extends Model<TransformActivity> {
 
   @get
   select(value?: { id?: number; start?: number; end?: number }) {
-    let query = this.selectByLooseType(value)
+    let query = this.kysely.with('p', () => this.#program.select()).selectFrom(['activity', 'p']).where('activity.deletedAt', '=', 0)
+    if (value?.id)
+      query = query.where('id', '=', value.id)
     if (value?.start)
       query = query.where('end', '>', value.start)
     if (value?.end)
       query = query.where('start', '<', value.end)
 
-    return query.select(
-      jsonObjectFrom(
-        this.#program.select().whereRef('activity.programId', '=', 'program.id'),
-      ).as('program'),
-    ).selectAll(this.table)
+    return query.select(eb =>
+      jsonBuildObject({
+        id: eb.ref('p.id'),
+        color: eb.ref('p.color'),
+        icon: eb.ref('p.icon'),
+        name: eb.ref('p.name'),
+        path: eb.ref('p.path'),
+        sort: eb.ref('p.sort'),
+        deletedAt: eb.ref('p.deletedAt'),
+        totalTime: eb.ref('p.totalTime'),
+      }).as('program'),
+    ).selectAll(this.table).whereRef('activity.programId', '=', 'p.id')
   }
 }

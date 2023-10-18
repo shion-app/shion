@@ -1,6 +1,6 @@
 import { type Kysely } from 'kysely'
+import { jsonBuildObject } from 'kysely/helpers/sqlite'
 
-import { jsonObjectFrom } from 'kysely/helpers/sqlite'
 import type { DB, Note as TransformNote } from '../transform-types'
 import { Model, get, injectModel } from './model'
 import { Label } from './label'
@@ -38,7 +38,9 @@ export class Note extends Model<TransformNote> {
 
   @get
   select(value?: { id?: number; start?: number; end?: number; planId?: number; labelId?: number }) {
-    let query = this.selectByLooseType(value)
+    let query = this.kysely.with('l', () => this.#label.select()).with('p', () => this.#plan.select()).selectFrom(['note', 'l', 'p']).where('note.deletedAt', '=', 0)
+    if (value?.id)
+      query = query.where('id', '=', value.id)
     if (value?.start)
       query = query.where('end', '>', value.start)
     if (value?.end)
@@ -48,15 +50,24 @@ export class Note extends Model<TransformNote> {
     if (value?.labelId)
       query = query.where('labelId', '=', value.labelId)
 
-    return query.select(
-      [
-        jsonObjectFrom(
-          this.#label.select().whereRef('note.labelId', '=', 'label.id'),
-        ).as('label'),
-        jsonObjectFrom(
-          this.#plan.select().whereRef('note.planId', '=', 'plan.id'),
-        ).as('plan'),
-      ],
-    ).selectAll(this.table)
+    return query.select(eb => [
+      jsonBuildObject({
+        id: eb.ref('l.id'),
+        name: eb.ref('l.name'),
+        color: eb.ref('l.color'),
+        sort: eb.ref('l.sort'),
+        planId: eb.ref('l.planId'),
+        deletedAt: eb.ref('l.deletedAt'),
+        totalTime: eb.ref('l.totalTime'),
+      }).as('label'),
+      jsonBuildObject({
+        id: eb.ref('p.id'),
+        name: eb.ref('p.name'),
+        color: eb.ref('p.color'),
+        sort: eb.ref('p.sort'),
+        deletedAt: eb.ref('p.deletedAt'),
+        totalTime: eb.ref('p.totalTime'),
+      }).as('plan'),
+    ]).selectAll(this.table).whereRef('note.labelId', '=', 'l.id').whereRef('note.planId', '=', 'p.id')
   }
 }

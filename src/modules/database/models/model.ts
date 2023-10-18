@@ -31,7 +31,6 @@ export class Model<T extends DB[TableName]> {
     }).where('id', '=', id)
   }
 
-  @get
   protected selectByLooseType(value?: { id?: number }) {
     let query = this.kysely.selectFrom(this.table).where(`${this.table}.deletedAt`, '=', 0)
     if (value?.id)
