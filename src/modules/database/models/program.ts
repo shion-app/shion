@@ -1,17 +1,8 @@
 import { sql } from 'kysely'
 
 import type { Program as TransformProgram } from '../transform-types'
-import type { Program as OriginProgram } from '../types'
-import { Model, get, injectModel } from './model'
+import { Model, get } from './model'
 
-@injectModel<OriginProgram, TransformProgram>({
-  set: v => ({
-    icon: v.icon?.join(','),
-  }),
-  get: e => ({
-    icon: e.icon.split(',').map(Number),
-  }),
-})
 export class Program extends Model<TransformProgram> {
   table = 'program' as const
 

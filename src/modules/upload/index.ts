@@ -21,6 +21,10 @@ function readFile(file: File): Promise<{ name: string; buffer: ArrayBuffer }> {
 
 export async function uploadFile(file: File) {
   const { name, buffer } = await readFile(file)
+  return await upload(name, buffer)
+}
+
+export async function upload(name: string, buffer: ArrayBuffer) {
   const id = nanoid()
   const ext = await extname(name)
   const uploadDir = 'upload'

@@ -17,7 +17,6 @@ export const useMonitor = defineStore('monitor', () => {
 
   async function refresh() {
     whiteList.value = await db.program.select()
-    whiteList.value.forEach(transformIcon)
   }
 
   function transformIcon(program: Pick<backend.Program, 'path' | 'icon'>) {

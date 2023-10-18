@@ -3,6 +3,7 @@ import { Modal, message } from 'ant-design-vue'
 
 import type * as backend from '@interfaces/backend'
 import { type SelectProgram, db } from '@modules/database'
+import { upload } from '@modules/upload'
 
 const store = useMonitor()
 const { setMenu } = useMore()
@@ -23,10 +24,11 @@ async function handleCreateProgram(program: backend.Program) {
   const color = randomColor()
   const index = filterList.value.findIndex(i => i.path == path)
   filterList.value.splice(index, 1)
+  const src = await upload(`${name}.png`, new Uint8Array(icon))
   await db.program.insert({
     name,
     path,
-    icon,
+    icon: src,
     color,
   })
 }
@@ -79,7 +81,7 @@ refresh()
         hover:shadow-xl
         transition-shadow
       >
-        <img :src="getIconUrl(program.path)" width="32" height="32" object-contain>
+        <img :src="program.icon" width="32" height="32" object-contain>
         <div flex-1 min-w-0 space-y-2>
           <div flex justify-between>
             <div :title="program.path">

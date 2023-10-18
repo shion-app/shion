@@ -7,7 +7,7 @@ type Replace<T, U extends { [K in keyof T]?: unknown }> = {
 
 type TotalTime = ColumnType<number, never, never>
 
-export type Program = Replace<origin.Program, { icon: number[] }> & { totalTime: TotalTime }
+export type Program = origin.Program & { totalTime: TotalTime }
 
 export type Activity = origin.Activity & { program: ColumnType<Program, never, never> }
 
