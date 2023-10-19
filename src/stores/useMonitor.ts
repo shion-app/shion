@@ -5,7 +5,7 @@ import { invoke } from '@tauri-apps/api'
 import type * as backend from '@interfaces/backend'
 import { type SelectProgram, db } from '@modules/database'
 
-import exe from '@assets/exe.ico'
+import exe from '@assets/exe.png'
 
 export const useMonitor = defineStore('monitor', () => {
   const filtering = ref(false)

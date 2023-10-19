@@ -4,6 +4,7 @@ import { Modal, message } from 'ant-design-vue'
 import type * as backend from '@interfaces/backend'
 import { type SelectProgram, db } from '@modules/database'
 import { upload } from '@modules/upload'
+import exe from '@assets/exe.png'
 
 const store = useMonitor()
 const { setMenu } = useMore()
@@ -24,7 +25,7 @@ async function handleCreateProgram(program: backend.Program) {
   const color = randomColor()
   const index = filterList.value.findIndex(i => i.path == path)
   filterList.value.splice(index, 1)
-  const src = await upload(`${name}.png`, new Uint8Array(icon))
+  const src = await upload(`${name}.png`, icon.length ? new Uint8Array(icon) : await (await fetch(exe)).arrayBuffer())
   await db.program.insert({
     name,
     path,
