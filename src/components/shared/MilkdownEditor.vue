@@ -92,6 +92,8 @@ const uploader: Uploader = async (files, schema) => {
   return nodes
 }
 
+let inputed = false
+
 const editor = useEditor(root => Editor.make()
   .config((ctx) => {
     ctx.set(rootCtx, root)
@@ -109,6 +111,7 @@ const editor = useEditor(root => Editor.make()
 
     const listener = ctx.get(listenerCtx)
     listener.markdownUpdated((ctx, markdown) => {
+      inputed = true
       contentVModel.value = markdown
     })
   })
@@ -123,7 +126,10 @@ function call<T>(command: CmdKey<T>, payload?: T) {
   return editor.get()?.action(callCommand(command, payload))
 }
 
-watchOnce(() => props.content, v =>
+watchOnce(() => props.content, (v) => {
+  if (inputed)
+    return
+
   editor.get()?.action((ctx) => {
     const view = ctx.get(editorViewCtx)
     const parser = ctx.get(parserCtx)
@@ -138,7 +144,8 @@ watchOnce(() => props.content, v =>
         new Slice(doc.content, 0, 0),
       ),
     )
-  }))
+  })
+})
 </script>
 
 <template>

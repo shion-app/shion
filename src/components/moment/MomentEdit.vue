@@ -1,4 +1,3 @@
-import { emit } from 'process';
 <script setup lang="ts">
 import { MilkdownProvider } from '@milkdown/vue'
 
