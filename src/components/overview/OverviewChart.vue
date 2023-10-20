@@ -44,10 +44,11 @@ function splitByDay<T extends TimeRange>(list: T[], range: [Date, Date]) {
     timeList.push(isAfter(endDate, end) ? end : endDate.getTime())
     const result: T[] = []
     for (let i = 0; i < timeList.length - 1; i++) {
-      result.push(Object.assign({}, data, {
+      result.push({
+        ...data,
         start: timeList[i],
         end: timeList[i + 1],
-      }))
+      })
     }
     return result
   })
@@ -71,17 +72,34 @@ function splitByHour<T extends TimeRange>(list: T[]) {
     timeList.push(isSameDay(start, end) ? end : new Date(startOfDay(addDays(start, 1))).getTime())
     const result: T[] = []
     for (let i = 0; i < timeList.length - 1; i++) {
-      result.push(Object.assign({}, data, {
+      result.push({
+        ...data,
         start: timeList[i],
         end: timeList[i + 1],
-      }))
+      })
     }
     return result
   })
 }
 
-function calcTotalTime(list: Array<TimeRange>) {
-  return list.reduce((acc, cur) => acc += cur.end - cur.start, 0)
+function calcTotalTime(list: Array<{ time: number }>) {
+  return list.reduce((acc, cur) => acc += cur.time, 0)
+}
+
+function getChartData(xAxis: string[], list: Array<TimeRange & { name: string }>) {
+  const data: Array<Array<{
+    name: string
+    time: number
+  }>> = new Array(xAxis.length).fill(0).map(() => [])
+
+  for (const item of list) {
+    const index = xAxis.findIndex(time => unitVModel.value == 'date' ? isSameDay(new Date(time).getTime(), item.start) : isSameHour(new Date(selectedDate.value).setHours(Number(time)), item.start))
+    data[index].push({
+      name: item.name,
+      time: item.end - item.start,
+    })
+  }
+  return data
 }
 
 const x = computed(() => unitVModel.value == 'date'
@@ -90,19 +108,23 @@ const x = computed(() => unitVModel.value == 'date'
 
 const option = computed(() => {
   const range = [startOfDay(addDays(new Date(), 1 - day.value)), startOfDay(addDays(new Date(), 1))] as [Date, Date]
-  let transformNoteList = splitByDay(noteList.value, range)
-  let transformactivityList = splitByDay(activityList.value, range)
-  transformNoteList = unitVModel.value == 'date' ? transformNoteList : splitByHour(transformNoteList.filter(i => isSameDay(new Date(selectedDate.value), i.start)))
-  transformactivityList = unitVModel.value == 'date' ? transformactivityList : splitByHour(transformactivityList.filter(i => isSameDay(new Date(selectedDate.value), i.start)))
+  const transformNoteList = unitVModel.value == 'date' ? splitByDay(noteList.value, range) : splitByHour(noteList.value.filter(i => isSameDay(new Date(selectedDate.value), i.start)))
+  const transformactivityList = unitVModel.value == 'date' ? splitByDay(activityList.value, range) : splitByHour(activityList.value.filter(i => isSameDay(new Date(selectedDate.value), i.start)))
 
-  const planList = [...new Set(transformNoteList.map(i => i.plan.name))]
+  const planNameList = [...new Set(transformNoteList.map(i => i.plan.name))]
 
-  const planData = planList.map((name) => {
+  const planData = getChartData(x.value, transformNoteList.map(i => ({
+    name: i.plan.name,
+    start: i.start,
+    end: i.end,
+  })))
+
+  const planSeries = planNameList.map((name) => {
     return {
       name,
       type: 'bar',
       stack: 'plan',
-      data: x.value.map(time => calcTotalTime(transformNoteList.filter(i => i.plan.name == name && (unitVModel.value == 'date' ? isSameDay(new Date(time).getTime(), i.start) : isSameHour(new Date(selectedDate.value).setHours(Number(time)), i.start))))),
+      data: x.value.map((_, index) => calcTotalTime(planData[index].filter(i => i.name == name))),
       itemStyle: {
         color: transformNoteList.find(i => i.plan.name == name)!.plan.color,
       },
@@ -112,14 +134,20 @@ const option = computed(() => {
     }
   })
 
-  const labelList = [...new Set(transformNoteList.map(i => i.label.name))]
+  const labelNameList = [...new Set(transformNoteList.map(i => i.label.name))]
 
-  const labelData = labelList.map((name) => {
+  const labelData = getChartData(x.value, transformNoteList.map(i => ({
+    name: i.label.name,
+    start: i.start,
+    end: i.end,
+  })))
+
+  const labelSeries = labelNameList.map((name) => {
     return {
       name,
       type: 'bar',
       stack: 'label',
-      data: x.value.map(time => calcTotalTime(transformNoteList.filter(i => i.label.name == name && (unitVModel.value == 'date' ? isSameDay(new Date(time).getTime(), i.start) : isSameHour(new Date(selectedDate.value).setHours(Number(time)), i.start))))),
+      data: x.value.map((_, index) => calcTotalTime(labelData[index].filter(i => i.name == name))),
       itemStyle: {
         color: transformNoteList.find(i => i.label.name == name)!.label.color,
       },
@@ -129,14 +157,20 @@ const option = computed(() => {
     }
   })
 
-  const programList = [...new Set(transformactivityList.map(i => i.program.name))]
+  const programNameList = [...new Set(transformactivityList.map(i => i.program.name))]
 
-  const programData = programList.map((name) => {
+  const programData = getChartData(x.value, transformactivityList.map(i => ({
+    name: i.program.name,
+    start: i.start,
+    end: i.end,
+  })))
+
+  const programSeries = programNameList.map((name) => {
     return {
       name,
       type: 'bar',
-      stack: props.mode == 'plan' ? 'plan' : 'label',
-      data: x.value.map(time => calcTotalTime(transformactivityList.filter(i => i.program.name == name && (unitVModel.value == 'date' ? isSameDay(new Date(time).getTime(), i.start) : isSameHour(new Date(selectedDate.value).setHours(Number(time)), i.start))))),
+      stack: props.mode,
+      data: x.value.map((_, index) => calcTotalTime(programData[index].filter(i => i.name == name))),
       itemStyle: {
         color: transformactivityList.find(i => i.program.name == name)!.program.color,
       },
@@ -195,7 +229,7 @@ const option = computed(() => {
         },
       },
     ],
-    series: [...(props.mode == 'plan' ? planData : labelData), ...programData],
+    series: [...(props.mode == 'plan' ? planSeries : labelSeries), ...programSeries],
   } as EChartsOption
 })
 
