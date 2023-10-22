@@ -69,7 +69,7 @@
       "menuOnLeftClick": false
     },
     "security": {
-      "csp": "default-src 'self' 'unsafe-inline'; img-src 'self' asset: https://asset.localhost data:"
+      "csp": "default-src 'self' 'unsafe-inline'; img-src 'self' asset: https://asset.localhost data: blob:"
     },
     "updater": {
       "active": true,
