@@ -46,7 +46,7 @@ export class Note extends Model<TransformNote> {
     if (value?.end)
       query = query.where('start', '<', value.end)
     if (value?.planId)
-      query = query.where('planId', '=', value.planId)
+      query = query.where('note.planId', '=', value.planId)
     if (value?.labelId)
       query = query.where('labelId', '=', value.labelId)
 
