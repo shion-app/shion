@@ -296,12 +296,7 @@ describe('program', () => {
         {
           "color": "#ffffff",
           "deletedAt": 0,
-          "icon": [
-            0,
-            0,
-            0,
-            0,
-          ],
+          "icon": "",
           "id": 1,
           "name": "program1",
           "path": "D:\\\\folder",
@@ -335,12 +330,7 @@ describe('activity', () => {
           "program": {
             "color": "#ffffff",
             "deletedAt": 0,
-            "icon": [
-              0,
-              0,
-              0,
-              0,
-            ],
+            "icon": "",
             "id": 1,
             "name": "program1",
             "path": "D:\\\\folder",
@@ -357,12 +347,7 @@ describe('activity', () => {
           "program": {
             "color": "#ffffff",
             "deletedAt": 0,
-            "icon": [
-              0,
-              0,
-              0,
-              0,
-            ],
+            "icon": "",
             "id": 1,
             "name": "program1",
             "path": "D:\\\\folder",
