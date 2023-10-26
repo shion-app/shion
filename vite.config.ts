@@ -7,15 +7,12 @@ import Unocss from 'unocss/vite'
 import { presetAttributify, presetUno } from 'unocss'
 import presetIcons from '@unocss/preset-icons'
 import Components from 'unplugin-vue-components/vite'
-import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
+import { Vuetify3Resolver } from 'unplugin-vue-components/resolvers'
 import Pages from 'vite-plugin-pages'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { visualizer } from 'rollup-plugin-visualizer'
-import { AndDesignVueResolve, createStyleImportPlugin } from 'vite-plugin-style-import'
 import { defineConfig } from 'vitest/config'
 import transformerDirectives from '@unocss/transformer-directives'
-
-import minifyLocale from './plugins/minify-date-fns-locale'
 
 // const mobile =
 //   process.env.TAURI_PLATFORM === "android" ||
@@ -45,9 +42,7 @@ export default defineConfig({
       transformers: [transformerDirectives()],
     }),
     Components({
-      resolvers: [AntDesignVueResolver({
-        importStyle: 'less',
-      })],
+      resolvers: [Vuetify3Resolver()],
       dts: 'src/components.d.ts',
     }),
     Pages(),
@@ -57,27 +52,8 @@ export default defineConfig({
     visualizer({
       filename: '.visualizer/index.html',
     }),
-    minifyLocale({
-      locale: ['zhCN', 'enUS'],
-    }),
-    createStyleImportPlugin({
-      resolves: [AndDesignVueResolve()],
-    }),
     // VueDevTools(),
   ],
-  css: {
-    preprocessorOptions: {
-      less: {
-        javascriptEnabled: true,
-        modifyVars: {
-          'primary-color': '#1867c0',
-          'border-radius-base': '6px',
-          'menu-item-vertical-margin': 0,
-          'menu-item-boundary-margin': 0,
-        },
-      },
-    },
-  },
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   // prevent vite from obscuring rust errors
   clearScreen: false,

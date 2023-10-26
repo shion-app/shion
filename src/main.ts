@@ -1,10 +1,11 @@
 import 'uno.css'
-import 'ant-design-vue/es/date-picker/style/index.less'
-import './styles/index.css'
+import '@unocss/reset/tailwind.css'
+import './styles/index.scss'
 
 import { createApp } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { createPinia } from 'pinia'
+import { createVuetify } from 'vuetify'
 
 import VChart from 'vue-echarts'
 import { use } from 'echarts/core'
@@ -30,6 +31,8 @@ const router = createRouter({
 
 const pinia = createPinia()
 
+const vuetify = createVuetify()
+
 use([
   CanvasRenderer,
   BarChart,
@@ -46,6 +49,7 @@ createApp(App)
   .use(i18n)
   .use(router)
   .use(pinia)
+  .use(vuetify)
   .component('v-chart', VChart)
   .mount('#app')
 

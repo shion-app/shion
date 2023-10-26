@@ -1,3 +1,8 @@
+@use 'vuetify/lib/styles/main.sass' with (
+  $reset: false,
+  $utilities: false,
+);
+
 html, body {
   overflow: hidden;
 }
@@ -20,10 +25,4 @@ html, body {
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: #a8bbbf;
-}
-
-* {
-  border-width: 0;
-  border-style: solid;
-  border-color: #e5e7eb;
 }
