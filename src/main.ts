@@ -31,7 +31,19 @@ const router = createRouter({
 
 const pinia = createPinia()
 
-const vuetify = createVuetify()
+const vuetify = createVuetify({
+  theme: {
+    themes: {
+      light: {
+        colors: {
+          'primary': '#1565c0',
+          'secondary': '#2e7d32',
+          'on-background': '#424242',
+        },
+      },
+    },
+  },
+})
 
 use([
   CanvasRenderer,
