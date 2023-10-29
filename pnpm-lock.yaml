@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@mdi/font':
+    specifier: ^7.3.67
+    version: 7.3.67
   '@milkdown/core':
     specifier: ^7.3.0
     version: 7.3.0(@milkdown/ctx@7.3.0)(@milkdown/prose@7.3.0)(@milkdown/transformer@7.3.0)
@@ -1143,6 +1146,10 @@ packages:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
+
+  /@mdi/font@7.3.67:
+    resolution: {integrity: sha512-SWxvzRbUQRfewlIV+OF4/YF4DkeTjMWoT8Hh9yeU/5UBVdJZj9Uf4a9+cXjknSIhIaMxZ/4N1O/s7ojApOOGjg==}
+    dev: false
 
   /@milkdown/core@7.3.0(@milkdown/ctx@7.3.0)(@milkdown/prose@7.3.0)(@milkdown/transformer@7.3.0):
     resolution: {integrity: sha512-spB2mti5glP/ZJROgNZuaVgDC0djhMEnd9eu5iEmm4qqUj4RabKDZkVox9kZE0ngn6msWtDW/qQwnIFd4iFGdQ==}

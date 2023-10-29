@@ -22,6 +22,7 @@
     "release": "vue-tsc --noEmit && node scripts/release"
   },
   "dependencies": {
+    "@mdi/font": "^7.3.67",
     "@milkdown/core": "^7.3.0",
     "@milkdown/plugin-history": "^7.3.0",
     "@milkdown/plugin-listener": "^7.3.0",
