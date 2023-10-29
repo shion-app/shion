@@ -49,18 +49,9 @@ const submit = handleSubmit((values) => {
           :error-messages="field.errorMessage.value"
           v-bind="itemProps"
         >
-          <template #append-inner="{ isFocused }">
-            <!-- <v-btn icon="mdi-palette" /> -->
-            <VColorPicker
-              v-if="isFocused.value"
-              v-model="field.value.value"
-              hide-inputs
-              mode="hex"
-              canvas-height="100"
-              position="absolute"
-              left-0
-              z-1000
-            />
+          <template #append>
+            <!-- @vue-ignore -->
+            <color-picker-button v-model="field.value.value" />
           </template>
         </VTextField>
       </template>
