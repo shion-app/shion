@@ -5,3 +5,5 @@ export interface Menu {
   children?: Array<Menu>
   click?: Function
 }
+
+export { FormItem } from '@components/modal/types'

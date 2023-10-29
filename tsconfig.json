@@ -17,7 +17,8 @@
       "@locales/*": ["src/locales/*"],
       "@interfaces/*": ["src/interfaces/*"],
       "@assets/*": ["src/assets/*"],
-      "@modules/*": ["src/modules/*"]
+      "@modules/*": ["src/modules/*"],
+      "@components/*": ["src/components/*"]
     }
   },
   "include": [

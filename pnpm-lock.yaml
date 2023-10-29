@@ -83,6 +83,9 @@ dependencies:
   tauri-plugin-store-api:
     specifier: github:tauri-apps/tauri-plugin-store#v1
     version: git@github.com+tauri-apps/tauri-plugin-store/6e19887b1bdea9b921a31993d72396a350731e07
+  vee-validate:
+    specifier: ^4.11.8
+    version: 4.11.8(vue@3.3.7)
   vue:
     specifier: ^3.3.7
     version: 3.3.7(typescript@5.2.2)
@@ -7895,6 +7898,16 @@ packages:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
     dev: true
+
+  /vee-validate@4.11.8(vue@3.3.7):
+    resolution: {integrity: sha512-ZuVpw0axWYBM3aVTD/bm94hcWHumqeUgNjptOqfBT0gyqyHaGYCrm0tSD/0bygEbWUDwEPJOQaEKaUGM82j8TQ==}
+    peerDependencies:
+      vue: ^3.3.4
+    dependencies:
+      '@vue/devtools-api': 6.5.0
+      type-fest: 4.3.2
+      vue: 3.3.7(typescript@5.2.2)
+    dev: false
 
   /vfile-message@3.1.4:
     resolution: {integrity: sha512-fa0Z6P8HUrQN4BZaX05SIVXic+7kE3b05PWAtPuYP9QLHsLKYR7/AlLW3NtOrpXRLeawpDLMsVkmk5DG0NXgWw==}
