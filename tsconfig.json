@@ -18,7 +18,8 @@
       "@interfaces/*": ["src/interfaces/*"],
       "@assets/*": ["src/assets/*"],
       "@modules/*": ["src/modules/*"],
-      "@components/*": ["src/components/*"]
+      "@components/*": ["src/components/*"],
+      "@plugins/*": ["src/plugins/*"]
     }
   },
   "include": [

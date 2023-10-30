@@ -7,7 +7,6 @@ import './styles/index.scss'
 import { createApp } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { createPinia } from 'pinia'
-import { createVuetify } from 'vuetify'
 import { createVfm } from 'vue-final-modal'
 
 import VChart from 'vue-echarts'
@@ -24,6 +23,7 @@ import {
 } from 'echarts/components'
 
 import { i18n } from '@locales/index'
+import { vuetify } from '@plugins/vuetify'
 import App from './App.vue'
 import routes from '~pages'
 
@@ -33,20 +33,6 @@ const router = createRouter({
 })
 
 const pinia = createPinia()
-
-const vuetify = createVuetify({
-  theme: {
-    themes: {
-      light: {
-        colors: {
-          'primary': '#1565c0',
-          'secondary': '#2e7d32',
-          'on-background': '#424242',
-        },
-      },
-    },
-  },
-})
 
 const vfm = createVfm()
 

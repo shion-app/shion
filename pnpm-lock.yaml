@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@date-io/date-fns':
+    specifier: ^2.17.0
+    version: 2.17.0(date-fns@2.29.3)
   '@mdi/font':
     specifier: ^7.3.67
     version: 7.3.67
@@ -101,6 +104,9 @@ dependencies:
   vue-router:
     specifier: ^4.1.6
     version: 4.1.6(vue@3.3.7)
+  vuetify:
+    specifier: ^3.3.23
+    version: 3.3.23(typescript@5.2.2)(vue-i18n@9.6.0)(vue@3.3.7)
 
 devDependencies:
   '@antfu/eslint-config':
@@ -217,9 +223,6 @@ devDependencies:
   vue-tsc:
     specifier: ^1.0.11
     version: 1.2.0(typescript@5.2.2)
-  vuetify:
-    specifier: ^3.3.23
-    version: 3.3.23(typescript@5.2.2)(vue-i18n@9.6.0)(vue@3.3.7)
 
 packages:
 
@@ -717,6 +720,22 @@ packages:
   /@chevrotain/utils@10.5.0:
     resolution: {integrity: sha512-hBzuU5+JjB2cqNZyszkDHZgOSrUUT8V3dhgRl8Q9Gp6dAj/H5+KILGjbhDpc3Iy9qmqlm/akuOI2ut9VUtzJxQ==}
     dev: true
+
+  /@date-io/core@2.17.0:
+    resolution: {integrity: sha512-+EQE8xZhRM/hsY0CDTVyayMDDY5ihc4MqXCrPxooKw19yAzUIC6uUqsZeaOFNL9YKTNxYKrJP5DFgE8o5xRCOw==}
+    dev: false
+
+  /@date-io/date-fns@2.17.0(date-fns@2.29.3):
+    resolution: {integrity: sha512-L0hWZ/mTpy3Gx/xXJ5tq5CzHo0L7ry6KEO9/w/JWiFWFLZgiNVo3ex92gOl3zmzjHqY/3Ev+5sehAr8UnGLEng==}
+    peerDependencies:
+      date-fns: ^2.0.0
+    peerDependenciesMeta:
+      date-fns:
+        optional: true
+    dependencies:
+      '@date-io/core': 2.17.0
+      date-fns: 2.29.3
+    dev: false
 
   /@esbuild-kit/cjs-loader@2.4.2:
     resolution: {integrity: sha512-BDXFbYOJzT/NBEtp71cvsrGPwGAMGRB/349rwKuoxNSiKjPraNNnlK6MIIabViCjqZugu6j+xeMDlEkWdHHJSg==}
@@ -8324,7 +8343,7 @@ packages:
       typescript: 5.2.2
       vue: 3.3.7(typescript@5.2.2)
       vue-i18n: 9.6.0(vue@3.3.7)
-    dev: true
+    dev: false
 
   /w3c-keyname@2.2.8:
     resolution: {integrity: sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==}
