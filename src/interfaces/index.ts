@@ -6,4 +6,4 @@ export interface Menu {
   click?: Function
 }
 
-export { FormItem } from '@components/modal/types'
+export * from '@components/modal/types'

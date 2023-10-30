@@ -3,7 +3,7 @@ import { useField, useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
 
-import type { BuildSchemaObject, Form } from './types'
+import type { BuildSchemaObject, Form } from '@interfaces/index'
 
 const props = defineProps<{
   form: Form
