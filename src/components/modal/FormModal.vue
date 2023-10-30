@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { VueFinalModal } from 'vue-final-modal'
+import { nanoid } from 'nanoid'
+
 import type { BuildSchemaObject, Form } from './types'
 
 defineProps<{
@@ -9,8 +11,10 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'confirm'): void
+  (e: 'confirm', values, setErrors: (fields) => void): void
 }>()
+
+const formId = `form-${nanoid()}`
 </script>
 
 <template>
@@ -19,13 +23,14 @@ const emit = defineEmits<{
   >
     <v-card :title="title" min-width="400" max-width="600">
       <v-card-text>
-        <form-factory :form="form" :schema="schema" />
+        <form-factory :form="form" :schema="schema" :form-id="formId" @confirm="(...args) => emit('confirm', ...args)" />
       </v-card-text>
       <v-card-actions>
         <v-spacer />
         <v-btn
-          text="Close Dialog"
-          @click="emit('confirm')"
+          type="submit"
+          :form="formId"
+          :text="$t('modal.submit')"
         />
       </v-card-actions>
     </v-card>

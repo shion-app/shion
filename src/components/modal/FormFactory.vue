@@ -8,9 +8,14 @@ import type { BuildSchemaObject, Form } from './types'
 const props = defineProps<{
   form: Form
   schema: BuildSchemaObject
+  formId: string
 }>()
 
-const { handleSubmit, handleReset } = useForm({
+const emit = defineEmits<{
+  (e: 'confirm', values, setErrors: (fields) => void): void
+}>()
+
+const { handleSubmit, setErrors } = useForm({
   validationSchema: toTypedSchema(props.schema(z)),
 })
 
@@ -26,12 +31,12 @@ const transformForm = props.form.map((i) => {
 })
 
 const submit = handleSubmit((values) => {
-  alert(JSON.stringify(values, null, 2))
+  emit('confirm', values, setErrors)
 })
 </script>
 
 <template>
-  <form @submit.prevent="submit">
+  <form :id="formId" @submit.prevent="submit">
     <template v-for="{ type, key, field, label, props: itemProps } in transformForm" :key="key">
       <VTextField
         v-if="type == 'textField'"
@@ -55,13 +60,5 @@ const submit = handleSubmit((values) => {
         </VTextField>
       </template>
     </template>
-
-    <v-btn class="me-4" type="submit">
-      submit
-    </v-btn>
-
-    <v-btn @click="handleReset">
-      clear
-    </v-btn>
   </form>
 </template>
