@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import { useField, useForm } from 'vee-validate'
-import type { Form } from './types'
+import { toTypedSchema } from '@vee-validate/zod'
+import { z } from 'zod'
+
+import type { BuildSchemaObject, Form } from './types'
 
 const props = defineProps<{
   form: Form
+  schema: BuildSchemaObject
 }>()
 
 const { handleSubmit, handleReset } = useForm({
-  validationSchema: props.form.reduce((prev, cur) => {
-    if (cur.validationSchema)
-      prev[cur.key] = cur.validationSchema
-
-    return prev
-  }, {}),
+  validationSchema: toTypedSchema(props.schema(z)),
 })
 
 const transformForm = props.form.map((i) => {

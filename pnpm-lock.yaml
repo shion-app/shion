@@ -41,6 +41,9 @@ dependencies:
   '@tauri-apps/api':
     specifier: ^1.3.0
     version: 1.3.0
+  '@vee-validate/zod':
+    specifier: ^4.11.8
+    version: 4.11.8(vue@3.3.7)
   '@vueuse/components':
     specifier: ^10.1.2
     version: 10.1.2(vue@3.3.7)
@@ -62,6 +65,9 @@ dependencies:
   echarts:
     specifier: ^5.4.2
     version: 5.4.2
+  i18next:
+    specifier: ^23.6.0
+    version: 23.6.0
   kysely:
     specifier: ^0.26.3
     version: 0.26.3
@@ -107,6 +113,12 @@ dependencies:
   vuetify:
     specifier: ^3.3.23
     version: 3.3.23(typescript@5.2.2)(vue-i18n@9.6.0)(vue@3.3.7)
+  zod:
+    specifier: ^3.22.4
+    version: 3.22.4
+  zod-i18n-map:
+    specifier: ^2.21.0
+    version: 2.21.0(i18next@23.6.0)(zod@3.22.4)
 
 devDependencies:
   '@antfu/eslint-config':
@@ -649,6 +661,13 @@ packages:
       '@babel/helper-plugin-utils': 7.22.5
       '@babel/plugin-syntax-typescript': 7.22.5(@babel/core@7.22.9)
     dev: true
+
+  /@babel/runtime@7.23.2:
+    resolution: {integrity: sha512-mM8eg4yl5D6i3lu2QKPuPH4FArvJ8KhTofbE7jwMUv9KX5mBvwPAqnV3MlyBNqdp9RyRKP6Yck8TrfYrPvX3bg==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      regenerator-runtime: 0.14.0
+    dev: false
 
   /@babel/template@7.22.5:
     resolution: {integrity: sha512-X7yV7eiwAxdj9k94NEylvbVHLiVG1nvzCV2EAowhxLTwODV1jl9UzZ48leOC0sH7OnuHrIkllaBgneUykIcZaw==}
@@ -2192,6 +2211,16 @@ packages:
     transitivePeerDependencies:
       - rollup
     dev: true
+
+  /@vee-validate/zod@4.11.8(vue@3.3.7):
+    resolution: {integrity: sha512-qAyqDEigklMf669ZqIw9t95g0Ipzu9rMYUqcZpANlCvyaIAeBlJGcsv+2CewlqgwuC6BL9EAURLJ8Ux5WlBgXg==}
+    dependencies:
+      type-fest: 4.3.2
+      vee-validate: 4.11.8(vue@3.3.7)
+      zod: 3.22.4
+    transitivePeerDependencies:
+      - vue
+    dev: false
 
   /@vite-plugin-vue-devtools/core@1.0.0-beta.5(vite@4.3.5):
     resolution: {integrity: sha512-bz5GU4zUntNUUXFyFZqxuXoGrGmXjnJjhVrAgqkJDhOhl33OHFcUWXk7Df98fsY0xOt2ldCbhXnXAarX7eeEpQ==}
@@ -4683,6 +4712,12 @@ packages:
     engines: {node: '>=14.18.0'}
     dev: true
 
+  /i18next@23.6.0:
+    resolution: {integrity: sha512-z0Cxr0MGkt+kli306WS4nNNM++9cgt2b2VCMprY92j+AIab/oclgPxdwtTZVLP1zn5t5uo8M6uLsZmYrcjr3HA==}
+    dependencies:
+      '@babel/runtime': 7.23.2
+    dev: false
+
   /iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
     engines: {node: '>=0.10.0'}
@@ -6449,7 +6484,7 @@ packages:
       '@prisma/generator-helper': 4.13.0
       '@prisma/internals': 4.13.0
       typescript: 5.2.2
-      zod: 3.22.2
+      zod: 3.22.4
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -6765,6 +6800,10 @@ packages:
     dependencies:
       picomatch: 2.3.1
     dev: true
+
+  /regenerator-runtime@0.14.0:
+    resolution: {integrity: sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==}
+    dev: false
 
   /regexp-to-ast@0.5.0:
     resolution: {integrity: sha512-tlbJqcMHnPKI9zSrystikWKwHkBqu2a/Sgw01h3zFjvYrMxEDYHzzoMZnUrbIfpTFEsoRnnviOXNCzFiSc54Qw==}
@@ -8547,9 +8586,18 @@ packages:
       readable-stream: 3.6.2
     dev: true
 
-  /zod@3.22.2:
-    resolution: {integrity: sha512-wvWkphh5WQsJbVk1tbx1l1Ly4yg+XecD+Mq280uBGt9wa5BKSWf4Mhp6GmrkPixhMxmabYY7RbzlwVP32pbGCg==}
-    dev: true
+  /zod-i18n-map@2.21.0(i18next@23.6.0)(zod@3.22.4):
+    resolution: {integrity: sha512-5yyL8m6GDfaNH2u9GC7QE3U8XTPYOGjXMFgxhXzK8N/HCTZHyBQR5X0Y76n4AscbHNmBfxLKXLwkjWXpx6JZaw==}
+    peerDependencies:
+      i18next: '>=21.3.0'
+      zod: '>=3.17.0'
+    dependencies:
+      i18next: 23.6.0
+      zod: 3.22.4
+    dev: false
+
+  /zod@3.22.4:
+    resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
 
   /zrender@5.4.3:
     resolution: {integrity: sha512-DRUM4ZLnoaT0PBVvGBDO9oWIDBKFdAVieNWxWwK0niYzJCMwGchRk21/hsE+RKkIveH3XHCyvXcJDkgLVvfizQ==}

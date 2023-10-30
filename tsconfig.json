@@ -8,6 +8,7 @@
     "noImplicitAny": false,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
+    "resolveJsonModule": true,
     "types": [
       "@intlify/unplugin-vue-i18n/messages",
       "vite-plugin-pages/client"

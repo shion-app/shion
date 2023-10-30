@@ -10,20 +10,12 @@ import { createPinia } from 'pinia'
 import { createVfm } from 'vue-final-modal'
 
 import VChart from 'vue-echarts'
-import { use } from 'echarts/core'
-import { CanvasRenderer } from 'echarts/renderers'
-import { BarChart, LineChart } from 'echarts/charts'
-import {
-  DataZoomComponent,
-  GraphicComponent,
-  GridComponent,
-  LegendComponent,
-  TitleComponent,
-  TooltipComponent,
-} from 'echarts/components'
 
 import { i18n } from '@locales/index'
 import { vuetify } from '@plugins/vuetify'
+import '@plugins/zod'
+import '@plugins/echarts'
+
 import App from './App.vue'
 import routes from '~pages'
 
@@ -35,18 +27,6 @@ const router = createRouter({
 const pinia = createPinia()
 
 const vfm = createVfm()
-
-use([
-  CanvasRenderer,
-  BarChart,
-  LineChart,
-  GridComponent,
-  TooltipComponent,
-  LegendComponent,
-  TitleComponent,
-  GraphicComponent,
-  DataZoomComponent,
-])
 
 createApp(App)
   .use(i18n)

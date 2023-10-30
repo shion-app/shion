@@ -2,6 +2,7 @@ import { Store } from 'tauri-plugin-store-api'
 import { getVersion } from '@tauri-apps/api/app'
 import { invoke } from '@tauri-apps/api'
 import { disable, enable, isEnabled } from 'tauri-plugin-autostart-api'
+import i18next from 'i18next'
 
 interface Config {
   version: string
@@ -65,6 +66,7 @@ export const useConfig = defineStore('config', () => {
   })
 
   watch(() => config.value.locale, (v) => {
+    i18next.changeLanguage(v)
     locale.value = v
     invoke('update_tray_menu', {
       data: {
