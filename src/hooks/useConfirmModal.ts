@@ -1,7 +1,10 @@
+import type { UseModalOptions } from 'vue-final-modal'
 import { useModal } from 'vue-final-modal'
-import ConfirmModal from '@components/modal/ConfirmModal.vue'
 
-export function useConfirmModal(options: Parameters<typeof useModal>[0]) {
+import ConfirmModal from '@components/modal/ConfirmModal.vue'
+import type { ComponentProps } from '@interfaces/index'
+
+export function useFormModal(options: UseModalOptions<ComponentProps<typeof ConfirmModal>>) {
   return useModal({
     component: ConfirmModal,
     ...options,

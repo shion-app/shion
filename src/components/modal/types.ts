@@ -3,7 +3,7 @@ import type { AllowedComponentProps, VNodeProps } from 'vue'
 
 import type { z as Zod, ZodObject } from 'zod'
 
-type ComponentProps<C extends Component> = C extends new (...args: any) => any
+export type ComponentProps<C extends Component> = C extends new (...args: any) => any
   ? Omit<InstanceType<C>['$props'], keyof VNodeProps | keyof AllowedComponentProps>
   : never
 
