@@ -6,4 +6,4 @@ export interface Menu {
   click?: Function
 }
 
-export * from '@components/modal/types'
+export * from '@/components/modal/types'

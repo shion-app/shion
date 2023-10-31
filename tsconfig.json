@@ -15,12 +15,7 @@
     ],
     "baseUrl": "./",
     "paths": {
-      "@locales/*": ["src/locales/*"],
-      "@interfaces/*": ["src/interfaces/*"],
-      "@assets/*": ["src/assets/*"],
-      "@modules/*": ["src/modules/*"],
-      "@components/*": ["src/components/*"],
-      "@plugins/*": ["src/plugins/*"]
+      "@/*": ["src/*"]
     }
   },
   "include": [

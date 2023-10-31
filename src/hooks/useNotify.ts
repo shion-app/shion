@@ -1,6 +1,6 @@
-import type { NotificationSchema } from '@plugins/notiwind'
-import { notify } from '@plugins/notiwind'
-import { i18n } from '@locales/index'
+import type { NotificationSchema } from '@/plugins/notiwind'
+import { notify } from '@/plugins/notiwind'
+import { i18n } from '@/locales'
 
 type Notify = typeof notify
 

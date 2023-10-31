@@ -1,7 +1,7 @@
 import { format as _format, formatDistance as _formatDistance, formatDistanceStrict as _formatDistanceStrict, formatDuration as _formatDuration, endOfMonth, startOfMonth } from 'date-fns'
 import { enUS, zhCN } from 'date-fns/locale'
 
-import { i18n } from '@locales/index'
+import { i18n } from '@/locales'
 
 export * from './path'
 

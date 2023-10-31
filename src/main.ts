@@ -11,13 +11,13 @@ import { createVfm } from 'vue-final-modal'
 
 import VChart from 'vue-echarts'
 
-import { i18n } from '@locales/index'
-import { vuetify } from '@plugins/vuetify'
-import '@plugins/zod'
-import '@plugins/echarts'
-
 import App from './App.vue'
 import routes from '~pages'
+
+import { i18n } from '@/locales'
+import { vuetify } from '@/plugins/vuetify'
+import '@/plugins/zod'
+import '@/plugins/echarts'
 
 const router = createRouter({
   history: createWebHashHistory(),

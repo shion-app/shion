@@ -1,10 +1,12 @@
 import type { UseModalOptions } from 'vue-final-modal'
 import { useModal } from 'vue-final-modal'
 
-import FormModal from '@components/modal/FormModal.vue'
-import type { ComponentProps } from '@interfaces/index'
+import FormModal from '@/components/modal/FormModal.vue'
+import type { ComponentProps } from '@/interfaces'
 
-export function useFormModal(options: UseModalOptions<ComponentProps<typeof FormModal>>) {
+export type useFormModalOptions = UseModalOptions<ComponentProps<typeof FormModal>>
+
+export function useFormModal(options: useFormModalOptions) {
   return useModal({
     component: FormModal,
     ...options,

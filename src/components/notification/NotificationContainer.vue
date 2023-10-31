@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Notification, NotificationGroup } from '@plugins/notiwind'
+import { Notification, NotificationGroup } from '@/plugins/notiwind'
 </script>
 
 <template>
