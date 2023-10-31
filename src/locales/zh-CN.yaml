@@ -100,3 +100,8 @@ moment:
     listBulleted: 列表
     listNumbered: 有序列表
     quote: 引用
+notiwind:
+  success: 成功
+  info: 提示
+  warning: 警告
+  error: 错误

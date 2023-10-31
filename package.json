@@ -45,6 +45,7 @@
     "i18next": "^23.6.0",
     "kysely": "^0.26.3",
     "nanoid": "^5.0.1",
+    "notiwind": "^2.0.2",
     "p-queue": "^7.3.4",
     "pinia": "^2.0.34",
     "tauri-plugin-autostart-api": "github:tauri-apps/tauri-plugin-autostart#v1",

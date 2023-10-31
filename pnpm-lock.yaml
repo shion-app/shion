@@ -74,6 +74,9 @@ dependencies:
   nanoid:
     specifier: ^5.0.1
     version: 5.0.1
+  notiwind:
+    specifier: ^2.0.2
+    version: 2.0.2(vue@3.3.7)
   p-queue:
     specifier: ^7.3.4
     version: 7.3.4
@@ -5842,6 +5845,10 @@ packages:
     engines: {node: '>=16 || 14 >=14.17'}
     dev: true
 
+  /mitt@3.0.1:
+    resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
+    dev: false
+
   /mkdirp-classic@0.5.3:
     resolution: {integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==}
     dev: true
@@ -5983,6 +5990,15 @@ packages:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /notiwind@2.0.2(vue@3.3.7):
+    resolution: {integrity: sha512-wMCf+07E093d0Q78C5UHroT9GQHm4mIGerhg7dGLJ0GN6zONqKj8nTR3clkq/Y44On9k28/0DtDNwOX7FT5p/A==}
+    peerDependencies:
+      vue: ^3.3.4
+    dependencies:
+      mitt: 3.0.1
+      vue: 3.3.7(typescript@5.2.2)
+    dev: false
 
   /npm-bundled@2.0.1:
     resolution: {integrity: sha512-gZLxXdjEzE/+mOstGDqR6b0EkhJ+kM6fxM6vUuckuctuVPh80Q6pw/rSZj9s4Gex9GxWtIicO1pc8DB9KZWudw==}
