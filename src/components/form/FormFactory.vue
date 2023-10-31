@@ -19,16 +19,25 @@ const { handleSubmit, setErrors } = useForm({
   validationSchema: toTypedSchema(props.schema(z)),
 })
 
-const transformForm = props.form.map((i) => {
-  const field = useField(i.key)
+const fields = props.form.map(({ key, value }) => {
+  const field = useField(key)
   field.resetField({
-    value: i.value,
+    value,
   })
   return {
-    ...i,
+    key,
     field,
   }
 })
+
+const transformForm = computed(() =>
+  props.form.map((i) => {
+    const { field } = fields.find(f => f.key == i.key)!
+    return {
+      ...i,
+      field,
+    }
+  }))
 
 const submit = handleSubmit((values) => {
   emit('confirm', values, setErrors)
