@@ -20,6 +20,9 @@ export interface FormItem<T extends keyof FormItemProps> {
   props?: FormItemProps[T]
 }
 
-export type Form = Array<FormItem<keyof FormItemProps>>
+export interface Form {
+  fields: Array<FormItem<keyof FormItemProps>>
+  values?: Record<string, unknown>
+}
 
 export type BuildSchemaObject = (z: typeof Zod) => ZodObject<any, any, any, any, any>

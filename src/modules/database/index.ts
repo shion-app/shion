@@ -1,6 +1,6 @@
 import Database from 'tauri-plugin-sql-api'
 import { error } from 'tauri-plugin-log-api'
-import type { SelectType } from 'kysely'
+import type { Insertable, SelectType } from 'kysely'
 
 import type { DatabaseExecutor } from './db'
 import { DatabaseError, SqliteErrorEnum, createKyselyDatabaseWithModels, findSqliteMessageFields } from './db'
@@ -50,3 +50,5 @@ export type SelectPlan = DeepSelectable<Plan>
 export type SelectLabel = DeepSelectable<Label>
 export type SelectNote = DeepSelectable<Note>
 export type SelectMoment = DeepSelectable<Moment>
+
+export type InsertPlan = Insertable<Plan>

@@ -1,39 +1,91 @@
 <script setup lang="ts">
-import { Modal, message } from 'ant-design-vue'
-import type { SelectPlan } from '@modules/database'
-import { db } from '@modules/database'
+import type { useFormModalOptions } from '@/hooks/useFormModal'
+import type { InsertPlan, SelectPlan } from '@/modules/database'
+import { db } from '@/modules/database'
 
-const { setMenu } = useMore()
 const { t } = useI18n()
+const { parseError } = useDatabase()
 const router = useRouter()
+const { success } = useNotify()
 
-const planCreateVisible = ref(false)
-const planUpdateVisible = ref(false)
-const planCreateModel = ref({
-  name: '',
-  color: randomColor(),
-} as SelectPlan)
-const planUpdateModel = ref({} as SelectPlan)
+const model = ref<SelectPlan>()
+const isCreate = ref(true)
+
+const { open, close } = useFormModal(
+  computed<useFormModalOptions>(() => ({
+    attrs: {
+      title: isCreate.value ? t('plan.create') : t('plan.update'),
+      form: {
+        fields: [
+          {
+            type: 'textField',
+            key: 'name',
+            label: t('plan.name'),
+          },
+          {
+            type: 'colorPicker',
+            key: 'color',
+            label: t('plan.color'),
+          },
+        ],
+        values: isCreate.value ? {} : model.value,
+      },
+      schema: z => z.object({
+        name: z.string().min(1),
+        color: z.string().length(7),
+      }),
+      async onConfirm(v, setErrors) {
+        try {
+          isCreate.value ? await handleCreate(v) : await handleUpdate(v)
+        }
+        catch (error) {
+          return setErrors(parseError(error))
+        }
+        close()
+        success({})
+        refresh()
+      },
+    },
+  })))
+
 const list = ref<Array<SelectPlan>>([])
 
 async function refresh() {
   list.value = await db.plan.select()
 }
 
-function handleUpdate(plan: SelectPlan) {
-  planUpdateVisible.value = true
-  Object.assign(planUpdateModel.value, plan)
+function showCreateForm() {
+  isCreate.value = true
+  open()
+}
+
+function showUpdateForm(plan: SelectPlan) {
+  model.value = plan
+  isCreate.value = false
+  open()
+}
+
+function handleCreate(plan: InsertPlan) {
+  return db.plan.insert(plan)
+}
+
+function handleUpdate(plan: InsertPlan) {
+  return db.plan.update(model.value!.id, plan)
 }
 
 function handleRemove(plan: SelectPlan) {
-  Modal.confirm({
-    title: t('modal.confirmDelete'),
-    async onOk() {
-      await db.plan.removeRelation(plan.id)
-      message.success(t('message.success'))
-      refresh()
+  const { open, close } = useConfirmModal({
+    attrs: {
+      title: t('modal.confirmDelete'),
+      async onConfirm() {
+        await db.plan.removeRelation(plan.id)
+        close()
+        success({})
+        refresh()
+      },
     },
   })
+  open()
 }
 
 function viewNote(planId: number) {
@@ -44,16 +96,6 @@ function viewNote(planId: number) {
     },
   })
 }
-
-setMenu(() => [
-  {
-    key: 'createPlan',
-    title: t('plan.create'),
-    click() {
-      planCreateVisible.value = true
-    },
-  },
-])
 
 refresh()
 </script>
@@ -88,23 +130,28 @@ refresh()
         <div>{{ formatHHmmss(plan.totalTime) }}</div>
         <div flex-1 />
         <div flex op-0 group-hover-op-100 transition-opacity-400 space-x-2>
-          <a-tooltip placement="bottom">
-            <template #title>
-              <span>{{ $t('button.update') }}</span>
+          <v-tooltip :text="$t('button.update')" location="bottom">
+            <template #activator="{ props }">
+              <div i-mdi:file-edit-outline text-5 cursor-pointer v-bind="props" @click.stop="showUpdateForm(plan)" />
             </template>
-            <div i-mdi:file-edit-outline text-5 cursor-pointer @click.stop="handleUpdate(plan)" />
-          </a-tooltip>
-          <a-tooltip placement="bottom">
-            <template #title>
-              <span>{{ $t('button.remove') }}</span>
+          </v-tooltip>
+          <v-tooltip :text="$t('button.remove')" location="bottom">
+            <template #activator="{ props }">
+              <div i-mdi:delete-outline text-5 cursor-pointer v-bind="props" @click.stop="handleRemove(plan)" />
             </template>
-            <div i-mdi:delete-outline text-5 cursor-pointer @click.stop="handleRemove(plan)" />
-          </a-tooltip>
+          </v-tooltip>
         </div>
       </div>
     </div>
   </div>
-  <a-empty v-else h-full flex flex-col justify-center />
-  <plan-form v-model:visible="planCreateVisible" v-model:model="planCreateModel" type="create" @refresh="refresh" />
-  <plan-form v-model:visible="planUpdateVisible" type="update" :model="planUpdateModel" @refresh="refresh" />
+  <!-- <a-empty v-else h-full flex flex-col justify-center /> -->
+  <more-menu>
+    <v-list>
+      <v-list-item value="plan.create">
+        <v-list-item-title @click="showCreateForm">
+          {{ $t('plan.create') }}
+        </v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </more-menu>
 </template>

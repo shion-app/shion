@@ -19,8 +19,9 @@ const { handleSubmit, setErrors } = useForm({
   validationSchema: toTypedSchema(props.schema(z)),
 })
 
-const fields = props.form.map(({ key, value }) => {
+const fields = props.form.fields.map(({ key }) => {
   const field = useField(key)
+  const value = props.form.values?.[key]
   field.resetField({
     value,
   })
@@ -31,7 +32,7 @@ const fields = props.form.map(({ key, value }) => {
 })
 
 const transformForm = computed(() =>
-  props.form.map((i) => {
+  props.form.fields.map((i) => {
     const { field } = fields.find(f => f.key == i.key)!
     return {
       ...i,
