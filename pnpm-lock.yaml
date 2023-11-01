@@ -71,6 +71,9 @@ dependencies:
   kysely:
     specifier: ^0.26.3
     version: 0.26.3
+  mitt:
+    specifier: ^3.0.1
+    version: 3.0.1
   nanoid:
     specifier: ^5.0.1
     version: 5.0.1
