@@ -105,3 +105,6 @@ notiwind:
   info: 提示
   warning: 警告
   error: 错误
+database:
+  RAW: '未处理数据库错误: ({message})'
+  SQLITE_CONSTRAINT_UNIQUE: 已存在重复值

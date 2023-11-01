@@ -106,3 +106,6 @@ notiwind:
   info: Info
   warning: Warning
   error: Error
+database:
+  RAW: 'Unhandled database error: ({message})'
+  SQLITE_CONSTRAINT_UNIQUE: Duplicate value already exists
