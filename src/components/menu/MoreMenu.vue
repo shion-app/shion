@@ -1,10 +1,20 @@
 <script setup lang="ts">
+import { nanoid } from 'nanoid'
+
 import { emitter } from '@/plugins/mitt'
 
-emitter.emit('toggle-more-menu', true)
+const id = nanoid()
+
+emitter.emit('toggle-more-menu', {
+  id,
+  show: true,
+})
 
 onUnmounted(() => {
-  emitter.emit('toggle-more-menu', false)
+  emitter.emit('toggle-more-menu', {
+    id,
+    show: false,
+  })
 })
 </script>
 

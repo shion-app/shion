@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import { emitter } from '@/plugins/mitt'
 
-const isShowMenu = ref(false)
+const moreMenu = ref({
+  id: '',
+  show: false,
+})
 
-emitter.on('toggle-more-menu', v => isShowMenu.value = v)
+emitter.on('toggle-more-menu', (v) => {
+  if (v.show || moreMenu.value.id == v.id)
+    moreMenu.value = v
+})
 
 const { t } = useI18n()
 const router = useRouter()
@@ -77,7 +83,7 @@ function goBack() {
     </div>
     <v-btn
       id="more-menu" icon variant="text" size="small" :class="{
-        invisible: !isShowMenu,
+        invisible: !moreMenu.show,
       }"
     >
       <div i-mdi:menu text-6 />
