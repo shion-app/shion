@@ -77,13 +77,16 @@ export function useNoteCreate() {
             start(() => db.note.update(noteId, {
               end: Date.now(),
             }))
+            emitter.emit('confirm')
           },
           onClosed() {
             formvalues.value = {
               planId: undefined,
               labelId: undefined,
             }
-            emitter.emit('close')
+          },
+          onCancel() {
+            emitter.emit('cancel')
           },
         },
       }
@@ -98,19 +101,20 @@ export function useNoteCreate() {
     })
   }
 
-  async function init() {
+  async function refresh() {
     [labelList.value, planList.value] = await Promise.all([db.label.select(), db.plan.select()])
   }
 
-  init()
+  async function openModal(value?: { planId: number; labelId: number }) {
+    await refresh()
 
-  function openModal(value?: { planId: number; labelId: number }) {
     if (value)
       formvalues.value = value
 
-    open()
-    return new Promise<void>((resolve) => {
-      emitter.on('close', () => resolve())
+    await open()
+    return new Promise<void>((resolve, reject) => {
+      emitter.on('confirm', () => resolve())
+      emitter.on('cancel', () => reject(new Error('cancel')))
     })
   }
 

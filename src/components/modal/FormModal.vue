@@ -12,7 +12,8 @@ defineProps<{
 
 defineEmits<{
   (e: 'confirm', values, setErrors: (fields) => void): void
-  (e: 'closed')
+  (e: 'closed'): void
+  (e: 'cancel'): void
 }>()
 
 const formId = `form-${nanoid()}`
@@ -22,6 +23,7 @@ const formId = `form-${nanoid()}`
   <VueFinalModal
     flex justify-center items-center
     @closed="$emit('closed')"
+    @click-outside="$emit('cancel')"
   >
     <v-card :title="title" min-width="400" max-width="600">
       <v-card-text>
