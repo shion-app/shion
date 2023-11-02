@@ -40,6 +40,14 @@ const transformForm = computed(() =>
     }
   }))
 
+watchDeep(() => props.form.values, (v) => {
+  for (const key in v) {
+    const { field } = fields.find(i => i.key == key)!
+    if (field.value.value != v[key])
+      field.setValue(v[key])
+  }
+})
+
 const submit = handleSubmit((values) => {
   emit('confirm', values, setErrors)
 })
@@ -55,20 +63,26 @@ const submit = handleSubmit((values) => {
         :error-messages="field.errorMessage.value"
         v-bind="itemProps"
       />
-      <template v-if="type == 'colorPicker'">
-        <VTextField
-          :model-value="field.value.value"
-          readonly
-          :label="label"
-          :error-messages="field.errorMessage.value"
-          v-bind="itemProps"
-        >
-          <template #append>
-            <!-- @vue-ignore -->
-            <color-picker-button v-model="field.value.value" />
-          </template>
-        </VTextField>
-      </template>
+      <VTextField
+        v-if="type == 'colorPicker'"
+        :model-value="field.value.value"
+        readonly
+        :label="label"
+        :error-messages="field.errorMessage.value"
+        v-bind="itemProps"
+      >
+        <template #append>
+          <!-- @vue-ignore -->
+          <color-picker-button v-model="field.value.value" />
+        </template>
+      </VTextField>
+      <v-select
+        v-if="type == 'select'"
+        v-model="field.value.value"
+        :label="label"
+        :error-messages="field.errorMessage.value"
+        v-bind="itemProps"
+      />
     </template>
   </form>
 </template>

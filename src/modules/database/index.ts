@@ -52,3 +52,4 @@ export type SelectNote = DeepSelectable<Note>
 export type SelectMoment = DeepSelectable<Moment>
 
 export type InsertPlan = Insertable<Plan>
+export type InsertNote = Insertable<Note>

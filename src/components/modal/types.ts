@@ -1,4 +1,4 @@
-import type { VColorPicker, VTextField } from 'vuetify/components'
+import type { VColorPicker, VSelect, VTextField } from 'vuetify/components'
 import type { AllowedComponentProps, VNodeProps } from 'vue'
 
 import type { z as Zod, ZodObject } from 'zod'
@@ -10,6 +10,7 @@ export type ComponentProps<C extends Component> = C extends new (...args: any) =
 interface FormItemProps {
   textField: ComponentProps<typeof VTextField>
   colorPicker: ComponentProps<typeof VColorPicker>
+  select: ComponentProps<typeof VSelect>
 }
 
 export interface FormItem<T extends keyof FormItemProps> {

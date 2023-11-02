@@ -34,5 +34,8 @@ export const vuetify = createVuetify({
     VTextField: {
       variant: 'solo',
     },
+    VSelect: {
+      variant: 'solo',
+    },
   },
 })

@@ -10,8 +10,9 @@ defineProps<{
   schema: BuildSchemaObject
 }>()
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'confirm', values, setErrors: (fields) => void): void
+  (e: 'closed')
 }>()
 
 const formId = `form-${nanoid()}`
@@ -20,10 +21,11 @@ const formId = `form-${nanoid()}`
 <template>
   <VueFinalModal
     flex justify-center items-center
+    @closed="$emit('closed')"
   >
     <v-card :title="title" min-width="400" max-width="600">
       <v-card-text>
-        <form-factory :form="form" :schema="schema" :form-id="formId" @confirm="(...args) => emit('confirm', ...args)" />
+        <form-factory :form="form" :schema="schema" :form-id="formId" @confirm="(...args) => $emit('confirm', ...args)" />
       </v-card-text>
       <v-card-actions>
         <v-spacer />
