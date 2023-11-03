@@ -2,12 +2,12 @@ import type { Event } from '@tauri-apps/api/event'
 import { listen } from '@tauri-apps/api/event'
 import { invoke } from '@tauri-apps/api'
 
-import type * as backend from '@interfaces/backend'
-import { type SelectProgram, db } from '@modules/database'
+import type * as backend from '@/interfaces/backend'
+import { type SelectProgram, db } from '@/modules/database'
 
-import exe from '@assets/exe.png'
+import exe from '@/assets/exe.png'
 
-export const useMonitor = defineStore('monitor', () => {
+export const useMonitorStore = defineStore('monitor', () => {
   const filtering = ref(false)
   const filterList = ref<Array<backend.Program & {
     checked: boolean

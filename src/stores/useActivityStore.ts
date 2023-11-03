@@ -4,8 +4,8 @@ import { debug } from 'tauri-plugin-log-api'
 import { invoke } from '@tauri-apps/api'
 import PQueue from 'p-queue'
 
-import type * as backend from '@interfaces/backend'
-import { type SelectProgram, db } from '@modules/database'
+import type * as backend from '@/interfaces/backend'
+import { type SelectProgram, db } from '@/modules/database'
 
 const RECORD_INTERVAL = 1000 * 60
 const INACTIVE_TIMEOUT = 1000 * 60
@@ -207,8 +207,8 @@ class Watcher {
   }
 }
 
-export const useActivity = defineStore('activity', () => {
-  const monitor = useMonitor()
+export const useActivityStore = defineStore('activity', () => {
+  const monitor = useMonitorStore()
 
   const watcher = new Watcher()
 
