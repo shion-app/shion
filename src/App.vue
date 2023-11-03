@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import zhCN from 'ant-design-vue/es/locale/zh_CN'
-import enUS from 'ant-design-vue/es/locale/en_US'
+import { ModalsContainer } from 'vue-final-modal'
+
 import { listen } from '@tauri-apps/api/event'
 import { exit } from '@tauri-apps/api/process'
 
-const { locale: l } = useI18n()
-const { start } = useUpdate()
-const configStore = useConfig()
-const timeStore = useTime()
-useMonitor()
-useActivity()
+const { start } = useUpdateStore()
+const configStore = useConfigStore()
+const timeStore = useTimerStore()
+useMonitorStore()
+useActivityStore()
 
 const { finish } = timeStore
 const { config } = storeToRefs(configStore)
@@ -20,16 +19,6 @@ watchOnce(() => config.value.checkUpdate, (v) => {
     start()
 })
 
-const locale = computed(() => {
-  switch (l.value) {
-    case 'zh-CN':
-      return zhCN
-
-    default:
-      return enUS
-  }
-})
-
 listen('quit', async () => {
   if (running.value)
     await finish()
@@ -38,11 +27,21 @@ listen('quit', async () => {
 </script>
 
 <template>
-  <a-config-provider :locale="locale">
-    <nav-drawer>
-      <router-view v-slot="{ Component }">
-        <component :is="Component" />
-      </router-view>
-    </nav-drawer>
-  </a-config-provider>
+  <v-locale-provider :locale="config.locale">
+    <v-theme-provider with-background>
+      <layout-provider>
+        <layout-nav>
+          <nav-action />
+        </layout-nav>
+        <layout-main>
+          <router-view v-slot="{ Component }">
+            <component :is="Component" />
+          </router-view>
+        </layout-main>
+        <layout-footer />
+      </layout-provider>
+      <ModalsContainer />
+      <notification-container />
+    </v-theme-provider>
+  </v-locale-provider>
 </template>

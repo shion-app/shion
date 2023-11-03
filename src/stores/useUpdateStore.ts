@@ -2,14 +2,15 @@ import { TauriEvent, listen } from '@tauri-apps/api/event'
 import { checkUpdate, installUpdate, onUpdaterEvent } from '@tauri-apps/api/updater'
 import { error, info } from 'tauri-plugin-log-api'
 import { relaunch } from '@tauri-apps/api/process'
-import { Modal, message } from 'ant-design-vue'
+
+const notify = useNotify()
 
 interface Payload {
   chunkLength: number
   contentLength: number
 }
 
-export const useUpdate = defineStore('update', () => {
+export const useUpdateStore = defineStore('update', () => {
   const { t } = useI18n()
 
   const precent = ref(0)
@@ -23,27 +24,30 @@ export const useUpdate = defineStore('update', () => {
       const { shouldUpdate, manifest } = await checkUpdate()
 
       if (shouldUpdate) {
-        const { destroy } = Modal.confirm({
-          title: t('updater.title'),
-          content: t('updater.content', {
-            version: manifest?.version,
-          }),
-          async onOk() {
-            destroy()
-            downloading.value = true
-            // Install the update. This will also restart the app on Windows!
-            await installUpdate()
+        const { open, close } = useConfirmModal({
+          attrs: {
+            title: t('updater.title'),
+            content: t('updater.content', {
+              version: manifest?.version,
+            }),
+            async onConfirm() {
+              close()
+              downloading.value = true
+              // Install the update. This will also restart the app on Windows!
+              await installUpdate()
 
-            // On macOS and Linux you will need to restart the app manually.
-            // You could use this step to display another confirmation dialog.
-            await relaunch()
+              // On macOS and Linux you will need to restart the app manually.
+              // You could use this step to display another confirmation dialog.
+              await relaunch()
+            },
           },
         })
+        open()
       }
     }
     catch (e) {
-      message.error({
-        content: t('updater.checkUpdate'),
+      notify.error({
+        text: t('updater.checkUpdate'),
       })
       error(e as string)
     }
@@ -56,8 +60,8 @@ export const useUpdate = defineStore('update', () => {
   onUpdaterEvent(({ error: e, status }) => {
     if (downloading.value && e) {
       downloading.value = false
-      message.error({
-        content: t('updater.updating'),
+      notify.error({
+        text: t('updater.updating'),
       })
       error(`Updater event ${e}, ${status}`)
     }

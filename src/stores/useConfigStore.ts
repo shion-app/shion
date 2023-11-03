@@ -13,7 +13,7 @@ interface Config {
 
 const PATH = 'config.json'
 
-export const useConfig = defineStore('config', () => {
+export const useConfigStore = defineStore('config', () => {
   const { locale, t } = useI18n()
 
   const store = new Store(PATH)
