@@ -1,16 +1,20 @@
 <script setup lang="ts">
-import { type DatabaseError, db } from '@modules/database'
-import { message } from 'ant-design-vue'
+import { db } from '@/modules/database'
 
 const title = ref('')
 const content = ref('')
 
 const router = useRouter()
 const { t } = useI18n()
+const { success, error } = useNotify()
+const { parseError } = useDatabase()
 
 async function handleSubmit() {
-  if (!title.value)
-    return message.error(t('moment.tip.emptyTitle'))
+  if (!title.value) {
+    return error({
+      text: t('moment.tip.emptyTitle'),
+    })
+  }
   try {
     await db.moment.insert({
       time: Date.now(),
@@ -18,11 +22,13 @@ async function handleSubmit() {
       content: content.value,
     })
   }
-  catch (error) {
-    return message.error((error as DatabaseError).message)
+  catch (e) {
+    // return error({
+    //   text: parseError(e),
+    // })
   }
 
-  message.success(t('message.success'))
+  success({})
   router.push('/moment')
 }
 </script>

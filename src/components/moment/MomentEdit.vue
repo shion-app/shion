@@ -14,14 +14,13 @@ const { title: titleVModel, content: contentVModel } = useVModels(props)
 <template>
   <div h-full flex flex-col>
     <div flex px-6 py-2 items-center>
-      <a-input
-        v-model:value="titleVModel" :placeholder="$t('moment.inputTitle')" size="large"
-        class="w-[500px]! border-0! p-0! bg-transparent! border-transparent! shadow-none! text-6! rounded-none!"
+      <v-text-field
+        v-model="titleVModel" :placeholder="$t('moment.inputTitle')"
       />
       <div flex-1 />
-      <a-button type="primary" @click="$emit('submit')">
+      <v-btn @click="$emit('submit')">
         {{ $t('moment.submit') }}
-      </a-button>
+      </v-btn>
     </div>
     <MilkdownProvider>
       <MilkdownEditor v-model:content="contentVModel" />

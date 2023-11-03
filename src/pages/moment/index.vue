@@ -1,26 +1,19 @@
 <script setup lang="ts">
-import type { SelectMoment } from '@modules/database'
-import { db } from '@modules/database'
 import { isThisYear } from 'date-fns'
 
-const { setMenu } = useMore()
-const { t } = useI18n()
+import type { SelectMoment } from '@/modules/database'
+import { db } from '@/modules/database'
+
 const router = useRouter()
 
 const list = ref<Array<SelectMoment>>([])
 
-setMenu(() => [
-  {
-    key: 'createMoment',
-    title: t('moment.create'),
-    click() {
-      router.push('/moment/create')
-    },
-  },
-])
-
 async function init() {
   list.value = await db.moment.select()
+}
+
+function viewMomentCreate() {
+  router.push('/moment/create')
 }
 
 function viewDetail(id: number) {
@@ -37,29 +30,37 @@ init()
 <template>
   <div h-full>
     <template v-if="list.length">
-      <div
-        v-for="{ title, time, id } in list" :key="id"
-        flex cursor-pointer px-4 py-2 hover:bg-gray-300 bg-transparent transition
+      <v-card
+        v-for="{ title, content, time, id } in list" :key="id"
+        m-4
         class="group"
         @click="viewDetail(id)"
       >
-        <div>{{ title }}</div>
-        <div flex-1 />
-        <div mr-6>
-          {{ isThisYear(time) ? format(time, 'MM-dd') : format(time, 'yyyy-MM-dd') }}
-        </div>
-        <a-dropdown>
-          <div text-6 i-mdi:dots-vertical op-0 group-hover-op-100 transition-opacity-400 />
-          <template #overlay>
-            <a-menu>
-              <a-menu-item @click="update(id)">
-                {{ $t('moment.edit') }}
-              </a-menu-item>
-            </a-menu>
-          </template>
-        </a-dropdown>
-      </div>
+        <v-card-title class="flex!">
+          <div>{{ title }}</div>
+          <div flex-1 />
+          <div>{{ isThisYear(time) ? format(time, 'MM-dd') : format(time, 'yyyy-MM-dd') }}</div>
+        </v-card-title>
+        <v-card-text line-clamp-2 class="pb-0!">
+          {{ content }}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn @click.stop="update(id)">
+            {{ $t('moment.edit') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
     </template>
-    <a-empty v-else h-full flex flex-col justify-center />
+    <!-- <a-empty v-else h-full flex flex-col justify-center /> -->
+    <more-menu>
+      <v-list>
+        <v-list-item value="moment.create">
+          <v-list-item-title @click="viewMomentCreate">
+            {{ $t('moment.create') }}
+          </v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </more-menu>
   </div>
 </template>

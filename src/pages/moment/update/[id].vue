@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { db } from '@modules/database'
-import type { DatabaseError, SelectMoment } from '@modules/database'
-
-import { message } from 'ant-design-vue'
+import { db } from '@/modules/database'
+import type { SelectMoment } from '@/modules/database'
 
 const props = defineProps<{
   id: string
 }>()
+
+const { success, error } = useNotify()
 
 const moment = ref<SelectMoment>()
 
@@ -30,8 +30,11 @@ async function init() {
 }
 
 async function handleSubmit() {
-  if (!title.value)
-    return message.error(t('moment.tip.emptyTitle'))
+  if (!title.value) {
+    return error({
+      text: t('moment.tip.emptyTitle'),
+    })
+  }
   try {
     await db.moment.update(Number(props.id), {
       title: title.value,
@@ -39,10 +42,10 @@ async function handleSubmit() {
     })
   }
   catch (error) {
-    return message.error((error as DatabaseError).message)
+    // return message.error((error as DatabaseError).message)
   }
 
-  message.success(t('message.success'))
+  success({})
   router.push('/moment')
 }
 

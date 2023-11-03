@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { MilkdownProvider } from '@milkdown/vue'
-
-import { type SelectMoment, db } from '@modules/database'
 import { isThisYear } from 'date-fns'
+
+import { type SelectMoment, db } from '@/modules/database'
 
 const props = defineProps<{
   id: string

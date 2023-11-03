@@ -13,7 +13,7 @@ import { listener, listenerCtx } from '@milkdown/plugin-listener'
 
 import '@milkdown/theme-nord/style.css'
 
-import { uploadFile } from '@modules/upload'
+import { uploadFile } from '@/modules/upload'
 
 const props = withDefaults(defineProps<{
   content: string
@@ -150,9 +150,11 @@ watchOnce(() => props.content, (v) => {
 
 <template>
   <div v-if="$props.editable" flex border-b px-6 py-2 space-x-2>
-    <a-tooltip v-for="{ icon, tip, handler } in utils" :key="icon" placement="bottom" :title="tip">
-      <div text-6 cursor-pointer :class="icon" @click="handler" />
-    </a-tooltip>
+    <v-tooltip v-for="{ icon, tip, handler } in utils" :key="icon" :text="tip" location="bottom">
+      <template #activator="{ props: activatorProps }">
+        <div text-6 cursor-pointer :class="icon" v-bind="activatorProps" @click="handler" />
+      </template>
+    </v-tooltip>
   </div>
   <Milkdown flex-1 overflow-y-auto />
 </template>
