@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { EChartsOption } from 'echarts'
 import { addDays, isAfter, isSameDay, isSameHour, startOfDay, startOfHour, subDays } from 'date-fns'
+import VChart from 'vue-echarts'
 
-import type { SelectActivity, SelectNote } from '@modules/database'
+import type { SelectActivity, SelectNote } from '@/modules/database'
 
 const props = defineProps<{
   noteList: Array<SelectNote>
@@ -21,7 +22,7 @@ const chartRef = ref()
 const selectedDate = ref('')
 const selectedComponentIndex = ref(-1)
 
-const TITLE_HEIGHT = 30
+const TITLE_HEIGHT = 60
 const LEGEND_MARGIN_BOTTOM = 10
 
 interface TimeRange {
@@ -263,7 +264,7 @@ function handleChartMouseOut() {
 </script>
 
 <template>
-  <v-chart
+  <VChart
     ref="chartRef" class="chart" :option="option" autoresize @rendered="handleChartRendered"
     @click="handleChartClick"
     @mouseover="handleChartMouseOver"

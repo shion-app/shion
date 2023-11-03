@@ -3,8 +3,8 @@ import { endOfDay, subDays } from 'date-fns'
 import { appWindow } from '@tauri-apps/api/window'
 import { TauriEvent } from '@tauri-apps/api/event'
 
-import { type SelectActivity, type SelectNote } from '@modules/database'
-import { db } from '@modules/database'
+import { type SelectActivity, type SelectNote } from '@/modules/database'
+import { db } from '@/modules/database'
 
 const noteList = ref<Array<SelectNote>>([])
 const activityList = ref<Array<SelectActivity>>([])
@@ -63,46 +63,38 @@ watch(range, refreshThrottle, {
     <template v-if="isShowChart">
       <div absolute z-1 flex w-full p-2 space-x-2>
         <div v-if="unit == 'hour'">
-          <a-button type="primary" shape="round" size="small" @click="returnPrev">
+          <v-btn @click="returnPrev">
             <div i-mdi:arrow-left text-4 />
-          </a-button>
+          </v-btn>
         </div>
         <div flex-1 />
-        <a-radio-group v-if="isShowRangeRadio" v-model:value="range" size="small">
-          <a-radio-button value="week">
-            <a-tooltip :title="$t('overview.week')">
-              <div h-full flex items-center>
-                <div i-mdi:calendar-week text-4 />
-              </div>
-            </a-tooltip>
-          </a-radio-button>
-          <a-radio-button value="month">
-            <a-tooltip :title="$t('overview.month')">
-              <div h-full flex items-center>
-                <div i-mdi:calendar-month text-4 />
-              </div>
-            </a-tooltip>
-          </a-radio-button>
-        </a-radio-group>
-        <a-radio-group v-model:value="mode" size="small">
-          <a-radio-button value="plan">
-            <a-tooltip :title="$t('overview.plan')">
-              <div h-full flex items-center>
-                <div i-mdi:format-list-bulleted-type text-4 />
-              </div>
-            </a-tooltip>
-          </a-radio-button>
-          <a-radio-button value="label">
-            <a-tooltip :title="$t('overview.label')">
-              <div h-full flex items-center>
-                <div i-mdi:label text-4 />
-              </div>
-            </a-tooltip>
-          </a-radio-button>
-        </a-radio-group>
+        <v-btn-toggle v-if="isShowRangeRadio" v-model="range">
+          <v-tooltip :text="$t('overview.week')" location="bottom">
+            <template #activator="{ props }">
+              <v-btn icon="mdi-calendar-week" value="week" v-bind="props" size="small" />
+            </template>
+          </v-tooltip>
+          <v-tooltip :text="$t('overview.month')" location="bottom">
+            <template #activator="{ props }">
+              <v-btn icon="mdi-calendar-month" value="month" v-bind="props" size="small" />
+            </template>
+          </v-tooltip>
+        </v-btn-toggle>
+        <v-btn-toggle v-model="mode">
+          <v-tooltip :text="$t('overview.plan')" location="bottom">
+            <template #activator="{ props }">
+              <v-btn icon="mdi-list-box-outline" value="plan" v-bind="props" size="small" />
+            </template>
+          </v-tooltip>
+          <v-tooltip :text="$t('overview.label')" location="bottom">
+            <template #activator="{ props }">
+              <v-btn icon="mdi-label-outline" value="label" v-bind="props" size="small" />
+            </template>
+          </v-tooltip>
+        </v-btn-toggle>
       </div>
       <OverviewChart v-model:unit="unit" :note-list="noteList" :activity-list="activityList" :mode="mode" :day="day" />
     </template>
-    <a-empty v-else h-full flex flex-col justify-center />
+    <!-- <a-empty v-else h-full flex flex-col justify-center /> -->
   </div>
 </template>
