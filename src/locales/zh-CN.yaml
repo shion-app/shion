@@ -114,3 +114,6 @@ titleBar:
   view:
     desc: 视图
     setting: 设置
+  help:
+    desc: 帮助
+    about: 关于

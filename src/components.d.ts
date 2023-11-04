@@ -9,6 +9,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AboutDialog: typeof import('./components/dialog/AboutDialog.vue')['default']
     Calendar: typeof import('./components/note/Calendar.vue')['default']
     ColorPickerButton: typeof import('./components/form/ColorPickerButton.vue')['default']
     ConfirmModal: typeof import('./components/modal/ConfirmModal.vue')['default']

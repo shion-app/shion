@@ -115,3 +115,6 @@ titleBar:
   view:
     desc: View
     setting: Setting
+  help:
+    desc: Help
+    about: About

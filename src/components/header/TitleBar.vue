@@ -26,6 +26,24 @@ import logo from '@/assets/logo.png'
           </v-list-item>
         </v-list>
       </v-menu>
+      <v-menu>
+        <template #activator="{ props }">
+          <v-btn
+            variant="text"
+            v-bind="props"
+          >
+            {{ $t('titleBar.help.desc') }}
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item value="titleBar.help.about">
+            <v-list-item-title>
+              {{ $t('titleBar.help.about') }}
+            </v-list-item-title>
+            <about-dialog />
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </div>
     <div>
       <v-btn variant="text" @click="() => appWindow.minimize()">
