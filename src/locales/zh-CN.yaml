@@ -110,3 +110,7 @@ database:
   SQLITE_CONSTRAINT_UNIQUE: 已存在重复值
 hint:
   empty: 暂无数据
+titleBar:
+  view:
+    desc: 视图
+    setting: 设置

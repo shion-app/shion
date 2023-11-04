@@ -26,3 +26,7 @@ html, body {
 ::-webkit-scrollbar-thumb:hover {
   background-color: #a8bbbf;
 }
+
+* {
+  text-transform: none !important;
+}

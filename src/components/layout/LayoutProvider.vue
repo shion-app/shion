@@ -2,7 +2,7 @@
 import { layoutSymbol } from './provide'
 
 provide(layoutSymbol, {
-  headerHeight: 30,
+  headerHeight: 36,
   footerHeight: 30,
   railWidth: 100,
 })

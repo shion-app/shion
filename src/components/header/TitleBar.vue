@@ -6,20 +6,37 @@ import logo from '@/assets/logo.png'
 
 <template>
   <div data-tauri-drag-region flex h-full select-none justify-between items-center>
-    <img :src="logo" width="16" height="16" alt="logo" ml-2>
+    <div flex>
+      <img :src="logo" object-contain width="20" height="20" alt="logo" mx-2>
+      <v-menu>
+        <template #activator="{ props }">
+          <v-btn
+            variant="text"
+            v-bind="props"
+          >
+            {{ $t('titleBar.view.desc') }}
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item value="titleBar.view.setting">
+            <v-list-item-title>
+              {{ $t('titleBar.view.setting') }}
+            </v-list-item-title>
+            <setting-dialog />
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </div>
     <div>
-      <v-btn variant="text" size="small" @click="() => appWindow.minimize()">
+      <v-btn variant="text" @click="() => appWindow.minimize()">
         <div i-mdi:window-minimize />
       </v-btn>
-      <v-btn variant="text" :disabled="true" size="small">
+      <v-btn variant="text" :disabled="true">
         <div i-mdi:window-maximize />
       </v-btn>
-      <v-btn variant="text" size="small" @click="() => appWindow.hide()">
+      <v-btn variant="text" @click="() => appWindow.hide()">
         <div i-mdi:close />
       </v-btn>
     </div>
   </div>
 </template>
-
-<style>
-</style>
