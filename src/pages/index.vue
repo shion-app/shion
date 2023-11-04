@@ -95,6 +95,6 @@ watch(range, refreshThrottle, {
       </div>
       <OverviewChart v-model:unit="unit" :note-list="noteList" :activity-list="activityList" :mode="mode" :day="day" />
     </template>
-    <!-- <a-empty v-else h-full flex flex-col justify-center /> -->
+    <empty v-else />
   </div>
 </template>

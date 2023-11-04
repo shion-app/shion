@@ -151,7 +151,7 @@ refresh()
         </div>
       </div>
     </div>
-    <!-- <a-empty v-else h-full flex flex-col justify-center /> -->
+    <empty v-else />
     <more-menu>
       <v-list>
         <v-list-item value="monitor.filterProgram">
@@ -163,8 +163,8 @@ refresh()
     </more-menu>
     <v-dialog
       v-model="filtering"
-      width="600"
-      height="400"
+      width="550"
+      max-height="400"
     >
       <v-card>
         <v-card-title>{{ $t('monitor.filterProgram') }}</v-card-title>
@@ -195,9 +195,7 @@ refresh()
               </div>
             </div>
           </template>
-          <template v-else>
-            <!-- <a-empty h-full flex flex-col justify-center :description="$t('monitor.switchWindowTip')" /> -->
-          </template>
+          <empty v-else :desc="$t('monitor.switchWindowTip')" />
         </v-card-text>
         <v-card-actions>
           <v-spacer />

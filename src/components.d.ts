@@ -13,6 +13,7 @@ declare module '@vue/runtime-core' {
     ColorPickerButton: typeof import('./components/form/ColorPickerButton.vue')['default']
     ConfirmModal: typeof import('./components/modal/ConfirmModal.vue')['default']
     Display: typeof import('./components/time/Display.vue')['default']
+    Empty: typeof import('./components/shared/Empty.vue')['default']
     FormFactory: typeof import('./components/form/FormFactory.vue')['default']
     FormModal: typeof import('./components/modal/FormModal.vue')['default']
     LabelForm: typeof import('./components/label/LabelForm.vue')['default']

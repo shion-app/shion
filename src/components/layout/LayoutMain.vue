@@ -6,7 +6,7 @@ const { railWidth, footerHeight } = inject(layoutSymbol)!
 
 <template>
   <main
-    absolute top-0 right-0
+    absolute top-0 right-0 overflow-y-auto
     :style="{
       left: `${railWidth}px`,
       bottom: `${footerHeight}px`,

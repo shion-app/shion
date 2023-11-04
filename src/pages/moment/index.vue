@@ -28,12 +28,11 @@ init()
 </script>
 
 <template>
-  <div h-full>
+  <div>
     <template v-if="list.length">
       <v-card
         v-for="{ title, content, time, id } in list" :key="id"
         m-4
-        class="group"
         @click="viewDetail(id)"
       >
         <v-card-title class="flex!">
@@ -52,7 +51,7 @@ init()
         </v-card-actions>
       </v-card>
     </template>
-    <!-- <a-empty v-else h-full flex flex-col justify-center /> -->
+    <empty v-else />
     <more-menu>
       <v-list>
         <v-list-item value="moment.create">

@@ -108,3 +108,5 @@ notiwind:
 database:
   RAW: '未处理数据库错误: ({message})'
   SQLITE_CONSTRAINT_UNIQUE: 已存在重复值
+hint:
+  empty: 暂无数据

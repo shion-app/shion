@@ -189,7 +189,7 @@ refresh()
       </div>
     </div>
   </div>
-  <!-- <a-empty v-else h-full flex flex-col justify-center /> -->
+  <empty v-else />
   <more-menu>
     <v-list>
       <v-list-item value="label.create">
