@@ -30,6 +30,9 @@ listen('quit', async () => {
   <v-locale-provider :locale="config.locale">
     <v-theme-provider with-background>
       <layout-provider>
+        <layout-header>
+          <title-bar />
+        </layout-header>
         <layout-nav>
           <nav-action />
         </layout-nav>

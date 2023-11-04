@@ -36,6 +36,12 @@
       "protocol": {
         "asset": true,
         "assetScope": ["$APPDATA/**"]
+      },
+      "window": {
+        "all": false,
+        "hide": true,
+        "minimize": true,
+        "startDragging": true
       }
     },
     "bundle": {
@@ -87,7 +93,8 @@
         "title": "shion",
         "width": 1056,
         "height": 594,
-        "fileDropEnabled": false
+        "fileDropEnabled": false,
+        "decorations": false
       }
     ]
   }

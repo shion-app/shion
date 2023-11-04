@@ -14,4 +14,3 @@ const { footerHeight } = inject(layoutSymbol)!
     <slot />
   </footer>
 </template>
-./provide

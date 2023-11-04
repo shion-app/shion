@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { layoutSymbol } from './provide'
 
-const { railWidth, footerHeight } = inject(layoutSymbol)!
+const { railWidth, footerHeight, headerHeight } = inject(layoutSymbol)!
 </script>
 
 <template>
   <nav
     absolute
-    top-0
     left-0
     :style="{
+      top: `${headerHeight}px`,
       width: `${railWidth}px`,
       bottom: `${footerHeight}px`,
     }"
@@ -17,4 +17,3 @@ const { railWidth, footerHeight } = inject(layoutSymbol)!
     <slot />
   </nav>
 </template>
-./provide

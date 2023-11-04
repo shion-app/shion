@@ -14,6 +14,7 @@ use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu
 use tauri_plugin_autostart::MacosLauncher;
 use tauri_plugin_log::{LogTarget, TimezoneStrategy};
 use tauri_plugin_sql::{Migration, MigrationKind};
+use window_shadows::set_shadow;
 
 use shion::monitor::{
     self,
@@ -111,6 +112,9 @@ fn main() {
             is_audio_active
         ])
         .setup(|app| {
+            let window = app.get_window("main").unwrap();
+            set_shadow(&window, true).unwrap();
+
             let app_handle = Arc::new(app.handle());
             let app_handle_clone = app_handle.clone();
             let filter = {
