@@ -20,6 +20,11 @@ const menu = computed(() => [{
   name: t('nav.overview'),
   to: '/',
 }, {
+  icon: 'i-mdi:timeline-text-outline',
+  activeIcon: 'i-mdi:timeline-text',
+  name: t('nav.timeline'),
+  to: '/timeline',
+}, {
   icon: 'i-mdi:list-box-outline',
   activeIcon: 'i-mdi:list-box',
   name: t('nav.plan'),
