@@ -9,11 +9,12 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'select', date: Date): void
-  (e: 'inViewport', yaer: number): void
+  (e: 'inViewport', year: number): void
+  (e: 'update:selected', date: Date): void
 }>()
 
 const { locale } = useI18n()
+const { selected: selectedVModel } = useVModels(props)
 
 interface CalendarDate {
   date: Date
@@ -64,7 +65,7 @@ function generate() {
 }
 
 function selectDate(c: CalendarDate) {
-  emit('select', c.date)
+  selectedVModel.value = c.date
 }
 
 function scrollToViewIfThisMonth(date: Date) {

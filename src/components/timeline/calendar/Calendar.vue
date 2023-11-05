@@ -1,4 +1,10 @@
 <script setup lang="ts">
+const props = defineProps<{
+  date: Date
+}>()
+
+const { date: dateVModel } = useVModels(props)
+
 const { locale } = useI18n()
 
 interface CalendarMonthType {
@@ -13,7 +19,6 @@ const dayMap = {
 let generatedYear = new Date().getFullYear()
 
 const list = ref<Array<CalendarMonthType>>([])
-const selected = ref(new Date())
 const currentYear = ref(new Date().getFullYear())
 
 const calendarMonthRef = useTemplateRefsList<{
@@ -53,7 +58,7 @@ function scrollToView() {
 }
 
 function handleSelectDate(date: Date) {
-  selected.value = date
+  dateVModel.value = date
 }
 
 function onScroll() {
@@ -68,27 +73,24 @@ onMounted(scrollToView)
 </script>
 
 <template>
-  <div h-full flex>
-    <div flex-1 />
-    <div ref="scrollContainer" h-full overflow-y-auto overflow-x-hidden relative>
-      <div sticky top-0 left-0 right-0 bg-white z-1 shadow>
-        <div text-5>
-          {{ currentYear }}
-        </div>
-        <div flex>
-          <div v-for="name in weekdaysName" :key="name" w-12 h-12 flex justify-center items-center>
-            {{ name }}
-          </div>
+  <div ref="scrollContainer" h-full overflow-y-auto overflow-x-hidden relative>
+    <div sticky top-0 left-0 right-0 bg-white z-1 shadow>
+      <div text-5>
+        {{ currentYear }}
+      </div>
+      <div flex>
+        <div v-for="name in weekdaysName" :key="name" w-12 h-12 flex justify-center items-center>
+          {{ name }}
         </div>
       </div>
-      <CalendarMonth
-        v-for="{ year, month } in list"
-        :ref="calendarMonthRef.set"
-        :key="`${year}-${month}`"
-        :year="year" :month="month" :weekdays="weekdays" :selected="selected"
-        @select="handleSelectDate"
-        @in-viewport="year => currentYear = year"
-      />
     </div>
+    <CalendarMonth
+      v-for="{ year, month } in list"
+      :ref="calendarMonthRef.set"
+      :key="`${year}-${month}`"
+      v-model:selected="dateVModel" :year="year" :month="month" :weekdays="weekdays"
+      @select="handleSelectDate"
+      @in-viewport="year => currentYear = year"
+    />
   </div>
 </template>
