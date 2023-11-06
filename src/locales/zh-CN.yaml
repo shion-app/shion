@@ -16,6 +16,9 @@ config:
   timelineMinMinute: 最小时间
   desc:
     timelineMinMinute: 时间线显示时，筛选掉小于当前分钟的片段
+  header:
+    general: 通用
+    behavior: 行为
 plan:
   create: 创建计划
   update: 修改计划

@@ -16,6 +16,9 @@ config:
   timelineMinMinute: Minimum time
   desc:
     timelineMinMinute: When displaying the timeline, filter out segments smaller than the current minute
+  header:
+    general: General
+    behavior: Behavior
 plan:
   create: Create plan
   update: Update plan

@@ -16,11 +16,12 @@ const localeOptions = [
 </script>
 
 <template>
-  <v-dialog activator="parent" width="500">
+  <v-dialog activator="parent" width="600">
     <v-card>
       <v-card-title>{{ $t('titleBar.view.setting') }}</v-card-title>
       <v-card-text>
         <v-list lines="two">
+          <v-list-subheader>{{ $t('config.header.general') }}</v-list-subheader>
           <v-list-item>
             <v-list-item-title>{{ $t('config.locale') }}</v-list-item-title>
             <template #append>
@@ -29,6 +30,7 @@ const localeOptions = [
                   v-model="config.locale"
                   :items="localeOptions"
                   hide-details
+                  class="w-[200px]"
                 />
               </v-list-item-action>
             </template>
@@ -49,6 +51,8 @@ const localeOptions = [
               </v-list-item-action>
             </template>
           </v-list-item>
+          <v-divider />
+          <v-list-subheader>{{ $t('config.header.behavior') }}</v-list-subheader>
           <v-list-item>
             <v-list-item-title>{{ $t('config.timelineMinMinute') }}</v-list-item-title>
             <v-list-item-subtitle>
@@ -56,7 +60,7 @@ const localeOptions = [
             </v-list-item-subtitle>
             <template #append>
               <v-list-item-action>
-                <v-select v-model="config.timelineMinMinute" :items="[2, 3, 4, 5, 6, 7, 8]" hide-details />
+                <v-slider v-model="config.timelineMinMinute" class="w-[200px]" thumb-label hide-details :min="2" :max="10" :step="1" />
               </v-list-item-action>
             </template>
           </v-list-item>
