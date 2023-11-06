@@ -4,24 +4,33 @@ import { SqliteErrorEnum } from '@/modules/database/db'
 export function useDatabase() {
   const { t } = useI18n()
 
-  function parseError(error) {
-    const { fields, code, message } = error as DatabaseError
+  function getI18nMessage(error) {
+    const { code, message } = error as DatabaseError
+    switch (code) {
+      case SqliteErrorEnum.RAW:
+        return t(`database.${SqliteErrorEnum[code]}`, {
+          message,
+        })
+      default:
+        return t(`database.${SqliteErrorEnum[code]}`)
+    }
+  }
+
+  function parseFieldsError(error) {
+    const { fields } = error as DatabaseError
     return fields.reduce((prev, cur) => {
-      switch (code) {
-        case SqliteErrorEnum.RAW:
-          prev[cur] = t(`database.${SqliteErrorEnum[code]}`, {
-            message,
-          })
-          break
-        default:
-          prev[cur] = t(`database.${SqliteErrorEnum[code]}`)
-          break
-      }
+      prev[cur] = getI18nMessage(error)
       return prev
     }, {})
   }
 
+  function isUniqueError(error) {
+    return (error as DatabaseError).code == SqliteErrorEnum.SQLITE_CONSTRAINT_UNIQUE
+  }
+
   return {
-    parseError,
+    parseFieldsError,
+    getI18nMessage,
+    isUniqueError,
   }
 }

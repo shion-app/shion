@@ -7,7 +7,7 @@ const content = ref('')
 const router = useRouter()
 const { t } = useI18n()
 const { success, error } = useNotify()
-const { parseError } = useDatabase()
+const { getI18nMessage, isUniqueError } = useDatabase()
 
 async function handleSubmit() {
   if (!title.value) {
@@ -23,9 +23,14 @@ async function handleSubmit() {
     })
   }
   catch (e) {
-    // return error({
-    //   text: parseError(e),
-    // })
+    if (isUniqueError(e)) {
+      return error({
+        text: t('moment.tip.duplicateTitle'),
+      })
+    }
+    return error({
+      text: getI18nMessage(e),
+    })
   }
 
   success({})

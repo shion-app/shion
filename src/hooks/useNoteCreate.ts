@@ -6,7 +6,7 @@ import type { InsertNote, SelectLabel, SelectPlan } from '@/modules/database'
 
 export function useNoteCreate() {
   const { t } = useI18n()
-  const { parseError } = useDatabase()
+  const { parseFieldsError } = useDatabase()
   const { start } = useTimerStore()
 
   const planList = ref<Array<SelectPlan>>([])
@@ -71,7 +71,7 @@ export function useNoteCreate() {
               noteId = data.lastInsertId
             }
             catch (error) {
-              return setErrors(parseError(error))
+              return setErrors(parseFieldsError(error))
             }
             close()
             start(() => db.note.update(noteId, {

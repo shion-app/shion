@@ -99,6 +99,7 @@ moment:
   edit: Edit
   tip:
     emptyTitle: Need to input title
+    duplicateTitle: This title already exists
   editor:
     uodo: Uodo
     redo: Redo

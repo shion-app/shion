@@ -10,7 +10,7 @@ import exe from '@/assets/exe.png'
 
 const { t } = useI18n()
 const store = useMonitorStore()
-const { parseError } = useDatabase()
+const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
 
 const { getIconUrl, refresh } = store
@@ -46,7 +46,7 @@ const { open, close } = useFormModal(
           await handleUpdate(v)
         }
         catch (error) {
-          return setErrors(parseError(error))
+          return setErrors(parseFieldsError(error))
         }
         close()
         success({})

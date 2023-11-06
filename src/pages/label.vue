@@ -6,7 +6,7 @@ import type { InsertLabel, SelectLabel, SelectPlan } from '@/modules/database'
 const timeStore = useTimerStore()
 const { t } = useI18n()
 const router = useRouter()
-const { parseError } = useDatabase()
+const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
 const { openModal } = useNoteCreate()
 
@@ -70,7 +70,7 @@ const { open, close } = useFormModal(
           isCreate.value ? await handleCreate(v) : await handleUpdate(v)
         }
         catch (error) {
-          return setErrors(parseError(error))
+          return setErrors(parseFieldsError(error))
         }
         close()
         success({})

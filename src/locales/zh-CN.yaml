@@ -99,6 +99,7 @@ moment:
   edit: 编辑
   tip:
     emptyTitle: 需要输入标题
+    duplicateTitle: 已存在此标题
   editor:
     uodo: 撤销
     redo: 重做

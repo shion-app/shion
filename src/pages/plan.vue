@@ -4,7 +4,7 @@ import type { InsertPlan, SelectPlan } from '@/modules/database'
 import { db } from '@/modules/database'
 
 const { t } = useI18n()
-const { parseError } = useDatabase()
+const { parseFieldsError } = useDatabase()
 const router = useRouter()
 const { success } = useNotify()
 
@@ -39,7 +39,7 @@ const { open, close } = useFormModal(
           isCreate.value ? await handleCreate(v) : await handleUpdate(v)
         }
         catch (error) {
-          return setErrors(parseError(error))
+          return setErrors(parseFieldsError(error))
         }
         close()
         success({})
