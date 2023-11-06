@@ -13,6 +13,9 @@ config:
   locale: Language
   checkUpdate: Check update
   autostart: Auto start
+  timelineMinMinute: Minimum time
+  desc:
+    timelineMinMinute: When displaying the timeline, filter out segments smaller than the current minute
 plan:
   create: Create plan
   update: Update plan

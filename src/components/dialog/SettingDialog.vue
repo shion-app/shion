@@ -33,7 +33,6 @@ const localeOptions = [
               </v-list-item-action>
             </template>
           </v-list-item>
-
           <v-list-item>
             <v-list-item-title>{{ $t('config.checkUpdate') }}</v-list-item-title>
             <template #append>
@@ -42,12 +41,22 @@ const localeOptions = [
               </v-list-item-action>
             </template>
           </v-list-item>
-
           <v-list-item>
             <v-list-item-title>{{ $t('config.autostart') }}</v-list-item-title>
             <template #append>
               <v-list-item-action>
                 <v-checkbox-btn v-model="config.autostart" />
+              </v-list-item-action>
+            </template>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>{{ $t('config.timelineMinMinute') }}</v-list-item-title>
+            <v-list-item-subtitle>
+              {{ $t('config.desc.timelineMinMinute') }}
+            </v-list-item-subtitle>
+            <template #append>
+              <v-list-item-action>
+                <v-select v-model="config.timelineMinMinute" :items="[2, 3, 4, 5, 6, 7, 8]" hide-details />
               </v-list-item-action>
             </template>
           </v-list-item>

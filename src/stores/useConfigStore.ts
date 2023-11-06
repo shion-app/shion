@@ -9,6 +9,7 @@ interface Config {
   locale: 'zh-CN' | 'en-US'
   checkUpdate: boolean
   autostart: boolean
+  timelineMinMinute: number
 }
 
 const PATH = 'config.json'
@@ -25,6 +26,7 @@ export const useConfigStore = defineStore('config', () => {
       locale: 'en-US',
       checkUpdate: false,
       autostart: false,
+      timelineMinMinute: 3,
     }
     const len = await store.length()
     if (len == 0)
