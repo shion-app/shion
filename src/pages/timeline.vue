@@ -4,24 +4,28 @@ import { endOfDay, startOfDay } from 'date-fns'
 import type { SelectActivity, SelectNote } from '@/modules/database'
 import { db } from '@/modules/database'
 
+const configStore = useConfigStore()
+
+const { config } = storeToRefs(configStore)
+
 const date = ref(new Date())
 const noteList = ref<Array<SelectNote>>([])
 const activityList = ref<Array<SelectActivity>>([])
-
-const MIN_RECORD_TIME = 1000 * 60 * 2
 
 const list = computed(() => [
   ...noteList.value.map(i => ({
     start: i.start,
     end: i.end,
     name: i.plan.name,
+    color: i.plan.color,
   })),
   ...activityList.value.map(i => ({
     start: i.start,
     end: i.end,
     name: i.program.name,
+    color: i.program.color,
   })),
-].filter(i => i.end - i.start > MIN_RECORD_TIME).sort((a, b) => a.start - b.start))
+].filter(i => i.end - i.start > config.value.timelineMinMinute * 1000 * 60).sort((a, b) => a.start - b.start))
 
 async function refresh() {
   const start = startOfDay(date.value).getTime()
@@ -43,7 +47,10 @@ watch(date, refresh, {
 
 <template>
   <div h-full flex>
-    <timeline-graph flex-1 :list="list" />
+    <div flex-1>
+      <timeline-graph v-if="list.length" :list="list" />
+      <empty v-else />
+    </div>
     <calendar v-model:date="date" />
   </div>
 </template>

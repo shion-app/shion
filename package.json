@@ -49,6 +49,7 @@
     "notiwind": "^2.0.2",
     "p-queue": "^7.3.4",
     "pinia": "^2.0.34",
+    "svg.js": "^2.7.1",
     "tauri-plugin-autostart-api": "github:tauri-apps/tauri-plugin-autostart#v1",
     "tauri-plugin-log-api": "github:tauri-apps/tauri-plugin-log#v1",
     "tauri-plugin-sql-api": "github:tauri-apps/tauri-plugin-sql#v1",
