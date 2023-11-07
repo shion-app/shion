@@ -55,7 +55,6 @@ export function format(date: Date | number,
 }
 
 function dateFnsLocale() {
-  // @ts-expect-error https://github.com/intlify/vue-i18n-next/issues/1003
   switch (i18n.global.locale.value) {
     case 'zh-CN':
       return zhCN

@@ -26,7 +26,6 @@ declare module '@vue/runtime-core' {
     MomentEdit: typeof import('./components/moment/MomentEdit.vue')['default']
     MoreMenu: typeof import('./components/menu/MoreMenu.vue')['default']
     NavAction: typeof import('./components/nav/NavAction.vue')['default']
-    NoteUpdate: typeof import('./components/note/NoteUpdate.vue')['default']
     NotificationContainer: typeof import('./components/notification/NotificationContainer.vue')['default']
     OverviewChart: typeof import('./components/overview/OverviewChart.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
