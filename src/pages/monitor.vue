@@ -121,12 +121,12 @@ refresh()
       >
         <img :src="program.icon" width="32" height="32" object-contain>
         <div flex-1 min-w-0 space-y-2>
-          <div flex justify-between>
-            <div :title="program.path">
+          <div flex justify-between items-center>
+            <div truncate :title="program.name">
               {{ program.name }}
             </div>
             <div
-              w-3 h-3 rounded-full mr-1
+              w-3 h-3 rounded-full mx-1 flex-shrink-0
               :style="{
                 backgroundColor: program.color,
               }"
@@ -199,7 +199,7 @@ refresh()
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn @click="handleSelect">
+          <v-btn color="primary" @click="handleSelect">
             {{ $t('modal.submit') }}
           </v-btn>
         </v-card-actions>

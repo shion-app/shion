@@ -143,22 +143,24 @@ refresh()
 </script>
 
 <template>
-  <div v-if="labelList.length">
+  <div v-if="labelList.length" py-4 space-y-6>
     <div v-for="group in labelGroup" :key="group[0]">
       <div p-x-4 text-5 font-bold>
         {{ planList.find(i => i.id == group[0])!.name }}
       </div>
-      <div grid grid-cols-3 gap-6 p-4>
+      <div grid grid-cols-3 gap-6 py-2 px-4>
         <div
           v-for="label in group[1]"
           :key="label.id"
           rounded-2 p-4 bg-white shadow-lg hover:shadow-xl transition-shadow space-y-2
           @click="viewNote(label.id)"
         >
-          <div flex justify-between>
-            <div>{{ label.name }}</div>
+          <div flex justify-between items-center>
+            <div truncate :title="label.name">
+              {{ label.name }}
+            </div>
             <div
-              w-3 h-3 rounded-full mr-1
+              w-3 h-3 rounded-full mx-1 flex-shrink-0
               :style="{
                 backgroundColor: label.color,
               }"

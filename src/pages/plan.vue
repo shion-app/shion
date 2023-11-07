@@ -117,10 +117,12 @@ refresh()
       space-y-2
       @click="viewNote(plan.id)"
     >
-      <div flex justify-between>
-        <div>{{ plan.name }}</div>
+      <div flex justify-between items-center>
+        <div truncate :title="plan.name">
+          {{ plan.name }}
+        </div>
         <div
-          w-3 h-3 rounded-full mr-1
+          w-3 h-3 rounded-full mx-1 flex-shrink-0
           :style="{
             backgroundColor: plan.color,
           }"

@@ -32,6 +32,7 @@ const formId = `form-${nanoid()}`
       <v-card-actions>
         <v-spacer />
         <v-btn
+          color="primary"
           type="submit"
           :form="formId"
           :text="$t('modal.submit')"

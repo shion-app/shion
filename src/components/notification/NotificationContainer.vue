@@ -5,7 +5,7 @@ import { Notification, NotificationGroup } from '@/plugins/notiwind'
 <template>
   <NotificationGroup>
     <div
-      class="fixed inset-0 flex items-start justify-end p-6 px-4 py-6 pointer-events-none"
+      class="fixed inset-0 flex items-start justify-end p-6 pointer-events-none"
     >
       <div class="min-w-56 max-w-xs">
         <Notification
@@ -25,7 +25,9 @@ import { Notification, NotificationGroup } from '@/plugins/notiwind'
             :type="type"
             :title="title"
             :text="text"
+            variant="tonal"
             mt-4
+            class="bg-white!"
           />
         </Notification>
       </div>

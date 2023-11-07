@@ -22,6 +22,7 @@ const emit = defineEmits<{
       <v-card-actions>
         <v-spacer />
         <v-btn
+          color="primary"
           :text="$t('modal.submit')"
           @click="emit('confirm')"
         />

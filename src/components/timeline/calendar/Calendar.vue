@@ -73,7 +73,7 @@ onMounted(scrollToView)
 </script>
 
 <template>
-  <div ref="scrollContainer" h-full overflow-y-auto overflow-x-hidden relative>
+  <div ref="scrollContainer" h-full overflow-y-auto overflow-x-hidden relative ml-2>
     <div sticky top-0 left-0 right-0 bg-white z-1 shadow>
       <div text-5>
         {{ currentYear }}

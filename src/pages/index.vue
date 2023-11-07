@@ -63,9 +63,7 @@ watch(range, refreshThrottle, {
     <template v-if="isShowChart">
       <div absolute z-1 flex w-full p-2 space-x-2>
         <div v-if="unit == 'hour'">
-          <v-btn @click="returnPrev">
-            <div i-mdi:arrow-left text-4 />
-          </v-btn>
+          <v-btn icon="mdi-arrow-left" @click="returnPrev" />
         </div>
         <div flex-1 />
         <v-btn-toggle v-if="isShowRangeRadio" v-model="range">
