@@ -88,15 +88,6 @@ function handleRemove(plan: SelectPlan) {
   open()
 }
 
-function viewNote(planId: number) {
-  router.push({
-    path: '/note',
-    query: {
-      planId,
-    },
-  })
-}
-
 refresh()
 </script>
 
@@ -115,7 +106,6 @@ refresh()
       hover:shadow-xl
       transition-shadow
       space-y-2
-      @click="viewNote(plan.id)"
     >
       <div flex justify-between items-center>
         <div truncate :title="plan.name">

@@ -130,15 +130,6 @@ async function handleStart(label: SelectLabel) {
   router.push('/timer')
 }
 
-function viewNote(labelId: number) {
-  router.push({
-    path: '/note',
-    query: {
-      labelId,
-    },
-  })
-}
-
 refresh()
 </script>
 
@@ -153,7 +144,6 @@ refresh()
           v-for="label in group[1]"
           :key="label.id"
           rounded-2 p-4 bg-white shadow-lg hover:shadow-xl transition-shadow space-y-2
-          @click="viewNote(label.id)"
         >
           <div flex justify-between items-center>
             <div truncate :title="label.name">
