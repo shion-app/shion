@@ -60,7 +60,7 @@ const localeOptions = [
             </v-list-item-subtitle>
             <template #append>
               <v-list-item-action>
-                <v-slider v-model="config.timelineMinMinute" class="w-[200px]" thumb-label hide-details :min="2" :max="10" :step="1" />
+                <v-slider v-model="config.timelineMinMinute" class="w-[200px]" thumb-label hide-details :min="0" :max="10" :step="1" />
               </v-list-item-action>
             </template>
           </v-list-item>

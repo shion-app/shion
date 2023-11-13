@@ -26,7 +26,7 @@ export const useConfigStore = defineStore('config', () => {
       locale: 'en-US',
       checkUpdate: false,
       autostart: false,
-      timelineMinMinute: 3,
+      timelineMinMinute: 1,
     }
     const len = await store.length()
     if (len == 0)
