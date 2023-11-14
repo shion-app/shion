@@ -125,3 +125,9 @@ titleBar:
   help:
     desc: 帮助
     about: 关于
+timeline:
+  plan: 计划
+  label: 标签
+  monitor: 监听
+  filter: 筛选类别
+  reset: 重置筛选条件

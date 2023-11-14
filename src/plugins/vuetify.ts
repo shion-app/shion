@@ -36,6 +36,7 @@ export const vuetify = createVuetify({
     },
     VSelect: {
       variant: 'solo',
+      density: 'compact',
     },
   },
 })

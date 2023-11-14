@@ -126,3 +126,9 @@ titleBar:
   help:
     desc: Help
     about: About
+timeline:
+  plan: Plan
+  label: Label
+  monitor: Monitor
+  filter: Filter Categories
+  reset: Reset Filter condition
