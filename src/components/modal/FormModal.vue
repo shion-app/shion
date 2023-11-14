@@ -21,6 +21,7 @@ const formId = `form-${nanoid()}`
 
 <template>
   <VueFinalModal
+    content-transition="dialog-transition"
     flex justify-center items-center
     @closed="$emit('closed')"
     @click-outside="$emit('cancel')"

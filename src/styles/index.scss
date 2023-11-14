@@ -3,6 +3,8 @@
   $utilities: false,
 );
 
+@use './vfm.scss';
+
 html, body {
   overflow: hidden;
   --un-default-border-color: #000000;

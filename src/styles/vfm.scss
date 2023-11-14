@@ -1,0 +1,43 @@
+@use 'vuetify/lib/styles/tools';
+@use 'vuetify/lib/components/VDialog/variables' as dialog;
+@use 'vuetify/lib/components/VOverlay/variables' as overlay;
+
+.vfm {
+  .vfm--overlay {
+    opacity: overlay.$overlay-opacity;
+    background: overlay.$overlay-scrim-background;
+  }
+
+  .vfm__content {
+
+    &,
+    >form>.v-card,
+    >.v-sheet {
+      --v-scrollbar-offset: 0px;
+      border-radius: dialog.$dialog-border-radius;
+      overflow-y: auto;
+
+      @include tools.elevation(dialog.$dialog-elevation);
+    }
+
+    >.v-card {
+      display: flex;
+      flex-direction: column;
+
+      >.v-card-item {
+        padding: dialog.$dialog-card-header-padding;
+      }
+
+      +.v-card-text {
+        padding-top: dialog.$dialog-card-header-text-padding-top;
+      }
+
+      >.v-card-text {
+        font-size: inherit;
+        letter-spacing: dialog.$dialog-card-text-letter-spacing;
+        line-height: inherit;
+        padding: dialog.$dialog-card-text-padding;
+      }
+    }
+  }
+}

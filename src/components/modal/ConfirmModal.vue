@@ -13,6 +13,7 @@ const emit = defineEmits<{
 
 <template>
   <VueFinalModal
+    content-transition="dialog-transition"
     flex justify-center items-center
   >
     <v-card :title="title" min-width="400" max-width="600">
