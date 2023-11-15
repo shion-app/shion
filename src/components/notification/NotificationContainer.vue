@@ -5,9 +5,9 @@ import { Notification, NotificationGroup } from '@/plugins/notiwind'
 <template>
   <NotificationGroup>
     <div
-      class="fixed inset-0 flex items-start justify-end p-6 pointer-events-none"
+      fixed inset-0 flex items-start justify-end p-6 pointer-events-none z-1000
     >
-      <div class="min-w-56 max-w-xs">
+      <div min-w-56 max-w-xs pointer-events-auto>
         <Notification
           v-slot="{ notifications }"
           enter="transform ease-out duration-300 transition"

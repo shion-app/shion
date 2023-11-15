@@ -61,7 +61,7 @@ watch(range, refreshThrottle, {
 <template>
   <div h-full relative overflow-hidden>
     <template v-if="isShowChart">
-      <div absolute flex w-full p-2 space-x-2>
+      <div absolute z-1 flex w-full p-2 space-x-2>
         <div v-if="unit == 'hour'">
           <v-btn icon="mdi-arrow-left" @click="returnPrev" />
         </div>
