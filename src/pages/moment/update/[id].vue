@@ -7,6 +7,7 @@ const props = defineProps<{
 }>()
 
 const { success, error } = useNotify()
+const { getI18nMessage, isUniqueError } = useDatabase()
 
 const moment = ref<SelectMoment>()
 
@@ -41,8 +42,15 @@ async function handleSubmit() {
       content: content.value,
     })
   }
-  catch (error) {
-    // return message.error((error as DatabaseError).message)
+  catch (e) {
+    if (isUniqueError(e)) {
+      return error({
+        text: t('moment.tip.duplicateTitle'),
+      })
+    }
+    return error({
+      text: getI18nMessage(e),
+    })
   }
 
   success({})
