@@ -2,6 +2,7 @@ import 'uno.css'
 import '@unocss/reset/tailwind.css'
 import 'vue-final-modal/style.css'
 import '@mdi/font/css/materialdesignicons.css'
+import 'gridstack/dist/gridstack.min.css'
 import './styles/index.scss'
 
 import { createApp } from 'vue'

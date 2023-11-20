@@ -53,6 +53,9 @@ dependencies:
   echarts:
     specifier: ^5.4.2
     version: 5.4.2
+  gridstack:
+    specifier: ^9.5.1
+    version: 9.5.1
   i18next:
     specifier: ^23.6.0
     version: 23.6.0
@@ -4662,6 +4665,10 @@ packages:
   /grapheme-splitter@1.0.4:
     resolution: {integrity: sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==}
     dev: true
+
+  /gridstack@9.5.1:
+    resolution: {integrity: sha512-ZzBXY8J2dTPwVOP14d6vHhrXZMWh4qCgb+FJ1COSOrI02OtiPJtDgEQbz1rDlVR/tFU5WQP67w1RYz0eF0FkuA==}
+    dev: false
 
   /gzip-size@6.0.0:
     resolution: {integrity: sha512-ax7ZYomf6jqPTQ4+XCpUGyXKHk5WweS+e05MBO4/y3WJ5RkmPXNKvX+bx1behVILVwr6JSQvZAku021CHPXG3Q==}
