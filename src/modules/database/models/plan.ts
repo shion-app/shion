@@ -17,6 +17,10 @@ export class Plan extends Model<TransformPlan> {
     })
   }
 
+  batchRemoveRelation(idList: number[]) {
+    return this.transaction().execute(trx => Promise.all(idList.map(id => trx.plan.removeRelation(id))))
+  }
+
   @get
   select(value?: { id?: number }) {
     const query = this.selectByLooseType(value)

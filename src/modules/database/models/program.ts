@@ -15,6 +15,10 @@ export class Program extends Model<TransformProgram> {
     })
   }
 
+  batchRemoveRelation(idList: number[]) {
+    return this.transaction().execute(trx => Promise.all(idList.map(id => trx.program.removeRelation(id))))
+  }
+
   @get
   select(value?: { id?: number }) {
     const query = this.selectByLooseType(value)

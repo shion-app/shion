@@ -92,8 +92,15 @@ function createKyselyDatabase<U extends Record<string, object>>(executor: Databa
                   const fn = target[p]
                   const { __transform } = target.constructor as any
                   const { __setIndex, __getFlag } = fn as any
-                  if (__transform && __transform.set && typeof __setIndex == 'number')
-                    Object.assign(args[__setIndex], __transform.set(args[__setIndex]))
+                  if (__transform && __transform.set && typeof __setIndex == 'number') {
+                    if (Array.isArray(args[__setIndex])) {
+                      for (let i = 0; i < args[__setIndex].length; i++)
+                        Object.assign(args[__setIndex][i], __transform.set(args[__setIndex][i]))
+                    }
+                    else {
+                      Object.assign(args[__setIndex], __transform.set(args[__setIndex]))
+                    }
+                  }
 
                   const query = fn.apply(target, args)
                   const CompiledQuery = query.compile()

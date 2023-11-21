@@ -14,6 +14,10 @@ export class Label extends Model<TransformLabel> {
     })
   }
 
+  batchRemoveRelation(idList: number[]) {
+    return this.transaction().execute(trx => Promise.all(idList.map(id => trx.label.removeRelation(id))))
+  }
+
   removeBy(value: { planId?: number }) {
     let query = this.kysely.updateTable(this.table).set({
       deletedAt: Date.now(),

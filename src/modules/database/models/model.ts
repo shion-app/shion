@@ -25,10 +25,18 @@ export class Model<T extends DB[TableName]> {
     return this.kysely.updateTable(this.table).set(value).where('id', '=', id)
   }
 
+  batchUpdate(@set value: Array<Updateable<T> & { id: number }>) {
+    return this.transaction().execute(trx => Promise.all(value.map(i => trx[this.table].update(i.id, i))))
+  }
+
   remove(id: number) {
     return this.kysely.updateTable(this.table).set({
       deletedAt: Date.now(),
     }).where('id', '=', id)
+  }
+
+  batchRemove(idList: number[]) {
+    return this.transaction().execute(trx => Promise.all(idList.map(id => trx[this.table].remove(id))))
   }
 
   protected selectByLooseType(value?: { id?: number }) {
