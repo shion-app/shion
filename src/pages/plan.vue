@@ -6,7 +6,6 @@ import { db } from '@/modules/database'
 
 const { t } = useI18n()
 const { parseFieldsError } = useDatabase()
-const router = useRouter()
 const { success } = useNotify()
 const { getItemsByOrder } = useGrid()
 
@@ -54,11 +53,9 @@ const list = ref<Array<SelectPlan>>([])
 
 const cardList = computed(() => list.value.map(({ id, name, totalTime, color }) => ({
   id,
-  data: {
-    title: name,
-    totalTime,
-    color,
-  },
+  title: name,
+  totalTime,
+  color,
 })))
 
 async function refresh() {
@@ -70,7 +67,8 @@ function showCreateForm() {
   open()
 }
 
-function showUpdateForm(plan: SelectPlan) {
+function showUpdateForm(id: number) {
+  const plan = list.value.find(i => i.id == id)
   model.value = plan
   isCreate.value = false
   open()
@@ -84,12 +82,12 @@ function handleUpdate(plan: InsertPlan) {
   return db.plan.update(model.value!.id, plan)
 }
 
-function handleRemove(plan: SelectPlan) {
+function handleRemove(id: number) {
   const { open, close } = useConfirmModal({
     attrs: {
       title: t('modal.confirmDelete'),
       async onConfirm() {
-        await db.plan.removeRelation(plan.id)
+        await db.plan.removeRelation(id)
         close()
         success({})
         refresh()
@@ -103,53 +101,9 @@ refresh()
 </script>
 
 <template>
-  <!-- <div
-    v-if="list.length"
-    grid grid-cols-3 gap-6 p-4
-  >
-    <div
-      v-for="plan in list"
-      :key="plan.id"
-      rounded-2
-      p-4
-      bg-white
-      shadow-lg
-      hover:shadow-xl
-      transition-shadow
-      space-y-2
-    >
-      <div flex justify-between items-center>
-        <div truncate :title="plan.name">
-          {{ plan.name }}
-        </div>
-        <div
-          w-3 h-3 rounded-full mx-1 flex-shrink-0
-          :style="{
-            backgroundColor: plan.color,
-          }"
-        />
-      </div>
-      <div flex class="group">
-        <div>{{ formatHHmmss(plan.totalTime) }}</div>
-        <div flex-1 />
-        <div flex op-0 group-hover-op-100 transition-opacity-400 space-x-2>
-          <v-tooltip :text="$t('button.update')" location="bottom">
-            <template #activator="{ props }">
-              <div i-mdi:file-edit-outline text-5 cursor-pointer v-bind="props" @click.stop="showUpdateForm(plan)" />
-            </template>
-          </v-tooltip>
-          <v-tooltip :text="$t('button.remove')" location="bottom">
-            <template #activator="{ props }">
-              <div i-mdi:delete-outline text-5 cursor-pointer v-bind="props" @click.stop="handleRemove(plan)" />
-            </template>
-          </v-tooltip>
-        </div>
-      </div>
-    </div>
-  </div> -->
-  <grid v-if="list.length" :items="getItemsByOrder(list)" :component-props="cardList" :options="{ cellHeight: 120 }">
+  <grid v-if="list.length" :items="getItemsByOrder(list)" :component-props="cardList" :options="{ cellHeight: 150 }">
     <template #default="{ componentProps }">
-      <time-card v-bind="componentProps" />
+      <time-card v-bind="componentProps" @update="showUpdateForm" @remove="handleRemove" />
     </template>
   </grid>
   <empty v-else />

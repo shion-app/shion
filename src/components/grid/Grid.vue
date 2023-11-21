@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="T">
+<script setup lang="ts" generic="T extends { id: number }">
 import type { AddRemoveFcn, GridStackNode, GridStackOptions, GridStackWidget } from 'gridstack'
 import { GridStack } from 'gridstack'
 import { render } from 'vue'
@@ -7,10 +7,7 @@ import GridItem from './GridItem.vue'
 
 const props = defineProps<{
   items: GridStackWidget[]
-  componentProps: Array<{
-    id: number
-    data: T
-  }>
+  componentProps: Array<T>
   options?: GridStackOptions
 }>()
 
@@ -44,7 +41,7 @@ const gsAddRemoveVueComponents: AddRemoveFcn = (host, item, add, isGrid) => {
       {
         default: componentProps
           ? () => slots.default({
-              componentProps: componentProps.data,
+              componentProps,
             })
           : undefined,
       },
@@ -74,6 +71,10 @@ onMounted(() => {
   GridStack.addRemoveCB = gsAddRemoveVueComponents
 
   grid.load(props.items)
+})
+
+watchDeep(() => props.items, () => {
+  grid?.load(props.items)
 })
 </script>
 
