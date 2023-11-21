@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import type { AddRemoveFcn, GridStackWidget } from 'gridstack'
+<script setup lang="ts" generic="T">
+import type { AddRemoveFcn, GridStackNode, GridStackOptions, GridStackWidget } from 'gridstack'
 import { GridStack } from 'gridstack'
 import { render } from 'vue'
 
@@ -8,23 +8,24 @@ import GridItem from './GridItem.vue'
 const props = defineProps<{
   items: GridStackWidget[]
   componentProps: Array<{
-    id: string
-    data: any
+    id: number
+    data: T
   }>
+  options?: GridStackOptions
+}>()
+
+const emit = defineEmits<{
+  (e: 'change', items: number[]): void
 }>()
 
 const slots = defineSlots<{
-  default(props: { componentProps }): any
+  default(props: { componentProps: T }): any
 }>()
 
+const instance = getCurrentInstance()
+
 let grid: GridStack | null = null
-// const items: GridStackWidget[] = [
-//   { id: '1', x: 1, y: 1, h: 2, w: 8 },
-//   // { id: '2', x: 2, y: 4, w: 3 },
-//   // { id: '3', x: 4, y: 2 },
-//   // { id: '4', x: 3, y: 1, h: 2 },
-//   // { id: '5', x: 0, y: 6, w: 2, h: 2 },
-// ]
+
 const shadowDom = {}
 
 const gsAddRemoveVueComponents: AddRemoveFcn = (host, item, add, isGrid) => {
@@ -34,7 +35,7 @@ const gsAddRemoveVueComponents: AddRemoveFcn = (host, item, add, isGrid) => {
   if (isGrid)
     return
 
-  const itemId = item.id!
+  const itemId = Number(item.id)
   if (add) {
     const componentProps = props.componentProps.find(i => i.id == itemId)
     const itemVNode = h(
@@ -42,13 +43,14 @@ const gsAddRemoveVueComponents: AddRemoveFcn = (host, item, add, isGrid) => {
       null,
       {
         default: componentProps
-          ? () => slots.default?.({
+          ? () => slots.default({
               componentProps: componentProps.data,
             })
           : undefined,
       },
     )
     shadowDom[itemId] = document.createElement('div')
+    itemVNode.appContext = instance!.appContext
     render(itemVNode, shadowDom[itemId])
     return itemVNode.el as HTMLElement
   }
@@ -59,8 +61,14 @@ const gsAddRemoveVueComponents: AddRemoveFcn = (host, item, add, isGrid) => {
 
 onMounted(() => {
   grid = GridStack.init({
-    float: true,
-    cellHeight: '70px',
+    margin: 0,
+    disableResize: true,
+    ...props.options,
+  })
+
+  grid.on('change', (event: Event, items: GridStackNode[]) => {
+    emit('change', items.map(i => Number(i.id)))
+    grid!.compact()
   })
 
   GridStack.addRemoveCB = gsAddRemoveVueComponents

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { useFormModalOptions } from '@/hooks/useFormModal'
+import { useGrid } from '@/hooks/useGrid'
 import type { InsertPlan, SelectPlan } from '@/modules/database'
 import { db } from '@/modules/database'
 
@@ -7,6 +8,7 @@ const { t } = useI18n()
 const { parseFieldsError } = useDatabase()
 const router = useRouter()
 const { success } = useNotify()
+const { getItemsByOrder } = useGrid()
 
 const model = ref<SelectPlan>()
 const isCreate = ref(true)
@@ -50,6 +52,15 @@ const { open, close } = useFormModal(
 
 const list = ref<Array<SelectPlan>>([])
 
+const cardList = computed(() => list.value.map(({ id, name, totalTime, color }) => ({
+  id,
+  data: {
+    title: name,
+    totalTime,
+    color,
+  },
+})))
+
 async function refresh() {
   list.value = await db.plan.select()
 }
@@ -92,7 +103,7 @@ refresh()
 </script>
 
 <template>
-  <div
+  <!-- <div
     v-if="list.length"
     grid grid-cols-3 gap-6 p-4
   >
@@ -135,7 +146,12 @@ refresh()
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
+  <grid v-if="list.length" :items="getItemsByOrder(list)" :component-props="cardList" :options="{ cellHeight: 120 }">
+    <template #default="{ componentProps }">
+      <time-card v-bind="componentProps" />
+    </template>
+  </grid>
   <empty v-else />
   <more-menu>
     <v-list>

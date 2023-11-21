@@ -1,6 +1,6 @@
 <template>
-  <div class="grid-stack-item" shadow-lg>
-    <div class="grid-stack-item-content">
+  <div class="grid-stack-item">
+    <div class="grid-stack-item-content" p-3>
       <slot />
     </div>
   </div>
