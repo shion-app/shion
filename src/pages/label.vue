@@ -96,8 +96,12 @@ function showUpdateForm(id: number, list: Array<SelectLabel>) {
   open()
 }
 
-function handleCreate(label: InsertLabel) {
-  return db.label.insert(label)
+async function handleCreate(label: InsertLabel) {
+  // todo: db event listener
+  const { lastInsertId } = await db.label.insert(label)
+  await db.label.update(lastInsertId, {
+    sort: lastInsertId,
+  })
 }
 
 function handleUpdate(label: InsertLabel) {

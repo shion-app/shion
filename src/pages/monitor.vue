@@ -80,11 +80,15 @@ async function handleCreateProgram(program: backend.Program) {
   const index = filterList.value.findIndex(i => i.path == path)
   filterList.value.splice(index, 1)
   const src = await upload(`${name}.png`, icon.length ? new Uint8Array(icon) : await (await fetch(exe)).arrayBuffer())
-  await db.program.insert({
+  // todo: db event listener
+  const { lastInsertId } = await db.program.insert({
     name,
     path,
     icon: src,
     color,
+  })
+  await db.program.update(lastInsertId, {
+    sort: lastInsertId,
   })
 }
 
