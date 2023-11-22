@@ -97,11 +97,29 @@ function handleRemove(id: number) {
   open()
 }
 
+async function handleGridChange(items: number[]) {
+  const planList = items.map((id, index) => {
+    const { sort } = list.value[index]
+    return {
+      id,
+      sort,
+    }
+  }).filter((i, index) => list.value[index].id != i.id)
+  await db.plan.batchUpdate(planList)
+  await refresh()
+}
+
 refresh()
 </script>
 
 <template>
-  <grid v-if="list.length" :items="getItemsByOrder(list)" :component-props="cardList" :options="{ cellHeight: 150 }">
+  <grid
+    v-if="list.length"
+    :items="getItemsByOrder(list)"
+    :component-props="cardList"
+    :options="{ cellHeight: 150 }"
+    @change="handleGridChange"
+  >
     <template #default="{ componentProps }">
       <time-card v-bind="componentProps" @update="showUpdateForm" @remove="handleRemove" />
     </template>

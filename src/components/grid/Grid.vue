@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends { id: number }">
-import type { AddRemoveFcn, GridStackNode, GridStackOptions, GridStackWidget } from 'gridstack'
+import type { AddRemoveFcn, GridStackOptions, GridStackWidget } from 'gridstack'
 import { GridStack } from 'gridstack'
 import { render } from 'vue'
 
@@ -63,9 +63,10 @@ onMounted(() => {
     ...props.options,
   })
 
-  grid.on('change', (event: Event, items: GridStackNode[]) => {
-    emit('change', items.map(i => Number(i.id)))
+  grid.on('dragstop', () => {
     grid!.compact()
+    const widgets = grid!.save() as GridStackWidget[]
+    emit('change', widgets.map(i => Number(i.id)))
   })
 
   GridStack.addRemoveCB = gsAddRemoveVueComponents
@@ -73,7 +74,8 @@ onMounted(() => {
   grid.load(props.items)
 })
 
-watchDeep(() => props.items, () => {
+watchDeep(() => props.componentProps, () => {
+  grid?.removeAll()
   grid?.load(props.items)
 })
 </script>
