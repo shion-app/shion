@@ -80,6 +80,7 @@ function transformResult(constructor, obj) {
 function createKyselyDatabase<U extends Record<string, object>>(executor: DatabaseExecutor, models: U) {
   class KyselyDatabase<M extends Record<string, object>> {
     #executor: DatabaseExecutor
+    #connectionMutex = new ConnectionMutex()
 
     constructor(executor: DatabaseExecutor, models: M) {
       this.#executor = executor
@@ -88,7 +89,7 @@ function createKyselyDatabase<U extends Record<string, object>>(executor: Databa
           [modelKey]: new Proxy(models[modelKey], {
             get: (target, p) => {
               if (typeof target[p] === 'function') {
-                return (...args) => {
+                return this.#provideConnection((...args) => {
                   const fn = target[p]
                   const { __transform } = target.constructor as any
                   const { __setIndex, __getFlag } = fn as any
@@ -121,7 +122,7 @@ function createKyselyDatabase<U extends Record<string, object>>(executor: Databa
                   }
 
                   return this.#execute(CompiledQuery)
-                }
+                })
               }
               else {
                 return target[p]
@@ -131,6 +132,26 @@ function createKyselyDatabase<U extends Record<string, object>>(executor: Databa
         }
         Object.assign(this, obj)
       }
+    }
+
+    #provideConnection(consumer: (...args) => Promise<unknown>) {
+      return async (...args) => {
+        await this.#acquireConnection()
+        try {
+          return await consumer(...args)
+        }
+        finally {
+          this.#releaseConnection()
+        }
+      }
+    }
+
+    async #acquireConnection() {
+      await this.#connectionMutex.lock()
+    }
+
+    #releaseConnection() {
+      this.#connectionMutex.unlock()
     }
 
     async #execute<T extends CompiledQuery>(query: T) {
@@ -147,9 +168,10 @@ function createKyselyDatabase<U extends Record<string, object>>(executor: Databa
     }
 
     async #executeTransaction(callback: (trx) => Promise<unknown>) {
+      const transaction = new Transaction(executor, models)
       try {
         await this.#executor.execute('begin')
-        const result = await callback(this)
+        const result = await callback(transaction)
         await this.#executor.execute('commit')
         return result
       }
@@ -159,7 +181,32 @@ function createKyselyDatabase<U extends Record<string, object>>(executor: Databa
       }
     }
   }
+
+  class Transaction extends KyselyDatabase<Record<string, object>> {}
   return new KyselyDatabase(executor, models) as KyselyDatabase<U> & Executor<U>
+}
+
+class ConnectionMutex {
+  #promise?: Promise<void>
+  #resolve?: () => void
+
+  async lock(): Promise<void> {
+    while (this.#promise)
+      await this.#promise
+
+    this.#promise = new Promise((resolve) => {
+      this.#resolve = resolve
+    })
+  }
+
+  unlock(): void {
+    const resolve = this.#resolve
+
+    this.#promise = undefined
+    this.#resolve = undefined
+
+    resolve?.()
+  }
 }
 
 export class TransactionBuilder<T> {
