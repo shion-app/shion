@@ -13,6 +13,7 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vitest/config'
 import transformerDirectives from '@unocss/transformer-directives'
+import vuetify from 'vite-plugin-vuetify'
 
 // const mobile =
 //   process.env.TAURI_PLATFORM === "android" ||
@@ -51,6 +52,11 @@ export default defineConfig({
     }),
     visualizer({
       filename: '.visualizer/index.html',
+    }),
+    vuetify({
+      styles: {
+        configFile: 'src/styles/settings.scss',
+      },
     }),
     // VueDevTools(),
   ],

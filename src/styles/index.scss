@@ -1,4 +1,4 @@
-@use 'vuetify/lib/styles/main.sass' with (
+@use 'vuetify' with (
   $reset: false,
   $utilities: false,
 );
