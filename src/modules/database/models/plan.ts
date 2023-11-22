@@ -35,6 +35,6 @@ export class Plan extends Model<TransformPlan> {
       ])
       .leftJoin('note as n', join => join.onRef('n.planId', '=', 'plan.id').on('n.deletedAt', '=', 0))
       .groupBy('plan.id')
-      .orderBy(['plan.sort desc', 'plan.id'])
+      .orderBy(['plan.sort'])
   }
 }

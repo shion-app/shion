@@ -35,6 +35,6 @@ export class Program extends Model<TransformProgram> {
       ])
       .leftJoin('activity as a', join => join.onRef('a.programId', '=', 'program.id').on('a.deletedAt', '=', 0))
       .groupBy('program.id')
-      .orderBy(['program.sort desc', 'program.id'])
+      .orderBy(['program.sort'])
   }
 }

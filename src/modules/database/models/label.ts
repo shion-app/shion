@@ -43,6 +43,6 @@ export class Label extends Model<TransformLabel> {
       ])
       .leftJoin('note as n', join => join.onRef('n.labelId', '=', 'label.id').on('n.deletedAt', '=', 0))
       .groupBy('label.id')
-      .orderBy(['label.sort desc', 'label.id'])
+      .orderBy(['label.sort'])
   }
 }
