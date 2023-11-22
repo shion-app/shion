@@ -22,7 +22,7 @@ defineEmits<{
         hover
       >
         <template v-if="$props.prependImgUrl" #prepend>
-          <img :src="$props.prependImgUrl">
+          <img :src="$props.prependImgUrl" width="32" height="32">
         </template>
         <template #append>
           <div

@@ -12,11 +12,20 @@ const { t } = useI18n()
 const store = useMonitorStore()
 const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
+const { getItemsByOrder } = useGrid()
 
 const { getIconUrl, refresh } = store
 const { filtering, filterList, whiteList } = storeToRefs(store)
 
 const model = ref<SelectProgram>()
+
+const cardList = computed(() => whiteList.value.map(({ id, name, totalTime, color, icon }) => ({
+  id,
+  title: name,
+  totalTime,
+  color,
+  prependImgUrl: icon,
+})))
 
 const { open, close } = useFormModal(
   computed<useFormModalOptions>(() => ({
@@ -55,8 +64,9 @@ const { open, close } = useFormModal(
     },
   })))
 
-function showUpdateForm(plan: SelectProgram) {
-  model.value = plan
+function showUpdateForm(id: number) {
+  const program = whiteList.value.find(i => i.id == id)
+  model.value = program
   open()
 }
 
@@ -85,12 +95,12 @@ async function handleSelect() {
   success({})
 }
 
-async function handleRemove(program: SelectProgram) {
+async function handleRemove(id: number) {
   const { open, close } = useConfirmModal({
     attrs: {
       title: t('modal.confirmDelete'),
       async onConfirm() {
-        await db.program.removeRelation(program.id)
+        await db.program.removeRelation(id)
         close()
         success({})
         refresh()
@@ -104,106 +114,85 @@ function showFilterDialog() {
   filtering.value = true
 }
 
+async function handleGridChange(items: number[]) {
+  const programList = items.map((id, index) => {
+    const { sort } = whiteList.value[index]
+    return {
+      id,
+      sort,
+    }
+  }).filter((i, index) => whiteList.value[index].id != i.id)
+  await db.program.batchUpdate(programList)
+  await refresh()
+}
+
 refresh()
 </script>
 
 <template>
-  <div h-full>
-    <div v-if="whiteList.length" grid grid-cols-3 gap-6 p-4>
-      <div
-        v-for="program in whiteList" :key="program.id"
-        p-4 flex space-x-4 items-center
-        rounded-2
-        bg-white
-        shadow-lg
-        hover:shadow-xl
-        transition-shadow
-      >
-        <img :src="program.icon" width="32" height="32" object-contain>
-        <div flex-1 min-w-0 space-y-2>
-          <div flex justify-between items-center>
-            <div truncate :title="program.name">
-              {{ program.name }}
+  <grid
+    v-if="whiteList.length"
+    :items="getItemsByOrder(whiteList)"
+    :component-props="cardList"
+    :options="{ cellHeight: 150 }"
+    @change="handleGridChange"
+  >
+    <template #default="{ componentProps }">
+      <time-card v-bind="componentProps" @update="showUpdateForm" @remove="handleRemove" />
+    </template>
+  </grid>
+  <empty v-else />
+  <more-menu>
+    <v-list>
+      <v-list-item value="monitor.filterProgram">
+        <v-list-item-title @click="showFilterDialog">
+          {{ $t('monitor.filterProgram') }}
+        </v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </more-menu>
+  <v-dialog
+    v-model="filtering"
+    width="550"
+    max-height="400"
+  >
+    <v-card>
+      <v-card-title>{{ $t('monitor.filterProgram') }}</v-card-title>
+      <v-card-text overflow-y-auto>
+        <template v-if="filterList.length">
+          <div v-for="program in filterList" :key="program.path" flex space-x-4 mb-4>
+            <div>
+              <v-checkbox v-model="program.checked" />
             </div>
             <div
-              w-3 h-3 rounded-full mx-1 flex-shrink-0
-              :style="{
-                backgroundColor: program.color,
-              }"
-            />
-          </div>
-          <div flex class="group">
-            <div>{{ formatHHmmss(program.totalTime) }}</div>
-            <div flex-1 />
-            <div flex op-0 group-hover-op-100 transition-opacity-400 space-x-2>
-              <v-tooltip :text="$t('button.update')" location="bottom">
-                <template #activator="{ props }">
-                  <div i-mdi:file-edit-outline text-5 cursor-pointer v-bind="props" @click.stop="showUpdateForm(program)" />
-                </template>
-              </v-tooltip>
-              <v-tooltip :text="$t('button.remove')" location="bottom">
-                <template #activator="{ props }">
-                  <div i-mdi:delete-outline text-5 cursor-pointer v-bind="props" @click.stop="handleRemove(program)" />
-                </template>
-              </v-tooltip>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <empty v-else />
-    <more-menu>
-      <v-list>
-        <v-list-item value="monitor.filterProgram">
-          <v-list-item-title @click="showFilterDialog">
-            {{ $t('monitor.filterProgram') }}
-          </v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </more-menu>
-    <v-dialog
-      v-model="filtering"
-      width="550"
-      max-height="400"
-    >
-      <v-card>
-        <v-card-title>{{ $t('monitor.filterProgram') }}</v-card-title>
-        <v-card-text overflow-y-auto>
-          <template v-if="filterList.length">
-            <div v-for="program in filterList" :key="program.path" flex space-x-4 mb-4>
-              <div>
-                <v-checkbox v-model="program.checked" />
-              </div>
-              <div
-                flex-1 min-w-0
-                p-4 flex space-x-4 items-center
-                rounded-2
-                bg-white
-                shadow-lg
-                hover:shadow-xl
-                transition-shadow
-              >
-                <img :src="getIconUrl(program.path)" width="32" height="32" object-contain>
-                <div flex-1 min-w-0>
-                  <div>
-                    {{ program.name }}
-                  </div>
-                  <div truncate :title="program.path">
-                    {{ program.path }}
-                  </div>
+              flex-1 min-w-0
+              p-4 flex space-x-4 items-center
+              rounded-2
+              bg-white
+              shadow-lg
+              hover:shadow-xl
+              transition-shadow
+            >
+              <img :src="getIconUrl(program.path)" width="32" height="32" object-contain>
+              <div flex-1 min-w-0>
+                <div>
+                  {{ program.name }}
+                </div>
+                <div truncate :title="program.path">
+                  {{ program.path }}
                 </div>
               </div>
             </div>
-          </template>
-          <empty v-else :desc="$t('monitor.switchWindowTip')" />
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="primary" @click="handleSelect">
-            {{ $t('modal.submit') }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+          </div>
+        </template>
+        <empty v-else :desc="$t('monitor.switchWindowTip')" />
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn color="primary" @click="handleSelect">
+          {{ $t('modal.submit') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
