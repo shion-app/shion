@@ -9,6 +9,7 @@ const router = useRouter()
 const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
 const { openModal } = useNoteCreate()
+const { getItemsByOrder } = useGrid()
 
 const { running: timerRunning } = storeToRefs(timeStore)
 
@@ -88,7 +89,8 @@ function showCreateForm() {
   open()
 }
 
-function showUpdateForm(label: SelectLabel) {
+function showUpdateForm(id: number, list: Array<SelectLabel>) {
+  const label = list.find(i => i.id == id)
   model.value = label
   isCreate.value = false
   open()
@@ -102,12 +104,12 @@ function handleUpdate(label: InsertLabel) {
   return db.label.update(model.value!.id, label)
 }
 
-function handleRemove(label: SelectLabel) {
+function handleRemove(id: number) {
   const { open, close } = useConfirmModal({
     attrs: {
       title: t('modal.confirmDelete'),
       async onConfirm() {
-        await db.label.removeRelation(label.id)
+        await db.label.removeRelation(id)
         close()
         success({})
         refresh()
@@ -117,7 +119,7 @@ function handleRemove(label: SelectLabel) {
   open()
 }
 
-async function handleStart(label: SelectLabel) {
+async function handleStart(label: Pick<SelectLabel, 'id' | 'planId'>) {
   try {
     await openModal({
       labelId: label.id,
@@ -130,55 +132,55 @@ async function handleStart(label: SelectLabel) {
   router.push('/timer')
 }
 
+async function handleGridChange(items: number[], list: Array<SelectLabel>) {
+  const labelList = items.map((id, index) => {
+    const { sort } = list[index]
+    return {
+      id,
+      sort,
+    }
+  }).filter((i, index) => list[index].id != i.id)
+  await db.label.batchUpdate(labelList)
+  await refresh()
+}
+
+function getCardList(list: Array<SelectLabel>) {
+  return list.map(({ id, name, totalTime, color, planId }) => ({
+    id,
+    title: name,
+    totalTime,
+    color,
+    planId,
+  }))
+}
+
 refresh()
 </script>
 
 <template>
   <div v-if="labelList.length" py-4 space-y-6>
-    <div v-for="group in labelGroup" :key="group[0]">
-      <div p-x-4 text-5 font-bold>
-        {{ planList.find(i => i.id == group[0])!.name }}
-      </div>
-      <div grid grid-cols-3 gap-6 py-2 px-4>
-        <div
-          v-for="label in group[1]"
-          :key="label.id"
-          rounded-2 p-4 bg-white shadow-lg hover:shadow-xl transition-shadow space-y-2
-        >
-          <div flex justify-between items-center>
-            <div truncate :title="label.name">
-              {{ label.name }}
-            </div>
-            <div
-              w-3 h-3 rounded-full mx-1 flex-shrink-0
-              :style="{
-                backgroundColor: label.color,
-              }"
-            />
-          </div>
-          <div flex class="group">
-            <div>{{ formatHHmmss(label.totalTime) }}</div>
-            <div flex-1 />
-            <div flex space-x-1 op-0 group-hover-op-100 transition-opacity-400>
-              <v-tooltip :text="$t('button.update')" location="bottom">
-                <template #activator="{ props }">
-                  <div i-mdi:file-edit-outline text-5 cursor-pointer v-bind="props" @click.stop="showUpdateForm(label)" />
-                </template>
-              </v-tooltip>
-              <v-tooltip :text="$t('button.remove')" location="bottom">
-                <template #activator="{ props }">
-                  <div i-mdi:delete-outline text-5 cursor-pointer v-bind="props" @click.stop="handleRemove(label)" />
-                </template>
-              </v-tooltip>
-              <v-tooltip v-if="!timerRunning" :text="$t('label.button.start')" location="bottom">
-                <template #activator="{ props }">
-                  <div i-mdi:play-circle-outline text-5 cursor-pointer v-bind="props" @click.stop="handleStart(label)" />
-                </template>
-              </v-tooltip>
-            </div>
-          </div>
+    <div v-for="[id, list] in labelGroup" :key="id">
+      <template v-if="list.length">
+        <div p-x-4 text-5 font-bold>
+          {{ planList.find(i => i.id == id)!.name }}
         </div>
-      </div>
+        <grid
+          :items="getItemsByOrder(list)"
+          :component-props="getCardList(list)"
+          :options="{ cellHeight: 150 }"
+          @change="items => handleGridChange(items, list)"
+        >
+          <template #default="{ componentProps }">
+            <time-card v-bind="componentProps" @update="id => showUpdateForm(id, list)" @remove="handleRemove">
+              <template v-if="!timerRunning" #menu>
+                <v-list-item value="timer" @click="handleStart(componentProps)">
+                  <v-list-item-title>{{ $t('label.button.start') }}</v-list-item-title>
+                </v-list-item>
+              </template>
+            </time-card>
+          </template>
+        </grid>
+      </template>
     </div>
   </div>
   <empty v-else />

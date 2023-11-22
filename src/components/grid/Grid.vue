@@ -2,6 +2,7 @@
 import type { AddRemoveFcn, GridStackOptions, GridStackWidget } from 'gridstack'
 import { GridStack } from 'gridstack'
 import { render } from 'vue'
+import { nanoid } from 'nanoid'
 
 import GridItem from './GridItem.vue'
 
@@ -22,6 +23,7 @@ const slots = defineSlots<{
 const instance = getCurrentInstance()
 
 let grid: GridStack | null = null
+const gridId = `grid-stack-${nanoid()}`
 
 const shadowDom = {}
 
@@ -61,7 +63,7 @@ onMounted(() => {
     margin: 0,
     disableResize: true,
     ...props.options,
-  })
+  }, gridId)
 
   grid.on('dragstop', () => {
     grid!.compact()
@@ -69,17 +71,15 @@ onMounted(() => {
     emit('change', widgets.map(i => Number(i.id)))
   })
 
-  GridStack.addRemoveCB = gsAddRemoveVueComponents
-
-  grid.load(props.items)
+  grid.load(props.items, gsAddRemoveVueComponents)
 })
 
 watchDeep(() => props.componentProps, () => {
   grid?.removeAll()
-  grid?.load(props.items)
+  grid?.load(props.items, gsAddRemoveVueComponents)
 })
 </script>
 
 <template>
-  <div class="grid-stack" />
+  <div :class="gridId" />
 </template>

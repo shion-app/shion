@@ -11,6 +11,10 @@ defineEmits<{
   (e: 'update', id: number): void
   (e: 'remove', id: number): void
 }>()
+
+defineOptions({
+  inheritAttrs: false,
+})
 </script>
 
 <template>
@@ -37,7 +41,7 @@ defineEmits<{
             {{ formatHHmmss($props.totalTime) }}
           </div>
           <div :class="isHovering ? 'opacity-100' : 'opacity-0'" transition-opacity-400>
-            <v-menu width="100" open-on-hover>
+            <v-menu min-width="150" open-on-hover>
               <template #activator="{ props: menuProps }">
                 <v-btn icon variant="text" v-bind="menuProps" size="small">
                   <div i-mdi:menu-down text-6 />
@@ -50,6 +54,7 @@ defineEmits<{
                 <v-list-item value="remove" @click="$emit('remove', $props.id)">
                   <v-list-item-title>{{ $t('button.remove') }}</v-list-item-title>
                 </v-list-item>
+                <slot name="menu" />
               </v-list>
             </v-menu>
           </div>
