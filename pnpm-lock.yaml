@@ -120,8 +120,8 @@ dependencies:
     specifier: ^4.1.6
     version: 4.1.6(vue@3.3.7)
   vuetify:
-    specifier: ^3.3.23
-    version: 3.3.23(typescript@5.2.2)(vue-i18n@9.6.0)(vue@3.3.7)
+    specifier: ^3.4.3
+    version: 3.4.3(typescript@5.2.2)(vue-i18n@9.6.0)(vue@3.3.7)
   zod:
     specifier: ^3.22.4
     version: 3.22.4
@@ -8333,13 +8333,13 @@ packages:
       '@vue/shared': 3.3.7
       typescript: 5.2.2
 
-  /vuetify@3.3.23(typescript@5.2.2)(vue-i18n@9.6.0)(vue@3.3.7):
-    resolution: {integrity: sha512-EVEFvDyKr/HK2+hQJyhQSjIDULDaBi9vfgAAB0ekm+2Tvc8AkaDwb7VK44R2eilGFGpju6iN52FV7Uasj8SmIg==}
+  /vuetify@3.4.3(typescript@5.2.2)(vue-i18n@9.6.0)(vue@3.3.7):
+    resolution: {integrity: sha512-b8yi87Zv4bn2JbaVkkV9uzSRw0fdY/v3ieWne0OTI29w/CNSyLyfHGBCrmx7eD74i562M1j+AwSSRJCX3wF0+Q==}
     engines: {node: ^12.20 || >=14.13}
     peerDependencies:
       typescript: '>=4.7'
       vite-plugin-vuetify: ^1.0.0-alpha.12
-      vue: ^3.2.0
+      vue: ^3.3.0
       vue-i18n: ^9.0.0
       webpack-plugin-vuetify: ^2.0.0-alpha.11
     peerDependenciesMeta:
