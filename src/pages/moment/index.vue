@@ -13,16 +13,21 @@ type Moment = Replace<SelectMoment, {
     filteredMarkdown: string
     images: Array<Image>
   }
-}>
+}> & {
+  selected: boolean
+}
 
 const router = useRouter()
+const { success } = useNotify()
 
 const list = ref<Array<Moment>>([])
+const selectedList = computed(() => list.value.filter(i => i.selected).map(i => i.id))
 
-async function init() {
+async function refresh() {
   list.value = (await db.moment.select()).map(i => ({
     ...i,
     content: filterMarkdownImages(i.content),
+    selected: false,
   }))
 }
 
@@ -54,37 +59,48 @@ function update(id: number) {
   router.push(`/moment/update/${id}`)
 }
 
-init()
+async function remove() {
+  await Promise.all(selectedList.value.map(id => db.moment.remove(id)))
+  await refresh()
+  success({})
+}
+
+refresh()
 </script>
 
 <template>
   <div p-4>
     <template v-if="list.length">
-      <template v-for="{ title, content, id }, index in list" :key="id">
+      <template v-for="moment, index in list" :key="moment.id">
         <v-card
-          :title="title"
+          :title="moment.title"
           variant="flat"
           class="group"
-          @click="viewDetail(id)"
+          @click="viewDetail(moment.id)"
         >
+          <template #append>
+            <div group-hover:opacity-100 transition-opacity-400 :class="moment.selected ? 'opacity-100' : 'opacity-0'" @click.stop>
+              <v-checkbox v-model="moment.selected" />
+            </div>
+          </template>
           <v-card-text>
-            <div flex flex-1 space-x-4>
-              <img v-if="content.images.length" width="200" height="200" object-contain v-bind="content.images[0]">
-              <div flex-1 line-clamp-2>
-                {{ content.filteredMarkdown }}
+            <div flex space-x-4>
+              <img v-if="moment.content.images.length" width="200" height="200" object-contain v-bind="moment.content.images[0]">
+              <div flex-1 line-clamp-4 h-max>
+                {{ moment.content.filteredMarkdown }}
               </div>
               <div flex flex-col>
                 <div flex-1 />
                 <v-menu open-on-hover>
                   <template #activator="{ props }">
-                    <v-btn icon size="small" v-bind="props" opacity-0 group-hover:opacity-100 transition-opacity-400>
+                    <v-btn icon size="small" v-bind="props" opacity-0 group-hover:opacity-100 transition-opacity-400 @click.stop>
                       <div i-mdi:menu-down text-6 />
                     </v-btn>
                   </template>
                   <v-list>
                     <v-list-item
                       value="edit"
-                      @click="update(id)"
+                      @click="update(moment.id)"
                     >
                       <v-list-item-title>{{ $t('moment.edit') }}</v-list-item-title>
                     </v-list-item>
@@ -103,6 +119,11 @@ init()
         <v-list-item value="moment.create">
           <v-list-item-title @click="viewMomentCreate">
             {{ $t('moment.create') }}
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item v-if="selectedList.length" value="button.remove">
+          <v-list-item-title @click="remove">
+            {{ $t('button.remove') }}
           </v-list-item-title>
         </v-list-item>
       </v-list>
