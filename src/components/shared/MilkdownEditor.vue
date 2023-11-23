@@ -135,19 +135,15 @@ watchOnce(() => props.content, (v) => {
 </script>
 
 <template>
-  <div v-if="$props.editable" flex px-6 py-2 space-x-2>
-    <v-tooltip v-for="{ icon, tip, handler } in utils" :key="icon" :text="tip" location="bottom">
-      <template #activator="{ props: activatorProps }">
-        <div text-6 cursor-pointer :class="icon" v-bind="activatorProps" @click="handler" />
-      </template>
-    </v-tooltip>
+  <div v-if="$props.editable" flex px-6>
+    <tooltip-button v-for="{ icon, tip, handler } in utils" :key="icon" :text="tip" :icon="icon" size="small" @click="handler" />
   </div>
-  <v-divider mx-4 />
+  <v-divider mx-6 />
   <Milkdown flex-1 overflow-y-auto />
 </template>
 
 <style>
 .milkdown {
-  @apply  p-6 h-full overflow-y-auto text-4;
+  @apply  p-6 h-full text-4;
 }
 </style>
