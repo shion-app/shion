@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { CmdKey } from '@milkdown/core'
-import { Editor, editorViewCtx, editorViewOptionsCtx, parserCtx, rootCtx } from '@milkdown/core'
+import { Editor, editorViewOptionsCtx, rootCtx } from '@milkdown/core'
 import { nord } from '@milkdown/theme-nord'
 import { Milkdown, useEditor } from '@milkdown/vue'
 import { commonmark, toggleEmphasisCommand, toggleStrongCommand, wrapInBlockquoteCommand, wrapInBulletListCommand, wrapInOrderedListCommand } from '@milkdown/preset-commonmark'
 import { history, redoCommand, undoCommand } from '@milkdown/plugin-history'
 import type { Uploader } from '@milkdown/plugin-upload'
 import { upload, uploadConfig } from '@milkdown/plugin-upload'
-import { type Node, Slice } from '@milkdown/prose/model'
-import { callCommand } from '@milkdown/utils'
+import { type Node } from '@milkdown/prose/model'
+import { callCommand, replaceAll } from '@milkdown/utils'
 import { listener, listenerCtx } from '@milkdown/plugin-listener'
 
 import '@milkdown/theme-nord/style.css'
@@ -130,21 +130,7 @@ watchOnce(() => props.content, (v) => {
   if (inputed)
     return
 
-  editor.get()?.action((ctx) => {
-    const view = ctx.get(editorViewCtx)
-    const parser = ctx.get(parserCtx)
-    const doc = parser(v)
-    if (!doc)
-      return
-    const state = view.state
-    view.dispatch(
-      state.tr.replace(
-        0,
-        state.doc.content.size,
-        new Slice(doc.content, 0, 0),
-      ),
-    )
-  })
+  editor.get()?.action(replaceAll(v))
 })
 </script>
 
