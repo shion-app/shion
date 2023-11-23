@@ -1,10 +1,6 @@
 import type { ColumnType } from 'kysely'
 import type * as origin from './types'
 
-type Replace<T, U extends { [K in keyof T]?: unknown }> = {
-  [P in keyof T]: P extends keyof U ? U[P] : T[P];
-}
-
 type TotalTime = ColumnType<number, never, never>
 
 export type Program = origin.Program & { totalTime: TotalTime }
