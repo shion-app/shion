@@ -100,6 +100,7 @@ moment:
   tip:
     emptyTitle: Need to input title
     duplicateTitle: This title already exists
+    notSave: The content has not been saved. Are you sure to exit?
   editor:
     uodo: Uodo
     redo: Redo

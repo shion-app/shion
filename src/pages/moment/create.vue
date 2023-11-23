@@ -4,37 +4,18 @@ import { db } from '@/modules/database'
 const title = ref('')
 const content = ref('')
 
-const router = useRouter()
-const { t } = useI18n()
-const { success, error } = useNotify()
-const { getI18nMessage, isUniqueError } = useDatabase()
+const { onEditGuard, submit } = useMoment()
 
-async function handleSubmit() {
-  if (!title.value) {
-    return error({
-      text: t('moment.tip.emptyTitle'),
-    })
-  }
-  try {
-    await db.moment.insert({
-      time: Date.now(),
-      title: title.value,
-      content: content.value,
-    })
-  }
-  catch (e) {
-    if (isUniqueError(e)) {
-      return error({
-        text: t('moment.tip.duplicateTitle'),
-      })
-    }
-    return error({
-      text: getI18nMessage(e),
-    })
-  }
+const hasChanged = computed(() => !!(title.value || content.value))
 
-  success({})
-  router.push('/moment')
+onEditGuard(hasChanged)
+
+function handleSubmit() {
+  submit(title, () => db.moment.insert({
+    time: Date.now(),
+    title: title.value,
+    content: content.value,
+  }))
 }
 </script>
 
