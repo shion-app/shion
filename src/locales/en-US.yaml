@@ -110,7 +110,6 @@ moment:
     listBulleted: List bulleted
     listNumbered: List numbered
     quote: Quote
-    create: Create
 notiwind:
   success: Success
   info: Info
@@ -134,3 +133,5 @@ timeline:
   monitor: Monitor
   filter: Filter Categories
   reset: Reset Filter condition
+upload:
+  webImage: 已过滤不支持的图片类型

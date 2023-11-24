@@ -133,3 +133,5 @@ timeline:
   monitor: 监听
   filter: 筛选类别
   reset: 重置筛选条件
+upload:
+  webImage: 已过滤不支持的图片类型

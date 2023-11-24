@@ -35,3 +35,7 @@ export async function upload(name: string, buffer: ArrayBuffer) {
   const path = await resolve(appDataDirPath, target)
   return convertFileSrc(path)
 }
+
+export function isWebImage(file: File) {
+  return ['image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/webp'].includes(file.type)
+}

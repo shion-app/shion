@@ -3,7 +3,7 @@ import type { ChainedCommands } from '@tiptap/vue-3'
 import { EditorContent, useEditor } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
-import { uploadFile } from '@/modules/upload'
+import { isWebImage, uploadFile } from '@/modules/upload'
 
 interface ImageNode {
   src: string
@@ -20,6 +20,7 @@ const props = withDefaults(defineProps<{
 
 const { content: contentVModel } = useVModels(props)
 const { t } = useI18n()
+const { info } = useNotify()
 
 const editor = useEditor({
   content: contentVModel.value,
@@ -37,7 +38,17 @@ const editor = useEditor({
       if (moved || !hasFile)
         return
 
-      Promise.all([...event.dataTransfer!.files].filter(i => i.type.includes('image')).map((file) => {
+      const files = [...event.dataTransfer!.files]
+
+      const hasNonWebImage = files.some(file => !isWebImage(file))
+
+      if (hasNonWebImage) {
+        info({
+          text: t('upload.webImage'),
+        })
+      }
+
+      Promise.all(files.filter(isWebImage).map((file) => {
         return new Promise<ImageNode>((resolve) => {
           uploadFile(file).then(src =>
             resolve({
