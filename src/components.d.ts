@@ -32,6 +32,7 @@ declare module '@vue/runtime-core' {
     RouterView: typeof import('vue-router')['RouterView']
     SettingDialog: typeof import('./components/dialog/SettingDialog.vue')['default']
     TimelineGraph: typeof import('./components/timeline/TimelineGraph.vue')['default']
+    Tiptap: typeof import('./components/shared/Tiptap.vue')['default']
     TitleBar: typeof import('./components/header/TitleBar.vue')['default']
     TooltipButton: typeof import('./components/shared/TooltipButton.vue')['default']
     VAlert: typeof import('vuetify/components')['VAlert']

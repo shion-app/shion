@@ -4,7 +4,7 @@ import vue from '@vitejs/plugin-vue'
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Unocss from 'unocss/vite'
-import { presetAttributify, presetUno } from 'unocss'
+import { presetAttributify, presetTypography, presetUno } from 'unocss'
 import presetIcons from '@unocss/preset-icons'
 import Components from 'unplugin-vue-components/vite'
 import { Vuetify3Resolver } from 'unplugin-vue-components/resolvers'
@@ -38,7 +38,7 @@ export default defineConfig({
       dts: 'src/auto-imports.d.ts',
     }),
     Unocss({
-      presets: [presetUno(), presetAttributify(), presetIcons()],
+      presets: [presetUno(), presetAttributify(), presetIcons(), presetTypography()],
       transformers: [transformerDirectives()],
     }),
     Components({
