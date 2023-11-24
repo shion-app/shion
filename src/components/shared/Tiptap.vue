@@ -66,11 +66,13 @@ const utils = computed(() => [
     icon: 'i-mdi:undo',
     tip: t('moment.editor.uodo'),
     handler: call(c => c.undo()),
+    disabled: !editor.value?.can().undo(),
   },
   {
     icon: 'i-mdi:redo',
     tip: t('moment.editor.redo'),
     handler: call(c => c.redo()),
+    disabled: !editor.value?.can().redo(),
   },
   {
     icon: 'i-mdi:format-bold',
@@ -107,14 +109,22 @@ function call(command: (chain: ChainedCommands) => ChainedCommands) {
   return () => command(chain).run()
 }
 
-watch(contentVModel, (v) => {
+watchOnce(contentVModel, (v) => {
   editor.value?.commands.setContent(v, false)
 })
 </script>
 
 <template>
   <div v-if="$props.editable" flex px-4>
-    <tooltip-button v-for="{ icon, tip, handler } in utils" :key="icon" :text="tip" :icon="icon" size="small" @click="handler" />
+    <tooltip-button
+      v-for="{ icon, tip, handler, disabled } in utils"
+      :key="icon"
+      :text="tip"
+      :icon="icon"
+      :disabled="disabled"
+      size="small"
+      @click="handler"
+    />
   </div>
   <v-divider mx-4 my-2 />
   <EditorContent :editor="editor" h-full overflow-y-auto p-4 />
