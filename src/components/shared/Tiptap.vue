@@ -2,6 +2,14 @@
 import type { ChainedCommands } from '@tiptap/vue-3'
 import { EditorContent, useEditor } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
+import Image from '@tiptap/extension-image'
+import { uploadFile } from '@/modules/upload'
+
+interface ImageNode {
+  src: string
+  alt: string
+  title: string
+}
 
 const props = withDefaults(defineProps<{
   content: string
@@ -18,10 +26,34 @@ const editor = useEditor({
   editable: props.editable,
   extensions: [
     StarterKit,
+    Image,
   ],
   editorProps: {
     attributes: {
       class: 'prose outline-none min-h-full',
+    },
+    handleDrop: (view, event, slice, moved) => {
+      const hasFile = Number(event.dataTransfer?.files.length) > 0
+      if (moved || !hasFile)
+        return
+
+      Promise.all([...event.dataTransfer!.files].filter(i => i.type.includes('image')).map((file) => {
+        return new Promise<ImageNode>((resolve) => {
+          uploadFile(file).then(src =>
+            resolve({
+              src,
+              alt: file.name,
+              title: file.name,
+            }))
+        })
+      })).then((files) => {
+        editor.value?.commands.insertContent(files.map(attrs => ({
+          type: 'image',
+          attrs,
+        })))
+      })
+
+      event.preventDefault()
     },
   },
   onUpdate: () => {
