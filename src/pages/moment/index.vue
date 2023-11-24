@@ -10,7 +10,7 @@ interface Image {
 
 type Moment = Replace<SelectMoment, {
   content: {
-    filteredMarkdown: string
+    data: string
     images: Array<Image>
   }
 }> & {
@@ -19,6 +19,7 @@ type Moment = Replace<SelectMoment, {
 
 const router = useRouter()
 const { success } = useNotify()
+const { t } = useI18n()
 
 const list = ref<Array<Moment>>([])
 const selectedList = computed(() => list.value.filter(i => i.selected).map(i => i.id))
@@ -26,25 +27,24 @@ const selectedList = computed(() => list.value.filter(i => i.selected).map(i => 
 async function refresh() {
   list.value = (await db.moment.select()).map(i => ({
     ...i,
-    content: filterMarkdownImages(i.content),
+    content: filterImagesAndContent(i.content),
     selected: false,
   }))
 }
 
-function filterMarkdownImages(markdown: string) {
-  const regex = /!\[([^\]]*)\]\(([^\)]*)\s"([^"]*)"\)/g
-  let match
-  let filteredMarkdown = markdown
-  const images: Array<Image> = []
+function filterImagesAndContent(str: string) {
+  const match = str.match(/<img[^>]+>/g)
+  const images = match
+    ? match.map((image) => {
+      const src = image.match(/src="([^"]*)"/)?.[1] || ''
+      const alt = image.match(/alt="([^"]*)"/)?.[1] || ''
+      const title = image.match(/title="([^"]*)"/)?.[1] || ''
+      return { src, alt, title }
+    })
+    : []
 
-  match = regex.exec(markdown)
-  while (match !== null) {
-    images.push({ alt: match[1], src: match[2], title: match[3] })
-    filteredMarkdown = filteredMarkdown.replace(match[0], '')
-    match = regex.exec(markdown)
-  }
-
-  return { filteredMarkdown, images }
+  const data = str.replace(/<img[^>]+>/g, t('moment.placeholder')).replace(/(<([^>]+)>)/gi, ' ')
+  return { images, data }
 }
 
 function viewMomentCreate() {
@@ -86,8 +86,8 @@ refresh()
           <v-card-text>
             <div flex space-x-4>
               <img v-if="moment.content.images.length" width="200" height="200" object-contain v-bind="moment.content.images[0]">
-              <div flex-1 line-clamp-4 h-max>
-                {{ moment.content.filteredMarkdown }}
+              <div flex-1 line-clamp-4 h-max break-all>
+                {{ moment.content.data }}
               </div>
               <div flex flex-col>
                 <div flex-1 />

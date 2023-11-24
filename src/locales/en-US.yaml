@@ -97,6 +97,7 @@ moment:
   inputTitle: Input title
   submit: Submit
   edit: Edit
+  placeholder: '[Image]'
   tip:
     emptyTitle: Need to input title
     duplicateTitle: This title already exists

@@ -97,6 +97,7 @@ moment:
   inputTitle: 输入标题
   submit: 提交
   edit: 编辑
+  placeholder: '[图片]'
   tip:
     emptyTitle: 需要输入标题
     duplicateTitle: 已存在此标题
