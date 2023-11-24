@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { MilkdownProvider } from '@milkdown/vue'
 import { isThisYear } from 'date-fns'
 
 import { type SelectMoment, db } from '@/modules/database'
@@ -34,8 +33,5 @@ init()
       <div flex-1 />
       <div>{{ time }}</div>
     </div>
-    <MilkdownProvider>
-      <MilkdownEditor :content="content" :editable="false" />
-    </MilkdownProvider>
   </div>
 </template>

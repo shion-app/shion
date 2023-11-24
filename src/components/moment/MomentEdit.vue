@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { MilkdownProvider } from '@milkdown/vue'
-
 const props = defineProps<{
   title: string
   content: string
@@ -22,8 +20,5 @@ const { title: titleVModel, content: contentVModel } = useVModels(props)
         {{ $t('moment.submit') }}
       </v-btn>
     </div>
-    <MilkdownProvider>
-      <MilkdownEditor v-model:content="contentVModel" />
-    </MilkdownProvider>
   </div>
 </template>
