@@ -134,4 +134,5 @@ timeline:
   filter: Filter Categories
   reset: Reset Filter condition
 upload:
-  webImage: 已过滤不支持的图片类型
+  webImage: Unsupported image types filtered
+  webVideo: Unsupported video types filtered

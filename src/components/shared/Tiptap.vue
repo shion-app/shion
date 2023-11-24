@@ -3,12 +3,17 @@ import type { ChainedCommands } from '@tiptap/vue-3'
 import { EditorContent, useEditor } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
-import { isWebImage, uploadFile } from '@/modules/upload'
+
+import { isImage, isVideo, isWebImage, isWebVideo, uploadFile } from '@/modules/upload'
+import { Video } from '@/plugins/tiptap-video'
 
 interface ImageNode {
   src: string
   alt: string
   title: string
+}
+interface VideoNode {
+  src: string
 }
 
 const props = withDefaults(defineProps<{
@@ -28,6 +33,7 @@ const editor = useEditor({
   extensions: [
     StarterKit,
     Image,
+    Video,
   ],
   editorProps: {
     attributes: {
@@ -40,29 +46,8 @@ const editor = useEditor({
 
       const files = [...event.dataTransfer!.files]
 
-      const hasNonWebImage = files.some(file => !isWebImage(file))
-
-      if (hasNonWebImage) {
-        info({
-          text: t('upload.webImage'),
-        })
-      }
-
-      Promise.all(files.filter(isWebImage).map((file) => {
-        return new Promise<ImageNode>((resolve) => {
-          uploadFile(file).then(src =>
-            resolve({
-              src,
-              alt: file.name,
-              title: file.name,
-            }))
-        })
-      })).then((files) => {
-        editor.value?.commands.insertContent(files.map(attrs => ({
-          type: 'image',
-          attrs,
-        })))
-      })
+      uploadImage(files)
+      uploadVideo(files)
 
       event.preventDefault()
     },
@@ -71,6 +56,64 @@ const editor = useEditor({
     contentVModel.value = editor.value!.getHTML()
   },
 })
+
+function uploadImage(files: File[]) {
+  const images = files.filter(isImage)
+  const hasNonWebImage = images.some(file => !isWebImage(file))
+
+  if (hasNonWebImage) {
+    info({
+      text: t('upload.webImage'),
+    })
+  }
+
+  Promise.all(images.filter(isWebImage).map((file) => {
+    return new Promise<ImageNode>((resolve) => {
+      uploadFile(file).then(src =>
+        resolve({
+          src,
+          alt: file.name,
+          title: file.name,
+        }))
+    })
+  })).then((files) => {
+    if (!files.length)
+      return
+
+    editor.value?.commands.insertContent(files.map(attrs => ({
+      type: 'image',
+      attrs,
+    })))
+  })
+}
+
+function uploadVideo(files: File[]) {
+  const videos = files.filter(isVideo)
+  const hasNonWebVideo = videos.some(file => !isWebVideo(file))
+
+  if (hasNonWebVideo) {
+    info({
+      text: t('upload.webVideo'),
+    })
+  }
+
+  Promise.all(videos.filter(isWebVideo).map((file) => {
+    return new Promise<VideoNode>((resolve) => {
+      uploadFile(file).then(src =>
+        resolve({
+          src,
+        }))
+    })
+  })).then((files) => {
+    if (!files.length)
+      return
+
+    editor.value?.commands.insertContent(files.map(attrs => ({
+      type: 'video',
+      attrs,
+    })))
+  })
+}
 
 const utils = computed(() => [
   {

@@ -36,6 +36,18 @@ export async function upload(name: string, buffer: ArrayBuffer) {
   return convertFileSrc(path)
 }
 
+export function isImage(file: File) {
+  return file.type.includes('image')
+}
+
 export function isWebImage(file: File) {
   return ['image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/webp'].includes(file.type)
+}
+
+export function isVideo(file: File) {
+  return file.type.includes('video')
+}
+
+export function isWebVideo(file: File) {
+  return ['video/mp4', 'video/webm'].includes(file.type)
 }
