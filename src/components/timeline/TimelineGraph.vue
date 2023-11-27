@@ -31,8 +31,9 @@ const pointSize = 40
 const pointOffset = pointSize / 4
 const pointRadius = pointSize / 2
 const offsetLeft = 100
-const textOffsetLeft = 80
+const textOffsetLeft = 100
 const lineWidth = 10
+const secondaryLineOffset = textOffsetLeft - lineWidth * 2
 
 const svg = ref()
 
@@ -93,7 +94,7 @@ function drawPrimaryPath(svg: SVG.Doc) {
 
 function createSecondaryPath(start: Point, end: Point) {
   const distance = (end.y - start.y) / 2
-  const xDistance = distance / 2
+  const xDistance = secondaryLineOffset
   const yDistance = distance / 2
   const controlYDistance = distance / 4
   const startControlPoint1: Point = {
