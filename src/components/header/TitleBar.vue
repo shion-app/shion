@@ -2,6 +2,9 @@
 import { appWindow } from '@tauri-apps/api/window'
 
 import logo from '@/assets/logo.png'
+
+const setting = ref(false)
+const about = ref(false)
 </script>
 
 <template>
@@ -18,12 +21,7 @@ import logo from '@/assets/logo.png'
           </v-btn>
         </template>
         <v-list>
-          <v-list-item value="titleBar.view.setting">
-            <v-list-item-title>
-              {{ $t('titleBar.view.setting') }}
-            </v-list-item-title>
-            <setting-dialog />
-          </v-list-item>
+          <v-list-item value="titleBar.view.setting" :title="$t('titleBar.view.setting')" @click="setting = true" />
         </v-list>
       </v-menu>
       <v-menu>
@@ -36,12 +34,7 @@ import logo from '@/assets/logo.png'
           </v-btn>
         </template>
         <v-list>
-          <v-list-item value="titleBar.help.about">
-            <v-list-item-title>
-              {{ $t('titleBar.help.about') }}
-            </v-list-item-title>
-            <about-dialog />
-          </v-list-item>
+          <v-list-item value="titleBar.help.about" :title="$t('titleBar.help.about')" @click="about = true" />
         </v-list>
       </v-menu>
     </div>
@@ -56,5 +49,7 @@ import logo from '@/assets/logo.png'
         <div i-mdi:close />
       </v-btn>
     </div>
+    <setting-dialog v-model:visible="setting" />
+    <about-dialog v-model:visible="about" />
   </div>
 </template>

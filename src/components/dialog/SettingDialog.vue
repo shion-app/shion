@@ -1,4 +1,10 @@
 <script setup lang="ts">
+const props = defineProps<{
+  visible: boolean
+}>()
+
+const { visible: visibleVModel } = useVModels(props)
+
 const store = useConfigStore()
 
 const { config } = storeToRefs(store)
@@ -16,7 +22,7 @@ const localeOptions = [
 </script>
 
 <template>
-  <v-dialog activator="parent" width="600">
+  <v-dialog v-model="visibleVModel" width="600">
     <v-card>
       <v-card-title>{{ $t('titleBar.view.setting') }}</v-card-title>
       <v-card-text>
