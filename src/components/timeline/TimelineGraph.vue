@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import SVG from 'svg.js'
 
+import type { TimeLineNode } from '@/interfaces'
+
 interface GraphItem {
   name: string
   color: string
   start: PointWithTime
   end: PointWithTime
+  children: number
+  totalTime: number
 }
 
 interface Point {
@@ -18,13 +22,10 @@ interface PointWithTime extends Point {
 }
 
 const props = defineProps<{
-  list: Array<{
-    start: number
-    end: number
-    name: string
-    color: string
-  }>
+  list: Array<TimeLineNode>
 }>()
+
+const { t } = useI18n()
 
 const pointDistance = 80
 const pointSize = 40
@@ -59,6 +60,8 @@ const graph = computed(() => {
         y: endIndex * pointDistance + pointRadius,
         time: item.end,
       },
+      children: item.children?.length || 0,
+      totalTime: (item.children || []).reduce((acc, prev) => acc += prev.end - prev.start, 0),
     }
     if (isSibling)
       primary.push(graphItem)
@@ -150,6 +153,12 @@ function drawPoint(svg: SVG.Doc, item: GraphItem) {
   svg.text(format(item.start.time, 'HH:mm:ss')).translate(0, startPointTranslateY)
   svg.circle(pointRadius).fill(item.color).translate(startPointTranslateX, startPointTranslateY)
   svg.text(item.name).fill(item.color).translate(startPointTranslateX + textOffsetLeft, startPointTranslateY)
+  if (item.children) {
+    svg.text(t('timelineGraph.include', {
+      count: item.children,
+      totalTime: formatHHmmss(item.totalTime),
+    })).fill(item.color).translate(startPointTranslateX + textOffsetLeft, startPointTranslateY + 30)
+  }
   svg.circle(pointRadius).fill(item.color).translate(endPointTranslateX, endPointTranslateY)
   svg.text(format(item.end.time, 'HH:mm:ss')).translate(0, endPointTranslateY)
 }

@@ -133,6 +133,8 @@ timeline:
   monitor: Monitor
   filter: Filter Categories
   reset: Reset Filter condition
+timelineGraph:
+  include: (Including {count} items, the actual time spent is {totalTime})
 upload:
   webImage: Unsupported image types filtered
   webVideo: Unsupported video types filtered

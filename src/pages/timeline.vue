@@ -3,6 +3,9 @@ import { endOfDay, startOfDay } from 'date-fns'
 
 import type { SelectActivity, SelectLabel, SelectNote, SelectPlan, SelectProgram } from '@/modules/database'
 import { db } from '@/modules/database'
+import type { TimeLineNode } from '@/interfaces'
+
+type computedTimeLineNode = TimeLineNode & { id: string }
 
 const configStore = useConfigStore()
 const { t } = useI18n()
@@ -30,6 +33,7 @@ const list = computed(() => {
                 end: i.end,
                 name: i.plan.name,
                 color: i.plan.color,
+                id: `plan-${i.planId}`,
               }))
             : filterCategory.value == 'label'
               ? noteList.value
@@ -39,6 +43,7 @@ const list = computed(() => {
                   end: i.end,
                   name: i.label.name,
                   color: i.label.color,
+                  id: `label-${i.labelId}`,
                 }))
               : []
         ),
@@ -51,6 +56,7 @@ const list = computed(() => {
                 end: i.end,
                 name: i.program.name,
                 color: i.program.color,
+                id: `program-${i.programId}`,
               }))
             : []
         ),
@@ -61,15 +67,17 @@ const list = computed(() => {
           end: i.end,
           name: i.label.name,
           color: i.label.color,
+          id: `label-${i.labelId}`,
         })),
         ...activityList.value.map(i => ({
           start: i.start,
           end: i.end,
           name: i.program.name,
           color: i.program.color,
+          id: `program-${i.programId}`,
         })),
       ]
-  return list.filter(i => i.end - i.start > config.value.timelineMinMinute * 1000 * 60).sort((a, b) => a.start - b.start)
+  return compress(list.filter(i => i.end - i.start > config.value.timelineMinMinute * 1000 * 60).sort((a, b) => a.start - b.start))
 })
 
 const filterOptions = computed(() => [
@@ -131,6 +139,39 @@ async function refresh() {
 function resetFilterCondition() {
   filterCategory.value = ''
   filterTargetId.value = undefined
+}
+
+function compress(list: Array<computedTimeLineNode>): Array<TimeLineNode> {
+  const temp: Array<Array<computedTimeLineNode>> = []
+  for (let i = 0; i < list.length; i++) {
+    let index = i
+    const group: Array<computedTimeLineNode> = []
+    while (list[index]?.id == list[i].id) {
+      group.push(list[index])
+      index++
+    }
+    temp.push(group)
+    i = index - 1
+  }
+  return temp.map((list) => {
+    const [first] = list
+    const min = Math.min(...list.map(i => i.start))
+    const max = Math.max(...list.map(i => i.end))
+    return {
+      name: first.name,
+      color: first.color,
+      start: min,
+      end: max,
+      children: list.length == 1
+        ? []
+        : list.map(i => ({
+          start: i.start,
+          end: i.end,
+          name: i.name,
+          color: i.color,
+        })),
+    }
+  })
 }
 
 watch(date, refresh, {
