@@ -2,20 +2,21 @@ import type { GridStackWidget } from 'gridstack'
 
 export function useGrid() {
   const COLUMN = 12
+  const SPAN = 4
 
   function getItemsByOrder(list: Array<{ id: number }>): GridStackWidget[] {
-    const span = 4
-    const count = COLUMN / span
+    const count = COLUMN / SPAN
     return list.map((i, index) => ({
       id: String(i.id),
-      x: (index % count) * span,
+      x: (index % count) * SPAN,
       y: Math.floor(index / count),
-      w: span,
+      w: SPAN,
       h: 1,
     }))
   }
 
   return {
     getItemsByOrder,
+    SPAN,
   }
 }

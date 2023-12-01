@@ -56,3 +56,4 @@ export type InsertPlan = Insertable<Plan>
 export type InsertNote = Insertable<Note>
 export type InsertLabel = Insertable<Label>
 export type InsertProgram = Insertable<Program>
+export type InsertOverview = Insertable<Overview>

@@ -77,6 +77,7 @@ overview:
   month: Last month
   plan: Plan
   label: Label
+  create: Create widget
 monitor:
   filterProgram: Filter Program to monitor
   switchWindowTip: Switch to another application window to get data
@@ -138,3 +139,10 @@ timelineGraph:
 upload:
   webImage: Unsupported image types filtered
   webVideo: Unsupported video types filtered
+widget:
+  type: Type
+  typeDesc:
+    ACTIVE_STATUS_CALENDAR: Active status calendar
+    SINGLE_CATEGORY_BAR: Single category bar
+  column: Occupy column
+  row: Occupy row

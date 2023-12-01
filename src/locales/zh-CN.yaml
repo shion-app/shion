@@ -77,6 +77,7 @@ overview:
   month: 最近一个月
   plan: 计划
   label: 标签
+  create: 创建展示组件
 monitor:
   filterProgram: 筛选要监听的程序
   switchWindowTip: 切换到其他应用窗口，获取数据
@@ -138,3 +139,10 @@ timelineGraph:
 upload:
   webImage: 已过滤不支持的图片类型
   webVideo: 已过滤不支持的视频类型
+widget:
+  type: 类型
+  typeDesc:
+    ACTIVE_STATUS_CALENDAR: 活跃状态日历
+    SINGLE_CATEGORY_BAR: 单独类别柱状图
+  column: 占用列数
+  row: 占用行数
