@@ -4,7 +4,7 @@ import type { Insertable, SelectType } from 'kysely'
 
 import type { DatabaseExecutor } from './db'
 import { DatabaseError, SqliteErrorEnum, createKyselyDatabaseWithModels, findSqliteMessageFields } from './db'
-import type { Activity, Label, Moment, Note, Plan, Program } from './transform-types'
+import type { Activity, Label, Moment, Note, Overview, Plan, Program } from './transform-types'
 export { DatabaseError } from './db'
 
 const database = await Database.load('sqlite:data.db')
@@ -50,6 +50,7 @@ export type SelectPlan = DeepSelectable<Plan>
 export type SelectLabel = DeepSelectable<Label>
 export type SelectNote = DeepSelectable<Note>
 export type SelectMoment = DeepSelectable<Moment>
+export type SelectOverview = DeepSelectable<Overview>
 
 export type InsertPlan = Insertable<Plan>
 export type InsertNote = Insertable<Note>

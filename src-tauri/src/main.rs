@@ -49,12 +49,20 @@ fn is_audio_active(path: String) -> bool {
 }
 
 fn main() {
-    let migrations = vec![Migration {
-        version: 1,
-        description: "create table",
-        sql: include_str!("../../prisma/migrations/20230923052127_/migration.sql"),
-        kind: MigrationKind::Up,
-    }];
+    let migrations = vec![
+        Migration {
+            version: 1,
+            description: "create table",
+            sql: include_str!("../../prisma/migrations/20230923052127_/migration.sql"),
+            kind: MigrationKind::Up,
+        },
+        Migration {
+            version: 2,
+            description: "add overview",
+            sql: include_str!("../../prisma/migrations/20231201100249_/migration.sql"),
+            kind: MigrationKind::Up,
+        },
+    ];
 
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let tray_menu = SystemTrayMenu::new().add_item(quit);

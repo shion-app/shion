@@ -91,3 +91,16 @@ model Moment {
   @@unique([title, deleted_at])
   @@map("moment")
 }
+
+model Overview {
+  id         Int    @id @default(autoincrement())
+  type       Int
+  x          Int
+  y          Int
+  w          Int
+  h          Int
+  data       String
+  deleted_at Int    @default(0)
+
+  @@map("overview")
+}

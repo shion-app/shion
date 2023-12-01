@@ -1,5 +1,8 @@
 import type { ColumnType } from 'kysely'
+
 import type * as origin from './types'
+import type { WidgetType } from './models/overview'
+import type { Replace } from '@/interfaces'
 
 type TotalTime = ColumnType<number, never, never>
 
@@ -15,6 +18,11 @@ export type Note = origin.Note & { plan: ColumnType<Plan, never, never>; label: 
 
 export type Moment = origin.Moment
 
+export type Overview = Replace<origin.Overview, {
+  type: WidgetType
+  data: object
+}>
+
 export interface DB {
   activity: Activity
   label: Label
@@ -22,4 +30,5 @@ export interface DB {
   program: Program
   note: Note
   moment: Moment
+  overview: Overview
 }

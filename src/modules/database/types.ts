@@ -34,6 +34,16 @@ export interface Note {
   labelId: number
   deletedAt: Generated<number>
 }
+export interface Overview {
+  id: Generated<number>
+  type: number
+  x: number
+  y: number
+  w: number
+  h: number
+  data: string
+  deletedAt: Generated<number>
+}
 export interface Plan {
   id: Generated<number>
   name: string
@@ -55,6 +65,7 @@ export interface DB {
   label: Label
   moment: Moment
   note: Note
+  overview: Overview
   plan: Plan
   program: Program
 }
