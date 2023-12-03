@@ -15,6 +15,8 @@ defineEmits<{
   (e: 'closed'): void
   (e: 'cancel'): void
   (e: 'formUpdate', v): void
+  (e: 'afterConfirm'): void
+  (e: 'afterCancel'): void
 }>()
 
 const formId = `form-${nanoid()}`
@@ -25,7 +27,10 @@ const formId = `form-${nanoid()}`
     content-transition="dialog-transition"
     flex justify-center items-center
     @closed="$emit('closed')"
-    @click-outside="$emit('cancel')"
+    @click-outside="() => {
+      $emit('cancel')
+      $emit('afterCancel')
+    }"
   >
     <v-card :title="title" min-width="400" max-width="600">
       <v-card-text>
@@ -33,7 +38,10 @@ const formId = `form-${nanoid()}`
           :form="form"
           :schema="schema"
           :form-id="formId"
-          @confirm="(...args) => $emit('confirm', ...args)"
+          @confirm="(...args) => {
+            $emit('confirm', ...args)
+            $emit('afterConfirm')
+          }"
           @form-update="(...args) => $emit('formUpdate', ...args)"
         />
       </v-card-text>

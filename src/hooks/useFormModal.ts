@@ -7,8 +7,44 @@ import type { ComponentProps } from '@/interfaces'
 
 export type useFormModalOptions = UseModalOptions<ComponentProps<typeof FormModal>>
 
+class ModalPromise {
+  #promise?: Promise<void>
+  #resolve?: () => void
+  #reject?: () => void
+
+  async open() {
+    this.#promise = new Promise((resolve, reject) => {
+      this.#resolve = resolve
+      this.#reject = reject
+    })
+    return this.#promise
+  }
+
+  resolve() {
+    const resolve = this.#resolve
+
+    this.#promise = undefined
+    this.#resolve = undefined
+    this.#reject = undefined
+
+    resolve?.()
+  }
+
+  reject() {
+    const reject = this.#reject
+
+    this.#promise = undefined
+    this.#resolve = undefined
+    this.#reject = undefined
+
+    reject?.()
+  }
+}
+
 export function useFormModal<T>(source: (model: Partial<T>) => useFormModalOptions) {
   const model = ref({}) as Ref<Partial<T>>
+
+  const promise = new ModalPromise()
 
   const options = mergeOptions(source(model.value), {
     attrs: {
@@ -18,6 +54,12 @@ export function useFormModal<T>(source: (model: Partial<T>) => useFormModalOptio
       onClosed() {
         model.value = {}
       },
+      onAfterConfirm() {
+        promise.resolve()
+      },
+      onAfterCancel() {
+        promise.reject()
+      },
     },
   })
 
@@ -25,6 +67,11 @@ export function useFormModal<T>(source: (model: Partial<T>) => useFormModalOptio
     component: FormModal,
     ...options,
   })
+
+  async function open() {
+    await modal.open()
+    await promise.open()
+  }
 
   const unwatch = watchDeep(() => source(model.value), (v) => {
     modal.patchOptions({
@@ -51,6 +98,7 @@ export function useFormModal<T>(source: (model: Partial<T>) => useFormModalOptio
 
   return {
     ...modal,
+    open,
     model,
     setModelValue,
   }

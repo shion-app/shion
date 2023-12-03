@@ -1,5 +1,3 @@
-import mitt from 'mitt'
-
 import { db } from '@/modules/database'
 import type { InsertNote, SelectLabel, SelectPlan } from '@/modules/database'
 
@@ -12,8 +10,6 @@ export function useNoteCreate() {
 
   const planList = ref<Array<SelectPlan>>([])
   const labelList = ref<Array<SelectLabel>>([])
-
-  const emitter = mitt()
 
   const { open, close, setModelValue } = useFormModal<NoteForm>(
     model => ({
@@ -68,10 +64,6 @@ export function useNoteCreate() {
           start(() => db.note.update(noteId, {
             end: Date.now(),
           }))
-          emitter.emit('confirm')
-        },
-        onCancel() {
-          emitter.emit('cancel')
         },
       },
     }))
@@ -96,10 +88,6 @@ export function useNoteCreate() {
       setModelValue(value)
 
     await open()
-    return new Promise<void>((resolve, reject) => {
-      emitter.on('confirm', () => resolve())
-      emitter.on('cancel', () => reject(new Error('cancel')))
-    })
   }
 
   return {
