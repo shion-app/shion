@@ -1,19 +1,20 @@
 <script setup lang="ts">
-import type { useFormModalOptions } from '@/hooks/useFormModal'
 import { useGrid } from '@/hooks/useGrid'
 import type { InsertPlan, SelectPlan } from '@/modules/database'
 import { db } from '@/modules/database'
+
+type PlanForm = Pick<InsertPlan, 'name' | 'color'>
 
 const { t } = useI18n()
 const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
 const { getItemsByOrder } = useGrid()
 
-const model = ref<SelectPlan>()
 const isCreate = ref(true)
+let updateId = 0
 
-const { open, close } = useFormModal(
-  computed<useFormModalOptions>(() => ({
+const { open, close, setModelValue } = useFormModal<PlanForm>(
+  () => ({
     attrs: {
       title: isCreate.value ? t('plan.create') : t('plan.update'),
       form: {
@@ -29,7 +30,6 @@ const { open, close } = useFormModal(
             label: t('plan.color'),
           },
         ],
-        values: isCreate.value ? {} : model.value,
       },
       schema: z => z.object({
         name: z.string().min(1),
@@ -47,7 +47,7 @@ const { open, close } = useFormModal(
         refresh()
       },
     },
-  })))
+  }))
 
 const list = ref<Array<SelectPlan>>([])
 
@@ -68,13 +68,17 @@ function showCreateForm() {
 }
 
 function showUpdateForm(id: number) {
+  updateId = id
   const plan = list.value.find(i => i.id == id)
-  model.value = plan
+  if (!plan)
+    return
+
   isCreate.value = false
+  setModelValue(plan)
   open()
 }
 
-async function handleCreate(plan: InsertPlan) {
+async function handleCreate(plan: PlanForm) {
   // todo: db event listener
   const { lastInsertId } = await db.plan.insert(plan)
   await db.plan.update(lastInsertId, {
@@ -82,8 +86,8 @@ async function handleCreate(plan: InsertPlan) {
   })
 }
 
-function handleUpdate(plan: InsertPlan) {
-  return db.plan.update(model.value!.id, plan)
+function handleUpdate(plan: PlanForm) {
+  return db.plan.update(updateId, plan)
 }
 
 function handleRemove(id: number) {

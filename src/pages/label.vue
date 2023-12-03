@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { useFormModalOptions } from '@/hooks/useFormModal'
 import { db } from '@/modules/database'
 import type { InsertLabel, SelectLabel, SelectPlan } from '@/modules/database'
+
+type LabelForm = Pick<InsertLabel, 'name' | 'planId' | 'color'>
 
 const timeStore = useTimerStore()
 const { t } = useI18n()
@@ -16,7 +17,7 @@ const { running: timerRunning } = storeToRefs(timeStore)
 const labelList = ref<Array<SelectLabel>>([])
 const planList = ref<Array<SelectPlan>>([])
 const isCreate = ref(true)
-const model = ref<SelectLabel>()
+let updateId = 0
 
 const labelGroup = computed(() => {
   const map = new Map<number, Array<SelectLabel>>()
@@ -31,8 +32,8 @@ const labelGroup = computed(() => {
   return map
 })
 
-const { open, close } = useFormModal(
-  computed<useFormModalOptions>(() => ({
+const { open, close, setModelValue } = useFormModal<LabelForm>(
+  () => ({
     attrs: {
       title: isCreate.value ? t('label.create') : t('label.update'),
       form: {
@@ -59,7 +60,6 @@ const { open, close } = useFormModal(
             label: t('label.color'),
           },
         ],
-        values: isCreate.value ? {} : model.value,
       },
       schema: z => z.object({
         name: z.string().min(1),
@@ -78,7 +78,7 @@ const { open, close } = useFormModal(
         refresh()
       },
     },
-  })))
+  }))
 
 async function refresh() {
   [labelList.value, planList.value] = await Promise.all([db.label.select(), db.plan.select()])
@@ -90,13 +90,17 @@ function showCreateForm() {
 }
 
 function showUpdateForm(id: number, list: Array<SelectLabel>) {
+  updateId = id
   const label = list.find(i => i.id == id)
-  model.value = label
+  if (!label)
+    return
+
   isCreate.value = false
+  setModelValue(label)
   open()
 }
 
-async function handleCreate(label: InsertLabel) {
+async function handleCreate(label: LabelForm) {
   // todo: db event listener
   const { lastInsertId } = await db.label.insert(label)
   await db.label.update(lastInsertId, {
@@ -104,8 +108,8 @@ async function handleCreate(label: InsertLabel) {
   })
 }
 
-function handleUpdate(label: InsertLabel) {
-  return db.label.update(model.value!.id, label)
+function handleUpdate(label: LabelForm) {
+  return db.label.update(updateId, label)
 }
 
 function handleRemove(id: number) {

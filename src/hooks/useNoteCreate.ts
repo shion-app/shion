@@ -1,8 +1,9 @@
 import mitt from 'mitt'
 
-import type { useFormModalOptions } from '@/hooks/useFormModal'
 import { db } from '@/modules/database'
 import type { InsertNote, SelectLabel, SelectPlan } from '@/modules/database'
+
+type NoteForm = Pick<InsertNote, 'planId' | 'labelId'>
 
 export function useNoteCreate() {
   const { t } = useI18n()
@@ -12,87 +13,70 @@ export function useNoteCreate() {
   const planList = ref<Array<SelectPlan>>([])
   const labelList = ref<Array<SelectLabel>>([])
 
-  const formvalues = ref<{
-    planId?: number
-    labelId?: number
-  }>({
-    planId: undefined,
-    labelId: undefined,
-  })
-
   const emitter = mitt()
 
-  const { open, close } = useFormModal(
-    computed<useFormModalOptions>(() => {
-      return {
-        attrs: {
-          title: t('note.fill.title'),
-          form: {
-            fields: [
-              {
-                type: 'select',
-                key: 'planId',
-                label: t('note.fill.plan'),
-                props: {
-                  'items': planList.value.map(({ name, id }) => ({
-                    title: name,
-                    value: id,
-                  })),
-                  'onUpdate:modelValue': (v) => {
-                    formvalues.value = {
-                      planId: v,
-                      labelId: undefined,
-                    }
-                  },
+  const { open, close, setModelValue } = useFormModal<NoteForm>(
+    model => ({
+      attrs: {
+        title: t('note.fill.title'),
+        form: {
+          fields: [
+            {
+              type: 'select',
+              key: 'planId',
+              label: t('note.fill.plan'),
+              props: {
+                'items': planList.value.map(({ name, id }) => ({
+                  title: name,
+                  value: id,
+                })),
+                'onUpdate:modelValue': (v) => {
+                  setModelValue({
+                    planId: v,
+                    labelId: undefined,
+                  })
                 },
               },
-              {
-                type: 'select',
-                key: 'labelId',
-                label: t('note.fill.label'),
-                props: {
-                  items: labelList.value.filter(i => i.planId == formvalues.value.planId).map(({ name, id }) => ({
-                    title: name,
-                    value: id,
-                  })),
-                },
+            },
+            {
+              type: 'select',
+              key: 'labelId',
+              label: t('note.fill.label'),
+              props: {
+                items: labelList.value.filter(i => i.planId == model.planId).map(({ name, id }) => ({
+                  title: name,
+                  value: id,
+                })),
               },
-            ],
-            values: formvalues.value,
-          },
-          schema: z => z.object({
-            planId: z.number(),
-            labelId: z.number(),
-          }),
-          async onConfirm(v, setErrors) {
-            let noteId = 0
-            try {
-              const data = await handleCreate(v)
-              noteId = data.lastInsertId
-            }
-            catch (error) {
-              return setErrors(parseFieldsError(error))
-            }
-            close()
-            start(() => db.note.update(noteId, {
-              end: Date.now(),
-            }))
-            emitter.emit('confirm')
-          },
-          onClosed() {
-            formvalues.value = {
-              planId: undefined,
-              labelId: undefined,
-            }
-          },
-          onCancel() {
-            emitter.emit('cancel')
-          },
+            },
+          ],
         },
-      }
+        schema: z => z.object({
+          planId: z.number(),
+          labelId: z.number(),
+        }),
+        async onConfirm(v, setErrors) {
+          let noteId = 0
+          try {
+            const data = await handleCreate(v)
+            noteId = data.lastInsertId
+          }
+          catch (error) {
+            return setErrors(parseFieldsError(error))
+          }
+          close()
+          start(() => db.note.update(noteId, {
+            end: Date.now(),
+          }))
+          emitter.emit('confirm')
+        },
+        onCancel() {
+          emitter.emit('cancel')
+        },
+      },
     }))
 
-  function handleCreate(note: Pick<InsertNote, 'labelId' | 'planId'>) {
+  function handleCreate(note: NoteForm) {
     const now = Date.now()
     return db.note.insert({
       ...note,
@@ -109,7 +93,7 @@ export function useNoteCreate() {
     await refresh()
 
     if (value)
-      formvalues.value = value
+      setModelValue(value)
 
     await open()
     return new Promise<void>((resolve, reject) => {

@@ -41,6 +41,7 @@
     "gridstack": "^9.5.1",
     "i18next": "^23.6.0",
     "kysely": "^0.26.3",
+    "merge-options": "^3.0.4",
     "mitt": "^3.0.1",
     "nanoid": "^5.0.1",
     "notiwind": "^2.0.2",

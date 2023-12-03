@@ -13,6 +13,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'confirm', values, setErrors: (fields) => void): void
+  (e: 'formUpdate', v): void
 }>()
 
 const { handleSubmit, setErrors } = useForm({
@@ -40,11 +41,20 @@ const transformForm = computed(() =>
     }
   }))
 
+const fieldsModel = computed(() => Object.fromEntries(fields.map(({ key, field }) => [key, field.value.value])))
+
+watchDeep(fieldsModel, (v) => {
+  emit('formUpdate', v)
+})
+
 watchDeep(() => props.form.values, (v) => {
   for (const key in v) {
-    const { field } = fields.find(i => i.key == key)!
-    if (field.value.value != v[key])
-      field.setValue(v[key])
+    const field = fields.find(i => i.key == key)
+    if (!field)
+      continue
+
+    if (field.field.value.value != v[key])
+      field.field.setValue(v[key])
   }
 })
 

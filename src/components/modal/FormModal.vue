@@ -14,6 +14,7 @@ defineEmits<{
   (e: 'confirm', values, setErrors: (fields) => void): void
   (e: 'closed'): void
   (e: 'cancel'): void
+  (e: 'formUpdate', v): void
 }>()
 
 const formId = `form-${nanoid()}`
@@ -28,7 +29,13 @@ const formId = `form-${nanoid()}`
   >
     <v-card :title="title" min-width="400" max-width="600">
       <v-card-text>
-        <form-factory :form="form" :schema="schema" :form-id="formId" @confirm="(...args) => $emit('confirm', ...args)" />
+        <form-factory
+          :form="form"
+          :schema="schema"
+          :form-id="formId"
+          @confirm="(...args) => $emit('confirm', ...args)"
+          @form-update="(...args) => $emit('formUpdate', ...args)"
+        />
       </v-card-text>
       <v-card-actions>
         <v-spacer />

@@ -62,6 +62,9 @@ dependencies:
   kysely:
     specifier: ^0.26.3
     version: 0.26.3
+  merge-options:
+    specifier: ^3.0.4
+    version: 3.0.4
   mitt:
     specifier: ^3.0.1
     version: 3.0.1
@@ -85,7 +88,7 @@ dependencies:
     version: git@github.com+tauri-apps/tauri-plugin-autostart/7404c3ccd2e45c642e3b876500ab79d88af85e4d
   tauri-plugin-log-api:
     specifier: github:tauri-apps/tauri-plugin-log#v1
-    version: git@github.com+tauri-apps/tauri-plugin-log/91dd3fe9dcaa69bae62706e75702a0ce18ce9885
+    version: git@github.com+tauri-apps/tauri-plugin-log/a428c4c4833027865898ef0f284a69b1978fcd94
   tauri-plugin-sql-api:
     specifier: github:tauri-apps/tauri-plugin-sql#v1
     version: git@github.com+tauri-apps/tauri-plugin-sql/cf80d013a6ea34ee3ca74e4968a1632e87ba0de2
@@ -5016,6 +5019,11 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /is-plain-obj@2.1.0:
+    resolution: {integrity: sha512-YWnfyRwxL/+SsrWYfOpUtz5b3YD+nyfkHvjbcanzk8zgyO4ASD67uVMRt8k5bM4lLMDnXfriRhOpemw+NfT1eA==}
+    engines: {node: '>=8'}
+    dev: false
+
   /is-plain-object@2.0.4:
     resolution: {integrity: sha512-h5PpgXkWitc38BBMYawTYMWJHFZJVnBquFE57xFpjB8pJFiF6gZ+bU+WyI/yqXiFR5mdLsgYNaPe8uao6Uv9Og==}
     engines: {node: '>=0.10.0'}
@@ -5555,6 +5563,13 @@ packages:
 
   /mdurl@1.0.1:
     resolution: {integrity: sha512-/sKlQJCBYVY9Ers9hqzKou4H6V5UWc/M59TH2dvkt+84itfnq7uFOMLpOiOS4ujvHP4etln18fmIxA5R5fll0g==}
+    dev: false
+
+  /merge-options@3.0.4:
+    resolution: {integrity: sha512-2Sug1+knBjkaMsMgf1ctR1Ujx+Ayku4EdJN4Z+C2+JzoeF7A3OZ9KM2GY0CpQS51NR61LTurMJrRKPhSs3ZRTQ==}
+    engines: {node: '>=10'}
+    dependencies:
+      is-plain-obj: 2.1.0
     dev: false
 
   /merge-stream@2.0.0:
@@ -8354,15 +8369,15 @@ packages:
     dev: false
 
   git@github.com+tauri-apps/tauri-plugin-autostart/7404c3ccd2e45c642e3b876500ab79d88af85e4d:
-    resolution: {commit: 7404c3ccd2e45c642e3b876500ab79d88af85e4d, repo: git@github.com:tauri-apps/tauri-plugin-autostart.git, type: git}
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/7404c3ccd2e45c642e3b876500ab79d88af85e4d}
     name: tauri-plugin-autostart-api
     version: 0.0.0
     dependencies:
       '@tauri-apps/api': 1.5.1
     dev: false
 
-  git@github.com+tauri-apps/tauri-plugin-log/91dd3fe9dcaa69bae62706e75702a0ce18ce9885:
-    resolution: {commit: 91dd3fe9dcaa69bae62706e75702a0ce18ce9885, repo: git@github.com:tauri-apps/tauri-plugin-log.git, type: git}
+  git@github.com+tauri-apps/tauri-plugin-log/a428c4c4833027865898ef0f284a69b1978fcd94:
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-log/tar.gz/a428c4c4833027865898ef0f284a69b1978fcd94}
     name: tauri-plugin-log-api
     version: 0.0.0
     dependencies:
@@ -8370,7 +8385,7 @@ packages:
     dev: false
 
   git@github.com+tauri-apps/tauri-plugin-sql/cf80d013a6ea34ee3ca74e4968a1632e87ba0de2:
-    resolution: {commit: cf80d013a6ea34ee3ca74e4968a1632e87ba0de2, repo: git@github.com:tauri-apps/tauri-plugin-sql.git, type: git}
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-sql/tar.gz/cf80d013a6ea34ee3ca74e4968a1632e87ba0de2}
     name: tauri-plugin-sql-api
     version: 0.0.0
     dependencies:
@@ -8378,7 +8393,7 @@ packages:
     dev: false
 
   git@github.com+tauri-apps/tauri-plugin-store/3367248b2661abcb73d2a89f30df780c387fb57d:
-    resolution: {commit: 3367248b2661abcb73d2a89f30df780c387fb57d, repo: git@github.com:tauri-apps/tauri-plugin-store.git, type: git}
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/3367248b2661abcb73d2a89f30df780c387fb57d}
     name: tauri-plugin-store-api
     version: 0.0.0
     dependencies:

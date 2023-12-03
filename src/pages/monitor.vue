@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import type * as backend from '@/interfaces/backend'
 import { db } from '@/modules/database'
-import type { InsertProgram, SelectProgram } from '@/modules/database'
+import type { InsertProgram } from '@/modules/database'
 
 import { upload } from '@/modules/upload'
-import type { useFormModalOptions } from '@/hooks/useFormModal'
 
 import exe from '@/assets/exe.png'
+
+type ProgramForm = Pick<InsertProgram, 'name' | 'color'>
 
 const { t } = useI18n()
 const store = useMonitorStore()
@@ -17,7 +18,7 @@ const { getItemsByOrder } = useGrid()
 const { getIconUrl, refresh } = store
 const { filtering, filterList, whiteList } = storeToRefs(store)
 
-const model = ref<SelectProgram>()
+const updateId = 0
 
 const cardList = computed(() => whiteList.value.map(({ id, name, totalTime, color, icon }) => ({
   id,
@@ -27,8 +28,8 @@ const cardList = computed(() => whiteList.value.map(({ id, name, totalTime, colo
   prependImgUrl: icon,
 })))
 
-const { open, close } = useFormModal(
-  computed<useFormModalOptions>(() => ({
+const { open, close, setModelValue } = useFormModal<ProgramForm>(
+  () => ({
     attrs: {
       title: t('program.update'),
       form: {
@@ -44,7 +45,6 @@ const { open, close } = useFormModal(
             label: t('program.color'),
           },
         ],
-        values: model.value,
       },
       schema: z => z.object({
         name: z.string().min(1),
@@ -62,16 +62,19 @@ const { open, close } = useFormModal(
         refresh()
       },
     },
-  })))
+  }))
 
 function showUpdateForm(id: number) {
   const program = whiteList.value.find(i => i.id == id)
-  model.value = program
+  if (!program)
+    return
+
+  setModelValue(program)
   open()
 }
 
-function handleUpdate(program: InsertProgram) {
-  return db.program.update(model.value!.id, program)
+function handleUpdate(program: ProgramForm) {
+  return db.program.update(updateId, program)
 }
 
 async function handleCreateProgram(program: backend.Program) {
