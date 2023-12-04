@@ -9,6 +9,7 @@ import { createApp } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { createPinia } from 'pinia'
 import { createVfm } from 'vue-final-modal'
+import VChart from 'vue-echarts'
 
 import App from './App.vue'
 import routes from '~pages'
@@ -33,6 +34,7 @@ createApp(App)
   .use(pinia)
   .use(vuetify)
   .use(vfm)
+  .component('VChart', VChart)
   .mount('#app')
 
 if (!import.meta.env.TAURI_DEBUG)

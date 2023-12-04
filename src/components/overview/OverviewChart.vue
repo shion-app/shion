@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { EChartsOption } from 'echarts'
 import { addDays, isAfter, isSameDay, isSameHour, startOfDay, startOfHour, subDays } from 'date-fns'
-import VChart from 'vue-echarts'
 
 import type { SelectActivity, SelectNote } from '@/modules/database'
 
@@ -264,7 +263,7 @@ function handleChartMouseOut() {
 </script>
 
 <template>
-  <VChart
+  <v-chart
     ref="chartRef" class="chart" :option="option" autoresize @rendered="handleChartRendered"
     @click="handleChartClick"
     @mouseover="handleChartMouseOver"
