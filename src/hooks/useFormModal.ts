@@ -1,9 +1,9 @@
 import type { UseModalOptions } from 'vue-final-modal'
 import { useModal } from 'vue-final-modal'
 import mergeOptions from 'merge-options'
+import type { ComponentProps } from 'vue-component-type-helpers'
 
 import FormModal from '@/components/modal/FormModal.vue'
-import type { ComponentProps } from '@/interfaces'
 
 type ModalProps = ComponentProps<typeof FormModal>
 export type useFormModalOptions = UseModalOptions<ModalProps>

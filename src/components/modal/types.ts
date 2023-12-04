@@ -1,11 +1,7 @@
+import type { ComponentProps } from 'vue-component-type-helpers'
 import type { VColorPicker, VSelect, VTextField } from 'vuetify/components'
-import type { AllowedComponentProps, VNodeProps } from 'vue'
 
 import type { z as Zod, ZodObject } from 'zod'
-
-export type ComponentProps<C extends Component> = C extends new (...args: any) => any
-  ? Omit<InstanceType<C>['$props'], keyof VNodeProps | keyof AllowedComponentProps>
-  : never
 
 interface FormItemProps {
   textField: ComponentProps<typeof VTextField>

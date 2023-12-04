@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { GridStackWidget } from 'gridstack'
+import type { ComponentExposed } from 'vue-component-type-helpers'
 
 import { db } from '@/modules/database'
 import type { InsertOverview, SelectOverview } from '@/modules/database'
 import { WidgetType } from '@/modules/database/models/overview'
 import Grid from '@/components/grid/Grid.vue'
-import type { ComponentInstance } from '@/interfaces'
 
 type OverviewForm = Pick<InsertOverview, 'type' | 'w' | 'h'>
 
@@ -15,7 +15,7 @@ const { parseFieldsError } = useDatabase()
 const { SPAN } = useGrid()
 
 const list = ref<Array<SelectOverview>>([])
-const grid = ref<ComponentInstance<typeof Grid<any>>>()
+const grid = ref<ComponentExposed<typeof Grid<any>>>()
 
 const gridItems = computed(() => list.value.map(({ id, x, y, w, h }) => ({
   id: String(id), x, y, w, h,

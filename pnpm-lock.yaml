@@ -101,6 +101,9 @@ dependencies:
   vue:
     specifier: ^3.3.7
     version: 3.3.7(typescript@5.2.2)
+  vue-component-type-helpers:
+    specifier: ^1.8.24
+    version: 1.8.24
   vue-echarts:
     specifier: ^6.5.5
     version: 6.5.5(echarts@5.4.2)(vue@3.3.7)
@@ -7975,6 +7978,10 @@ packages:
     resolution: {integrity: sha512-Dhxzh5HZuiHQhbvTW9AMetFfBHDMYpo23Uo9btPXgdYP+3T5S+p+jgNy7spra+veYhBP2dCSgxR/i2Y02h5/6w==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /vue-component-type-helpers@1.8.24:
+    resolution: {integrity: sha512-lqWs/7fdRXoSBAlbouHBX+LNuaY6gI9xWW34m/ZIz9zVPYHEyw0b2/zaCBwlKx0NtKTeF/6pOpvrxVkh7nhIYg==}
+    dev: false
 
   /vue-demi@0.13.11(vue@3.3.7):
     resolution: {integrity: sha512-IR8HoEEGM65YY3ZJYAjMlKygDQn25D5ajNFNoKh9RSDMQtlzCxtfQjdQgv9jjK+m3377SsJXY8ysq8kLCZL25A==}

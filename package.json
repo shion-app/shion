@@ -54,6 +54,7 @@
     "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#v1",
     "vee-validate": "^4.11.8",
     "vue": "^3.3.7",
+    "vue-component-type-helpers": "^1.8.24",
     "vue-echarts": "^6.5.5",
     "vue-final-modal": "^4.4.5",
     "vue-i18n": "^9.6.0",
