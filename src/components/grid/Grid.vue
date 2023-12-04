@@ -13,12 +13,16 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'change', items: number[]): void
+  (e: 'change', items: number[], widgets: GridStackWidget[]): void
 }>()
 
 const slots = defineSlots<{
   default(props: { componentProps: T }): any
 }>()
+
+defineExpose({
+  compact,
+})
 
 const instance = getCurrentInstance()
 
@@ -58,6 +62,15 @@ const gsAddRemoveVueComponents: AddRemoveFcn = (host, item, add, isGrid) => {
   }
 }
 
+function compact() {
+  if (!grid)
+    return
+
+  grid.compact()
+  const widgets = grid.save() as GridStackWidget[]
+  emit('change', widgets.map(i => Number(i.id)), widgets)
+}
+
 onMounted(() => {
   grid = GridStack.init({
     margin: 0,
@@ -65,11 +78,7 @@ onMounted(() => {
     ...props.options,
   }, gridId)
 
-  grid.on('dragstop', () => {
-    grid!.compact()
-    const widgets = grid!.save() as GridStackWidget[]
-    emit('change', widgets.map(i => Number(i.id)))
-  })
+  grid.on('dragstop', compact)
 
   grid.load(props.items, gsAddRemoveVueComponents)
 })
