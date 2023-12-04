@@ -38,9 +38,6 @@ const { open, close, setModelValue } = useFormModal<ProgramForm>(model => ({
               value: WidgetType[i],
             })),
             'onUpdate:modelValue': (v) => {
-              setModelValue({
-                type: v,
-              })
               if (v == WidgetType.ACTIVE_STATUS_CALENDAR) {
                 setModelValue({
                   w: 3 * SPAN,

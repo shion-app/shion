@@ -26,9 +26,8 @@ export function useNoteCreate() {
                   title: name,
                   value: id,
                 })),
-                'onUpdate:modelValue': (v) => {
+                'onUpdate:modelValue': () => {
                   setModelValue({
-                    planId: v,
                     labelId: undefined,
                   })
                 },

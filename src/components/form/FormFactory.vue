@@ -43,8 +43,11 @@ const transformForm = computed(() =>
 
 const fieldsModel = computed(() => Object.fromEntries(fields.map(({ key, field }) => [key, field.value.value])))
 
-watchDeep(fieldsModel, (v) => {
+watch(fieldsModel, (v) => {
   emit('formUpdate', v)
+}, {
+  deep: true,
+  immediate: true,
 })
 
 watchDeep(() => props.form.values, (v) => {

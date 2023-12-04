@@ -5,7 +5,8 @@ import mergeOptions from 'merge-options'
 import FormModal from '@/components/modal/FormModal.vue'
 import type { ComponentProps } from '@/interfaces'
 
-export type useFormModalOptions = UseModalOptions<ComponentProps<typeof FormModal>>
+type ModalProps = ComponentProps<typeof FormModal>
+export type useFormModalOptions = UseModalOptions<ModalProps>
 
 class ModalPromise {
   #promise?: Promise<void>
@@ -63,7 +64,7 @@ export function useFormModal<T>(source: (model: Partial<T>) => useFormModalOptio
     },
   })
 
-  const modal = useModal({
+  const modal = useModal<ModalProps>({
     component: FormModal,
     ...options,
   })
@@ -74,9 +75,26 @@ export function useFormModal<T>(source: (model: Partial<T>) => useFormModalOptio
   }
 
   const unwatch = watchDeep(() => source(model.value), (v) => {
-    modal.patchOptions({
-      attrs: v.attrs,
-    })
+    const values = modal.options.attrs?.form.values
+    if (Object.keys(values || {}).length > 0) {
+      for (const key in values) {
+        if (values[key] != model.value[key])
+          return
+      }
+    }
+
+    const newOptions = mergeOptions(
+      {
+        attrs: modal.options.attrs,
+      },
+      {
+        attrs: v.attrs,
+      },
+    )
+
+    newOptions.attrs.form.values = {}
+
+    modal.patchOptions(newOptions)
   })
 
   onScopeDispose(unwatch)
@@ -92,8 +110,9 @@ export function useFormModal<T>(source: (model: Partial<T>) => useFormModalOptio
             values,
           },
         },
-      })
-    nextTick(() => modal.patchOptions(newOptions))
+      },
+    )
+    modal.patchOptions(newOptions)
   }
 
   return {
