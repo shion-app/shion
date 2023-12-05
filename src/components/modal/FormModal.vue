@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import { VueFinalModal } from 'vue-final-modal'
 import { nanoid } from 'nanoid'
 
@@ -6,15 +6,15 @@ import type { BuildSchemaObject, Form } from './types'
 
 defineProps<{
   title: string
-  form: Form
+  form: Form<keyof T>
   schema: BuildSchemaObject
 }>()
 
 defineEmits<{
-  (e: 'confirm', values, setErrors: (fields) => void): void
+  (e: 'confirm', values: T, setErrors: (fields) => void): void
   (e: 'closed'): void
   (e: 'cancel'): void
-  (e: 'formUpdate', v): void
+  (e: 'formUpdate', v: Partial<T>): void
   (e: 'afterConfirm'): void
   (e: 'afterCancel'): void
 }>()

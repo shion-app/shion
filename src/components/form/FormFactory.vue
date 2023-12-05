@@ -6,7 +6,7 @@ import { z } from 'zod'
 import type { BuildSchemaObject, Form } from '@/interfaces'
 
 const props = defineProps<{
-  form: Form
+  form: Form<any>
   schema: BuildSchemaObject
   formId: string
 }>()

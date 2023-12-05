@@ -5,9 +5,6 @@ import type { ComponentProps } from 'vue-component-type-helpers'
 
 import FormModal from '@/components/modal/FormModal.vue'
 
-type ModalProps = ComponentProps<typeof FormModal>
-export type useFormModalOptions = UseModalOptions<ModalProps>
-
 class ModalPromise {
   #promise?: Promise<void>
   #resolve?: () => void
@@ -42,8 +39,10 @@ class ModalPromise {
   }
 }
 
-export function useFormModal<T>(source: (model: Partial<T>) => useFormModalOptions) {
-  const model = ref({}) as Ref<Partial<T>>
+export function useFormModal<
+  T, C extends ComponentProps<typeof FormModal<T>> = ComponentProps<typeof FormModal<T>>, O extends UseModalOptions<C> = UseModalOptions<C>,
+>(source: (model: Readonly<Partial<T>>) => O) {
+  const model: Ref<Partial<T>> = ref({})
 
   const promise = new ModalPromise()
 
@@ -64,7 +63,7 @@ export function useFormModal<T>(source: (model: Partial<T>) => useFormModalOptio
     },
   })
 
-  const modal = useModal<ModalProps>({
+  const modal = useModal<C>({
     component: FormModal,
     ...options,
   })

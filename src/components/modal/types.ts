@@ -9,16 +9,16 @@ interface FormItemProps {
   select: ComponentProps<typeof VSelect>
 }
 
-export interface FormItem<T extends keyof FormItemProps> {
+export interface FormItem<T extends keyof FormItemProps, K> {
   type: T
-  key: string
+  key: K
   label: string
   value?: FormItemProps[T]['modelValue']
   props?: FormItemProps[T]
 }
 
-export interface Form {
-  fields: Array<FormItem<keyof FormItemProps>>
+export interface Form<K> {
+  fields: Array<FormItem<keyof FormItemProps, K>>
   values?: Record<string, unknown>
 }
 
