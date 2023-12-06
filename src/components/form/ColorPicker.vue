@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import type { FormItemProps } from '@/interfaces'
-
 const props = defineProps<{
   modelValue?: any
   label: string
   errorMessages: string | readonly string[] | null | undefined
-} & FormItemProps['colorPicker']>()
+}>()
+
+// [@vue/compiler-sfc] Unresolvable type: TSConditionalType
+// attrs: FormItemProps['colorPicker']
 
 const { modelValue } = useVModels(props)
 
