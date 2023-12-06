@@ -3,7 +3,7 @@ import type { VColorPicker, VSelect, VTextField } from 'vuetify/components'
 
 import type { z as Zod, ZodObject } from 'zod'
 
-interface FormItemProps {
+export interface FormItemProps {
   textField: ComponentProps<typeof VTextField>
   colorPicker: ComponentProps<typeof VColorPicker>
   select: ComponentProps<typeof VSelect>

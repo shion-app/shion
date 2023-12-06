@@ -69,26 +69,20 @@ const submit = handleSubmit((values) => {
 <template>
   <form :id="formId" @submit.prevent="submit">
     <template v-for="{ type, key, field, label, props: itemProps } in transformForm" :key="key">
-      <VTextField
+      <v-text-field
         v-if="type == 'textField'"
         v-model="field.value.value"
         :label="label"
         :error-messages="field.errorMessage.value"
         v-bind="itemProps"
       />
-      <VTextField
+      <color-picker
         v-if="type == 'colorPicker'"
-        :model-value="field.value.value"
-        readonly
+        v-model="field.value.value"
         :label="label"
         :error-messages="field.errorMessage.value"
         v-bind="itemProps"
-      >
-        <template #append>
-          <!-- @vue-ignore -->
-          <color-picker-button v-model="field.value.value" />
-        </template>
-      </VTextField>
+      />
       <v-select
         v-if="type == 'select'"
         v-model="field.value.value"

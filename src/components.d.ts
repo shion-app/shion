@@ -12,7 +12,7 @@ declare module '@vue/runtime-core' {
     AboutDialog: typeof import('./components/dialog/AboutDialog.vue')['default']
     Calendar: typeof import('./components/timeline/calendar/Calendar.vue')['default']
     CalendarMonth: typeof import('./components/timeline/calendar/CalendarMonth.vue')['default']
-    ColorPickerButton: typeof import('./components/form/ColorPickerButton.vue')['default']
+    ColorPicker: typeof import('./components/form/ColorPicker.vue')['default']
     ConfirmModal: typeof import('./components/modal/ConfirmModal.vue')['default']
     Empty: typeof import('./components/shared/Empty.vue')['default']
     FormFactory: typeof import('./components/form/FormFactory.vue')['default']
