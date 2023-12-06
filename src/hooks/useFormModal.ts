@@ -40,13 +40,14 @@ class ModalPromise {
 }
 
 export function useFormModal<
-  T, C extends ComponentProps<typeof FormModal<T>> = ComponentProps<typeof FormModal<T>>, O extends UseModalOptions<C> = UseModalOptions<C>,
->(source: (model: Readonly<Partial<T>>) => O) {
+  T, V = any, C extends ComponentProps<typeof FormModal<T>> = ComponentProps<typeof FormModal<T>>, O extends UseModalOptions<C> = UseModalOptions<C>,
+>(source: (model: Readonly<Partial<T>>, modalValue: Readonly<Partial<V>>) => O, setModalValue?: () => Promise<V>) {
   const model: Ref<Partial<T>> = ref({})
+  const modalValue: Ref<Partial<V>> = ref({})
 
   const promise = new ModalPromise()
 
-  const options = mergeOptions(source(model.value), {
+  const options = mergeOptions(source(model.value, modalValue.value), {
     attrs: {
       onFormUpdate(v: Partial<T>) {
         model.value = v
@@ -69,11 +70,14 @@ export function useFormModal<
   })
 
   async function open() {
+    if (setModalValue)
+      modalValue.value = await setModalValue()
+
     await modal.open()
     await promise.open()
   }
 
-  const unwatch = watchDeep(() => source(model.value), (v) => {
+  const unwatch = watchDeep(() => source(model.value, modalValue.value), (v) => {
     const values = modal.options.attrs?.form.values
     if (Object.keys(values || {}).length > 0) {
       for (const key in values) {
