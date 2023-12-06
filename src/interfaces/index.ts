@@ -10,4 +10,12 @@ export interface TimeLineNode {
   children?: TimeLineNode[]
 }
 
+export interface NestedMenuItem {
+  title: string
+  value: string | number
+  children?: Array<NestedMenuItem>
+}
+
+export type NestedMenuItemValue = NestedMenuItem['value']
+
 export * from '@/components/modal/types'
