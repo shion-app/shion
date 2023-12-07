@@ -153,6 +153,10 @@ async function refresh() {
 }
 
 function showCreateForm() {
+  setModelValue({
+    w: SPAN,
+    h: 1,
+  })
   open()
 }
 
