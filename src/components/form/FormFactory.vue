@@ -2,8 +2,11 @@
 import { useField, useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
+import { VSelect, VTextField } from 'vuetify/components'
 
-import type { BuildSchemaObject, Form } from '@/interfaces'
+import ColorPicker from './ColorPicker.vue'
+import Cascader from './Cascader.vue'
+import type { BuildSchemaObject, Form, FormItemProps } from '@/interfaces'
 
 const props = defineProps<{
   form: Form<any>
@@ -33,7 +36,7 @@ const fields = props.form.fields.map(({ key }) => {
 })
 
 const transformForm = computed(() =>
-  props.form.fields.map((i) => {
+  props.form.fields.filter(i => typeof i.visible == 'boolean' ? i.visible : true).map((i) => {
     const { field } = fields.find(f => f.key == i.key)!
     return {
       ...i,
@@ -64,32 +67,31 @@ watchDeep(() => props.form.values, (v) => {
 const submit = handleSubmit((values) => {
   emit('confirm', values, setErrors)
 })
+
+function component(type: keyof FormItemProps) {
+  switch (type) {
+    case 'textField':
+      return VTextField
+    case 'colorPicker':
+      return ColorPicker
+    case 'select':
+      return VSelect
+    case 'cascader':
+      return Cascader
+  }
+}
 </script>
 
 <template>
   <form :id="formId" @submit.prevent="submit">
-    <template v-for="{ type, key, field, label, props: itemProps } in transformForm" :key="key">
-      <v-text-field
-        v-if="type == 'textField'"
-        v-model="field.value.value"
-        :label="label"
-        :error-messages="field.errorMessage.value"
-        v-bind="itemProps"
-      />
-      <color-picker
-        v-if="type == 'colorPicker'"
-        v-model="field.value.value"
-        :label="label"
-        :error-messages="field.errorMessage.value"
-        v-bind="itemProps"
-      />
-      <v-select
-        v-if="type == 'select'"
-        v-model="field.value.value"
-        :label="label"
-        :error-messages="field.errorMessage.value"
-        v-bind="itemProps"
-      />
-    </template>
+    <component
+      :is="component(type)"
+      v-for="{ type, key, field, label, props: itemProps } in transformForm"
+      :key="key"
+      v-model="field.value.value"
+      :label="label"
+      :error-messages="field.errorMessage.value"
+      v-bind="itemProps"
+    />
   </form>
 </template>
