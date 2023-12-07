@@ -37,11 +37,13 @@ type NonNeverSelectKeys<R> = {
   [K in keyof R]: IfNotNever<SelectType<R[K]>, K>;
 }[keyof R]
 
+type OptionalKeys<T> = { [K in keyof T]: T extends Record<K, T[K]> ? never : K }[keyof T]
+type NonOptionalKeys<T> = { [K in keyof T]: T extends Record<K, T[K]> ? K : never }[keyof T]
+
 type DeepSelectable<R> = DrainOuterGeneric<{
-  [K in NonNeverSelectKeys<R>]:
-  SelectType<R[K]> extends object
-    ? DeepSelectable<SelectType<R[K]>>
-    : SelectType<R[K]>;
+  [K in NonNeverSelectKeys<R> & NonOptionalKeys<R>]: SelectType<R[K]> extends object ? DeepSelectable<SelectType<R[K]>> : SelectType<R[K]>;
+} & {
+  [K in NonNeverSelectKeys<R> & OptionalKeys<R>]?: SelectType<R[K]> extends object ? DeepSelectable<SelectType<R[K]>> : SelectType<R[K]>;
 }>
 
 export type SelectProgram = DeepSelectable<Program>

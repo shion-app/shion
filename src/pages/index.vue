@@ -3,11 +3,11 @@ import type { GridStackWidget } from 'gridstack'
 import type { ComponentExposed } from 'vue-component-type-helpers'
 
 import { db } from '@/modules/database'
-import type { InsertOverview, SelectOverview } from '@/modules/database'
+import type { InsertOverview, SelectLabel, SelectOverview, SelectPlan, SelectProgram } from '@/modules/database'
 import { WidgetType } from '@/modules/database/models/overview'
 import Grid from '@/components/grid/Grid.vue'
 
-type OverviewForm = Pick<InsertOverview, 'type' | 'w' | 'h'>
+type OverviewForm = Pick<InsertOverview, 'type' | 'w' | 'h'> & { query?: [string, number] }
 
 const { t } = useI18n()
 const { success } = useNotify()
@@ -27,70 +27,126 @@ const cardList = computed(() => list.value.map(({ id, type, data }) => ({
   data,
 })))
 
-const { open, close, setModelValue } = useFormModal<OverviewForm>(model => ({
-  attrs: {
-    title: t('overview.create'),
-    form: {
-      fields: [
-        {
-          type: 'select',
-          key: 'type',
-          label: t('widget.type'),
-          props: {
-            'items': Object.values(WidgetType).filter(i => typeof i == 'string').map(i => ({
-              title: t(`widget.typeDesc.${i}`),
-              value: WidgetType[i],
-            })),
-            'onUpdate:modelValue': (v) => {
-              if (v == WidgetType.ACTIVE_STATUS_CALENDAR) {
-                setModelValue({
-                  w: 3 * SPAN,
-                })
-              }
+const { open, close, setModelValue } = useFormModal<
+  OverviewForm,
+  {
+    planList: Array<SelectPlan>
+    labelList: Array<SelectLabel>
+    programList: Array<SelectProgram>
+  }
+>
+((model, modal) => {
+  const singleCategoryBarvisible = model.type == WidgetType.SINGLE_CATEGORY_BAR
+  return {
+    attrs: {
+      title: t('overview.create'),
+      form: {
+        fields: [
+          {
+            type: 'select',
+            key: 'type',
+            label: t('widget.type'),
+            props: {
+              'items': Object.values(WidgetType).filter(i => typeof i == 'string').map(i => ({
+                title: t(`widget.typeDesc.${i}`),
+                value: WidgetType[i],
+              })),
+              'onUpdate:modelValue': (v) => {
+                if (v == WidgetType.ACTIVE_STATUS_CALENDAR) {
+                  setModelValue({
+                    w: 3 * SPAN,
+                  })
+                }
+              },
             },
           },
-        },
-        {
-          type: 'select',
-          key: 'w',
-          label: t('widget.column'),
-          props: {
-            items: [1, 2, 3].map(i => ({
-              title: i,
-              value: i * SPAN,
-            })),
-            disabled: model.type == WidgetType.ACTIVE_STATUS_CALENDAR,
+          {
+            type: 'select',
+            key: 'w',
+            label: t('widget.column'),
+            props: {
+              items: [1, 2, 3].map(i => ({
+                title: i,
+                value: i * SPAN,
+              })),
+              disabled: model.type == WidgetType.ACTIVE_STATUS_CALENDAR,
+            },
           },
-        },
-        {
-          type: 'select',
-          key: 'h',
-          label: t('widget.row'),
-          props: {
-            items: [1, 2, 3],
+          {
+            type: 'select',
+            key: 'h',
+            label: t('widget.row'),
+            props: {
+              items: [1, 2, 3],
+            },
           },
-        },
-      ],
+          {
+            type: 'cascader',
+            key: 'query',
+            label: t('widget.singleCategoryBar.table'),
+            visible: singleCategoryBarvisible,
+            props: {
+              items: [
+                {
+                  title: t('widget.singleCategoryBar.plan'),
+                  value: 'planId',
+                  children: modal?.planList?.map(i => ({
+                    title: i.name,
+                    value: i.id,
+                  })),
+                },
+                {
+                  title: t('widget.singleCategoryBar.label'),
+                  value: 'labelId',
+                  children: modal?.labelList?.map(i => ({
+                    title: i.name,
+                    value: i.id,
+                  })),
+                },
+                {
+                  title: t('widget.singleCategoryBar.program'),
+                  value: 'programId',
+                  children: modal?.programList?.map(i => ({
+                    title: i.name,
+                    value: i.id,
+                  })),
+                },
+              ],
+            },
+          },
+        ],
+      },
+      schema: (z) => {
+        const query = z.tuple([z.string(), z.number()])
+        return z.object({
+          type: z.number(),
+          w: z.number(),
+          h: z.number(),
+          query: singleCategoryBarvisible ? query : query.optional(),
+        })
+      },
+      async onConfirm(v, setErrors) {
+        try {
+          await handleCreate(v)
+        }
+        catch (error) {
+          return setErrors(parseFieldsError(error))
+        }
+        close()
+        success({})
+        await refresh()
+        grid.value?.compact()
+      },
     },
-    schema: z => z.object({
-      type: z.number(),
-      w: z.number(),
-      h: z.number(),
-    }),
-    async onConfirm(v, setErrors) {
-      try {
-        await handleCreate(v)
-      }
-      catch (error) {
-        return setErrors(parseFieldsError(error))
-      }
-      close()
-      success({})
-      await refresh()
-      grid.value?.compact()
-    },
-  },
-}))
+  }
+}, async () => {
+  const [planList, labelList, programList] = await Promise.all([
+    db.plan.select(),
+    db.label.select(),
+    db.program.select(),
+  ])
+  return { planList, labelList, programList }
+})
 
 async function refresh() {
   list.value = await db.overview.select()
@@ -101,12 +157,26 @@ function showCreateForm() {
 }
 
 function handleCreate(overview: OverviewForm) {
-  return db.overview.insert({
-    ...overview,
+  const { w, h, type } = overview
+  const value: InsertOverview = {
+    w,
+    h,
+    type,
     x: 0,
     y: 0,
     data: {},
-  })
+  }
+  if (overview.query) {
+    const [field, id] = overview.query
+    const table = field == 'programId' ? db.activity.table : db.note.table
+    value.data.query = {
+      table,
+      where: {
+        [field]: id,
+      },
+    }
+  }
+  return db.overview.insert(value)
 }
 
 async function handleGridChange(items: number[], widgets: GridStackWidget[]) {

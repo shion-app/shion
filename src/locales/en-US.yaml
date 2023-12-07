@@ -146,3 +146,8 @@ widget:
     SINGLE_CATEGORY_BAR: Single category bar
   column: Occupy column
   row: Occupy row
+  singleCategoryBar:
+    table: Data category
+    plan: Plan
+    label: Label
+    program: Program

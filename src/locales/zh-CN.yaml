@@ -146,3 +146,8 @@ widget:
     SINGLE_CATEGORY_BAR: 单独类别柱状图
   column: 占用列数
   row: 占用行数
+  singleCategoryBar:
+    table: 数据类别
+    plan: 计划
+    label: 标签
+    program: 程序

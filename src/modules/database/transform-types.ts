@@ -20,7 +20,12 @@ export type Moment = origin.Moment
 
 export type Overview = Replace<origin.Overview, {
   type: WidgetType
-  data: object
+  data: {
+    query?: {
+      table: string
+      where: object
+    }
+  }
 }>
 
 export interface DB {
