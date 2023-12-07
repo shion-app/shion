@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NestedMenuItemValue } from '@/interfaces'
+import type { NestedMenuItem, NestedMenuItemValue } from '@/interfaces'
 
 const props = withDefaults(defineProps<{
   modelValue?: Array<NestedMenuItemValue>
@@ -11,9 +11,23 @@ const props = withDefaults(defineProps<{
 
 defineEmits(['update:modelValue'])
 
+const attrs = useAttrs()
+
 const { modelValue } = useVModels(props)
 
-const text = computed(() => modelValue.value.join(' / '))
+const text = computed(() => getText(modelValue.value, attrs.items as any).join(' / '))
+
+function getText(target: Array<NestedMenuItemValue>, items: Array<NestedMenuItem>, result: Array<string> = []) {
+  const [value, ...rest] = target
+  const item = items.find(i => i.value === value)
+  if (item) {
+    result.push(item.title)
+
+    if (item.children && item.children.length > 0)
+      getText(rest, item.children, result)
+  }
+  return result
+}
 </script>
 
 <template>
