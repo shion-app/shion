@@ -19,8 +19,10 @@ const emit = defineEmits<{
   (e: 'formUpdate', v): void
 }>()
 
+const validationSchema = computed(() => toTypedSchema(props.schema(z)))
+
 const { handleSubmit, setErrors } = useForm({
-  validationSchema: toTypedSchema(props.schema(z)),
+  validationSchema,
 })
 
 const fields = props.form.fields.map(({ key }) => {
