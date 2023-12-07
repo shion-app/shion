@@ -1,9 +1,11 @@
 <script setup lang="ts">
 const props = defineProps<{
-  modelValue?: any
+  modelValue?: string
   label: string
-  errorMessages: string | readonly string[] | null | undefined
+  errorMessages?: string
 }>()
+
+defineEmits(['update:modelValue'])
 
 // [@vue/compiler-sfc] Unresolvable type: TSConditionalType
 // attrs: FormItemProps['colorPicker']
