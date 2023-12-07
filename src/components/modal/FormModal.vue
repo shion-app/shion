@@ -32,8 +32,8 @@ const formId = `form-${nanoid()}`
       $emit('afterCancel')
     }"
   >
-    <v-card :title="title" min-width="400" max-width="600">
-      <v-card-text>
+    <v-card :title="title" min-width="400" max-width="600" max-height="360">
+      <v-card-text class="overflow-auto!">
         <form-factory
           :form="form"
           :schema="schema"

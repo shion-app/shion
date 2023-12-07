@@ -28,7 +28,7 @@ function menuItemActive(value: NestedMenuItemValue) {
 
 <template>
   <v-menu :location="location" min-width="100" v-bind="$attrs">
-    <v-list>
+    <v-list max-height="200">
       <template v-for="{ title, value, children } in props.items" :key="value">
         <v-list-item v-if="children && children.length > 0" :title="title" :value="value" append-icon="mdi-chevron-right" :active="menuItemActive(value)">
           <nested-menu v-model="modelValue" :items="children" :prefix="[...props.prefix, value]" activator="parent" />
