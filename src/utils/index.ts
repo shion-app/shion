@@ -4,6 +4,7 @@ import { enUS, zhCN } from 'date-fns/locale'
 import { i18n } from '@/locales'
 
 export * from './path'
+export * from './shared'
 
 export function complement(num: number) {
   return num < 10 ? `0${num}` : `${num}`

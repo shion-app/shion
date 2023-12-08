@@ -12,10 +12,6 @@ interface CalendarMonthType {
   month: number
 }
 
-const dayMap = {
-  'zh-CN': ['日', '一', '二', '三', '四', '五', '六'],
-  'en-US': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-}
 let generatedYear = new Date().getFullYear()
 
 const list = ref<Array<CalendarMonthType>>([])
