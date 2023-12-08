@@ -1,4 +1,4 @@
-import { addDays, isAfter, isSameDay, startOfDay, startOfHour } from 'date-fns'
+import { addDays, endOfDay, isAfter, isSameDay, startOfDay, startOfHour } from 'date-fns'
 
 interface TimeRange {
   start: number
@@ -6,7 +6,7 @@ interface TimeRange {
 }
 
 export function generateRange(day: number) {
-  return [startOfDay(addDays(new Date(), 1 - day)), startOfDay(addDays(new Date(), 1))] as [Date, Date]
+  return [startOfDay(addDays(new Date(), 1 - day)), endOfDay(new Date())] as [Date, Date]
 }
 
 export function splitByDay<T extends TimeRange>(list: T[], range: [Date, Date]) {

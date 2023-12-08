@@ -216,7 +216,8 @@ refresh()
     @change="handleGridChange"
   >
     <template #default="{ componentProps }">
-      <single-category-bar v-if="componentProps.type == WidgetType.SINGLE_CATEGORY_BAR" :data="componentProps.data" />
+      <active-status-calendar v-if="componentProps.type == WidgetType.ACTIVE_STATUS_CALENDAR" />
+      <single-category-bar v-else-if="componentProps.type == WidgetType.SINGLE_CATEGORY_BAR" :data="componentProps.data" />
     </template>
   </Grid>
   <empty v-else />
