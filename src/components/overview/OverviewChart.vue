@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { EChartsOption } from 'echarts'
-import { addDays, isAfter, isSameDay, isSameHour, startOfDay, startOfHour, subDays } from 'date-fns'
+import { addDays, isSameDay, isSameHour, startOfDay, subDays } from 'date-fns'
 
 import type { SelectActivity, SelectNote } from '@/modules/database'
 
@@ -24,69 +24,15 @@ const selectedComponentIndex = ref(-1)
 const TITLE_HEIGHT = 60
 const LEGEND_MARGIN_BOTTOM = 10
 
-interface TimeRange {
-  start: number
-  end: number
-}
-
-function splitByDay<T extends TimeRange>(list: T[], range: [Date, Date]) {
-  return list.flatMap((data) => {
-    const { start, end } = data
-    const [startDate, endDate] = range
-    let _start = isAfter(start, startDate) ? new Date(start) : startDate
-    const timeList: Array<number> = [_start.getTime()]
-    _start = startOfDay(addDays(_start, 1))
-    while (isAfter(end, _start)) {
-      timeList.push(_start.getTime())
-      _start = addDays(_start, 1)
-    }
-
-    timeList.push(isAfter(endDate, end) ? end : endDate.getTime())
-    const result: T[] = []
-    for (let i = 0; i < timeList.length - 1; i++) {
-      result.push({
-        ...data,
-        start: timeList[i],
-        end: timeList[i + 1],
-      })
-    }
-    return result
-  })
-}
-
-function splitByHour<T extends TimeRange>(list: T[]) {
-  return list.flatMap((data) => {
-    const { start, end } = data
-    const startHour = new Date(start).getHours()
-    const endHour = isSameDay(start, end) ? new Date(end).getHours() : 23
-    const timeList: Array<number> = [start]
-    for (let i = startHour + 1; i <= endHour; i++) {
-      const date = startOfHour(new Date(start).setHours(i))
-      const time = date.getTime()
-      if (time > end)
-        break
-
-      else
-        timeList.push(time)
-    }
-    timeList.push(isSameDay(start, end) ? end : new Date(startOfDay(addDays(start, 1))).getTime())
-    const result: T[] = []
-    for (let i = 0; i < timeList.length - 1; i++) {
-      result.push({
-        ...data,
-        start: timeList[i],
-        end: timeList[i + 1],
-      })
-    }
-    return result
-  })
-}
-
 function calcTotalTime(list: Array<{ time: number }>) {
   return list.reduce((acc, cur) => acc += cur.time, 0)
 }
 
-function getChartData(xAxis: string[], list: Array<TimeRange & { name: string }>) {
+function getChartData(xAxis: string[], list: Array<{
+  start: number
+  end: number
+  name: string
+}>) {
   const data: Array<Array<{
     name: string
     time: number
@@ -263,7 +209,7 @@ function handleChartMouseOut() {
 </script>
 
 <template>
-  <v-chart
+  <vue-echarts
     ref="chartRef" class="chart" :option="option" autoresize @rendered="handleChartRendered"
     @click="handleChartClick"
     @mouseover="handleChartMouseOver"

@@ -8,6 +8,7 @@ declare global {
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
+  const calcTotalTime: typeof import('./utils/time')['calcTotalTime']
   const complement: typeof import('./utils/index')['complement']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
@@ -43,6 +44,7 @@ declare global {
   const formatDistanceStrict: typeof import('./utils/index')['formatDistanceStrict']
   const formatDuration: typeof import('./utils/index')['formatDuration']
   const formatHHmmss: typeof import('./utils/index')['formatHHmmss']
+  const generateRange: typeof import('./utils/time')['generateRange']
   const getActivePinia: typeof import('pinia')['getActivePinia']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
@@ -110,6 +112,8 @@ declare global {
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']
   const sortObjectsByKey: typeof import('./utils/index')['sortObjectsByKey']
+  const splitByDay: typeof import('./utils/time')['splitByDay']
+  const splitByHour: typeof import('./utils/time')['splitByHour']
   const storeToRefs: typeof import('pinia')['storeToRefs']
   const syncRef: typeof import('@vueuse/core')['syncRef']
   const syncRefs: typeof import('@vueuse/core')['syncRefs']
@@ -333,6 +337,7 @@ declare module 'vue' {
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
+    readonly calcTotalTime: UnwrapRef<typeof import('./utils/time')['calcTotalTime']>
     readonly complement: UnwrapRef<typeof import('./utils/index')['complement']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
@@ -368,6 +373,7 @@ declare module 'vue' {
     readonly formatDistanceStrict: UnwrapRef<typeof import('./utils/index')['formatDistanceStrict']>
     readonly formatDuration: UnwrapRef<typeof import('./utils/index')['formatDuration']>
     readonly formatHHmmss: UnwrapRef<typeof import('./utils/index')['formatHHmmss']>
+    readonly generateRange: UnwrapRef<typeof import('./utils/time')['generateRange']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
@@ -435,6 +441,8 @@ declare module 'vue' {
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
     readonly sortObjectsByKey: UnwrapRef<typeof import('./utils/index')['sortObjectsByKey']>
+    readonly splitByDay: UnwrapRef<typeof import('./utils/time')['splitByDay']>
+    readonly splitByHour: UnwrapRef<typeof import('./utils/time')['splitByHour']>
     readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
     readonly syncRef: UnwrapRef<typeof import('@vueuse/core')['syncRef']>
     readonly syncRefs: UnwrapRef<typeof import('@vueuse/core')['syncRefs']>
