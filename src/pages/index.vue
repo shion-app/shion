@@ -212,13 +212,11 @@ refresh()
     ref="grid"
     :items="gridItems"
     :component-props="cardList"
-    :options="{ cellHeight: 150 }"
+    :options="{ cellHeight: 200 }"
     @change="handleGridChange"
   >
     <template #default="{ componentProps }">
-      <div>
-        {{ componentProps.type }}
-      </div>
+      <single-category-bar v-if="componentProps.type == WidgetType.SINGLE_CATEGORY_BAR" :data="componentProps.data" />
     </template>
   </Grid>
   <empty v-else />
