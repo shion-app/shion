@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-import VChart from 'vue-echarts'
+import vueEcharts from 'vue-echarts'
 
 declare module "*.vue" {
   import type { DefineComponent } from "vue";
@@ -10,6 +10,6 @@ declare module "*.vue" {
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    VChart: typeof VChart,
+    vueEcharts: typeof vueEcharts,
   }
 }
