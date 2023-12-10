@@ -12,7 +12,7 @@ type OverviewForm = Pick<InsertOverview, 'type' | 'w' | 'h'> & { query?: [string
 const { t } = useI18n()
 const { success } = useNotify()
 const { parseFieldsError } = useDatabase()
-const { SPAN } = useGrid()
+const { col } = useGrid()
 
 const list = ref<Array<SelectOverview>>([])
 const grid = ref<ComponentExposed<typeof Grid<any>>>()
@@ -54,7 +54,7 @@ const { open, close, setModelValue } = useFormModal<
               'onUpdate:modelValue': (v) => {
                 if (v == WidgetType.ACTIVE_STATUS_CALENDAR) {
                   setModelValue({
-                    w: 3 * SPAN,
+                    w: col(3),
                   })
                 }
               },
@@ -67,7 +67,7 @@ const { open, close, setModelValue } = useFormModal<
             props: {
               items: [1, 2, 3].map(i => ({
                 title: i,
-                value: i * SPAN,
+                value: col(i),
               })),
               disabled: model.type == WidgetType.ACTIVE_STATUS_CALENDAR,
             },
@@ -154,7 +154,7 @@ async function refresh() {
 
 function showCreateForm() {
   setModelValue({
-    w: SPAN,
+    w: col(1),
     h: 1,
   })
   open()

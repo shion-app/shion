@@ -15,8 +15,10 @@ export function useGrid() {
     }))
   }
 
+  const col = (column: number) => SPAN * column
+
   return {
     getItemsByOrder,
-    SPAN,
+    col,
   }
 }
