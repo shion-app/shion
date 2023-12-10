@@ -6,6 +6,8 @@ import { type SelectActivity, type SelectNote, db } from '@/modules/database'
 
 const configStore = useConfigStore()
 
+const { format, formatHHmmss } = useDateFns()
+
 const { config } = storeToRefs(configStore)
 
 const noteList = ref<Array<SelectNote>>([])

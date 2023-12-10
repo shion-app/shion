@@ -9,7 +9,6 @@ declare global {
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const calcTotalTime: typeof import('./utils/time')['calcTotalTime']
-  const complement: typeof import('./utils/index')['complement']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
   const computedEager: typeof import('@vueuse/core')['computedEager']
@@ -37,19 +36,12 @@ declare global {
   const defineStore: typeof import('pinia')['defineStore']
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const effectScope: typeof import('vue')['effectScope']
-  const excludeKeys: typeof import('./utils/index')['excludeKeys']
   const extendRef: typeof import('@vueuse/core')['extendRef']
-  const extractTime: typeof import('./utils/index')['extractTime']
-  const format: typeof import('./utils/index')['format']
-  const formatDistance: typeof import('./utils/index')['formatDistance']
-  const formatDistanceStrict: typeof import('./utils/index')['formatDistanceStrict']
-  const formatDuration: typeof import('./utils/index')['formatDuration']
-  const formatHHmmss: typeof import('./utils/index')['formatHHmmss']
+  const extractTime: typeof import('./utils/time')['extractTime']
   const generateRange: typeof import('./utils/time')['generateRange']
   const getActivePinia: typeof import('pinia')['getActivePinia']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
-  const getRangeOfMonth: typeof import('./utils/index')['getRangeOfMonth']
   const h: typeof import('vue')['h']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
   const inject: typeof import('vue')['inject']
@@ -112,7 +104,6 @@ declare global {
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']
-  const sortObjectsByKey: typeof import('./utils/index')['sortObjectsByKey']
   const splitByDay: typeof import('./utils/time')['splitByDay']
   const splitByHour: typeof import('./utils/time')['splitByHour']
   const storeToRefs: typeof import('pinia')['storeToRefs']
@@ -173,6 +164,7 @@ declare global {
   const useCycleList: typeof import('@vueuse/core')['useCycleList']
   const useDark: typeof import('@vueuse/core')['useDark']
   const useDatabase: typeof import('./hooks/useDatabase')['useDatabase']
+  const useDateFns: typeof import('./hooks/useDateFns')['useDateFns']
   const useDateFormat: typeof import('@vueuse/core')['useDateFormat']
   const useDebounce: typeof import('@vueuse/core')['useDebounce']
   const useDebounceFn: typeof import('@vueuse/core')['useDebounceFn']
@@ -339,7 +331,6 @@ declare module 'vue' {
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly calcTotalTime: UnwrapRef<typeof import('./utils/time')['calcTotalTime']>
-    readonly complement: UnwrapRef<typeof import('./utils/index')['complement']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -367,19 +358,12 @@ declare module 'vue' {
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
-    readonly excludeKeys: UnwrapRef<typeof import('./utils/index')['excludeKeys']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
-    readonly extractTime: UnwrapRef<typeof import('./utils/index')['extractTime']>
-    readonly format: UnwrapRef<typeof import('./utils/index')['format']>
-    readonly formatDistance: UnwrapRef<typeof import('./utils/index')['formatDistance']>
-    readonly formatDistanceStrict: UnwrapRef<typeof import('./utils/index')['formatDistanceStrict']>
-    readonly formatDuration: UnwrapRef<typeof import('./utils/index')['formatDuration']>
-    readonly formatHHmmss: UnwrapRef<typeof import('./utils/index')['formatHHmmss']>
+    readonly extractTime: UnwrapRef<typeof import('./utils/time')['extractTime']>
     readonly generateRange: UnwrapRef<typeof import('./utils/time')['generateRange']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
-    readonly getRangeOfMonth: UnwrapRef<typeof import('./utils/index')['getRangeOfMonth']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
@@ -442,7 +426,6 @@ declare module 'vue' {
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
-    readonly sortObjectsByKey: UnwrapRef<typeof import('./utils/index')['sortObjectsByKey']>
     readonly splitByDay: UnwrapRef<typeof import('./utils/time')['splitByDay']>
     readonly splitByHour: UnwrapRef<typeof import('./utils/time')['splitByHour']>
     readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
@@ -503,6 +486,7 @@ declare module 'vue' {
     readonly useCycleList: UnwrapRef<typeof import('@vueuse/core')['useCycleList']>
     readonly useDark: UnwrapRef<typeof import('@vueuse/core')['useDark']>
     readonly useDatabase: UnwrapRef<typeof import('./hooks/useDatabase')['useDatabase']>
+    readonly useDateFns: UnwrapRef<typeof import('./hooks/useDateFns')['useDateFns']>
     readonly useDateFormat: UnwrapRef<typeof import('@vueuse/core')['useDateFormat']>
     readonly useDebounce: UnwrapRef<typeof import('@vueuse/core')['useDebounce']>
     readonly useDebounceFn: UnwrapRef<typeof import('@vueuse/core')['useDebounceFn']>

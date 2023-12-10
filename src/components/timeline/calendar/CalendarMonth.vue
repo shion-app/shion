@@ -13,8 +13,13 @@ const emit = defineEmits<{
   (e: 'update:selected', date: Date): void
 }>()
 
+defineExpose({
+  scrollToViewIfThisMonth,
+})
+
 const { locale } = useI18n()
 const { selected: selectedVModel } = useVModels(props)
+const { format } = useDateFns()
 
 interface CalendarDate {
   date: Date
@@ -72,10 +77,6 @@ function scrollToViewIfThisMonth(date: Date) {
   if (isSameMonth(startDate, date))
     target.value.scrollIntoView({ block: 'center' })
 }
-
-defineExpose({
-  scrollToViewIfThisMonth,
-})
 
 watchDeep(() => props.weekdays, generate, {
   immediate: true,

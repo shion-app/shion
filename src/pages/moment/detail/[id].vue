@@ -7,6 +7,8 @@ const props = defineProps<{
   id: string
 }>()
 
+const { format } = useDateFns()
+
 const detail = ref<SelectMoment>()
 const content = computed(() => detail.value?.content || '')
 const time = computed(() =>

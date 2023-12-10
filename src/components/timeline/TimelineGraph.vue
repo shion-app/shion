@@ -26,6 +26,7 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
+const { format, formatHHmmss } = useDateFns()
 
 const pointDistance = 80
 const pointSize = 40

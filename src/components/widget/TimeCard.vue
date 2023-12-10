@@ -15,6 +15,8 @@ defineEmits<{
 defineOptions({
   inheritAttrs: false,
 })
+
+const { formatHHmmss } = useDateFns()
 </script>
 
 <template>
