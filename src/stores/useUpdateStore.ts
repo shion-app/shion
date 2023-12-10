@@ -3,8 +3,6 @@ import { checkUpdate, installUpdate, onUpdaterEvent } from '@tauri-apps/api/upda
 import { error, info } from 'tauri-plugin-log-api'
 import { relaunch } from '@tauri-apps/api/process'
 
-const notify = useNotify()
-
 interface Payload {
   chunkLength: number
   contentLength: number
@@ -12,6 +10,7 @@ interface Payload {
 
 export const useUpdateStore = defineStore('update', () => {
   const { t } = useI18n()
+  const notify = useNotify()
 
   const precent = ref(0)
   const downloading = ref(false)
