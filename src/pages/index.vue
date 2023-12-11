@@ -6,25 +6,29 @@ import { db } from '@/modules/database'
 import type { InsertOverview, SelectLabel, SelectOverview, SelectPlan, SelectProgram } from '@/modules/database'
 import { WidgetType } from '@/modules/database/models/overview'
 import Grid from '@/components/grid/Grid.vue'
+import type { GridList } from '@/hooks/useGrid'
 
 type OverviewForm = Pick<InsertOverview, 'type' | 'w' | 'h'> & { query?: [string, number] }
 
 const { t } = useI18n()
 const { success } = useNotify()
 const { parseFieldsError } = useDatabase()
-const { col } = useGrid()
 
-const list = ref<Array<SelectOverview>>([])
+const list = ref<GridList<SelectOverview>>([])
+
+const { col, wrap, select, selectedList } = useGrid(list)
+
 const grid = ref<ComponentExposed<typeof Grid<any>>>()
 
 const gridItems = computed(() => list.value.map(({ id, x, y, w, h }) => ({
   id: String(id), x, y, w, h,
 })))
 
-const cardList = computed(() => list.value.map(({ id, type, data }) => ({
+const cardList = computed(() => list.value.map(({ id, type, data, selected }) => ({
   id,
   type,
   data,
+  selected,
 })))
 
 const { open, close, setModelValue } = useFormModal<
@@ -149,7 +153,7 @@ const { open, close, setModelValue } = useFormModal<
 })
 
 async function refresh() {
-  list.value = await db.overview.select()
+  list.value = wrap(await db.overview.select())
 }
 
 function showCreateForm() {
@@ -203,6 +207,22 @@ async function handleGridChange(items: number[], widgets: GridStackWidget[]) {
   await refresh()
 }
 
+async function removeList() {
+  const { open, close } = useConfirmModal({
+    attrs: {
+      title: t('modal.confirmDelete'),
+      async onConfirm() {
+        await Promise.all(selectedList.value.map(id => db.overview.remove(id)))
+        close()
+        success({})
+        await refresh()
+        grid.value?.compact()
+      },
+    },
+  })
+  open()
+}
+
 refresh()
 </script>
 
@@ -216,14 +236,19 @@ refresh()
     @change="handleGridChange"
   >
     <template #default="{ componentProps }">
-      <active-status-calendar v-if="componentProps.type == WidgetType.ACTIVE_STATUS_CALENDAR" />
-      <single-category-bar v-else-if="componentProps.type == WidgetType.SINGLE_CATEGORY_BAR" :data="componentProps.data" />
+      <grid-card :selected="componentProps.selected" @update:selected="v => select(componentProps.id, v)">
+        <v-card-text h-full class="pr-10!">
+          <active-status-calendar v-if="componentProps.type == WidgetType.ACTIVE_STATUS_CALENDAR" />
+          <single-category-bar v-else-if="componentProps.type == WidgetType.SINGLE_CATEGORY_BAR" :data="componentProps.data" />
+        </v-card-text>
+      </grid-card>
     </template>
   </Grid>
   <empty v-else />
   <more-menu>
     <v-list>
       <v-list-item value="overview.create" :title="$t('overview.create')" @click="showCreateForm" />
+      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="removeList" />
     </v-list>
   </more-menu>
 </template>

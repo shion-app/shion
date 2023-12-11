@@ -26,7 +26,7 @@ const { formatHHmmss } = useDateFns()
     </template>
     <template #append>
       <div
-        w-3 h-3 rounded-full my-4.5 mr-3
+        w-3 h-3 rounded-full mr-1
         :style="{
           backgroundColor: color,
         }"
@@ -37,7 +37,7 @@ const { formatHHmmss } = useDateFns()
       <v-list-item value="button.remove" :title="$t('button.remove')" @click="$emit('remove', $props.id)" />
       <slot name="menu" />
     </template>
-    <v-card-text class="pb-0!">
+    <v-card-text class="pb-0! pt-2!">
       <div>
         {{ formatHHmmss($props.totalTime) }}
       </div>

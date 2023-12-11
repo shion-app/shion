@@ -143,7 +143,7 @@ refresh()
     v-if="list.length"
     :items="items"
     :component-props="cardList"
-    :options="{ cellHeight: 130 }"
+    :options="{ cellHeight: 120 }"
     @change="handleGridChange"
   >
     <template #default="{ componentProps }">
