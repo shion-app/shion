@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { GridList } from '@/hooks/useGrid'
 import { useGrid } from '@/hooks/useGrid'
 import type { InsertPlan, SelectPlan } from '@/modules/database'
 import { db } from '@/modules/database'
@@ -8,7 +9,10 @@ type PlanForm = Pick<InsertPlan, 'name' | 'color'>
 const { t } = useI18n()
 const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
-const { getItemsByOrder } = useGrid()
+
+const list = ref<GridList<SelectPlan>>([])
+
+const { items, wrap, select, selectedList } = useGrid(list)
 
 const isCreate = ref(true)
 let updateId = 0
@@ -49,17 +53,16 @@ const { open, close, setModelValue } = useFormModal<PlanForm>(
     },
   }))
 
-const list = ref<Array<SelectPlan>>([])
-
-const cardList = computed(() => list.value.map(({ id, name, totalTime, color }) => ({
+const cardList = computed(() => list.value.map(({ id, name, totalTime, color, selected }) => ({
   id,
   title: name,
   totalTime,
   color,
+  selected,
 })))
 
 async function refresh() {
-  list.value = await db.plan.select()
+  list.value = wrap(await db.plan.select())
 }
 
 function showCreateForm() {
@@ -117,29 +120,46 @@ async function handleGridChange(items: number[]) {
   await refresh()
 }
 
+async function removeList() {
+  const { open, close } = useConfirmModal({
+    attrs: {
+      title: t('modal.confirmDelete'),
+      async onConfirm() {
+        await Promise.all(selectedList.value.map(id => db.plan.removeRelation(id)))
+        close()
+        success({})
+        refresh()
+      },
+    },
+  })
+  open()
+}
+
 refresh()
 </script>
 
 <template>
   <grid
     v-if="list.length"
-    :items="getItemsByOrder(list)"
+    :items="items"
     :component-props="cardList"
-    :options="{ cellHeight: 150 }"
+    :options="{ cellHeight: 130 }"
     @change="handleGridChange"
   >
     <template #default="{ componentProps }">
-      <time-card v-bind="componentProps" @update="showUpdateForm" @remove="handleRemove" />
+      <time-card
+        v-bind="componentProps"
+        @update="showUpdateForm"
+        @remove="handleRemove"
+        @update:selected="v => select(componentProps.id, v)"
+      />
     </template>
   </grid>
   <empty v-else />
   <more-menu>
     <v-list>
-      <v-list-item value="plan.create">
-        <v-list-item-title @click="showCreateForm">
-          {{ $t('plan.create') }}
-        </v-list-item-title>
-      </v-list-item>
+      <v-list-item value="plan.create" :title="$t('plan.create')" @click="showCreateForm" />
+      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="removeList" />
     </v-list>
   </more-menu>
 </template>

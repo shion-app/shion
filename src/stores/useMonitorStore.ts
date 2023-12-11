@@ -12,11 +12,14 @@ export const useMonitorStore = defineStore('monitor', () => {
   const filterList = ref<Array<backend.Program & {
     checked: boolean
   }>>([])
-  const whiteList = ref<SelectProgram[]>([])
+  const whiteList = ref<Array<SelectProgram & { selected: boolean }>>([])
   const iconMap = ref(new Map<string, string>())
 
   async function refresh() {
-    whiteList.value = await db.program.select()
+    whiteList.value = (await db.program.select()).map(i => ({
+      ...i,
+      selected: false,
+    }))
   }
 
   function transformIcon(program: Pick<backend.Program, 'path' | 'icon'>) {

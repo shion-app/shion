@@ -13,19 +13,21 @@ const { t } = useI18n()
 const store = useMonitorStore()
 const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
-const { getItemsByOrder } = useGrid()
 
 const { getIconUrl, refresh } = store
 const { filtering, filterList, whiteList } = storeToRefs(store)
 
+const { items, select, selectedList } = useGrid(whiteList)
+
 const updateId = 0
 
-const cardList = computed(() => whiteList.value.map(({ id, name, totalTime, color, icon }) => ({
+const cardList = computed(() => whiteList.value.map(({ id, name, totalTime, color, icon, selected }) => ({
   id,
   title: name,
   totalTime,
   color,
   prependImgUrl: icon,
+  selected,
 })))
 
 const { open, close, setModelValue } = useFormModal<ProgramForm>(
@@ -133,29 +135,46 @@ async function handleGridChange(items: number[]) {
   await refresh()
 }
 
+async function removeList() {
+  const { open, close } = useConfirmModal({
+    attrs: {
+      title: t('modal.confirmDelete'),
+      async onConfirm() {
+        await Promise.all(selectedList.value.map(id => db.program.removeRelation(id)))
+        close()
+        success({})
+        refresh()
+      },
+    },
+  })
+  open()
+}
+
 refresh()
 </script>
 
 <template>
   <grid
     v-if="whiteList.length"
-    :items="getItemsByOrder(whiteList)"
+    :items="items"
     :component-props="cardList"
-    :options="{ cellHeight: 150 }"
+    :options="{ cellHeight: 130 }"
     @change="handleGridChange"
   >
     <template #default="{ componentProps }">
-      <time-card v-bind="componentProps" @update="showUpdateForm" @remove="handleRemove" />
+      <time-card
+        v-bind="componentProps"
+        @update="showUpdateForm"
+        @remove="handleRemove"
+        @update:selected="v => select(componentProps.id, v)"
+      />
     </template>
   </grid>
   <empty v-else />
   <more-menu>
     <v-list>
-      <v-list-item value="monitor.filterProgram">
-        <v-list-item-title @click="showFilterDialog">
-          {{ $t('monitor.filterProgram') }}
-        </v-list-item-title>
-      </v-list-item>
+      <v-list-item value="monitor.filterProgram" :title="$t('monitor.filterProgram')" @click="showFilterDialog" />
+      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="removeList" />
     </v-list>
   </more-menu>
   <v-dialog

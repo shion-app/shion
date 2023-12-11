@@ -20,6 +20,7 @@ declare module '@vue/runtime-core' {
     FormFactory: typeof import('./components/form/FormFactory.vue')['default']
     FormModal: typeof import('./components/modal/FormModal.vue')['default']
     Grid: typeof import('./components/grid/Grid.vue')['default']
+    GridCard: typeof import('./components/grid/GridCard.vue')['default']
     GridItem: typeof import('./components/grid/GridItem.vue')['default']
     LayoutFooter: typeof import('./components/layout/LayoutFooter.vue')['default']
     LayoutHeader: typeof import('./components/layout/LayoutHeader.vue')['default']

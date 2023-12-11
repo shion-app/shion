@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { GridList } from '@/hooks/useGrid'
 import { db } from '@/modules/database'
 import type { InsertLabel, SelectLabel, SelectPlan } from '@/modules/database'
 
@@ -10,24 +11,21 @@ const router = useRouter()
 const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
 const { openModal } = useNoteCreate()
-const { getItemsByOrder } = useGrid()
+
+const labelList = ref<GridList<SelectLabel>>([])
+const { wrap, getItemsByOrder, select, selectedList } = useGrid(labelList)
 
 const { running: timerRunning } = storeToRefs(timeStore)
 
-const labelList = ref<Array<SelectLabel>>([])
 const planList = ref<Array<SelectPlan>>([])
 const isCreate = ref(true)
 let updateId = 0
 
 const labelGroup = computed(() => {
-  const map = new Map<number, Array<SelectLabel>>()
+  const map = new Map<number, GridList<SelectLabel>>()
   for (const label of labelList.value) {
-    if (!map.has(label.planId))
-      map.set(label.planId, [])
-
-    const list = map.get(label.planId)!
-    list.push(label)
-    map.set(label.planId, list)
+    const list = map.get(label.planId)
+    map.set(label.planId, [...(list || []), label])
   }
   return map
 })
@@ -81,7 +79,7 @@ const { open, close, setModelValue } = useFormModal<LabelForm>(
   }))
 
 async function refresh() {
-  [labelList.value, planList.value] = await Promise.all([db.label.select(), db.plan.select()])
+  [labelList.value, planList.value] = await Promise.all([db.label.select().then(wrap), db.plan.select()])
 }
 
 function showCreateForm() {
@@ -89,7 +87,7 @@ function showCreateForm() {
   open()
 }
 
-function showUpdateForm(id: number, list: Array<SelectLabel>) {
+function showUpdateForm(id: number, list: GridList<SelectLabel>) {
   updateId = id
   const label = list.find(i => i.id == id)
   if (!label)
@@ -140,7 +138,7 @@ async function handleStart(label: Pick<SelectLabel, 'id' | 'planId'>) {
   router.push('/timer')
 }
 
-async function handleGridChange(items: number[], list: Array<SelectLabel>) {
+async function handleGridChange(items: number[], list: GridList<SelectLabel>) {
   const labelList = items.map((id, index) => {
     const { sort } = list[index]
     return {
@@ -152,14 +150,30 @@ async function handleGridChange(items: number[], list: Array<SelectLabel>) {
   await refresh()
 }
 
-function getCardList(list: Array<SelectLabel>) {
-  return list.map(({ id, name, totalTime, color, planId }) => ({
+function getCardList(list: GridList<SelectLabel>) {
+  return list.map(({ id, name, totalTime, color, planId, selected }) => ({
     id,
     title: name,
     totalTime,
     color,
     planId,
+    selected,
   }))
+}
+
+async function removeList() {
+  const { open, close } = useConfirmModal({
+    attrs: {
+      title: t('modal.confirmDelete'),
+      async onConfirm() {
+        await Promise.all(selectedList.value.map(id => db.label.removeRelation(id)))
+        close()
+        success({})
+        refresh()
+      },
+    },
+  })
+  open()
 }
 
 refresh()
@@ -175,11 +189,16 @@ refresh()
         <grid
           :items="getItemsByOrder(list)"
           :component-props="getCardList(list)"
-          :options="{ cellHeight: 150 }"
+          :options="{ cellHeight: 130 }"
           @change="items => handleGridChange(items, list)"
         >
           <template #default="{ componentProps }">
-            <time-card v-bind="componentProps" @update="id => showUpdateForm(id, list)" @remove="handleRemove">
+            <time-card
+              v-bind="componentProps"
+              @update="id => showUpdateForm(id, list)"
+              @remove="handleRemove"
+              @update:selected="v => select(componentProps.id, v)"
+            >
               <template v-if="!timerRunning" #menu>
                 <v-list-item value="timer" @click="handleStart(componentProps)">
                   <v-list-item-title>{{ $t('label.button.start') }}</v-list-item-title>
@@ -194,11 +213,8 @@ refresh()
   <empty v-else />
   <more-menu>
     <v-list>
-      <v-list-item value="label.create">
-        <v-list-item-title @click="showCreateForm">
-          {{ $t('label.create') }}
-        </v-list-item-title>
-      </v-list-item>
+      <v-list-item value="label.create" :title="$t('label.create')" @click="showCreateForm" />
+      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="removeList" />
     </v-list>
   </more-menu>
 </template>

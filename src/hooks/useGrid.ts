@@ -1,6 +1,8 @@
 import type { GridStackWidget } from 'gridstack'
 
-export function useGrid() {
+export type GridList<T> = Array<T & { selected: boolean }>
+
+export function useGrid(list: Ref<GridList<{ id: number }>>) {
   const COLUMN = 12
   const SPAN = 4
 
@@ -17,8 +19,32 @@ export function useGrid() {
 
   const col = (column: number) => SPAN * column
 
+  function wrap<T extends object>(list: Array<T>) {
+    return list.map(i => ({
+      ...i,
+      selected: false,
+    }))
+  }
+
+  function select(id: number, selected: boolean) {
+    for (const item of list.value) {
+      if (item.id == id) {
+        item.selected = selected
+        break
+      }
+    }
+  }
+
+  const selectedList = computed(() => list.value.filter(i => i.selected).map(i => i.id))
+
+  const items = computed<GridStackWidget[]>(() => getItemsByOrder(list.value))
+
   return {
     getItemsByOrder,
     col,
+    wrap,
+    select,
+    selectedList,
+    items,
   }
 }

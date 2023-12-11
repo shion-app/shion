@@ -1,7 +1,8 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   id: number
   title: string
+  selected: boolean
   totalTime: number
   color: string
   prependImgUrl?: string
@@ -10,58 +11,36 @@ defineProps<{
 defineEmits<{
   (e: 'update', id: number): void
   (e: 'remove', id: number): void
+  (e: 'update:selected', v: boolean): void
 }>()
 
-defineOptions({
-  inheritAttrs: false,
-})
+const { selected: selectedVModel } = useVModels(props)
 
 const { formatHHmmss } = useDateFns()
 </script>
 
 <template>
-  <v-hover>
-    <template #default="{ isHovering, props }">
-      <v-card
-        v-bind="props"
-        :title="$props.title"
-        hover
-      >
-        <template v-if="$props.prependImgUrl" #prepend>
-          <img :src="$props.prependImgUrl" width="32" height="32">
-        </template>
-        <template #append>
-          <div
-            w-3 h-3 rounded-full m-3.5
-            :style="{
-              backgroundColor: color,
-            }"
-          />
-        </template>
-        <v-card-text flex items-center justify-between>
-          <div>
-            {{ formatHHmmss($props.totalTime) }}
-          </div>
-          <div :class="isHovering ? 'opacity-100' : 'opacity-0'" transition-opacity-400>
-            <v-menu min-width="150" open-on-hover>
-              <template #activator="{ props: menuProps }">
-                <v-btn icon variant="text" v-bind="menuProps" size="small">
-                  <div i-mdi:menu-down text-6 />
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item value="update" @click="$emit('update', $props.id)">
-                  <v-list-item-title>{{ $t('button.update') }}</v-list-item-title>
-                </v-list-item>
-                <v-list-item value="remove" @click="$emit('remove', $props.id)">
-                  <v-list-item-title>{{ $t('button.remove') }}</v-list-item-title>
-                </v-list-item>
-                <slot name="menu" />
-              </v-list>
-            </v-menu>
-          </div>
-        </v-card-text>
-      </v-card>
+  <grid-card v-model:selected="selectedVModel" :title="props.title">
+    <template v-if="$props.prependImgUrl" #prepend>
+      <img :src="$props.prependImgUrl" width="32" height="32">
     </template>
-  </v-hover>
+    <template #append>
+      <div
+        w-3 h-3 rounded-full my-4.5 mr-3
+        :style="{
+          backgroundColor: color,
+        }"
+      />
+    </template>
+    <template #menu>
+      <v-list-item value="button.update" :title="$t('button.update')" @click="$emit('update', $props.id)" />
+      <v-list-item value="button.remove" :title="$t('button.remove')" @click="$emit('remove', $props.id)" />
+      <slot name="menu" />
+    </template>
+    <v-card-text class="pb-0!">
+      <div>
+        {{ formatHHmmss($props.totalTime) }}
+      </div>
+    </v-card-text>
+  </grid-card>
 </template>
