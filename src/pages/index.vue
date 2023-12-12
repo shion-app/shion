@@ -21,7 +21,6 @@ const { col, wrap, select, selectedList } = useGrid(list)
 
 const grid = ref<ComponentExposed<typeof Grid<any>>>()
 const isCreate = ref(true)
-let updateId = 0
 
 const gridItems = computed(() => list.value.map(({ id, x, y, w, h }) => ({
   id: String(id), x, y, w, h,
@@ -33,6 +32,8 @@ const cardList = computed(() => list.value.map(({ id, type, data, selected }) =>
   data,
   selected,
 })))
+
+const { setUpdateId, handleUpdate } = buildUpdateFn()
 
 const { open, close, setModelValue } = useFormModal<
   OverviewForm,
@@ -185,6 +186,32 @@ function buildRemoveFn() {
   }
 }
 
+function buildUpdateFn() {
+  let id = 0
+  return {
+    setUpdateId: (updateId: number) => {
+      id = updateId
+    },
+    handleUpdate: (overview: OverviewForm) => {
+      const { w, h, type, category } = overview
+      const value: UpdateOverview = {
+        w,
+        h,
+        type,
+        data: {
+          fields: {
+            category,
+          },
+        },
+      }
+      if (overview.category)
+        value.data!.query = transformCategory(overview.category)
+
+      return db.overview.update(id, value)
+    },
+  }
+}
+
 async function refresh() {
   list.value = wrap(await db.overview.select())
 }
@@ -198,7 +225,7 @@ function showCreateForm() {
 }
 
 function showUpdateForm(id: number, list: GridList<SelectOverview>) {
-  updateId = id
+  setUpdateId(id)
   const overview = list.find(i => i.id == id)
   if (!overview)
     return
@@ -226,24 +253,6 @@ function transformCategory(category: NonNullable<OverviewForm['category']>): Sel
       [field]: id,
     },
   }
-}
-
-function handleUpdate(overview: OverviewForm) {
-  const { w, h, type, category } = overview
-  const value: UpdateOverview = {
-    w,
-    h,
-    type,
-    data: {
-      fields: {
-        category,
-      },
-    },
-  }
-  if (overview.category)
-    value.data!.query = transformCategory(overview.category)
-
-  return db.overview.update(updateId, value)
 }
 
 function handleCreate(overview: OverviewForm) {

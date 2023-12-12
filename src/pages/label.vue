@@ -20,7 +20,6 @@ const { running: timerRunning } = storeToRefs(timeStore)
 
 const planList = ref<Array<SelectPlan>>([])
 const isCreate = ref(true)
-let updateId = 0
 
 const labelGroup = computed(() => {
   const map = new Map<number, GridList<SelectLabel>>()
@@ -30,6 +29,8 @@ const labelGroup = computed(() => {
   }
   return map
 })
+
+const { setUpdateId, handleUpdate } = buildUpdateFn()
 
 const { open, close, setModelValue } = useFormModal<LabelForm>(
   () => ({
@@ -117,7 +118,7 @@ function showCreateForm() {
 }
 
 function showUpdateForm(id: number, list: GridList<SelectLabel>) {
-  updateId = id
+  setUpdateId(id)
   const label = list.find(i => i.id == id)
   if (!label)
     return
@@ -135,8 +136,16 @@ async function handleCreate(label: LabelForm) {
   })
 }
 
-function handleUpdate(label: LabelForm) {
-  return db.label.update(updateId, label)
+function buildUpdateFn() {
+  let id = 0
+  return {
+    setUpdateId: (updateId: number) => {
+      id = updateId
+    },
+    handleUpdate: (label: LabelForm) => {
+      return db.label.update(id, label)
+    },
+  }
 }
 
 async function handleStart(label: Pick<SelectLabel, 'id' | 'planId'>) {

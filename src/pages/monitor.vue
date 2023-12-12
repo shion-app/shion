@@ -20,7 +20,7 @@ const { filtering, filterList, whiteList } = storeToRefs(store)
 
 const { items, select, selectedList } = useGrid(whiteList)
 
-const updateId = 0
+const { setUpdateId, handleUpdate } = buildUpdateFn()
 
 const cardList = computed(() => whiteList.value.map(({ id, name, totalTime, color, icon, selected }) => ({
   id,
@@ -96,6 +96,7 @@ function buildRemoveFn() {
 }
 
 function showUpdateForm(id: number) {
+  setUpdateId(id)
   const program = whiteList.value.find(i => i.id == id)
   if (!program)
     return
@@ -104,8 +105,16 @@ function showUpdateForm(id: number) {
   open()
 }
 
-function handleUpdate(program: ProgramForm) {
-  return db.program.update(updateId, program)
+function buildUpdateFn() {
+  let id = 0
+  return {
+    setUpdateId: (updateId: number) => {
+      id = updateId
+    },
+    handleUpdate: (program: ProgramForm) => {
+      return db.program.update(id, program)
+    },
+  }
 }
 
 async function handleCreateProgram(program: backend.Program) {

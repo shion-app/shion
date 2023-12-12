@@ -16,7 +16,8 @@ const list = ref<GridList<SelectPlan>>([])
 const { items, wrap, select, selectedList } = useGrid(list)
 
 const isCreate = ref(true)
-let updateId = 0
+
+const { setUpdateId, handleUpdate } = buildUpdateFn()
 
 const { open, close, setModelValue } = useFormModal<PlanForm>(
   () => ({
@@ -100,7 +101,7 @@ function showCreateForm() {
 }
 
 function showUpdateForm(id: number) {
-  updateId = id
+  setUpdateId(id)
   const plan = list.value.find(i => i.id == id)
   if (!plan)
     return
@@ -118,8 +119,16 @@ async function handleCreate(plan: PlanForm) {
   })
 }
 
-function handleUpdate(plan: PlanForm) {
-  return db.plan.update(updateId, plan)
+function buildUpdateFn() {
+  let id = 0
+  return {
+    setUpdateId: (updateId: number) => {
+      id = updateId
+    },
+    handleUpdate: (plan: PlanForm) => {
+      return db.plan.update(id, plan)
+    },
+  }
 }
 
 async function handleGridChange(items: number[]) {
