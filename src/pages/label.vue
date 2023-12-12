@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useConfirmDeleteModal } from '@/hooks/useConfirmModal'
 import type { GridList } from '@/hooks/useGrid'
 import { db } from '@/modules/database'
 import type { InsertLabel, SelectLabel, SelectPlan } from '@/modules/database'
@@ -78,6 +79,34 @@ const { open, close, setModelValue } = useFormModal<LabelForm>(
     },
   }))
 
+const { open: openBatchRemoveModal } = useConfirmDeleteModal(async () => {
+  await Promise.all(selectedList.value.map(id => db.label.removeRelation(id)))
+  success({})
+  refresh()
+})
+
+const { setRemoveId, remove } = buildRemoveFn()
+const { open: openRemoveModal } = useConfirmDeleteModal(remove)
+
+function handleRemove(id: number) {
+  setRemoveId(id)
+  openRemoveModal()
+}
+
+function buildRemoveFn() {
+  let id = 0
+  return {
+    setRemoveId: (removeId: number) => {
+      id = removeId
+    },
+    remove: async () => {
+      await db.label.removeRelation(id)
+      success({})
+      refresh()
+    },
+  }
+}
+
 async function refresh() {
   [labelList.value, planList.value] = await Promise.all([db.label.select().then(wrap), db.plan.select()])
 }
@@ -108,21 +137,6 @@ async function handleCreate(label: LabelForm) {
 
 function handleUpdate(label: LabelForm) {
   return db.label.update(updateId, label)
-}
-
-function handleRemove(id: number) {
-  const { open, close } = useConfirmModal({
-    attrs: {
-      title: t('modal.confirmDelete'),
-      async onConfirm() {
-        await db.label.removeRelation(id)
-        close()
-        success({})
-        refresh()
-      },
-    },
-  })
-  open()
 }
 
 async function handleStart(label: Pick<SelectLabel, 'id' | 'planId'>) {
@@ -159,21 +173,6 @@ function getCardList(list: GridList<SelectLabel>) {
     planId,
     selected,
   }))
-}
-
-async function removeList() {
-  const { open, close } = useConfirmModal({
-    attrs: {
-      title: t('modal.confirmDelete'),
-      async onConfirm() {
-        await Promise.all(selectedList.value.map(id => db.label.removeRelation(id)))
-        close()
-        success({})
-        refresh()
-      },
-    },
-  })
-  open()
 }
 
 refresh()
@@ -214,7 +213,7 @@ refresh()
   <more-menu>
     <v-list>
       <v-list-item value="label.create" :title="$t('label.create')" @click="showCreateForm" />
-      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="removeList" />
+      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="openBatchRemoveModal" />
     </v-list>
   </more-menu>
 </template>

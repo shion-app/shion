@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useConfirmDeleteModal } from '@/hooks/useConfirmModal'
 import type { GridList } from '@/hooks/useGrid'
 import { useGrid } from '@/hooks/useGrid'
 import type { InsertPlan, SelectPlan } from '@/modules/database'
@@ -61,6 +62,34 @@ const cardList = computed(() => list.value.map(({ id, name, totalTime, color, se
   selected,
 })))
 
+const { open: openBatchRemoveModal } = useConfirmDeleteModal(async () => {
+  await Promise.all(selectedList.value.map(id => db.plan.removeRelation(id)))
+  success({})
+  refresh()
+})
+
+const { setRemoveId, remove } = buildRemoveFn()
+const { open: openRemoveModal } = useConfirmDeleteModal(remove)
+
+function handleRemove(id: number) {
+  setRemoveId(id)
+  openRemoveModal()
+}
+
+function buildRemoveFn() {
+  let id = 0
+  return {
+    setRemoveId: (removeId: number) => {
+      id = removeId
+    },
+    remove: async () => {
+      await db.plan.removeRelation(id)
+      success({})
+      refresh()
+    },
+  }
+}
+
 async function refresh() {
   list.value = wrap(await db.plan.select())
 }
@@ -93,21 +122,6 @@ function handleUpdate(plan: PlanForm) {
   return db.plan.update(updateId, plan)
 }
 
-function handleRemove(id: number) {
-  const { open, close } = useConfirmModal({
-    attrs: {
-      title: t('modal.confirmDelete'),
-      async onConfirm() {
-        await db.plan.removeRelation(id)
-        close()
-        success({})
-        refresh()
-      },
-    },
-  })
-  open()
-}
-
 async function handleGridChange(items: number[]) {
   const planList = items.map((id, index) => {
     const { sort } = list.value[index]
@@ -118,21 +132,6 @@ async function handleGridChange(items: number[]) {
   }).filter((i, index) => list.value[index].id != i.id)
   await db.plan.batchUpdate(planList)
   await refresh()
-}
-
-async function removeList() {
-  const { open, close } = useConfirmModal({
-    attrs: {
-      title: t('modal.confirmDelete'),
-      async onConfirm() {
-        await Promise.all(selectedList.value.map(id => db.plan.removeRelation(id)))
-        close()
-        success({})
-        refresh()
-      },
-    },
-  })
-  open()
 }
 
 refresh()
@@ -159,7 +158,7 @@ refresh()
   <more-menu>
     <v-list>
       <v-list-item value="plan.create" :title="$t('plan.create')" @click="showCreateForm" />
-      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="removeList" />
+      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="openBatchRemoveModal" />
     </v-list>
   </more-menu>
 </template>

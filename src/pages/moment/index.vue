@@ -3,6 +3,7 @@ import { isThisYear } from 'date-fns'
 
 import { type SelectMoment, db } from '@/modules/database'
 import type { Replace } from '@/interfaces'
+import { useConfirmDeleteModal } from '@/hooks/useConfirmModal'
 
 interface Image {
   src: string
@@ -26,6 +27,34 @@ const { format } = useDateFns()
 
 const list = ref<Array<Moment>>([])
 const selectedList = computed(() => list.value.filter(i => i.selected).map(i => i.id))
+
+const { open: openBatchRemoveModal } = useConfirmDeleteModal(async () => {
+  await db.moment.batchRemove(selectedList.value)
+  success({})
+  refresh()
+})
+
+const { setRemoveId, remove } = buildRemoveFn()
+const { open: openRemoveModal } = useConfirmDeleteModal(remove)
+
+function handleRemove(id: number) {
+  setRemoveId(id)
+  openRemoveModal()
+}
+
+function buildRemoveFn() {
+  let id = 0
+  return {
+    setRemoveId: (removeId: number) => {
+      id = removeId
+    },
+    remove: async () => {
+      await db.moment.remove(id)
+      success({})
+      refresh()
+    },
+  }
+}
 
 async function refresh() {
   list.value = (await db.moment.select()).map(i => ({
@@ -62,27 +91,6 @@ function update(id: number) {
   router.push(`/moment/update/${id}`)
 }
 
-function handleRemove(id: number) {
-  const { open, close } = useConfirmModal({
-    attrs: {
-      title: t('modal.confirmDelete'),
-      async onConfirm() {
-        await db.moment.remove(id)
-        close()
-        success({})
-        refresh()
-      },
-    },
-  })
-  open()
-}
-
-async function removeList() {
-  await Promise.all(selectedList.value.map(id => db.moment.remove(id)))
-  await refresh()
-  success({})
-}
-
 refresh()
 </script>
 
@@ -113,7 +121,7 @@ refresh()
     <more-menu>
       <v-list>
         <v-list-item value="moment.create" :title="$t('moment.create')" @click="viewMomentCreate" />
-        <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="removeList" />
+        <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="openBatchRemoveModal" />
       </v-list>
     </more-menu>
   </div>

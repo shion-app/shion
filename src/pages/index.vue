@@ -7,6 +7,7 @@ import type { InsertOverview, SelectLabel, SelectOverview, SelectPlan, SelectPro
 import { WidgetType } from '@/modules/database/models/overview'
 import Grid from '@/components/grid/Grid.vue'
 import type { GridList } from '@/hooks/useGrid'
+import { useConfirmDeleteModal } from '@/hooks/useConfirmModal'
 
 type OverviewForm = Pick<InsertOverview, 'type' | 'w' | 'h'> & { category?: [string, number] }
 
@@ -154,6 +155,36 @@ const { open, close, setModelValue } = useFormModal<
   return { planList, labelList, programList }
 })
 
+const { open: openBatchRemoveModal } = useConfirmDeleteModal(async () => {
+  await db.overview.batchRemove(selectedList.value)
+  success({})
+  await refresh()
+  grid.value?.compact()
+})
+
+const { setRemoveId, remove } = buildRemoveFn()
+const { open: openRemoveModal } = useConfirmDeleteModal(remove)
+
+function handleRemove(id: number) {
+  setRemoveId(id)
+  openRemoveModal()
+}
+
+function buildRemoveFn() {
+  let id = 0
+  return {
+    setRemoveId: (removeId: number) => {
+      id = removeId
+    },
+    remove: async () => {
+      await db.overview.remove(id)
+      success({})
+      await refresh()
+      grid.value?.compact()
+    },
+  }
+}
+
 async function refresh() {
   list.value = wrap(await db.overview.select())
 }
@@ -255,38 +286,6 @@ async function handleGridChange(items: number[], widgets: GridStackWidget[]) {
   await refresh()
 }
 
-async function removeList() {
-  const { open, close } = useConfirmModal({
-    attrs: {
-      title: t('modal.confirmDelete'),
-      async onConfirm() {
-        await Promise.all(selectedList.value.map(id => db.overview.remove(id)))
-        close()
-        success({})
-        await refresh()
-        grid.value?.compact()
-      },
-    },
-  })
-  open()
-}
-
-function handleRemove(id: number) {
-  const { open, close } = useConfirmModal({
-    attrs: {
-      title: t('modal.confirmDelete'),
-      async onConfirm() {
-        await db.overview.remove(id)
-        close()
-        success({})
-        await refresh()
-        grid.value?.compact()
-      },
-    },
-  })
-  open()
-}
-
 refresh()
 </script>
 
@@ -316,7 +315,7 @@ refresh()
   <more-menu>
     <v-list>
       <v-list-item value="overview.create" :title="$t('overview.create')" @click="showCreateForm" />
-      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="removeList" />
+      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="openBatchRemoveModal" />
     </v-list>
   </more-menu>
 </template>

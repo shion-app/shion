@@ -6,6 +6,7 @@ import type { InsertProgram } from '@/modules/database'
 import { upload } from '@/modules/upload'
 
 import exe from '@/assets/exe.png'
+import { useConfirmDeleteModal } from '@/hooks/useConfirmModal'
 
 type ProgramForm = Pick<InsertProgram, 'name' | 'color'>
 
@@ -66,6 +67,34 @@ const { open, close, setModelValue } = useFormModal<ProgramForm>(
     },
   }))
 
+const { open: openBatchRemoveModal } = useConfirmDeleteModal(async () => {
+  await Promise.all(selectedList.value.map(id => db.program.removeRelation(id)))
+  success({})
+  refresh()
+})
+
+const { setRemoveId, remove } = buildRemoveFn()
+const { open: openRemoveModal } = useConfirmDeleteModal(remove)
+
+function handleRemove(id: number) {
+  setRemoveId(id)
+  openRemoveModal()
+}
+
+function buildRemoveFn() {
+  let id = 0
+  return {
+    setRemoveId: (removeId: number) => {
+      id = removeId
+    },
+    remove: async () => {
+      await db.program.removeRelation(id)
+      success({})
+      refresh()
+    },
+  }
+}
+
 function showUpdateForm(id: number) {
   const program = whiteList.value.find(i => i.id == id)
   if (!program)
@@ -104,21 +133,6 @@ async function handleSelect() {
   success({})
 }
 
-async function handleRemove(id: number) {
-  const { open, close } = useConfirmModal({
-    attrs: {
-      title: t('modal.confirmDelete'),
-      async onConfirm() {
-        await db.program.removeRelation(id)
-        close()
-        success({})
-        refresh()
-      },
-    },
-  })
-  open()
-}
-
 function showFilterDialog() {
   filtering.value = true
 }
@@ -133,21 +147,6 @@ async function handleGridChange(items: number[]) {
   }).filter((i, index) => whiteList.value[index].id != i.id)
   await db.program.batchUpdate(programList)
   await refresh()
-}
-
-async function removeList() {
-  const { open, close } = useConfirmModal({
-    attrs: {
-      title: t('modal.confirmDelete'),
-      async onConfirm() {
-        await Promise.all(selectedList.value.map(id => db.program.removeRelation(id)))
-        close()
-        success({})
-        refresh()
-      },
-    },
-  })
-  open()
 }
 
 refresh()
@@ -174,7 +173,7 @@ refresh()
   <more-menu>
     <v-list>
       <v-list-item value="monitor.filterProgram" :title="$t('monitor.filterProgram')" @click="showFilterDialog" />
-      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="removeList" />
+      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="openBatchRemoveModal" />
     </v-list>
   </more-menu>
   <v-dialog
