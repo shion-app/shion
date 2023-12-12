@@ -1,14 +1,11 @@
 <script setup lang="ts">
 const props = defineProps<{
   title?: string
+  subtitle?: string
   selected: boolean
 }>()
 
 defineEmits(['update:selected'])
-
-defineOptions({
-  inheritAttrs: false,
-})
 
 const { selected: selectedVModel } = useVModels(props)
 </script>
@@ -16,7 +13,12 @@ const { selected: selectedVModel } = useVModels(props)
 <template>
   <v-hover>
     <template #default="{ isHovering, props: hoverProps }">
-      <v-card v-bind="hoverProps" :title="$props.title" hover flex-1 relative>
+      <v-card
+        v-bind="{
+          ...hoverProps,
+          ...$attrs,
+        }" :title="$props.title" :subtitle="$props.subtitle" hover flex-1 relative
+      >
         <template #prepend?>
           <slot name="prepend" />
         </template>
@@ -43,7 +45,6 @@ const { selected: selectedVModel } = useVModels(props)
           absolute bottom-2 right-2.5 bg-white
         >
           <v-menu
-            min-width="150"
             open-on-hover
           >
             <template #activator="{ props: menuProps }">
@@ -51,7 +52,7 @@ const { selected: selectedVModel } = useVModels(props)
                 <div i-mdi:menu-down text-6 />
               </v-btn>
             </template>
-            <v-list>
+            <v-list min-width="100">
               <slot name="menu" />
             </v-list>
           </v-menu>
