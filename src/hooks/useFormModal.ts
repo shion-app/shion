@@ -55,6 +55,7 @@ export function useFormModal<
       },
       onClosed() {
         model.value = {}
+        setModelValue({})
       },
       onAfterConfirm() {
         promise.resolve()
@@ -116,6 +117,9 @@ export function useFormModal<
         },
       },
     )
+    if (Object.keys(values).length == 0)
+      newOptions.attrs.form.values = {}
+
     modal.patchOptions(newOptions)
   }
 
