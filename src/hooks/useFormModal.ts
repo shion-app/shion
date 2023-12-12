@@ -2,6 +2,7 @@ import type { UseModalOptions } from 'vue-final-modal'
 import { useModal } from 'vue-final-modal'
 import mergeOptions from 'merge-options'
 import type { ComponentProps } from 'vue-component-type-helpers'
+import deepEqual from 'fast-deep-equal'
 
 import FormModal from '@/components/modal/FormModal.vue'
 
@@ -81,7 +82,7 @@ export function useFormModal<
     const values = modal.options.attrs?.form.values
     if (Object.keys(values || {}).length > 0) {
       for (const key in values) {
-        if (values[key] != model.value[key])
+        if (!deepEqual(values[key], model.value[key]))
           return
       }
     }
