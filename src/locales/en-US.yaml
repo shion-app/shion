@@ -78,6 +78,7 @@ overview:
   plan: Plan
   label: Label
   create: Create widget
+  update: Update widget
 monitor:
   filterProgram: Filter Program to monitor
   switchWindowTip: Switch to another application window to get data

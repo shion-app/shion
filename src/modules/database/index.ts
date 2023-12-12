@@ -1,6 +1,6 @@
 import Database from 'tauri-plugin-sql-api'
 import { error } from 'tauri-plugin-log-api'
-import type { Insertable, SelectType } from 'kysely'
+import type { Insertable, SelectType, Updateable } from 'kysely'
 
 import type { DatabaseExecutor } from './db'
 import { DatabaseError, SqliteErrorEnum, createKyselyDatabaseWithModels, findSqliteMessageFields } from './db'
@@ -59,3 +59,5 @@ export type InsertNote = Insertable<Note>
 export type InsertLabel = Insertable<Label>
 export type InsertProgram = Insertable<Program>
 export type InsertOverview = Insertable<Overview>
+
+export type UpdateOverview = Updateable<Overview>

@@ -3,12 +3,12 @@ import type { GridStackWidget } from 'gridstack'
 import type { ComponentExposed } from 'vue-component-type-helpers'
 
 import { db } from '@/modules/database'
-import type { InsertOverview, SelectLabel, SelectOverview, SelectPlan, SelectProgram } from '@/modules/database'
+import type { InsertOverview, SelectLabel, SelectOverview, SelectPlan, SelectProgram, UpdateOverview } from '@/modules/database'
 import { WidgetType } from '@/modules/database/models/overview'
 import Grid from '@/components/grid/Grid.vue'
 import type { GridList } from '@/hooks/useGrid'
 
-type OverviewForm = Pick<InsertOverview, 'type' | 'w' | 'h'> & { query?: [string, number] }
+type OverviewForm = Pick<InsertOverview, 'type' | 'w' | 'h'> & { category?: [string, number] }
 
 const { t } = useI18n()
 const { success } = useNotify()
@@ -19,6 +19,8 @@ const list = ref<GridList<SelectOverview>>([])
 const { col, wrap, select, selectedList } = useGrid(list)
 
 const grid = ref<ComponentExposed<typeof Grid<any>>>()
+const isCreate = ref(true)
+let updateId = 0
 
 const gridItems = computed(() => list.value.map(({ id, x, y, w, h }) => ({
   id: String(id), x, y, w, h,
@@ -43,7 +45,7 @@ const { open, close, setModelValue } = useFormModal<
   const singleCategoryBarvisible = model.type == WidgetType.SINGLE_CATEGORY_BAR
   return {
     attrs: {
-      title: t('overview.create'),
+      title: isCreate.value ? t('overview.create') : t('overview.update'),
       form: {
         fields: [
           {
@@ -86,7 +88,7 @@ const { open, close, setModelValue } = useFormModal<
           },
           {
             type: 'cascader',
-            key: 'query',
+            key: 'category',
             label: t('widget.singleCategoryBar.table'),
             visible: singleCategoryBarvisible,
             props: {
@@ -121,17 +123,17 @@ const { open, close, setModelValue } = useFormModal<
         ],
       },
       schema: (z) => {
-        const query = z.tuple([z.string(), z.number()])
+        const category = z.tuple([z.string(), z.number()])
         return z.object({
           type: z.number(),
           w: z.number(),
           h: z.number(),
-          query: singleCategoryBarvisible ? query : query.optional(),
+          category: singleCategoryBarvisible ? category : category.optional(),
         })
       },
       async onConfirm(v, setErrors) {
         try {
-          await handleCreate(v)
+          isCreate.value ? await handleCreate(v) : await handleUpdate(v)
         }
         catch (error) {
           return setErrors(parseFieldsError(error))
@@ -164,26 +166,72 @@ function showCreateForm() {
   open()
 }
 
+function showUpdateForm(id: number, list: GridList<SelectOverview>) {
+  updateId = id
+  const overview = list.find(i => i.id == id)
+  if (!overview)
+    return
+
+  isCreate.value = false
+  const { type, w, h, data } = overview
+  const value: Partial<OverviewForm> = {
+    type,
+    w,
+    h,
+  }
+  if (data.fields)
+    value.category = data.fields.category as [string, number]
+
+  setModelValue(value)
+  open()
+}
+
+function transformCategory(category: NonNullable<OverviewForm['category']>): SelectOverview['data']['query'] {
+  const [field, id] = category
+  const table = field == 'programId' ? db.activity.table : db.note.table
+  return {
+    table,
+    where: {
+      [field]: id,
+    },
+  }
+}
+
+function handleUpdate(overview: OverviewForm) {
+  const { w, h, type, category } = overview
+  const value: UpdateOverview = {
+    w,
+    h,
+    type,
+    data: {
+      fields: {
+        category,
+      },
+    },
+  }
+  if (overview.category)
+    value.data!.query = transformCategory(overview.category)
+
+  return db.overview.update(updateId, value)
+}
+
 function handleCreate(overview: OverviewForm) {
-  const { w, h, type } = overview
+  const { w, h, type, category } = overview
   const value: InsertOverview = {
     w,
     h,
     type,
     x: 0,
     y: 0,
-    data: {},
-  }
-  if (overview.query) {
-    const [field, id] = overview.query
-    const table = field == 'programId' ? db.activity.table : db.note.table
-    value.data.query = {
-      table,
-      where: {
-        [field]: id,
+    data: {
+      fields: {
+        category,
       },
-    }
+    },
   }
+  if (overview.category)
+    value.data.query = transformCategory(overview.category)
+
   return db.overview.insert(value)
 }
 
@@ -223,6 +271,22 @@ async function removeList() {
   open()
 }
 
+function handleRemove(id: number) {
+  const { open, close } = useConfirmModal({
+    attrs: {
+      title: t('modal.confirmDelete'),
+      async onConfirm() {
+        await db.overview.remove(id)
+        close()
+        success({})
+        await refresh()
+        grid.value?.compact()
+      },
+    },
+  })
+  open()
+}
+
 refresh()
 </script>
 
@@ -237,6 +301,10 @@ refresh()
   >
     <template #default="{ componentProps }">
       <grid-card :selected="componentProps.selected" @update:selected="v => select(componentProps.id, v)">
+        <template #menu>
+          <v-list-item value="button.update" :title="$t('button.update')" @click="showUpdateForm(componentProps.id, list)" />
+          <v-list-item value="button.remove" :title="$t('button.remove')" @click="handleRemove(componentProps.id)" />
+        </template>
         <v-card-text h-full class="pr-10!">
           <active-status-calendar v-if="componentProps.type == WidgetType.ACTIVE_STATUS_CALENDAR" />
           <single-category-bar v-else-if="componentProps.type == WidgetType.SINGLE_CATEGORY_BAR" :data="componentProps.data" />

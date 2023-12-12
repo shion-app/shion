@@ -21,9 +21,10 @@ export type Moment = origin.Moment
 export type Overview = Replace<origin.Overview, {
   type: WidgetType
   data: {
+    fields?: Record<string, unknown>
     query?: {
       table: string
-      where: object
+      where: Record<string, unknown>
     }
   }
 }>
