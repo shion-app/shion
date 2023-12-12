@@ -217,6 +217,7 @@ async function refresh() {
 }
 
 function showCreateForm() {
+  isCreate.value = true
   setModelValue({
     w: col(1),
     h: 1,
