@@ -7,6 +7,10 @@ const props = defineProps<{
 
 defineEmits(['update:modelValue'])
 
+defineOptions({
+  inheritAttrs: false,
+})
+
 // [@vue/compiler-sfc] Unresolvable type: TSConditionalType
 // attrs: FormItemProps['colorPicker']
 

@@ -7,6 +7,10 @@ const props = defineProps<{
 
 defineEmits(['update:selected'])
 
+defineOptions({
+  inheritAttrs: false,
+})
+
 const { selected: selectedVModel } = useVModels(props)
 </script>
 

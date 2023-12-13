@@ -11,6 +11,10 @@ const props = withDefaults(defineProps<{
 
 defineEmits(['update:modelValue'])
 
+defineOptions({
+  inheritAttrs: false,
+})
+
 const { modelValue } = useVModels(props)
 
 const isRoot = computed(() => props.prefix.length == 0)

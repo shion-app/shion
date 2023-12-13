@@ -11,6 +11,10 @@ const props = withDefaults(defineProps<{
 
 defineEmits(['update:modelValue'])
 
+defineOptions({
+  inheritAttrs: false,
+})
+
 const attrs = useAttrs()
 
 const { modelValue } = useVModels(props)
