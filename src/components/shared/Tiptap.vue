@@ -173,10 +173,12 @@ watchOnce(contentVModel, (v) => {
     <tooltip-button
       v-for="{ icon, tip, handler, disabled } in utils"
       :key="icon"
-      :text="tip"
+      :tooltip="tip"
+      location="bottom"
       :icon="icon"
       :disabled="disabled"
       size="small"
+      variant="text"
       @click="handler"
     />
   </div>

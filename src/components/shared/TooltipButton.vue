@@ -1,18 +1,22 @@
 <script setup lang="ts">
 defineProps<{
-  text: string
-  icon: string
+  tooltip: string
+  location?: any
 }>()
+
+defineOptions({
+  inheritAttrs: false,
+})
 </script>
 
 <template>
-  <v-tooltip :text="$props.text" location="bottom">
+  <v-tooltip :text="$props.tooltip" :location="$props.location">
     <template #activator="{ props }">
       <v-btn
         v-bind="{
           ...props,
           ...$attrs,
-        }" :icon="$props.icon" variant="text"
+        }"
       />
     </template>
   </v-tooltip>
