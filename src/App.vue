@@ -41,7 +41,9 @@ listen('quit', async () => {
             <component :is="Component" />
           </router-view>
         </layout-main>
-        <layout-footer />
+        <layout-footer>
+          <status-bar />
+        </layout-footer>
       </layout-provider>
       <ModalsContainer />
       <notification-container />

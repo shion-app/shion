@@ -1,6 +1,7 @@
 export const useTimerStore = defineStore('timer', () => {
   const running = ref(false)
   const spend = ref(0)
+  const text = ref('')
 
   let startTime = 0
   let endTime = 0
@@ -51,10 +52,16 @@ export const useTimerStore = defineStore('timer', () => {
     return raw.hour ? `${hour}:${result}` : result
   }
 
+  function setText(v: string) {
+    text.value = v
+  }
+
   return {
     running,
     time,
     start,
     finish,
+    setText,
+    text,
   }
 })
