@@ -1,10 +1,7 @@
 <script setup lang="ts" generic="T extends { id: number }">
-import type { AddRemoveFcn, GridStackOptions, GridStackWidget } from 'gridstack'
+import type { GridStackOptions, GridStackWidget } from 'gridstack'
 import { GridStack } from 'gridstack'
-import { render } from 'vue'
 import { nanoid } from 'nanoid'
-
-import GridItem from './GridItem.vue'
 
 const props = defineProps<{
   items: GridStackWidget[]
@@ -16,51 +13,12 @@ const emit = defineEmits<{
   (e: 'change', items: number[], widgets: GridStackWidget[]): void
 }>()
 
-const slots = defineSlots<{
+defineSlots<{
   default(props: { componentProps: T }): any
 }>()
 
-defineExpose({
-  compact,
-})
-
-const instance = getCurrentInstance()
-
 let grid: GridStack | null = null
 const gridId = `grid-stack-${nanoid()}`
-
-const shadowDom = {}
-
-const gsAddRemoveVueComponents: AddRemoveFcn = (host, item, add, isGrid) => {
-  if (!host)
-    return
-
-  if (isGrid)
-    return
-
-  const itemId = Number(item.id)
-  if (add) {
-    const componentProps = props.componentProps.find(i => i.id == itemId)
-    const itemVNode = h(
-      GridItem,
-      null,
-      {
-        default: componentProps
-          ? () => slots.default({
-              componentProps,
-            })
-          : undefined,
-      },
-    )
-    shadowDom[itemId] = document.createElement('div')
-    itemVNode.appContext = instance!.appContext
-    render(itemVNode, shadowDom[itemId])
-    return itemVNode.el as HTMLElement
-  }
-  else {
-    render(null, shadowDom[itemId])
-  }
-}
 
 function compact() {
   if (!grid)
@@ -71,6 +29,8 @@ function compact() {
   emit('change', widgets.map(i => Number(i.id)), widgets)
 }
 
+const item = (id: string) => `${gridId}-item-${id}`
+
 onMounted(() => {
   grid = GridStack.init({
     margin: 0,
@@ -78,17 +38,35 @@ onMounted(() => {
     ...props.options,
   }, gridId)
 
-  grid.on('dragstop', compact)
+  grid.setAnimation(false)
 
-  grid.load(props.items, gsAddRemoveVueComponents)
+  grid.on('dragstop', compact)
 })
 
-watchDeep(() => props.componentProps, () => {
-  grid?.removeAll()
-  grid?.load(props.items, gsAddRemoveVueComponents)
+watchArray(() => props.items, (newList, oldList) => {
+  for (const { id } of newList) {
+    if (!oldList.find(i => i.id == id)) {
+      nextTick(() => {
+        grid?.makeWidget(`#${item(id!)}`)
+        compact()
+      })
+    }
+  }
+  for (const { id } of oldList) {
+    if (!newList.find(i => i.id == id)) {
+      grid?.removeWidget(`#${item(id!)}`)
+      compact()
+    }
+  }
 })
 </script>
 
 <template>
-  <div :class="gridId" />
+  <div :class="gridId">
+    <div v-for="w in props.items" :id="item(w.id!)" :key="w.id" class="grid-stack-item" :gs-x="w.x" :gs-y="w.y" :gs-w="w.w" :gs-h="w.h" :gs-id="w.id">
+      <div class="grid-stack-item-content" p-3 flex flex-col>
+        <slot :component-props="props.componentProps.find(i => i.id == Number(w.id))!" />
+      </div>
+    </div>
+  </div>
 </template>

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { GridStackWidget } from 'gridstack'
-import type { ComponentExposed } from 'vue-component-type-helpers'
 
 import { db } from '@/modules/database'
 import type { InsertOverview, SelectLabel, SelectOverview, SelectPlan, SelectProgram, UpdateOverview } from '@/modules/database'
@@ -19,7 +18,6 @@ const list = ref<GridList<SelectOverview>>([])
 
 const { col, wrap, select, selectedList } = useGrid(list)
 
-const grid = ref<ComponentExposed<typeof Grid<any>>>()
 const isCreate = ref(true)
 
 const gridItems = computed(() => list.value.map(({ id, x, y, w, h }) => ({
@@ -143,7 +141,6 @@ const { open, close, setModelValue } = useFormModal<
         close()
         success({})
         await refresh()
-        grid.value?.compact()
       },
     },
   }
@@ -160,7 +157,6 @@ const { open: openBatchRemoveModal } = useConfirmDeleteModal(async () => {
   await db.overview.batchRemove(selectedList.value)
   success({})
   await refresh()
-  grid.value?.compact()
 })
 
 const { setRemoveId, remove } = buildRemoveFn()
@@ -181,7 +177,6 @@ function buildRemoveFn() {
       await db.overview.remove(id)
       success({})
       await refresh()
-      grid.value?.compact()
     },
   }
 }
