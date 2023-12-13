@@ -8,11 +8,11 @@ export function useNoteCreate() {
   const { parseFieldsError } = useDatabase()
   const { start } = useTimerStore()
 
-  const planList = ref<Array<SelectPlan>>([])
-  const labelList = ref<Array<SelectLabel>>([])
-
-  const { open, close, setModelValue } = useFormModal<NoteForm>(
-    model => ({
+  const { open, close, setModelValue } = useFormModal<NoteForm, {
+    planList: Array<SelectPlan>
+    labelList: Array<SelectLabel>
+  }>(
+    (model, modal) => ({
       attrs: {
         title: t('note.fill.title'),
         form: {
@@ -22,7 +22,7 @@ export function useNoteCreate() {
               key: 'planId',
               label: t('note.fill.plan'),
               props: {
-                'items': planList.value.map(({ name, id }) => ({
+                'items': (modal?.planList || []).map(({ name, id }) => ({
                   title: name,
                   value: id,
                 })),
@@ -38,7 +38,7 @@ export function useNoteCreate() {
               key: 'labelId',
               label: t('note.fill.label'),
               props: {
-                items: labelList.value.filter(i => i.planId == model.planId).map(({ name, id }) => ({
+                items: (modal?.labelList || []).filter(i => i.planId == model.planId).map(({ name, id }) => ({
                   title: name,
                   value: id,
                 })),
@@ -65,7 +65,13 @@ export function useNoteCreate() {
           }))
         },
       },
-    }))
+    }), async () => {
+      const [planList, labelList] = await Promise.all([
+        db.plan.select(),
+        db.label.select(),
+      ])
+      return { planList, labelList }
+    })
 
   function handleCreate(note: NoteForm) {
     const now = Date.now()
@@ -76,20 +82,5 @@ export function useNoteCreate() {
     })
   }
 
-  async function refresh() {
-    [labelList.value, planList.value] = await Promise.all([db.label.select(), db.plan.select()])
-  }
-
-  async function openModal(value?: { planId: number; labelId: number }) {
-    await refresh()
-
-    if (value)
-      setModelValue(value)
-
-    await open()
-  }
-
-  return {
-    openModal,
-  }
+  return { open, setModelValue }
 }

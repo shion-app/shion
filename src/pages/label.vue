@@ -11,7 +11,7 @@ const { t } = useI18n()
 const router = useRouter()
 const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
-const { openModal } = useNoteCreate()
+const noteCreate = useNoteCreate()
 
 const labelList = ref<GridList<SelectLabel>>([])
 const { wrap, getItemsByOrder, select, selectedList } = useGrid(labelList)
@@ -149,11 +149,12 @@ function buildUpdateFn() {
 }
 
 async function handleStart(label: Pick<SelectLabel, 'id' | 'planId'>) {
+  noteCreate.setModelValue({
+    labelId: label.id,
+    planId: label.planId,
+  })
   try {
-    await openModal({
-      labelId: label.id,
-      planId: label.planId,
-    })
+    await noteCreate.open()
   }
   catch (error) {
     return

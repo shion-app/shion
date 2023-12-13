@@ -6,7 +6,7 @@ const { success } = useNotify()
 const { running, time } = storeToRefs(store)
 const { finish } = store
 
-const { openModal } = useNoteCreate()
+const { open } = useNoteCreate()
 
 async function finishTimer() {
   await finish()
@@ -24,7 +24,7 @@ async function finishTimer() {
     <div
       shadow-lg hover:shadow-xl transition-shadow w-20 h-20 rounded-full cursor-pointer text-12 flex justify-center items-center bg-white
       @click="() => {
-        running ? finishTimer() : openModal()
+        running ? finishTimer() : open()
       }"
     >
       <div :class="running ? 'i-mdi:stop' : 'i-mdi:play'" />
