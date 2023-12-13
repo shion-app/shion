@@ -54,6 +54,9 @@ const { open, close, setModelValue } = useFormModal<Props, {
     return {
       attrs: {
         title: t('timeline.filter'),
+        options: {
+          reset: true,
+        },
         form: {
           fields: [
             {
@@ -87,6 +90,7 @@ const { open, close, setModelValue } = useFormModal<Props, {
         onConfirm(v) {
           categoryVModel.value = v.category
           idVModel.value = v.id
+          statusBarText.value = ''
           if (v.category)
             statusBarText.value = categoryOptions.value.find(i => i.value == v.category)!.title
 

@@ -52,6 +52,7 @@ modal:
   cancel: Cancel
   prompt: Prompt
   confirmDelete: Are you sure to delete?
+  reset: Reset
 button:
   update: Update
   remove: Remove

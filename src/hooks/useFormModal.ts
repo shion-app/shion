@@ -48,23 +48,32 @@ export function useFormModal<
 
   const promise = new ModalPromise()
 
-  const options = mergeOptions(source(model.value, modalValue.value), {
-    attrs: {
-      onFormUpdate(v: Partial<T>) {
-        model.value = v
-      },
-      onClosed() {
-        model.value = {}
-        setModelValue({})
-      },
-      onAfterConfirm() {
-        promise.resolve()
-      },
-      onAfterCancel() {
-        promise.reject()
+  const options = mergeOptions(
+    {
+      attrs: {
+        options: {
+          reset: false,
+        },
       },
     },
-  })
+    source(model.value, modalValue.value),
+    {
+      attrs: {
+        onFormUpdate(v: Partial<T>) {
+          model.value = v
+        },
+        onClosed() {
+          model.value = {}
+          setModelValue({})
+        },
+        onAfterConfirm() {
+          promise.resolve()
+        },
+        onAfterCancel() {
+          promise.reject()
+        },
+      },
+    })
 
   const modal = useModal<C>({
     component: FormModal,

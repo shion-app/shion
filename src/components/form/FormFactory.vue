@@ -21,8 +21,12 @@ const emit = defineEmits<{
 
 const validationSchema = computed(() => toTypedSchema(props.schema(z)))
 
-const { handleSubmit, setErrors } = useForm({
+const { handleSubmit, setErrors, handleReset } = useForm({
   validationSchema,
+})
+
+defineExpose({
+  handleReset,
 })
 
 const fields = props.form.fields.map(({ key }) => {

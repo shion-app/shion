@@ -1,11 +1,16 @@
 <script setup lang="ts" generic="T">
 import { VueFinalModal } from 'vue-final-modal'
 import { nanoid } from 'nanoid'
+import type { ComponentExposed } from 'vue-component-type-helpers'
 
+import FormFactory from '../form/FormFactory.vue'
 import type { BuildSchemaObject, Form } from './types'
 
 defineProps<{
   title: string
+  options?: {
+    reset: boolean
+  }
   form: Form<keyof T>
   schema: BuildSchemaObject
 }>()
@@ -20,6 +25,8 @@ defineEmits<{
 }>()
 
 const formId = `form-${nanoid()}`
+
+const formFactory = ref<ComponentExposed<typeof FormFactory>>()
 </script>
 
 <template>
@@ -34,7 +41,8 @@ const formId = `form-${nanoid()}`
   >
     <v-card :title="title" min-width="400" max-width="600" max-height="360">
       <v-card-text class="overflow-auto!">
-        <form-factory
+        <FormFactory
+          ref="formFactory"
           :form="form"
           :schema="schema"
           :form-id="formId"
@@ -47,6 +55,11 @@ const formId = `form-${nanoid()}`
       </v-card-text>
       <v-card-actions>
         <v-spacer />
+        <v-btn
+          v-if="$props.options?.reset"
+          :text="$t('modal.reset')"
+          @click="formFactory?.handleReset()"
+        />
         <v-btn
           color="primary"
           type="submit"

@@ -52,6 +52,7 @@ modal:
   cancel: 取消
   prompt: 提示
   confirmDelete: 确定删除吗?
+  reset: 重置
 button:
   update: 更改
   remove: 删除
