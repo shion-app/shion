@@ -7,7 +7,7 @@ const timerText = computed(() => route.fullPath == '/timer' ? text.value : `#${t
 </script>
 
 <template>
-  <div px-4 flex>
+  <div id="status-bar" px-4 flex>
     <div flex-1 />
     <tooltip-button v-if="running" :tooltip="$t('statusBar.timer')" location="top" :text="timerText" variant="text" />
   </div>

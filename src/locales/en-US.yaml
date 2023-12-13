@@ -154,3 +154,4 @@ widget:
     program: Program
 statusBar:
   timer: Timing...
+  timeline: Filter Categories
