@@ -95,34 +95,32 @@ refresh()
 </script>
 
 <template>
-  <div p-4>
-    <template v-if="list.length">
-      <grid-card
-        v-for="moment in list" :key="moment.id"
-        v-model:selected="moment.selected"
-        :title="moment.title"
-        :subtitle="format(moment.time, isThisYear(moment.time) ? 'MM-dd' : 'yyyy-MM-dd')"
-        mb-6
-        @click="viewDetail(moment.id)"
-      >
-        <v-card-text flex space-x-4>
-          <img v-if="moment.content.images.length" width="200" height="200" object-contain v-bind="moment.content.images[0]">
-          <div flex-1 line-clamp-4 h-max break-all mb-6>
-            {{ moment.content.data }}
-          </div>
-        </v-card-text>
-        <template #menu>
-          <v-list-item value="moment.edit" :title="$t('moment.edit')" @click="update(moment.id)" />
-          <v-list-item value="button.remove" :title="$t('button.remove')" @click="handleRemove(moment.id)" />
-        </template>
-      </grid-card>
-    </template>
-    <empty v-else />
-    <more-menu>
-      <v-list>
-        <v-list-item value="moment.create" :title="$t('moment.create')" @click="viewMomentCreate" />
-        <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="openBatchRemoveModal" />
-      </v-list>
-    </more-menu>
-  </div>
+  <template v-if="list.length">
+    <grid-card
+      v-for="moment in list" :key="moment.id"
+      v-model:selected="moment.selected"
+      :title="moment.title"
+      :subtitle="format(moment.time, isThisYear(moment.time) ? 'MM-dd' : 'yyyy-MM-dd')"
+      mx-4 mb-6
+      @click="viewDetail(moment.id)"
+    >
+      <v-card-text flex space-x-4>
+        <img v-if="moment.content.images.length" width="200" height="200" object-contain v-bind="moment.content.images[0]">
+        <div flex-1 line-clamp-4 h-max break-all mb-6>
+          {{ moment.content.data }}
+        </div>
+      </v-card-text>
+      <template #menu>
+        <v-list-item value="moment.edit" :title="$t('moment.edit')" @click="update(moment.id)" />
+        <v-list-item value="button.remove" :title="$t('button.remove')" @click="handleRemove(moment.id)" />
+      </template>
+    </grid-card>
+  </template>
+  <empty v-else />
+  <more-menu>
+    <v-list>
+      <v-list-item value="moment.create" :title="$t('moment.create')" @click="viewMomentCreate" />
+      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="openBatchRemoveModal" />
+    </v-list>
+  </more-menu>
 </template>
