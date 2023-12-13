@@ -152,3 +152,5 @@ widget:
     plan: Plan
     label: Label
     program: Program
+statusBar:
+  timer: Timing...

@@ -152,3 +152,5 @@ widget:
     plan: 计划
     label: 标签
     program: 程序
+statusBar:
+  timer: 计时中...
