@@ -105,7 +105,7 @@ refresh()
       @click="viewDetail(moment.id)"
     >
       <v-card-text flex space-x-4>
-        <img v-if="moment.content.images.length" width="200" height="200" object-contain v-bind="moment.content.images[0]">
+        <v-img v-if="moment.content.images.length" :max-width="200" v-bind="moment.content.images[0]" />
         <div flex-1 line-clamp-4 h-max break-all mb-6>
           {{ moment.content.data }}
         </div>
