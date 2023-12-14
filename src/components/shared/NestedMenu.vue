@@ -11,10 +11,6 @@ const props = withDefaults(defineProps<{
 
 defineEmits(['update:modelValue'])
 
-defineOptions({
-  inheritAttrs: false,
-})
-
 const { modelValue } = useVModels(props)
 
 const isRoot = computed(() => props.prefix.length == 0)
@@ -31,7 +27,7 @@ function menuItemActive(value: NestedMenuItemValue) {
 </script>
 
 <template>
-  <v-menu :location="location" min-width="100" v-bind="$attrs">
+  <v-menu :location="location" min-width="100">
     <v-list max-height="200">
       <template v-for="{ title, value, children } in props.items" :key="value">
         <v-list-item v-if="children && children.length > 0" :title="title" :value="value" append-icon="mdi-chevron-right" :active="menuItemActive(value)">
