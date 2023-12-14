@@ -32,9 +32,7 @@ defineExpose({
 const fields = props.form.fields.map(({ key }) => {
   const field = useField(key)
   const value = props.form.values?.[key]
-  field.resetField({
-    value,
-  })
+  field.setValue(value, false)
   return {
     key,
     field,
@@ -66,7 +64,7 @@ watchDeep(() => props.form.values, (v) => {
       continue
 
     if (field.field.value.value != v[key])
-      field.field.setValue(v[key])
+      field.field.setValue(v[key], false)
   }
 })
 
