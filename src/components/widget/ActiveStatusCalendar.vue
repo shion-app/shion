@@ -102,5 +102,5 @@ init()
 </script>
 
 <template>
-  <vue-echarts :option="option" autoresize overflow-hidden />
+  <vue-echarts :option="option" autoresize />
 </template>

@@ -61,6 +61,7 @@ const { open, close, setModelValue } = useFormModal<
                 if (v == WidgetType.ACTIVE_STATUS_CALENDAR) {
                   setModelValue({
                     w: col(3),
+                    category: undefined,
                   })
                 }
               },
@@ -96,7 +97,7 @@ const { open, close, setModelValue } = useFormModal<
                 {
                   title: t('widget.singleCategoryBar.plan'),
                   value: 'planId',
-                  children: modal?.planList?.map(i => ({
+                  children: modal.planList?.map(i => ({
                     title: i.name,
                     value: i.id,
                   })),
@@ -104,7 +105,7 @@ const { open, close, setModelValue } = useFormModal<
                 {
                   title: t('widget.singleCategoryBar.label'),
                   value: 'labelId',
-                  children: modal?.labelList?.map(i => ({
+                  children: modal.labelList?.map(i => ({
                     title: i.name,
                     value: i.id,
                   })),
@@ -112,7 +113,7 @@ const { open, close, setModelValue } = useFormModal<
                 {
                   title: t('widget.singleCategoryBar.program'),
                   value: 'programId',
-                  children: modal?.programList?.map(i => ({
+                  children: modal.programList?.map(i => ({
                     title: i.name,
                     value: i.id,
                   })),
@@ -132,8 +133,22 @@ const { open, close, setModelValue } = useFormModal<
         })
       },
       async onConfirm(v, setErrors) {
+        let widget
+        if (v.category) {
+          const [identifier, id] = v.category
+          const list
+            = ((identifier == 'planId'
+              ? modal.planList
+              : identifier == 'labelId'
+                ? modal.labelList
+                : identifier == 'programId'
+                  ? modal.programList
+                  : []) || []).map(({ id, name, color }) => ({ id, title: name, color }))
+          const { title, color } = list.find(i => i.id == id)!
+          widget = { title, color }
+        }
         try {
-          isCreate.value ? await handleCreate(v) : await handleUpdate(v)
+          isCreate.value ? await handleCreate(v, widget) : await handleUpdate(v, widget)
         }
         catch (error) {
           return setErrors(parseFieldsError(error))
@@ -187,7 +202,7 @@ function buildUpdateFn() {
     setUpdateId: (updateId: number) => {
       id = updateId
     },
-    handleUpdate: (overview: OverviewForm) => {
+    handleUpdate: (overview: OverviewForm, widget: Record<string, unknown>) => {
       const { w, h, type, category } = overview
       const value: UpdateOverview = {
         w,
@@ -201,6 +216,9 @@ function buildUpdateFn() {
       }
       if (overview.category)
         value.data!.query = transformCategory(overview.category)
+
+      if (widget)
+        value.data!.widget = widget
 
       return db.overview.update(id, value)
     },
@@ -251,7 +269,7 @@ function transformCategory(category: NonNullable<OverviewForm['category']>): Sel
   }
 }
 
-function handleCreate(overview: OverviewForm) {
+function handleCreate(overview: OverviewForm, widget?: Record<string, unknown>) {
   const { w, h, type, category } = overview
   const value: InsertOverview = {
     w,
@@ -267,6 +285,9 @@ function handleCreate(overview: OverviewForm) {
   }
   if (overview.category)
     value.data.query = transformCategory(overview.category)
+
+  if (widget)
+    value.data.widget = widget
 
   return db.overview.insert(value)
 }

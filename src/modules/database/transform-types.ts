@@ -26,6 +26,7 @@ export type Overview = Replace<origin.Overview, {
       table: string
       where: Record<string, unknown>
     }
+    widget?: Record<string, unknown>
   }
 }>
 

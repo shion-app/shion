@@ -33,10 +33,11 @@ const list = computed(() => {
     }))
 })
 
-const title = computed(() => list.value[0]?.name)
-const color = computed(() => list.value[0]?.color)
+const title = computed(() => props.data.widget?.title as string)
+const color = computed(() => props.data.widget?.color as string)
 
 async function init() {
+  noteList.value = activityList.value = []
   const { query } = props.data
   if (!query)
     return
@@ -110,9 +111,12 @@ const option = computed<EChartsOption>(() => {
   }
 })
 
-init()
+watch(() => props.data, init, {
+  deep: true,
+  immediate: true,
+})
 </script>
 
 <template>
-  <vue-echarts :option="option" autoresize overflow-hidden />
+  <vue-echarts :option="option" autoresize />
 </template>
