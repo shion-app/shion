@@ -45,7 +45,8 @@ const graph = computed(() => {
   const primary: Array<GraphItem> = []
   const secondary: Array<GraphItem> = []
   for (const item of props.list) {
-    const startIndex = timeline.value.indexOf(item.start)
+    // fix: 前节点end和后节点start相同（暂时处理）
+    const startIndex = timeline.value.lastIndexOf(item.start)
     const endIndex = timeline.value.indexOf(item.end)
     const isSibling = endIndex - startIndex == 1
     const graphItem: GraphItem = {
