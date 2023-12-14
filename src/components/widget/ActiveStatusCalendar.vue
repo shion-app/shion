@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { EChartsOption } from 'echarts'
-import { addDays, isBefore, isSameYear } from 'date-fns'
+import { addDays, getDay, isBefore, isSameYear } from 'date-fns'
 
 import { type SelectActivity, type SelectNote, db } from '@/modules/database'
 
@@ -13,7 +13,7 @@ const { config } = storeToRefs(configStore)
 const noteList = ref<Array<SelectNote>>([])
 const activityList = ref<Array<SelectActivity>>([])
 
-const day = 365
+const day = 51 * 7 + getDay(new Date())
 const range = generateRange(day)
 
 const list = computed(() => {
@@ -73,7 +73,7 @@ const option = computed<EChartsOption>(() => {
         const [time, value] = params.value
         const date = new Date(time)
         const dateText = isSameYear(new Date(), date) ? format(date, 'MM-dd') : format(date, 'yyyy-MM-dd')
-        return `<div style="margin-bottom: 6px;">${dateText}</div><div>${formatHHmmss(value)}</div>`
+        return `<div style="margin-bottom: 6px;">${dateText}</div><div>${params.marker} <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatHHmmss(value)}</span></div>`
       },
     },
     series: {
