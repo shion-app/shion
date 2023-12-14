@@ -91,8 +91,8 @@
         "resizable": false,
         "center": true,
         "title": "shion",
-        "width": 1056,
-        "height": 594,
+        "width": 1152,
+        "height": 648,
         "fileDropEnabled": false,
         "decorations": false
       }

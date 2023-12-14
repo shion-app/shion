@@ -198,7 +198,7 @@ refresh()
         <grid
           :items="getItemsByOrder(list)"
           :component-props="getCardList(list)"
-          :options="{ cellHeight: 130 }"
+          :options="{ cellHeight: 120 }"
           @change="items => handleGridChange(items, list)"
         >
           <template #default="{ componentProps }">

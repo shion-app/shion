@@ -46,10 +46,10 @@ const option = computed<EChartsOption>(() => {
       },
     },
     calendar: {
-      left: 40,
-      top: 30,
-      width: '95%',
+      left: 50,
+      top: 20,
       range: range.map(date => format(date, 'yyyy-MM-dd')),
+      cellSize: 17,
       splitLine: {
         show: false,
       },

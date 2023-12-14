@@ -23,7 +23,7 @@ const { selected: selectedVModel } = useVModels(props)
           ...$attrs,
         }" :title="$props.title" :subtitle="$props.subtitle" hover flex-1 relative
       >
-        <template #prepend?>
+        <template v-if="$slots.prepend" #prepend>
           <slot name="prepend" />
         </template>
         <template v-if="$slots.append" #append>
