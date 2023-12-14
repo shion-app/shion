@@ -30,7 +30,9 @@ const formFactory = ref<ComponentExposed<typeof FormFactory>>()
 </script>
 
 <template>
+  <!-- fix: focus-trap 点击cascader list时无法选中 -->
   <VueFinalModal
+    :focus-trap="false"
     content-transition="dialog-transition"
     flex justify-center items-center
     @closed="$emit('closed')"
