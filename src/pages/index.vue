@@ -42,7 +42,7 @@ const { open, close, setModelValue } = useFormModal<
   }
 >
 ((model, modal) => {
-  const singleCategoryBarvisible = model.type == WidgetType.SINGLE_CATEGORY_BAR
+  const singleCategoryBarvisible = model.type == WidgetType.SINGLE_CATEGORY_BAR || model.type == WidgetType.TEXT_SUMMARY
   return {
     attrs: {
       title: isCreate.value ? t('overview.create') : t('overview.update'),
@@ -333,6 +333,7 @@ refresh()
         <v-card-text h-full class="pr-11!">
           <active-status-calendar v-if="componentProps.type == WidgetType.ACTIVE_STATUS_CALENDAR" />
           <single-category-bar v-else-if="componentProps.type == WidgetType.SINGLE_CATEGORY_BAR" :data="componentProps.data" />
+          <text-summary v-else-if="componentProps.type == WidgetType.TEXT_SUMMARY" :data="componentProps.data" />
         </v-card-text>
       </grid-card>
     </template>

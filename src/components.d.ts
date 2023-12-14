@@ -37,6 +37,7 @@ declare module '@vue/runtime-core' {
     SettingDialog: typeof import('./components/dialog/SettingDialog.vue')['default']
     SingleCategoryBar: typeof import('./components/widget/SingleCategoryBar.vue')['default']
     StatusBar: typeof import('./components/footer/StatusBar.vue')['default']
+    TextSummary: typeof import('./components/widget/TextSummary.vue')['default']
     TimeCard: typeof import('./components/widget/TimeCard.vue')['default']
     TimelineFilter: typeof import('./components/timeline/TimelineFilter.vue')['default']
     TimelineGraph: typeof import('./components/timeline/TimelineGraph.vue')['default']

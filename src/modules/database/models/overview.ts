@@ -5,6 +5,7 @@ import { Model, get, injectModel } from './model'
 export enum WidgetType {
   ACTIVE_STATUS_CALENDAR,
   SINGLE_CATEGORY_BAR,
+  TEXT_SUMMARY,
 }
 
 @injectModel<OriginOverview, TransformOverview>({

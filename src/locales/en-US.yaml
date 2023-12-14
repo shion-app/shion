@@ -146,6 +146,7 @@ widget:
   typeDesc:
     ACTIVE_STATUS_CALENDAR: Active status calendar
     SINGLE_CATEGORY_BAR: Single category bar
+    TEXT_SUMMARY: Text Summary
   column: Occupy column
   row: Occupy row
   singleCategoryBar:
@@ -153,6 +154,11 @@ widget:
     plan: Plan
     label: Label
     program: Program
+  textSummary:
+    clockIn: Clock in
+    day: '{day} days'
+    average: Average
+    monthAverage: 30 days average
 statusBar:
   timer: Timing...
   timeline: Filter Categories

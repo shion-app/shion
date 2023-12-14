@@ -146,6 +146,7 @@ widget:
   typeDesc:
     ACTIVE_STATUS_CALENDAR: 活跃状态日历
     SINGLE_CATEGORY_BAR: 单独类别柱状图
+    TEXT_SUMMARY: 文本总结
   column: 占用列数
   row: 占用行数
   singleCategoryBar:
@@ -153,6 +154,11 @@ widget:
     plan: 计划
     label: 标签
     program: 程序
+  textSummary:
+    clockIn: 打卡时长
+    day: '{day} 天'
+    average: 平均时长
+    monthAverage: 30天平均
 statusBar:
   timer: 计时中...
   timeline: 筛选类别
