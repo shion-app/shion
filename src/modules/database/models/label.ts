@@ -19,9 +19,7 @@ export class Label extends Model<TransformLabel> {
   }
 
   removeBy(value: { planId?: number }) {
-    let query = this.kysely.updateTable(this.table).set({
-      deletedAt: Date.now(),
-    })
+    let query = this.baseRemove()
     if (value.planId)
       query = query.where('planId', '=', value.planId)
 

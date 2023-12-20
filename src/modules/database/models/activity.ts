@@ -21,9 +21,7 @@ export class Activity extends Model<TransformActivity> {
   }
 
   removeBy(value: { programId?: number }) {
-    let query = this.kysely.updateTable(this.table).set({
-      deletedAt: Date.now(),
-    })
+    let query = this.baseRemove()
     if (value.programId)
       query = query.where('programId', '=', value.programId)
 
