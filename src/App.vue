@@ -2,7 +2,7 @@
 import { ModalsContainer } from 'vue-final-modal'
 
 import { listen } from '@tauri-apps/api/event'
-import { exit } from '@tauri-apps/api/process'
+import { exit } from '@tauri-apps/plugin-process'
 
 const { start } = useUpdateStore()
 const configStore = useConfigStore()

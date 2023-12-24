@@ -17,7 +17,6 @@ declare module '@vue/runtime-core' {
     ColorPicker: typeof import('./components/form/ColorPicker.vue')['default']
     ConfirmModal: typeof import('./components/modal/ConfirmModal.vue')['default']
     Empty: typeof import('./components/shared/Empty.vue')['default']
-    FooterTeleport: typeof import('./components/footer/FooterTeleport.vue')['default']
     FormFactory: typeof import('./components/form/FormFactory.vue')['default']
     FormModal: typeof import('./components/modal/FormModal.vue')['default']
     Grid: typeof import('./components/grid/Grid.vue')['default']
@@ -36,13 +35,11 @@ declare module '@vue/runtime-core' {
     RouterView: typeof import('vue-router')['RouterView']
     SettingDialog: typeof import('./components/dialog/SettingDialog.vue')['default']
     SingleCategoryBar: typeof import('./components/widget/SingleCategoryBar.vue')['default']
-    StatusBar: typeof import('./components/footer/StatusBar.vue')['default']
     TextSummary: typeof import('./components/widget/TextSummary.vue')['default']
     TimeCard: typeof import('./components/widget/TimeCard.vue')['default']
     TimelineFilter: typeof import('./components/timeline/TimelineFilter.vue')['default']
     TimelineGraph: typeof import('./components/timeline/TimelineGraph.vue')['default']
     Tiptap: typeof import('./components/shared/Tiptap.vue')['default']
-    TitleBar: typeof import('./components/header/TitleBar.vue')['default']
     TooltipButton: typeof import('./components/shared/TooltipButton.vue')['default']
   }
 }

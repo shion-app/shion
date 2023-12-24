@@ -1,6 +1,6 @@
 import type { Event } from '@tauri-apps/api/event'
 import { listen } from '@tauri-apps/api/event'
-import { invoke } from '@tauri-apps/api'
+import { core } from '@tauri-apps/api'
 
 import type * as backend from '@/interfaces/backend'
 import { type SelectProgram, db } from '@/modules/database'
@@ -40,7 +40,7 @@ export const useMonitorStore = defineStore('monitor', () => {
   refresh()
 
   watch(filtering, (data) => {
-    invoke('toggle_filter_program', {
+    core.invoke('toggle_filter_program', {
       data,
     })
     if (!data)

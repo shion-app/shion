@@ -1,11 +1,11 @@
 import type { Event } from '@tauri-apps/api/event'
 import { listen } from '@tauri-apps/api/event'
-import { debug } from 'tauri-plugin-log-api'
-import { invoke } from '@tauri-apps/api'
+import { core } from '@tauri-apps/api'
+import { debug } from '@tauri-apps/plugin-log'
 import PQueue from 'p-queue'
 
-import type * as backend from '@/interfaces/backend'
 import { type SelectProgram, db } from '@/modules/database'
+import type * as backend from '@/interfaces/backend'
 
 const RECORD_INTERVAL = 1000 * 60
 const INACTIVE_TIMEOUT = 1000 * 60
@@ -227,7 +227,7 @@ export const useActivityStore = defineStore('activity', () => {
         if (updatePropertyList.includes(id))
           continue
 
-        const active = await invoke('is_audio_active', {
+        const active = await core.invoke('is_audio_active', {
           path,
         })
         if (active)

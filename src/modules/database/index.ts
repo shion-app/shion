@@ -1,5 +1,5 @@
-import Database from 'tauri-plugin-sql-api'
-import { error } from 'tauri-plugin-log-api'
+import Database from '@tauri-apps/plugin-sql'
+import { error } from '@tauri-apps/plugin-log'
 import type { Insertable, SelectType, Updateable } from 'kysely'
 
 import type { DatabaseExecutor } from './db'

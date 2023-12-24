@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
-import { BaseDirectory, createDir, writeBinaryFile } from '@tauri-apps/api/fs'
+import { BaseDirectory, mkdir, writeFile } from '@tauri-apps/plugin-fs'
 import { appDataDir, extname, resolve } from '@tauri-apps/api/path'
-import { convertFileSrc } from '@tauri-apps/api/tauri'
+import { core } from '@tauri-apps/api'
 
 function readFile(file: File): Promise<{ name: string; buffer: ArrayBuffer }> {
   return new Promise((resolve) => {
@@ -29,11 +29,11 @@ export async function upload(name: string, buffer: ArrayBuffer) {
   const ext = await extname(name)
   const uploadDir = 'upload'
   const target = `${uploadDir}/${id}.${ext}`
-  await createDir(uploadDir, { dir: BaseDirectory.AppData, recursive: true })
-  await writeBinaryFile(target, buffer, { dir: BaseDirectory.AppData })
+  await mkdir(uploadDir, { baseDir: BaseDirectory.AppData, recursive: true })
+  await writeFile(target, new Uint8Array(buffer), { baseDir: BaseDirectory.AppData })
   const appDataDirPath = await appDataDir()
   const path = await resolve(appDataDirPath, target)
-  return convertFileSrc(path)
+  return core.convertFileSrc(path)
 }
 
 export function isImage(file: File) {

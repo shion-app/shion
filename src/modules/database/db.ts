@@ -11,8 +11,8 @@ import {
   SqliteIntrospector,
   SqliteQueryCompiler,
 } from 'kysely'
-import type { QueryResult } from 'tauri-plugin-sql-api'
-import type Database from 'tauri-plugin-sql-api'
+import type { QueryResult } from '@tauri-apps/plugin-sql'
+import type Database from '@tauri-apps/plugin-sql'
 import camelcaseKeys from 'camelcase-keys'
 import { camelCase } from 'camel-case'
 
@@ -24,7 +24,7 @@ import { Label } from './models/label'
 import { Note } from './models/note'
 import { Moment } from './models/moment'
 import { Overview } from './models/overview'
-export type { QueryResult } from 'tauri-plugin-sql-api'
+export type { QueryResult } from '@tauri-apps/plugin-sql'
 
 type IsSelectQueryBuilder<T> = T extends SelectQueryBuilder<any, any, any> ? true : false
 type IsTransactionQueryBuilder<T> = T extends TransactionQueryBuilder<any, any> ? true : false

@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { appWindow } from '@tauri-apps/api/window'
+import { getCurrent } from '@tauri-apps/api/window'
 
 import logo from '@/assets/logo.png'
 
 const setting = ref(false)
 const about = ref(false)
+
+const currentWindow = getCurrent()
 </script>
 
 <template>
@@ -39,13 +41,13 @@ const about = ref(false)
       </v-menu>
     </div>
     <div>
-      <v-btn variant="text" @click="() => appWindow.minimize()">
+      <v-btn variant="text" @click="() => currentWindow.minimize()">
         <div i-mdi:window-minimize />
       </v-btn>
       <v-btn variant="text" :disabled="true">
         <div i-mdi:window-maximize />
       </v-btn>
-      <v-btn variant="text" @click="() => appWindow.hide()">
+      <v-btn variant="text" @click="() => currentWindow.hide()">
         <div i-mdi:close />
       </v-btn>
     </div>
