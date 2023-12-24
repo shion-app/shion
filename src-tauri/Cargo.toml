@@ -16,22 +16,23 @@ tauri-build = { version = "2.0.0-alpha.13", features = [] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 log = "^0.4"
-winapi = { version = "0.3.9", features = ["winnls", "winuser", "winver", "psapi", "shellapi"] }
 image = "0.24.6"
-rdev = { git = "https://github.com/fufesou/rdev" }
-nodio-win32 = { git = "https://github.com/hanaTsuk1/nodio", version = "0.1.0" }
-window-shadows = "0.2.2"
 tauri = { version = "2.0.0-alpha.20", features = [ "protocol-asset", "tray-icon"] }
-tauri-plugin-updater = "2.0.0-alpha.6"
 tauri-plugin-process = "2.0.0-alpha.6"
 tauri-plugin-fs = "2.0.0-alpha.6"
 tauri-plugin-shell = "2.0.0-alpha.6"
 tauri-plugin-sql = { version = "2.0.0-alpha.6", features = ["sqlite"] }
 tauri-plugin-store = "2.0.0-alpha.6"
 tauri-plugin-log = "2.0.0-alpha.6"
+
+[target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
+winapi = { version = "0.3.9", features = ["winnls", "winuser", "winver", "psapi", "shellapi"] }
+rdev = "0.5.3"
+nodio-win32 = { git = "https://github.com/hanaTsuk1/nodio", version = "0.1.0" }
+window-shadows = "0.2.2"
 tauri-plugin-autostart = "2.0.0-alpha.6"
 tauri-plugin-single-instance = "2.0.0-alpha.6"
-
+tauri-plugin-updater = "2.0.0-alpha.6"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

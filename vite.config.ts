@@ -14,10 +14,9 @@ import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vitest/config'
 import transformerDirectives from '@unocss/transformer-directives'
 import vuetify from 'vite-plugin-vuetify'
+import { internalIpV4 } from 'internal-ip'
 
-// const mobile =
-//   process.env.TAURI_PLATFORM === "android" ||
-//   process.env.TAURI_PLATFORM === "ios";
+const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM || '')
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -67,17 +66,18 @@ export default defineConfig({
   server: {
     port: 1420,
     strictPort: true,
-  },
-  // to make use of `TAURI_DEBUG` and other env variables
-  // https://tauri.studio/v1/api/config#buildconfig.beforedevcommand
-  envPrefix: ['VITE_', 'TAURI_'],
-  build: {
-    // Tauri supports es2021
-    target: process.env.TAURI_PLATFORM == 'windows' ? 'chrome105' : 'safari15',
-    // don't minify for debug builds
-    minify: !process.env.TAURI_DEBUG ? 'esbuild' : false,
-    // produce sourcemaps for debug builds
-    sourcemap: !!process.env.TAURI_DEBUG,
+    host: mobile ? '0.0.0.0' : false,
+    hmr: mobile
+      ? {
+          protocol: 'ws',
+          host: await internalIpV4(),
+          port: 1421,
+        }
+      : undefined,
+    watch: {
+      // 3. tell vite to ignore watching `src-tauri`
+      ignored: ['**/src-tauri/**'],
+    },
   },
   test: {
     coverage: {
