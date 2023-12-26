@@ -1,4 +1,4 @@
-import { getVersion } from '@tauri-apps/plugin-app'
+// import { getVersion } from '@tauri-apps/plugin-app'
 import { Store } from '@tauri-apps/plugin-store'
 import { disable, enable, isEnabled } from '@tauri-apps/plugin-autostart'
 import { core } from '@tauri-apps/api'
@@ -22,7 +22,8 @@ export const useConfigStore = defineStore('config', () => {
 
   async function init() {
     const data: Config = {
-      version: await getVersion(),
+      // TODO: upgrade
+      version: await core.invoke('plugin:app|version'),
       locale: 'en-US',
       checkUpdate: false,
       autostart: false,
