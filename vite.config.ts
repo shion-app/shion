@@ -7,7 +7,6 @@ import Unocss from 'unocss/vite'
 import { presetAttributify, presetTypography, presetUno } from 'unocss'
 import presetIcons from '@unocss/preset-icons'
 import Components from 'unplugin-vue-components/vite'
-import { Vuetify3Resolver } from 'unplugin-vue-components/resolvers'
 import Pages from 'vite-plugin-pages'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { visualizer } from 'rollup-plugin-visualizer'
@@ -42,7 +41,6 @@ export default defineConfig({
       transformers: [transformerDirectives()],
     }),
     Components({
-      resolvers: [Vuetify3Resolver()],
       dts: 'src/components.d.ts',
     }),
     Pages(),

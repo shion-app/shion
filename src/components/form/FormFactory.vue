@@ -2,7 +2,8 @@
 import { useField, useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
-import { VSelect, VTextField } from 'vuetify/components'
+import { VSelect } from 'vuetify/components/VSelect'
+import { VTextField } from 'vuetify/components/VTextField'
 
 import ColorPicker from './ColorPicker.vue'
 import Cascader from './Cascader.vue'
