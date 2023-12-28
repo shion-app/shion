@@ -10,6 +10,9 @@ interface Payload {
 export const useUpdateStore = defineStore('update', () => {
   const { t } = useI18n()
   const notify = useNotify()
+  const configStore = useConfigStore()
+
+  const { config } = storeToRefs(configStore)
 
   const precent = ref(0)
   const downloading = ref(false)
@@ -46,6 +49,11 @@ export const useUpdateStore = defineStore('update', () => {
       error(e as string)
     }
   }
+
+  watchOnce(() => config.value.checkUpdate, (v) => {
+    if (v)
+      start()
+  })
 
   const logDownloadProgress = useThrottleFn((total: number) => {
     info(`Downloading updater downloaded: ${downloaded}, total: ${total}, precent: ${precent.value}%`)

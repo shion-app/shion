@@ -1,29 +1,13 @@
 <script setup lang="ts">
 import { ModalsContainer } from 'vue-final-modal'
 
-import { listen } from '@tauri-apps/api/event'
-import { exit } from '@tauri-apps/plugin-process'
-
-const { start } = useUpdateStore()
-const configStore = useConfigStore()
-const timeStore = useTimerStore()
+useTimerStore()
+useUpdateStore()
 useMonitorStore()
 useActivityStore()
+const configStore = useConfigStore()
 
-const { finish } = timeStore
 const { config } = storeToRefs(configStore)
-const { running } = storeToRefs(timeStore)
-
-watchOnce(() => config.value.checkUpdate, (v) => {
-  if (v)
-    start()
-})
-
-listen('quit', async () => {
-  if (running.value)
-    await finish()
-  await exit()
-})
 </script>
 
 <template>
