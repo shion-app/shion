@@ -43,6 +43,15 @@ const executor: DatabaseExecutor = {
     const fields = findSqliteMessageFields(e.message)
     return new DatabaseError(e.message, SqliteErrorEnum[e.code] || SqliteErrorEnum.RAW, fields)
   },
+  async close() {
+    try {
+      sqlite.close()
+    }
+    catch {
+      return false
+    }
+    return true
+  },
 }
 
 beforeEach(reset)

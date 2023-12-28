@@ -26,6 +26,9 @@ const executor: DatabaseExecutor = {
 
     return new DatabaseError(detail, Number(code), fields)
   },
+  close() {
+    return database.close()
+  },
 }
 
 export const db = createKyselyDatabaseWithModels(executor)

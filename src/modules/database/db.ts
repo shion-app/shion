@@ -181,6 +181,10 @@ function createKyselyDatabase<U extends Record<string, object>>(executor: Databa
         throw error
       }
     }
+
+    close() {
+      return this.#executor.close()
+    }
   }
 
   class Transaction extends KyselyDatabase<Record<string, object>> {}
@@ -264,7 +268,7 @@ export class DatabaseError extends Error {
   }
 }
 
-export type DatabaseExecutor = Pick<Database, 'execute' | 'select'> & {
+export type DatabaseExecutor = Pick<Database, 'execute' | 'select' | 'close'> & {
   handleError(err: unknown): DatabaseError
 }
 
