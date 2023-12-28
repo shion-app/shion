@@ -3,8 +3,10 @@ import { ModalsContainer } from 'vue-final-modal'
 
 import { db } from './modules/database'
 
+if (isDesktop)
+  useUpdateStore()
+
 useTimerStore()
-useUpdateStore()
 useMonitorStore()
 useActivityStore()
 const configStore = useConfigStore()

@@ -78,14 +78,16 @@ export const useConfigStore = defineStore('config', () => {
     })
   })
 
-  watch(() => config.value.autostart, async (v) => {
-    const switched = await isEnabled()
-    if (v)
-      enable()
+  if (isDesktop) {
+    watch(() => config.value.autostart, async (v) => {
+      const switched = await isEnabled()
+      if (v)
+        enable()
 
-    else if (switched)
-      disable()
-  })
+      else if (switched)
+        disable()
+    })
+  }
 
   return {
     config,

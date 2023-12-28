@@ -59,6 +59,7 @@ export default defineConfig({
   ],
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   // prevent vite from obscuring rust errors
+  envPrefix: ['VITE_', 'TAURI_ENV_'],
   clearScreen: false,
   // tauri expects a fixed port, fail if that port is not available
   server: {

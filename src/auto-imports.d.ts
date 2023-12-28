@@ -45,7 +45,10 @@ declare global {
   const h: typeof import('vue')['h']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
   const inject: typeof import('vue')['inject']
+  const isAndorid: typeof import('./utils/shared')['isAndorid']
   const isDefined: typeof import('@vueuse/core')['isDefined']
+  const isDesktop: typeof import('./utils/shared')['isDesktop']
+  const isMobile: typeof import('./utils/shared')['isMobile']
   const isPathEqual: typeof import('./utils/path')['isPathEqual']
   const isProxy: typeof import('vue')['isProxy']
   const isReactive: typeof import('vue')['isReactive']
@@ -369,7 +372,10 @@ declare module 'vue' {
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
+    readonly isAndorid: UnwrapRef<typeof import('./utils/shared')['isAndorid']>
     readonly isDefined: UnwrapRef<typeof import('@vueuse/core')['isDefined']>
+    readonly isDesktop: UnwrapRef<typeof import('./utils/shared')['isDesktop']>
+    readonly isMobile: UnwrapRef<typeof import('./utils/shared')['isMobile']>
     readonly isPathEqual: UnwrapRef<typeof import('./utils/path')['isPathEqual']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>

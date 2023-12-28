@@ -1,5 +1,3 @@
-import { isWindows } from './shared'
-
 export const isPathEqual = (base: string, target: string) => isWindows ? base.toLowerCase() == target.toLowerCase() : base == target
 
 /**
