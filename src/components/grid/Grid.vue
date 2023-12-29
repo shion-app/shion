@@ -17,6 +17,8 @@ defineSlots<{
   default(props: { componentProps: T }): any
 }>()
 
+const { column } = useGridColumn()
+
 let grid: GridStack | null = null
 const gridId = `grid-stack-${nanoid()}`
 
@@ -35,6 +37,7 @@ onMounted(() => {
   grid = GridStack.init({
     margin: 0,
     disableResize: true,
+    column: column.value,
     ...props.options,
   }, gridId)
 
@@ -59,6 +62,8 @@ watchArray(() => props.items, (newList, oldList) => {
     }
   }
 })
+
+watch(column, v => grid?.column(v))
 </script>
 
 <template>

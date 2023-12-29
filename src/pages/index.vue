@@ -16,7 +16,8 @@ const { parseFieldsError } = useDatabase()
 
 const list = ref<GridList<SelectOverview>>([])
 
-const { col, wrap, select, selectedList } = useGrid(list)
+const { wrap, select, selectedList } = useGrid(list)
+const { column, col, count } = useGridColumn()
 
 const isCreate = ref(true)
 
@@ -43,6 +44,7 @@ const { open, close, setModelValue } = useFormModal<
 >
 ((model, modal) => {
   const singleCategoryBarvisible = model.type == WidgetType.SINGLE_CATEGORY_BAR || model.type == WidgetType.TEXT_SUMMARY
+  const unrealColumnCount = count(column.value)
   return {
     attrs: {
       title: isCreate.value ? t('overview.create') : t('overview.update'),
@@ -60,7 +62,7 @@ const { open, close, setModelValue } = useFormModal<
               'onUpdate:modelValue': (v) => {
                 if (v == WidgetType.ACTIVE_STATUS_CALENDAR) {
                   setModelValue({
-                    w: col(3),
+                    w: col(unrealColumnCount),
                     category: undefined,
                   })
                 }
@@ -72,7 +74,7 @@ const { open, close, setModelValue } = useFormModal<
             key: 'w',
             label: t('widget.column'),
             props: {
-              items: [1, 2, 3].map(i => ({
+              items: new Array(unrealColumnCount).fill(0).map((_, i) => i + 1).map(i => ({
                 title: i,
                 value: col(i),
               })),

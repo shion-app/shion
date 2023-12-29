@@ -2,12 +2,37 @@ import type { GridStackWidget } from 'gridstack'
 
 export type GridList<T> = Array<T & { selected: boolean }>
 
+const SPAN = 4
+
+export function useGridColumn() {
+  const { sm, xl } = useTailwindBreakpoints()
+
+  const column = computed(() => {
+    if (xl.value)
+      return 16
+
+    if (sm.value)
+      return 12
+
+    return 8
+  })
+
+  const col = (unrealCol: number) => SPAN * unrealCol
+
+  const count = (realCol: number) => realCol / SPAN
+
+  return {
+    column,
+    col,
+    count,
+  }
+}
+
 export function useGrid(list: Ref<GridList<{ id: number }>>) {
-  const COLUMN = 12
-  const SPAN = 4
+  const { column } = useGridColumn()
 
   function getItemsByOrder(list: Array<{ id: number }>): GridStackWidget[] {
-    const count = COLUMN / SPAN
+    const count = column.value / SPAN
     return list.map((i, index) => ({
       id: String(i.id),
       x: (index % count) * SPAN,
@@ -16,8 +41,6 @@ export function useGrid(list: Ref<GridList<{ id: number }>>) {
       h: 1,
     }))
   }
-
-  const col = (column: number) => SPAN * column
 
   function wrap<T extends object>(list: Array<T>) {
     return list.map(i => ({
@@ -41,7 +64,6 @@ export function useGrid(list: Ref<GridList<{ id: number }>>) {
 
   return {
     getItemsByOrder,
-    col,
     wrap,
     select,
     selectedList,

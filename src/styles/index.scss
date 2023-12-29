@@ -4,6 +4,7 @@
 );
 
 @use './vfm.scss';
+@use './gridstack-extra.scss';
 
 html, body {
   overflow: hidden;
