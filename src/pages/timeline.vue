@@ -9,6 +9,9 @@ type computedTimeLineNode = TimeLineNode & { id: string }
 
 const configStore = useConfigStore()
 
+const { xs, sm } = useTailwindBreakpoints()
+const { format } = useDateFns()
+
 const { config } = storeToRefs(configStore)
 
 const noteList = ref<Array<SelectNote>>([])
@@ -131,12 +134,25 @@ watch(date, refresh, {
 </script>
 
 <template>
-  <div h-full flex>
+  <div
+    h-full flex :class="{
+      'flex-col': xs,
+    }"
+  >
+    <div v-if="xs" flex px-4>
+      <div flex-1 />
+      <v-btn variant="text">
+        {{ format(date, 'PP') }}
+      </v-btn>
+      <v-dialog activator="parent">
+        <v-date-picker v-model="date" show-adjacent-months />
+      </v-dialog>
+    </div>
     <div flex-1>
       <timeline-graph v-if="list.length" :list="list" flex-1 />
       <empty v-else />
     </div>
-    <calendar v-model:date="date" />
+    <calendar v-if="sm" v-model:date="date" />
   </div>
   <timeline-filter v-model:category="filterCategory" v-model:id="filterTargetId" />
 </template>
