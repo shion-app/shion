@@ -71,11 +71,13 @@ export const useConfigStore = defineStore('config', () => {
   watch(() => config.value.locale, (v) => {
     i18next.changeLanguage(v)
     locale.value = v
-    core.invoke('update_tray_menu', {
-      data: {
-        quit: t('tray.quit'),
-      },
-    })
+    if (isDesktop) {
+      core.invoke('update_tray_menu', {
+        data: {
+          quit: t('tray.quit'),
+        },
+      })
+    }
   })
 
   if (isDesktop) {
