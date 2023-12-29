@@ -83,7 +83,10 @@ const menu = computed(() => [
       <router-view v-slot="{ Component }">
         <component :is="Component" />
       </router-view>
-      <more-menu-fab v-if="isMobile" />
+      <template v-if="isMobile">
+        <more-menu-fab />
+        <page-timer />
+      </template>
     </layout-main>
     <layout-footer>
       <nav-action v-if="xs" :vertical="false" nav-text :menu="menu" />

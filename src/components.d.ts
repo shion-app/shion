@@ -36,6 +36,7 @@ declare module '@vue/runtime-core' {
     NotificationContainer: typeof import('./components/notification/NotificationContainer.vue')['default']
     PageLabel: typeof import('./components/page/PageLabel.vue')['default']
     PagePlan: typeof import('./components/page/PagePlan.vue')['default']
+    PageTimer: typeof import('./components/page/PageTimer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SettingDialog: typeof import('./components/dialog/SettingDialog.vue')['default']

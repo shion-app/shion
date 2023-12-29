@@ -13,6 +13,7 @@ type OverviewForm = Pick<InsertOverview, 'type' | 'w' | 'h'> & { category?: [str
 const { t } = useI18n()
 const { success } = useNotify()
 const { parseFieldsError } = useDatabase()
+const { open: openNoteCreate } = useNoteCreate()
 
 const list = ref<GridList<SelectOverview>>([])
 
@@ -345,6 +346,7 @@ refresh()
     <v-list>
       <v-list-item value="overview.create" :title="$t('overview.create')" @click="showCreateForm" />
       <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="openBatchRemoveModal" />
+      <v-list-item value="label.button.start" :title="$t('label.button.start')" @click="openNoteCreate" />
     </v-list>
   </more-menu>
 </template>
