@@ -21,22 +21,7 @@ app.addCloseHook(() => db.close())
 <template>
   <v-locale-provider :locale="config.locale">
     <v-theme-provider with-background>
-      <layout-provider>
-        <layout-header>
-          <title-bar />
-        </layout-header>
-        <layout-nav>
-          <nav-action />
-        </layout-nav>
-        <layout-main>
-          <router-view v-slot="{ Component }">
-            <component :is="Component" />
-          </router-view>
-        </layout-main>
-        <layout-footer>
-          <status-bar />
-        </layout-footer>
-      </layout-provider>
+      <layout />
       <ModalsContainer />
       <notification-container />
     </v-theme-provider>

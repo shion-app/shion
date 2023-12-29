@@ -21,6 +21,7 @@ declare module '@vue/runtime-core' {
     FormModal: typeof import('./components/modal/FormModal.vue')['default']
     Grid: typeof import('./components/grid/Grid.vue')['default']
     GridCard: typeof import('./components/grid/GridCard.vue')['default']
+    Layout: typeof import('./components/layout/Layout.vue')['default']
     LayoutFooter: typeof import('./components/layout/LayoutFooter.vue')['default']
     LayoutHeader: typeof import('./components/layout/LayoutHeader.vue')['default']
     LayoutMain: typeof import('./components/layout/LayoutMain.vue')['default']
@@ -40,6 +41,7 @@ declare module '@vue/runtime-core' {
     TimelineFilter: typeof import('./components/timeline/TimelineFilter.vue')['default']
     TimelineGraph: typeof import('./components/timeline/TimelineGraph.vue')['default']
     Tiptap: typeof import('./components/shared/Tiptap.vue')['default']
+    TitleBar: typeof import('./desktop/components/TitleBar.vue')['default']
     TooltipButton: typeof import('./components/shared/TooltipButton.vue')['default']
   }
 }

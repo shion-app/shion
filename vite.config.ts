@@ -41,6 +41,7 @@ export default defineConfig({
       transformers: [transformerDirectives()],
     }),
     Components({
+      dirs: ['src/components', mobile ? 'src/mobile/components' : 'src/desktop/components'],
       dts: 'src/components.d.ts',
     }),
     Pages(),
