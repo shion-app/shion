@@ -34,6 +34,8 @@ declare module '@vue/runtime-core' {
     NavAction: typeof import('./components/nav/NavAction.vue')['default']
     NestedMenu: typeof import('./components/shared/NestedMenu.vue')['default']
     NotificationContainer: typeof import('./components/notification/NotificationContainer.vue')['default']
+    PageLabel: typeof import('./components/page/PageLabel.vue')['default']
+    PagePlan: typeof import('./components/page/PagePlan.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SettingDialog: typeof import('./components/dialog/SettingDialog.vue')['default']
