@@ -1,5 +1,10 @@
+<script setup lang="ts">
+const { sm } = useTailwindBreakpoints()
+</script>
+
 <template>
-  <teleport to="#status-bar">
+  <teleport v-if="sm" to="#status-bar">
     <slot />
   </teleport>
+  <div v-else />
 </template>

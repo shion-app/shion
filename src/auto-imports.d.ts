@@ -271,6 +271,7 @@ declare global {
   const useStyleTag: typeof import('@vueuse/core')['useStyleTag']
   const useSupported: typeof import('@vueuse/core')['useSupported']
   const useSwipe: typeof import('@vueuse/core')['useSwipe']
+  const useTailwindBreakpoints: typeof import('./hooks/useTailwindBreakpoints')['useTailwindBreakpoints']
   const useTauriListen: typeof import('./hooks/useTauriListen')['useTauriListen']
   const useTemplateRefsList: typeof import('@vueuse/core')['useTemplateRefsList']
   const useTextDirection: typeof import('@vueuse/core')['useTextDirection']
@@ -598,6 +599,7 @@ declare module 'vue' {
     readonly useStyleTag: UnwrapRef<typeof import('@vueuse/core')['useStyleTag']>
     readonly useSupported: UnwrapRef<typeof import('@vueuse/core')['useSupported']>
     readonly useSwipe: UnwrapRef<typeof import('@vueuse/core')['useSwipe']>
+    readonly useTailwindBreakpoints: UnwrapRef<typeof import('./hooks/useTailwindBreakpoints')['useTailwindBreakpoints']>
     readonly useTauriListen: UnwrapRef<typeof import('./hooks/useTauriListen')['useTauriListen']>
     readonly useTemplateRefsList: UnwrapRef<typeof import('@vueuse/core')['useTemplateRefsList']>
     readonly useTextDirection: UnwrapRef<typeof import('@vueuse/core')['useTextDirection']>
