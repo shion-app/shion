@@ -9,6 +9,8 @@ nav:
   config: Config
   about: About
   moment: Moment
+  list: List
+  account: Account
 config:
   locale: Language
   checkUpdate: Check update

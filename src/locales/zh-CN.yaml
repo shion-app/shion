@@ -9,6 +9,8 @@ nav:
   config: 设置
   about: 关于
   moment: 瞬间
+  list: 列表
+  account: 我的
 config:
   locale: 语言
   checkUpdate: 检查更新
