@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { emitter } from '@/plugins/mitt'
-
 interface NavButton {
   icon: string
   activeIcon: string
@@ -15,16 +13,6 @@ withDefaults(defineProps<{
 }>(), {
   vertical: true,
   navText: false,
-})
-
-const moreMenu = ref({
-  id: '',
-  show: false,
-})
-
-emitter.on('toggle-more-menu', (v) => {
-  if (v.show || moreMenu.value.id == v.id)
-    moreMenu.value = v
 })
 
 const router = useRouter()
@@ -70,13 +58,8 @@ function goBack() {
         </div>
       </router-link>
     </div>
-    <v-btn
-      v-show="$props.vertical"
-      id="more-menu" icon variant="text" size="small" :class="{
-        invisible: !moreMenu.show,
-      }"
-    >
-      <div i-mdi:menu text-6 />
-    </v-btn>
+    <div v-show="$props.vertical">
+      <slot />
+    </div>
   </div>
 </template>

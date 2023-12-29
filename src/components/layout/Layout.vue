@@ -75,12 +75,15 @@ const menu = computed(() => [
       <title-bar />
     </layout-header>
     <layout-nav v-if="sm">
-      <nav-action :menu="menu" />
+      <nav-action :menu="menu">
+        <more-menu-button v-if="isDesktop" />
+      </nav-action>
     </layout-nav>
     <layout-main>
       <router-view v-slot="{ Component }">
         <component :is="Component" />
       </router-view>
+      <more-menu-fab v-if="isMobile" />
     </layout-main>
     <layout-footer>
       <nav-action v-if="xs" :vertical="false" nav-text :menu="menu" />
