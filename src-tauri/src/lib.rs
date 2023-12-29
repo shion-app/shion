@@ -29,25 +29,26 @@ pub fn run() {
             tauri_plugin_sql::Builder::default()
                 .add_migrations("sqlite:data.db", migrations)
                 .build(),
-        )
-        .plugin(
-            tauri_plugin_log::Builder::new()
-                .clear_targets()
-                .targets([
-                    Target::new(TargetKind::LogDir {
-                        file_name: Some("webview".into()),
-                    })
-                    .filter(|metadata| metadata.target() == WEBVIEW_TARGET),
-                    Target::new(TargetKind::LogDir {
-                        file_name: Some("rust".into()),
-                    })
-                    .filter(|metadata| metadata.target() != WEBVIEW_TARGET),
-                    Target::new(TargetKind::Stdout),
-                    Target::new(TargetKind::Webview),
-                ])
-                .timezone_strategy(TimezoneStrategy::UseLocal)
-                .build(),
         );
+    // TODO: log bug
+    // .plugin(
+    //     tauri_plugin_log::Builder::new()
+    //         .clear_targets()
+    //         .targets([
+    //             Target::new(TargetKind::LogDir {
+    //                 file_name: Some("webview".into()),
+    //             })
+    //             .filter(|metadata| metadata.target() == WEBVIEW_TARGET),
+    //             Target::new(TargetKind::LogDir {
+    //                 file_name: Some("rust".into()),
+    //             })
+    //             .filter(|metadata| metadata.target() != WEBVIEW_TARGET),
+    //             Target::new(TargetKind::Stdout),
+    //             Target::new(TargetKind::Webview),
+    //         ])
+    //         .timezone_strategy(TimezoneStrategy::UseLocal)
+    //         .build(),
+    // );
 
     #[cfg(desktop)]
     {
