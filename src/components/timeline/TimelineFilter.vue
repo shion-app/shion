@@ -125,7 +125,7 @@ function openFilterForm() {
       <v-list-item value="timeline.filter" :title="$t('timeline.filter')" @click="openFilterForm" />
     </v-list>
   </more-menu>
-  <footer-teleport>
+  <status-bar-teleport :xs="false">
     <tooltip-button v-if="statusBarText" :tooltip="$t('statusBar.timeline')" location="top" :text="statusBarText" variant="text" @click="openFilterForm" />
-  </footer-teleport>
+  </status-bar-teleport>
 </template>
