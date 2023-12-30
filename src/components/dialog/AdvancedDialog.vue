@@ -17,6 +17,7 @@ const { visible: visibleVModel } = useVModels(props)
       fullscreen: props.page,
       scrim: !props.page,
     }"
+    :transition="page ? 'dialog-slide-transition' : 'dialog-transition'"
   >
     <v-card>
       <v-toolbar v-if="props.page" class="bg-transparent!">

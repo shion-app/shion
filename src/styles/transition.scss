@@ -1,0 +1,34 @@
+@use 'vuetify/settings';
+
+@mixin transition-default() {
+  &-enter-active {
+    transition-duration: 0.3s !important;
+    transition-timing-function: settings.$standard-easing !important;
+  }
+
+  &-leave-active {
+    transition-duration: 0.3s !important;
+    transition-timing-function: settings.$standard-easing !important;
+  }
+
+  &-move {
+    transition-duration: 0.5s !important;
+    transition-property: transform !important;
+    transition-timing-function: settings.$standard-easing !important;
+  }
+}
+
+.dialog-slide-transition {
+  @include transition-default();
+
+  &-enter-from,
+  &-leave-to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  &-enter-active,
+  &-leave-active {
+    transition-property: transform, opacity !important;
+  }
+}
