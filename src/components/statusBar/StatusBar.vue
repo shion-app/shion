@@ -9,7 +9,7 @@ const timerText = computed(() => route.fullPath == '/timer' ? text.value : `#${t
 </script>
 
 <template>
-  <div v-show="xs" id="status-bar-xs" />
+  <div v-show="xs" id="status-bar-xs" px-4 flex h-full items-center relative />
   <div v-show="sm" id="status-bar-sm" px-4 flex>
     <div flex-1 />
     <tooltip-button v-if="running" :tooltip="$t('statusBar.timer')" location="top" :text="timerText" variant="text" />

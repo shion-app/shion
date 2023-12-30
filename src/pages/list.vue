@@ -45,4 +45,7 @@ const component = computed(() => {
       </v-window>
     </div>
   </div>
+  <status-bar-teleport>
+    <status-bar-content :title="$t('nav.list')" />
+  </status-bar-teleport>
 </template>

@@ -349,4 +349,7 @@ refresh()
       <v-list-item value="label.button.start" :title="$t('label.button.start')" @click="openNoteCreate" />
     </v-list>
   </more-menu>
+  <status-bar-teleport>
+    <status-bar-content :title="$t('nav.overview')" />
+  </status-bar-teleport>
 </template>

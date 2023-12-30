@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { layoutSymbol } from './provide'
 
-const { xs, sm } = useTailwindBreakpoints()
+const { sm } = useTailwindBreakpoints()
 
 provide(layoutSymbol, {
-  headerHeight: 36,
+  headerHeight: sm.value ? 36 : 48,
   footerHeight: sm.value ? 36 : 70,
   railWidth: sm.value ? 100 : 0,
 })

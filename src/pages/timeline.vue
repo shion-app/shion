@@ -134,20 +134,7 @@ watch(date, refresh, {
 </script>
 
 <template>
-  <div
-    h-full flex :class="{
-      'flex-col': xs,
-    }"
-  >
-    <div v-if="xs" flex px-4>
-      <div flex-1 />
-      <v-btn variant="text">
-        {{ format(date, 'PP') }}
-      </v-btn>
-      <v-dialog activator="parent">
-        <v-date-picker v-model="date" show-adjacent-months />
-      </v-dialog>
-    </div>
+  <div h-full flex>
     <div flex-1>
       <timeline-graph v-if="list.length" :list="list" flex-1 />
       <empty v-else />
@@ -155,4 +142,16 @@ watch(date, refresh, {
     <calendar v-if="sm" v-model:date="date" />
   </div>
   <timeline-filter v-model:category="filterCategory" v-model:id="filterTargetId" />
+  <status-bar-teleport>
+    <status-bar-content :title="$t('nav.timeline')">
+      <template #append>
+        <v-btn v-if="xs" variant="text">
+          {{ format(date, 'PP') }}
+          <v-dialog activator="parent">
+            <v-date-picker v-model="date" show-adjacent-months />
+          </v-dialog>
+        </v-btn>
+      </template>
+    </status-bar-content>
+  </status-bar-teleport>
 </template>

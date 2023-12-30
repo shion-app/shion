@@ -12,4 +12,7 @@ const about = ref(false)
   </div>
   <setting-dialog v-model:visible="setting" page />
   <about-dialog v-model:visible="about" page />
+  <status-bar-teleport>
+    <status-bar-content :title="$t('nav.account')" />
+  </status-bar-teleport>
 </template>
