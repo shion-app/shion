@@ -10,6 +10,8 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import { createPinia } from 'pinia'
 import { createVfm } from 'vue-final-modal'
 import vueEcharts from 'vue-echarts'
+import { GesturePlugin } from '@vueuse/gesture'
+import { MotionPlugin } from '@vueuse/motion'
 
 import App from './App.vue'
 import routes from '~pages'
@@ -34,6 +36,8 @@ createApp(App)
   .use(pinia)
   .use(vuetify)
   .use(vfm)
+  .use(GesturePlugin)
+  .use(MotionPlugin)
   .component('vueEcharts', vueEcharts)
   .mount('#app')
 

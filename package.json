@@ -42,6 +42,8 @@
     "@vee-validate/zod": "^4.11.8",
     "@vueuse/components": "^10.1.2",
     "@vueuse/core": "^10.1.0",
+    "@vueuse/gesture": "2.0.0-beta.1",
+    "@vueuse/motion": "^2.0.0",
     "camel-case": "^4.1.2",
     "camelcase-keys": "^9.0.0",
     "classnames": "^2.3.2",
