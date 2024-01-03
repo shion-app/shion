@@ -23,7 +23,7 @@
 
 
 
-## Introduce
+## Introduction
 
 >A book I once read, a piece of music I played. Maybe one afternoon, you can still recall that breath when you open it.
 
@@ -39,7 +39,7 @@ A time tracking software to help you record a period of time
 
 > Under construction🚧
 
-- [ ] 🛠️Android version adaptation
+- [ ] 📱Android version adaptation
 - [ ] 💡More features
 
 
