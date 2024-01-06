@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { vOnLongPress } from '@vueuse/components'
+
+import { layoutMainInject } from '../layout/provide'
+
 const props = defineProps<{
   title?: string
   subtitle?: string
@@ -12,16 +16,22 @@ defineOptions({
 })
 
 const { selected: selectedVModel } = useVModels(props)
+const { toggleDrag } = layoutMainInject()
+
+function handleLongpress() {
+  toggleDrag(true)
+}
 </script>
 
 <template>
   <v-hover>
     <template #default="{ isHovering, props: hoverProps }">
       <v-card
-        v-bind="{
+        v-on-long-press="[handleLongpress, { delay: 400 }]" v-bind="{
           ...hoverProps,
           ...$attrs,
-        }" :title="$props.title" :subtitle="$props.subtitle" hover flex-1 relative
+        }" :title="$props.title" :subtitle="$props.subtitle" hover flex-1
+        relative
       >
         <template v-if="$slots.prepend" #prepend>
           <slot name="prepend" />

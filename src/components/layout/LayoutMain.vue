@@ -1,12 +1,20 @@
 <script setup lang="ts">
-import { layoutSymbol } from './provide'
+import { layoutMainProvide, layoutSymbol } from './provide'
 
 const { railWidth, footerHeight, headerHeight } = inject(layoutSymbol)!
+
+const dragged = ref(false)
+const toggleDrag = useToggle(dragged)
+
+layoutMainProvide({
+  dragged,
+  toggleDrag,
+})
 </script>
 
 <template>
   <main
-    absolute top-0 right-0 overflow-y-auto
+    absolute right-0
     :style="{
       left: `${railWidth}px`,
       top: `${headerHeight}px`,
