@@ -10,6 +10,10 @@
 html, body {
   overflow: hidden;
   --un-default-border-color: #000000;
+  font-size: 3.75vw;
+  @media (min-width: 640px) {
+    font-size: 16PX;
+  }
 }
 
 ::-webkit-scrollbar {

@@ -13,6 +13,8 @@ import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vitest/config'
 import transformerDirectives from '@unocss/transformer-directives'
 import vuetify from 'vite-plugin-vuetify'
+import postCssPxToRem from 'postcss-pxtorem'
+import postCssCalc from 'postcss-calc'
 import { internalIpV4 } from 'internal-ip'
 
 const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM || '')
@@ -82,6 +84,17 @@ export default defineConfig({
   test: {
     coverage: {
       reporter: ['html-spa', 'json-summary'],
+    },
+  },
+  css: {
+    postcss: {
+      plugins: [
+        postCssPxToRem({
+          rootValue: 16,
+          propList: ['*', '!--v-*'],
+        }),
+        postCssCalc({}),
+      ],
     },
   },
 })
