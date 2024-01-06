@@ -50,7 +50,7 @@ declare module '@vue/runtime-core' {
     TimelineFilter: typeof import('./components/timeline/TimelineFilter.vue')['default']
     TimelineGraph: typeof import('./components/timeline/TimelineGraph.vue')['default']
     Tiptap: typeof import('./components/shared/Tiptap.vue')['default']
-    TitleBar: typeof import('./desktop/components/TitleBar.vue')['default']
+    TitleBar: typeof import('./mobile/components/TitleBar.vue')['default']
     TooltipButton: typeof import('./components/shared/TooltipButton.vue')['default']
   }
 }

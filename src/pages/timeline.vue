@@ -148,7 +148,7 @@ watch(date, refresh, {
         <v-btn v-if="xs" variant="text">
           {{ format(date, 'PP') }}
           <v-dialog activator="parent">
-            <v-date-picker v-model="date" show-adjacent-months />
+            <v-date-picker v-model="date" show-adjacent-months class="w-full!" />
           </v-dialog>
         </v-btn>
       </template>

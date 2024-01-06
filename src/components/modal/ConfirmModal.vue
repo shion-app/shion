@@ -16,7 +16,7 @@ const emit = defineEmits<{
     content-transition="dialog-transition"
     flex justify-center items-center
   >
-    <v-card :title="title" min-width="400" max-width="600">
+    <v-card :title="title" max-width="600" class="w-[24rem]">
       <v-card-text>
         {{ content }}
       </v-card-text>

@@ -5,7 +5,7 @@ defineProps<{
 </script>
 
 <template>
-  <div text-5 text-center w-full>
+  <div text-center w-full>
     {{ $props.title }}
   </div>
   <div absolute right-0>
