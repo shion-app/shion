@@ -5,14 +5,15 @@ const { dragged, toggleDrag } = layoutMainInject()
 </script>
 
 <template>
-  <div class="fixed bottom-24 right-6">
+  <div flex>
+    <div flex-1 />
     <v-btn
       v-show="dragged"
-      icon variant="elevated" size="large"
+      icon variant="elevated"
       @click="() => toggleDrag()"
     >
       <div i-mdi:stop text-6 />
     </v-btn>
-    <more-menu-button v-show="!dragged" variant="elevated" size="large" />
+    <more-menu-button v-show="!dragged" variant="elevated" size="default" />
   </div>
 </template>
