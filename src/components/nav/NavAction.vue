@@ -11,7 +11,7 @@ withDefaults(defineProps<{
   navText?: boolean
   menu: NavButton[]
 }>(), {
-  vertical: true,
+  vertical: false,
   navText: false,
 })
 
@@ -32,15 +32,15 @@ function goBack() {
       <div i-mdi:arrow-left text-6 @click="goBack" />
     </v-btn>
     <div
-      :class="$props.vertical ? ['space-y-2'] : ['flex', 'flex-1', 'justify-around']"
+      :class="$props.vertical ? ['space-y-2'] : ['flex', 'flex-1', 'justify-around', 'h-full', 'items-center']"
     >
       <router-link
         v-for="{ icon, activeIcon, name, to } in $props.menu" :key="icon" v-slot="{ isActive }"
         :to="to"
         block w-20 text-center
       >
-        <v-btn variant="text" rounded :active="isActive" size="small">
-          <div :class="[isActive ? activeIcon : icon]" text-6 />
+        <v-btn variant="text" rounded :color="isActive ? 'primary' : ''" size="small">
+          <div :class="[isActive ? activeIcon : icon]" text-7 />
           <v-tooltip
             v-if="!isActive"
             activator="parent"
@@ -49,9 +49,11 @@ function goBack() {
           </v-tooltip>
         </v-btn>
         <div
+          v-if="$props.navText"
           text-3.5 mt-1
           :class="{
-            invisible: $props.navText ? false : !isActive,
+            'invisible': !isActive,
+            'text-primary': isActive,
           }"
         >
           {{ name }}

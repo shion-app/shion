@@ -75,7 +75,7 @@ const menu = computed(() => [
       <title-bar />
     </layout-header>
     <layout-nav v-if="sm">
-      <nav-action :menu="menu">
+      <nav-action :menu="menu" nav-text vertical>
         <more-menu-button v-if="isDesktop" />
       </nav-action>
     </layout-nav>
@@ -90,7 +90,7 @@ const menu = computed(() => [
       </div>
     </layout-main>
     <layout-footer>
-      <nav-action v-if="xs" :vertical="false" nav-text :menu="menu" />
+      <nav-action v-if="xs" :menu="menu" />
       <status-bar v-else />
     </layout-footer>
   </layout-provider>

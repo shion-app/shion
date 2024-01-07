@@ -5,7 +5,7 @@ const { sm } = useTailwindBreakpoints()
 
 provide(layoutSymbol, {
   headerHeight: sm.value ? 36 : 48,
-  footerHeight: sm.value ? 36 : 70,
+  footerHeight: sm.value ? 36 : 54,
   railWidth: sm.value ? 100 : 0,
 })
 </script>
