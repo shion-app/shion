@@ -4,16 +4,28 @@ const { time, running, text } = storeToRefs(timeStore)
 
 const route = useRoute()
 const { xs, sm } = useTailwindBreakpoints()
+const router = useRouter()
 const { dragged, isGrid, toggleDrag } = layoutInject()
 
 const timerText = computed(() => route.fullPath == '/timer' ? text.value : `#${text.value}# ${time.value}`)
+
+function navigateTimer() {
+  router.push('/timer')
+}
 </script>
 
 <template>
   <div v-show="xs" id="status-bar-xs" px-4 flex h-full items-center relative />
   <div v-show="sm" id="status-bar-sm" px-4 flex>
     <div flex-1 />
-    <tooltip-button v-if="running" :tooltip="$t('statusBar.timer')" location="top" :text="timerText" variant="text" />
+    <tooltip-button
+      v-if="running"
+      :tooltip="$t('statusBar.timer')"
+      location="top"
+      :text="timerText"
+      variant="text"
+      @click="navigateTimer"
+    />
     <v-tooltip :text="dragged ? $t('statusBar.unlock') : $t('statusBar.lock')" location="top">
       <template #activator="{ props }">
         <v-btn
