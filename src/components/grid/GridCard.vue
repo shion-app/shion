@@ -16,10 +16,12 @@ defineOptions({
 })
 
 const { selected: selectedVModel } = useVModels(props)
-const { toggleDrag } = layoutMainInject()
+const { toggleDrag, dragged } = layoutMainInject()
+
+const mobileMenuVisible = ref(false)
 
 function handleLongpress() {
-  toggleDrag(true)
+  mobileMenuVisible.value = true
 }
 </script>
 
@@ -32,6 +34,9 @@ function handleLongpress() {
           ...$attrs,
         }" :title="$props.title" :subtitle="$props.subtitle" hover flex-1
         relative
+        :class="{
+          'vibrate-1': dragged,
+        }"
       >
         <template v-if="$slots.prepend" #prepend>
           <slot name="prepend" />
@@ -41,6 +46,7 @@ function handleLongpress() {
         </template>
         <slot />
         <div
+          v-if="isDesktop"
           :class="selectedVModel || isHovering ? 'opacity-100' : 'opacity-0'"
           transition-opacity-400
           absolute top-0 right-2 bg-white
@@ -53,14 +59,12 @@ function handleLongpress() {
           />
         </div>
         <div
-          v-if="$slots.menu"
+          v-if="isDesktop && $slots.menu"
           :class="isHovering ? 'opacity-100' : 'opacity-0'"
           transition-opacity-400
           absolute bottom-2 right-2.5 bg-white
         >
-          <v-menu
-            open-on-hover
-          >
+          <v-menu>
             <template #activator="{ props: menuProps }">
               <v-btn icon v-bind="menuProps" size="x-small">
                 <div i-mdi:menu-down text-6 />
@@ -71,6 +75,13 @@ function handleLongpress() {
             </v-list>
           </v-menu>
         </div>
+        <v-menu v-if="isMobile && $slots.menu" v-model="mobileMenuVisible" scrim target="parent" offset="10">
+          <v-list min-width="100">
+            <v-list-item v-if="!dragged" value="girdCard.move" :title="$t('gridCard.move')" @click="() => toggleDrag(true)" />
+
+            <slot name="menu" />
+          </v-list>
+        </v-menu>
       </v-card>
     </template>
   </v-hover>

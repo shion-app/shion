@@ -333,7 +333,11 @@ refresh()
           <v-list-item value="button.update" :title="$t('button.update')" @click="showUpdateForm(componentProps.id, list)" />
           <v-list-item value="button.remove" :title="$t('button.remove')" @click="handleRemove(componentProps.id)" />
         </template>
-        <v-card-text h-full class="pr-11!">
+        <v-card-text
+          h-full :class="{
+            'pr-11!': isDesktop,
+          }"
+        >
           <active-status-calendar v-if="componentProps.type == WidgetType.ACTIVE_STATUS_CALENDAR" />
           <single-category-bar v-else-if="componentProps.type == WidgetType.SINGLE_CATEGORY_BAR" :data="componentProps.data" />
           <text-summary v-else-if="componentProps.type == WidgetType.TEXT_SUMMARY" :data="componentProps.data" />
