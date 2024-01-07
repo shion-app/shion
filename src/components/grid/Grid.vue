@@ -79,7 +79,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="h-full!" :class="gridId" overflow-y-auto>
+  <div :class="gridId">
     <div v-for="w in props.items" :id="item(w.id!)" :key="w.id" class="grid-stack-item" :gs-x="w.x" :gs-y="w.y" :gs-w="w.w" :gs-h="w.h" :gs-id="w.id">
       <div class="grid-stack-item-content" p-3 flex flex-col>
         <slot :component-props="props.componentProps.find(i => i.id == Number(w.id))!" />

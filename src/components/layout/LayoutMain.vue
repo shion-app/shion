@@ -14,7 +14,7 @@ layoutMainProvide({
 
 <template>
   <main
-    absolute right-0
+    absolute right-0 overflow-y-auto
     :style="{
       left: `${railWidth}px`,
       top: `${headerHeight}px`,

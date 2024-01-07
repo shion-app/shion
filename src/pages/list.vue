@@ -37,9 +37,9 @@ const component = computed(() => {
       </v-tabs>
     </div>
 
-    <div flex-1>
-      <v-window v-model="tab" h-full>
-        <v-window-item v-for="{ value } in list" :key="value" :value="value" h-full>
+    <div flex-1 overflow-y-auto>
+      <v-window v-model="tab">
+        <v-window-item v-for="{ value } in list" :key="value" :value="value">
           <component :is="component" v-if="value == tab" />
         </v-window-item>
       </v-window>
