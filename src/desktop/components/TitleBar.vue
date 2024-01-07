@@ -22,7 +22,7 @@ const currentWindow = getCurrent()
             {{ $t('titleBar.view.desc') }}
           </v-btn>
         </template>
-        <v-list>
+        <v-list min-width="150">
           <v-list-item value="titleBar.view.setting" :title="$t('titleBar.view.setting')" @click="setting = true" />
         </v-list>
       </v-menu>
@@ -35,7 +35,7 @@ const currentWindow = getCurrent()
             {{ $t('titleBar.help.desc') }}
           </v-btn>
         </template>
-        <v-list>
+        <v-list min-width="150">
           <v-list-item value="titleBar.help.about" :title="$t('titleBar.help.about')" @click="about = true" />
         </v-list>
       </v-menu>

@@ -111,16 +111,16 @@ refresh()
         </div>
       </v-card-text>
       <template #menu>
-        <v-list-item value="moment.edit" :title="$t('moment.edit')" @click="update(moment.id)" />
-        <v-list-item value="button.remove" :title="$t('button.remove')" @click="handleRemove(moment.id)" />
+        <v-list-item value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="handleRemove(moment.id)" />
+        <v-list-item value="moment.edit" :title="$t('moment.edit')" append-icon="mdi-pencil-outline" @click="update(moment.id)" />
       </template>
     </grid-card>
   </template>
   <empty v-else />
   <more-menu>
     <v-list>
-      <v-list-item value="moment.create" :title="$t('moment.create')" @click="viewMomentCreate" />
-      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="openBatchRemoveModal" />
+      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal" />
+      <v-list-item value="moment.create" :title="$t('moment.create')" append-icon="mdi-plus" @click="viewMomentCreate" />
     </v-list>
   </more-menu>
 </template>

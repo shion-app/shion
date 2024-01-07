@@ -122,7 +122,7 @@ function openFilterForm() {
 <template>
   <more-menu>
     <v-list>
-      <v-list-item value="timeline.filter" :title="$t('timeline.filter')" @click="openFilterForm" />
+      <v-list-item value="timeline.filter" :title="$t('timeline.filter')" append-icon="mdi-filter-outline" @click="openFilterForm" />
     </v-list>
   </more-menu>
   <status-bar-teleport :xs="false">

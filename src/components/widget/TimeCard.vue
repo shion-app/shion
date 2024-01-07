@@ -33,8 +33,8 @@ const { formatHHmmss } = useDateFns()
       />
     </template>
     <template #menu>
-      <v-list-item value="button.update" :title="$t('button.update')" @click="$emit('update', $props.id)" />
-      <v-list-item value="button.remove" :title="$t('button.remove')" @click="$emit('remove', $props.id)" />
+      <v-list-item value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="$emit('remove', $props.id)" />
+      <v-list-item value="button.update" :title="$t('button.update')" append-icon="mdi-pencil-outline" @click="$emit('update', $props.id)" />
       <slot name="menu" />
     </template>
     <v-card-text class="pb-0! pt-2!">

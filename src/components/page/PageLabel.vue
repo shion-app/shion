@@ -209,9 +209,7 @@ refresh()
               @update:selected="v => select(componentProps.id, v)"
             >
               <template v-if="!timerRunning" #menu>
-                <v-list-item value="timer" @click="handleStart(componentProps)">
-                  <v-list-item-title>{{ $t('label.button.start') }}</v-list-item-title>
-                </v-list-item>
+                <v-list-item value="timer" :title="$t('label.button.start')" append-icon="mdi-timer-outline" @click="handleStart(componentProps)" />
               </template>
             </time-card>
           </template>
@@ -222,8 +220,8 @@ refresh()
   <empty v-else />
   <more-menu>
     <v-list>
-      <v-list-item value="label.create" :title="$t('label.create')" @click="showCreateForm" />
-      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="openBatchRemoveModal" />
+      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal" />
+      <v-list-item value="label.create" :title="$t('label.create')" append-icon="mdi-plus" @click="showCreateForm" />
     </v-list>
   </more-menu>
 </template>

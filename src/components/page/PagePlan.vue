@@ -166,8 +166,8 @@ refresh()
   <empty v-else />
   <more-menu>
     <v-list>
-      <v-list-item value="plan.create" :title="$t('plan.create')" @click="showCreateForm" />
-      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="openBatchRemoveModal" />
+      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal" />
+      <v-list-item value="plan.create" :title="$t('plan.create')" append-icon="mdi-plus" @click="showCreateForm" />
     </v-list>
   </more-menu>
 </template>

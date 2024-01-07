@@ -330,8 +330,8 @@ refresh()
     <template #default="{ componentProps }">
       <grid-card :selected="componentProps.selected" @update:selected="v => select(componentProps.id, v)">
         <template #menu>
-          <v-list-item value="button.update" :title="$t('button.update')" @click="showUpdateForm(componentProps.id, list)" />
-          <v-list-item value="button.remove" :title="$t('button.remove')" @click="handleRemove(componentProps.id)" />
+          <v-list-item value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="handleRemove(componentProps.id)" />
+          <v-list-item value="button.update" :title="$t('button.update')" append-icon="mdi-pencil-outline" @click="showUpdateForm(componentProps.id, list)" />
         </template>
         <v-card-text
           h-full :class="{
@@ -348,9 +348,9 @@ refresh()
   <empty v-else />
   <more-menu>
     <v-list>
-      <v-list-item value="overview.create" :title="$t('overview.create')" @click="showCreateForm" />
-      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" @click="openBatchRemoveModal" />
-      <v-list-item value="label.button.start" :title="$t('label.button.start')" @click="openNoteCreate" />
+      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal" />
+      <v-list-item value="overview.create" :title="$t('overview.create')" append-icon="mdi-plus" @click="showCreateForm" />
+      <v-list-item value="label.button.start" :title="$t('label.button.start')" append-icon="mdi-timer-outline" @click="openNoteCreate" />
     </v-list>
   </more-menu>
   <status-bar-teleport>

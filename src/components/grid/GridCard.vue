@@ -77,9 +77,8 @@ function handleLongpress() {
         </div>
         <v-menu v-if="isMobile && $slots.menu" v-model="mobileMenuVisible" scrim target="parent" offset="10">
           <v-list min-width="100">
-            <v-list-item v-if="!dragged" value="girdCard.move" :title="$t('gridCard.move')" @click="() => toggleDrag(true)" />
-
             <slot name="menu" />
+            <v-list-item v-if="!dragged" value="girdCard.move" :title="$t('gridCard.move')" append-icon="mdi-cursor-move" @click="() => toggleDrag(true)" />
           </v-list>
         </v-menu>
       </v-card>
