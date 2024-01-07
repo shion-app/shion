@@ -97,6 +97,9 @@ async function refresh() {
 
 function showCreateForm() {
   isCreate.value = true
+  setModelValue({
+    color: randomColor(),
+  })
   open()
 }
 
