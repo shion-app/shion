@@ -1,12 +1,19 @@
 <script setup lang="ts">
-import { layoutSymbol } from './provide'
-
 const { sm } = useTailwindBreakpoints()
 
-provide(layoutSymbol, {
+const dragged = ref(false)
+const isGrid = ref(false)
+const toggleDrag = useToggle(dragged)
+const toggleIsGrid = useToggle(isGrid)
+
+layoutProvide({
   headerHeight: sm.value ? 36 : 48,
   footerHeight: sm.value ? 36 : 54,
   railWidth: sm.value ? 100 : 0,
+  dragged,
+  toggleDrag,
+  isGrid,
+  toggleIsGrid,
 })
 </script>
 

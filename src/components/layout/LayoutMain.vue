@@ -1,15 +1,5 @@
 <script setup lang="ts">
-import { layoutMainProvide, layoutSymbol } from './provide'
-
-const { railWidth, footerHeight, headerHeight } = inject(layoutSymbol)!
-
-const dragged = ref(false)
-const toggleDrag = useToggle(dragged)
-
-layoutMainProvide({
-  dragged,
-  toggleDrag,
-})
+const { railWidth, footerHeight, headerHeight } = layoutInject()
 </script>
 
 <template>

@@ -164,5 +164,7 @@ widget:
 statusBar:
   timer: 计时中...
   timeline: 筛选类别
+  lock: 拖拽锁定
+  unlock: 拖拽解锁
 gridCard:
   move: 移动

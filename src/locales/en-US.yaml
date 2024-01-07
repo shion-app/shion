@@ -164,5 +164,7 @@ widget:
 statusBar:
   timer: Timing...
   timeline: Filter Categories
+  lock: Drag lock
+  unlock: Drag unlock
 gridCard:
   move: Move

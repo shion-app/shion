@@ -55,6 +55,8 @@ declare global {
   const isReadonly: typeof import('vue')['isReadonly']
   const isRef: typeof import('vue')['isRef']
   const isWindows: typeof import('./utils/shared')['isWindows']
+  const layoutInject: typeof import('./hooks/useLayout')['layoutInject']
+  const layoutProvide: typeof import('./hooks/useLayout')['layoutProvide']
   const makeDestructurable: typeof import('@vueuse/core')['makeDestructurable']
   const mapActions: typeof import('pinia')['mapActions']
   const mapGetters: typeof import('pinia')['mapGetters']
@@ -384,6 +386,8 @@ declare module 'vue' {
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
     readonly isWindows: UnwrapRef<typeof import('./utils/shared')['isWindows']>
+    readonly layoutInject: UnwrapRef<typeof import('./hooks/useLayout')['layoutInject']>
+    readonly layoutProvide: UnwrapRef<typeof import('./hooks/useLayout')['layoutProvide']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
     readonly mapActions: UnwrapRef<typeof import('pinia')['mapActions']>
     readonly mapGetters: UnwrapRef<typeof import('pinia')['mapGetters']>

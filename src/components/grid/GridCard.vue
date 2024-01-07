@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { vOnLongPress } from '@vueuse/components'
 
-import { layoutMainInject } from '../layout/provide'
-
 const props = defineProps<{
   title?: string
   subtitle?: string
@@ -16,7 +14,7 @@ defineOptions({
 })
 
 const { selected: selectedVModel } = useVModels(props)
-const { toggleDrag, dragged } = layoutMainInject()
+const { toggleDrag, dragged } = layoutInject()
 
 const mobileMenuVisible = ref(false)
 

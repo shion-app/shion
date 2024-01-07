@@ -3,8 +3,6 @@ import type { GridStackOptions, GridStackWidget } from 'gridstack'
 import { GridStack } from 'gridstack'
 import { nanoid } from 'nanoid'
 
-import { layoutMainInject } from '../layout/provide'
-
 const props = defineProps<{
   items: GridStackWidget[]
   componentProps: Array<T>
@@ -20,10 +18,12 @@ defineSlots<{
 }>()
 
 const { column } = useGridColumn()
-const { toggleDrag, dragged } = layoutMainInject()
+const { toggleDrag, dragged, toggleIsGrid } = layoutInject()
 
 let grid: GridStack | null = null
 const gridId = `grid-stack-${nanoid()}`
+
+toggleIsGrid(true)
 
 function compact() {
   if (!grid)
@@ -40,7 +40,7 @@ onMounted(() => {
   grid = GridStack.init({
     margin: 0,
     disableResize: true,
-    disableDrag: isMobile,
+    disableDrag: true,
     column: column.value,
     ...props.options,
   }, gridId)
@@ -75,6 +75,7 @@ watch(dragged, (v) => {
 
 onBeforeUnmount(() => {
   toggleDrag(false)
+  toggleIsGrid(false)
 })
 </script>
 

@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { layoutMainInject } from '../layout/provide'
-
-const { dragged, toggleDrag } = layoutMainInject()
+const { dragged, toggleDrag } = layoutInject()
 </script>
 
 <template>
@@ -12,7 +10,7 @@ const { dragged, toggleDrag } = layoutMainInject()
       icon variant="elevated"
       @click="() => toggleDrag()"
     >
-      <div i-mdi:stop text-6 />
+      <div i-mdi:lock-outline text-6 />
     </v-btn>
     <more-menu-button v-show="!dragged" variant="elevated" size="default" />
   </div>

@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { layoutSymbol } from './provide'
-
-const { headerHeight } = inject(layoutSymbol)!
+const { headerHeight } = layoutInject()
 </script>
 
 <template>

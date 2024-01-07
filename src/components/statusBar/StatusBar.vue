@@ -4,6 +4,7 @@ const { time, running, text } = storeToRefs(timeStore)
 
 const route = useRoute()
 const { xs, sm } = useTailwindBreakpoints()
+const { dragged, isGrid, toggleDrag } = layoutInject()
 
 const timerText = computed(() => route.fullPath == '/timer' ? text.value : `#${text.value}# ${time.value}`)
 </script>
@@ -13,5 +14,17 @@ const timerText = computed(() => route.fullPath == '/timer' ? text.value : `#${t
   <div v-show="sm" id="status-bar-sm" px-4 flex>
     <div flex-1 />
     <tooltip-button v-if="running" :tooltip="$t('statusBar.timer')" location="top" :text="timerText" variant="text" />
+    <v-tooltip :text="dragged ? $t('statusBar.unlock') : $t('statusBar.lock')" location="top">
+      <template #activator="{ props }">
+        <v-btn
+          v-if="isGrid"
+          v-bind="props"
+          variant="text"
+          @click="() => toggleDrag()"
+        >
+          <div :class="dragged ? 'i-mdi:lock-open-variant-outline' : 'i-mdi:lock-outline'" text-6 />
+        </v-btn>
+      </template>
+    </v-tooltip>
   </div>
 </template>
