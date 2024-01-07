@@ -5,7 +5,8 @@ import { Notification, NotificationGroup } from '@/plugins/notiwind'
 <template>
   <NotificationGroup>
     <div
-      fixed inset-0 flex items-start justify-end p-6 pointer-events-none z-1000
+      fixed inset-0 flex items-start p-6 pointer-events-none z-1000
+      :class="isMobile ? 'justify-center' : 'justify-end'"
     >
       <div min-w-56 max-w-xs pointer-events-auto>
         <Notification

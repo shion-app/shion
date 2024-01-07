@@ -177,5 +177,5 @@ watchDeep(() => props.list, () => {
 </script>
 
 <template>
-  <div id="timeline" h-full overflow-y-auto />
+  <div id="timeline" h-full overflow-y-auto p-4 />
 </template>
