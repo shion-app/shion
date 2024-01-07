@@ -8,3 +8,12 @@ export function randomColor() {
 }
 
 export const createIconBlob = (buffer: number[]) => new Blob([new Uint8Array(buffer)], { type: 'image/png' })
+
+export function includeKeys<T extends object, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
+  const result = {} as T
+  Object.keys(obj).forEach((key) => {
+    if (keys.includes(key as K))
+      result[key as keyof T] = obj[key as keyof T]
+  })
+  return result
+}

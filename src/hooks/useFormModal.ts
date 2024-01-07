@@ -114,6 +114,7 @@ export function useFormModal<
   onScopeDispose(unwatch)
 
   function setModelValue(values: Partial<T>) {
+    const validKeys = (modal.options.attrs?.form.fields || []).map(({ key }) => key)
     const newOptions = mergeOptions(
       {
         attrs: modal.options.attrs,
@@ -121,7 +122,7 @@ export function useFormModal<
       {
         attrs: {
           form: {
-            values,
+            values: includeKeys(values, validKeys),
           },
         },
       },
