@@ -39,7 +39,8 @@
       "publisher": "hanaTsuk1",
       "targets": [
         "nsis",
-        "updater"
+        "updater",
+        "app"
       ],
       "updater": {
         "active": true,
