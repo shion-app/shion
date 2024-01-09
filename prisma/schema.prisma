@@ -18,6 +18,8 @@ model Plan {
   color      String
   sort       Int     @default(0)
   deleted_at Int     @default(0)
+  created_at Int     @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at Int     @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
   labels     Label[]
   notes      Note[]
 
@@ -33,6 +35,8 @@ model Label {
   sort       Int    @default(0)
   plan_id    Int
   deleted_at Int    @default(0)
+  created_at Int    @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at Int    @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
   plan       Plan   @relation(fields: [plan_id], references: [id])
   notes      Note[]
 
@@ -48,6 +52,8 @@ model Note {
   plan_id    Int
   label_id   Int
   deleted_at Int   @default(0)
+  created_at Int   @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at Int   @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
   plan       Plan  @relation(fields: [plan_id], references: [id])
   label      Label @relation(fields: [label_id], references: [id])
 
@@ -62,6 +68,8 @@ model Program {
   icon       String
   sort       Int        @default(0)
   deleted_at Int        @default(0)
+  created_at Int        @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at Int        @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
   activities Activity[]
 
   @@unique([name, deleted_at])
@@ -76,6 +84,8 @@ model Activity {
   end        Int
   program_id Int
   deleted_at Int     @default(0)
+  created_at Int     @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at Int     @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
   program    Program @relation(fields: [program_id], references: [id])
 
   @@map("activity")
@@ -87,6 +97,8 @@ model Moment {
   title      String
   content    String
   deleted_at Int    @default(0)
+  created_at Int    @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at Int    @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
 
   @@unique([title, deleted_at])
   @@map("moment")
@@ -101,6 +113,8 @@ model Overview {
   h          Int
   data       String
   deleted_at Int    @default(0)
+  created_at Int    @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at Int    @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
 
   @@map("overview")
 }

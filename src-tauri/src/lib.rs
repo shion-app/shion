@@ -18,6 +18,12 @@ pub fn run() {
             sql: include_str!("../../prisma/migrations/20231201100249_/migration.sql"),
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 3,
+            description: "add created_at updated_at",
+            sql: include_str!("../../prisma/migrations/20240109024738_/migration.sql"),
+            kind: MigrationKind::Up,
+        },
     ];
 
     let mut builder = tauri::Builder::default()

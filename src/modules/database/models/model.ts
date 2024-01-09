@@ -22,7 +22,10 @@ export class Model<T extends DB[TableName]> {
   }
 
   update(id: number, @set value: Updateable<T>) {
-    return this.kysely.updateTable(this.table).set(value).where('id', '=', id)
+    return this.kysely.updateTable(this.table).set({
+      ...value,
+      updatedAt: Date.now(),
+    }).where('id', '=', id)
   }
 
   batchUpdate(@set value: Array<Updateable<T> & { id: number }>) {

@@ -10,6 +10,8 @@ export interface Activity {
   end: number
   programId: number
   deletedAt: Generated<number>
+  createdAt: Generated<number>
+  updatedAt: Generated<number>
 }
 export interface Label {
   id: Generated<number>
@@ -18,6 +20,8 @@ export interface Label {
   sort: Generated<number>
   planId: number
   deletedAt: Generated<number>
+  createdAt: Generated<number>
+  updatedAt: Generated<number>
 }
 export interface Moment {
   id: Generated<number>
@@ -25,6 +29,8 @@ export interface Moment {
   title: string
   content: string
   deletedAt: Generated<number>
+  createdAt: Generated<number>
+  updatedAt: Generated<number>
 }
 export interface Note {
   id: Generated<number>
@@ -33,6 +39,8 @@ export interface Note {
   planId: number
   labelId: number
   deletedAt: Generated<number>
+  createdAt: Generated<number>
+  updatedAt: Generated<number>
 }
 export interface Overview {
   id: Generated<number>
@@ -43,6 +51,8 @@ export interface Overview {
   h: number
   data: string
   deletedAt: Generated<number>
+  createdAt: Generated<number>
+  updatedAt: Generated<number>
 }
 export interface Plan {
   id: Generated<number>
@@ -50,6 +60,8 @@ export interface Plan {
   color: string
   sort: Generated<number>
   deletedAt: Generated<number>
+  createdAt: Generated<number>
+  updatedAt: Generated<number>
 }
 export interface Program {
   id: Generated<number>
@@ -59,6 +71,8 @@ export interface Program {
   icon: string
   sort: Generated<number>
   deletedAt: Generated<number>
+  createdAt: Generated<number>
+  updatedAt: Generated<number>
 }
 export interface DB {
   activity: Activity
