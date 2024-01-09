@@ -1,5 +1,7 @@
 -- RedefineTables
+COMMIT TRANSACTION;
 PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
 CREATE TABLE "new_program" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
@@ -104,4 +106,6 @@ ALTER TABLE "new_plan" RENAME TO "plan";
 CREATE UNIQUE INDEX "plan_name_deleted_at_key" ON "plan"("name", "deleted_at");
 CREATE UNIQUE INDEX "plan_color_deleted_at_key" ON "plan"("color", "deleted_at");
 PRAGMA foreign_key_check;
+COMMIT TRANSACTION;
 PRAGMA foreign_keys=ON;
+BEGIN TRANSACTION;
