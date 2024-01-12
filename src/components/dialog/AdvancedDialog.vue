@@ -16,7 +16,7 @@ const motions = useMotions()
 const { xs } = useTailwindBreakpoints()
 
 const dragHandler = ({ movement: [x], dragging }) => {
-  if (!xs)
+  if (!xs.value)
     return
 
   if (!motions.dialog)
