@@ -7,15 +7,17 @@ import { DatabaseError, SqliteErrorEnum, createKyselyDatabaseWithModels, findSql
 import type { Activity, Label, Moment, Note, Overview, Plan, Program } from './transform-types'
 export { DatabaseError } from './db'
 
-const database = await Database.load('sqlite:data.db')
+class Executor implements DatabaseExecutor<Database> {
+  database!: Database
 
-const executor: DatabaseExecutor = {
-  execute(...args) {
-    return database.execute(...args)
-  },
-  select(...args) {
-    return database.select(...args)
-  },
+  execute(query: string, bindValues?: unknown[] | undefined) {
+    return this.database.execute(query, bindValues)
+  }
+
+  select<T>(query: string, bindValues?: unknown[] | undefined): Promise<T> {
+    return this.database.select(query, bindValues)
+  }
+
   handleError(err: string) {
     error(err)
 
@@ -25,11 +27,19 @@ const executor: DatabaseExecutor = {
     const fields = findSqliteMessageFields(detail)
 
     return new DatabaseError(detail, Number(code), fields)
-  },
+  }
+
   close() {
-    return database.close()
-  },
+    return this.database.close()
+  }
+
+  async load() {
+    this.database = await Database.load('sqlite:data.db')
+  }
 }
+
+const executor = new Executor()
+await executor.load()
 
 export const db = createKyselyDatabaseWithModels(executor)
 

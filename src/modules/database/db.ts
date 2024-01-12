@@ -78,12 +78,12 @@ function transformResult(constructor, obj) {
   return obj
 }
 
-function createKyselyDatabase<U extends Record<string, object>>(executor: DatabaseExecutor, models: U) {
+function createKyselyDatabase<D, U extends Record<string, object>>(executor: DatabaseExecutor<D>, models: U) {
   class KyselyDatabase<M extends Record<string, object>> {
-    #executor: DatabaseExecutor
+    #executor: DatabaseExecutor<D>
     #connectionMutex = new ConnectionMutex()
 
-    constructor(executor: DatabaseExecutor, models: M) {
+    constructor(executor: DatabaseExecutor<D>, models: M) {
       this.#executor = executor
       for (const modelKey in models) {
         const obj = {
@@ -185,6 +185,10 @@ function createKyselyDatabase<U extends Record<string, object>>(executor: Databa
     close() {
       return this.#executor.close()
     }
+
+    load() {
+      return this.#executor.load()
+    }
   }
 
   class Transaction extends KyselyDatabase<Record<string, object>> {}
@@ -247,7 +251,7 @@ const models = {
 
 export type Executor<U = typeof models> = { [K in keyof U]: Transform<U[K]> }
 
-export function createKyselyDatabaseWithModels(executor: DatabaseExecutor) {
+export function createKyselyDatabaseWithModels<D, T extends DatabaseExecutor<D>>(executor: T) {
   return createKyselyDatabase(executor, models)
 }
 
@@ -268,8 +272,10 @@ export class DatabaseError extends Error {
   }
 }
 
-export type DatabaseExecutor = Pick<Database, 'execute' | 'select' | 'close'> & {
+export type DatabaseExecutor<T> = Pick<Database, 'execute' | 'select' | 'close'> & {
+  database: T
   handleError(err: unknown): DatabaseError
+  load(): Promise<void>
 }
 
 export function findSqliteMessageFields(message: string) {

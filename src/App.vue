@@ -16,6 +16,8 @@ const { config } = storeToRefs(configStore)
 const app = useApplication()
 
 app.addCloseHook(() => db.close())
+app.addSuspendHook(() => db.close())
+app.addResumeHook(() => db.load())
 </script>
 
 <template>

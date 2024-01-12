@@ -58,10 +58,14 @@ export const useTimerStore = defineStore('timer', () => {
     text.value = v
   }
 
-  app.addCloseHook(async () => {
+  async function appHook() {
     if (running.value)
       await finish()
-  })
+  }
+
+  app.addCloseHook(appHook)
+
+  app.addSuspendHook(appHook)
 
   return {
     running,

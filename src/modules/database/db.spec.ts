@@ -28,7 +28,8 @@ function reset() {
   init()
 }
 
-const executor: DatabaseExecutor = {
+const executor: DatabaseExecutor<Database.Database> = {
+  database: sqlite,
   select(query, bindValues) {
     return Promise.resolve<any>(sqlite.prepare(query).all(...(bindValues || [])))
   },
@@ -52,6 +53,7 @@ const executor: DatabaseExecutor = {
     }
     return true
   },
+  async load() { },
 }
 
 beforeEach(reset)
