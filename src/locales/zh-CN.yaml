@@ -129,6 +129,7 @@ titleBar:
   view:
     desc: 视图
     setting: 设置
+    sync: 同步
   help:
     desc: 帮助
     about: 关于
@@ -168,3 +169,12 @@ statusBar:
   unlock: 拖拽解锁
 gridCard:
   move: 移动
+sync:
+  authorizationStatus: 授权状态
+  authorize: 授权
+  authorized: 授权完成
+  sync: 开始同步
+  pulling: 拉取中...
+  pushing: 推送中...
+  updating: 更新中...
+  mergeConflict: 合并发生冲突，需手动解决

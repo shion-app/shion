@@ -44,6 +44,7 @@ declare module '@vue/runtime-core' {
     StatusBar: typeof import('./components/statusBar/StatusBar.vue')['default']
     StatusBarContent: typeof import('./components/statusBar/StatusBarContent.vue')['default']
     StatusBarTeleport: typeof import('./components/statusBar/StatusBarTeleport.vue')['default']
+    SyncDialog: typeof import('./components/dialog/SyncDialog.vue')['default']
     TextSummary: typeof import('./components/widget/TextSummary.vue')['default']
     TimeCard: typeof import('./components/widget/TimeCard.vue')['default']
     TimelineFilter: typeof import('./components/timeline/TimelineFilter.vue')['default']

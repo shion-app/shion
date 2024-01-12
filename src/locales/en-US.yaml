@@ -129,6 +129,7 @@ titleBar:
   view:
     desc: View
     setting: Setting
+    sync: Sync
   help:
     desc: Help
     about: About
@@ -168,3 +169,12 @@ statusBar:
   unlock: Drag unlock
 gridCard:
   move: Move
+sync:
+  authorizationStatus: Authorization status
+  authorize: Authorize
+  authorized: Authorization Complete
+  sync: Start sync
+  pulling: Pulling...
+  pushing: Pushing...
+  updating: Updating...
+  mergeConflict: Merge conflicts need to be manually resolved

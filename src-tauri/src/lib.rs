@@ -35,7 +35,8 @@ pub fn run() {
             tauri_plugin_sql::Builder::default()
                 .add_migrations("sqlite:data.db", migrations)
                 .build(),
-        );
+        )
+        .plugin(tauri_plugin_shion_synchronizer::init());
     // TODO: log bug
     // .plugin(
     //     tauri_plugin_log::Builder::new()

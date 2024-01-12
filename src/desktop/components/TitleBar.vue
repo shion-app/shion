@@ -4,6 +4,7 @@ import { getCurrent } from '@tauri-apps/api/window'
 import logo from '@/assets/logo.png'
 
 const setting = ref(false)
+const sync = ref(false)
 const about = ref(false)
 
 const currentWindow = getCurrent()
@@ -24,6 +25,7 @@ const currentWindow = getCurrent()
         </template>
         <v-list min-width="150">
           <v-list-item value="titleBar.view.setting" :title="$t('titleBar.view.setting')" @click="setting = true" />
+          <v-list-item value="titleBar.view.sync" :title="$t('titleBar.view.sync')" @click="sync = true" />
         </v-list>
       </v-menu>
       <v-menu>
@@ -53,5 +55,6 @@ const currentWindow = getCurrent()
     </div>
     <setting-dialog v-model:visible="setting" />
     <about-dialog v-model:visible="about" />
+    <sync-dialog v-model:visible="sync" />
   </div>
 </template>
