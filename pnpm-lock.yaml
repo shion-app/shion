@@ -119,6 +119,9 @@ dependencies:
   svg.js:
     specifier: ^2.7.1
     version: 2.7.1
+  tauri-plugin-shion-synchronizer-api:
+    specifier: github:hanaTsuk1/shion-synchronizer
+    version: git@github.com+hanaTsuk1/shion-synchronizer/df0667be54b2f047d81452adf9473a417edcef16
   vee-validate:
     specifier: ^4.11.8
     version: 4.11.8(vue@3.3.7)
@@ -9065,4 +9068,13 @@ packages:
     resolution: {integrity: sha512-DRUM4ZLnoaT0PBVvGBDO9oWIDBKFdAVieNWxWwK0niYzJCMwGchRk21/hsE+RKkIveH3XHCyvXcJDkgLVvfizQ==}
     dependencies:
       tslib: 2.3.0
+    dev: false
+
+  git@github.com+hanaTsuk1/shion-synchronizer/df0667be54b2f047d81452adf9473a417edcef16:
+    resolution: {commit: df0667be54b2f047d81452adf9473a417edcef16, repo: git@github.com:hanaTsuk1/shion-synchronizer.git, type: git}
+    name: tauri-plugin-shion-synchronizer-api
+    version: 0.0.0
+    dependencies:
+      '@tauri-apps/api': 2.0.0-alpha.13
+      tslib: 2.5.0
     dev: false

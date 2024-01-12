@@ -24,6 +24,7 @@ tauri-plugin-shell = "2.0.0-alpha.6"
 tauri-plugin-sql = { version = "2.0.0-alpha.6", features = ["sqlite"] }
 tauri-plugin-store = "2.0.0-alpha.6"
 tauri-plugin-log = "2.0.0-alpha.6"
+tauri-plugin-shion-synchronizer = { git = "https://github.com/hanaTsuk1/shion-synchronizer" }
 
 [target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
 winapi = { version = "0.3.9", features = ["winnls", "winuser", "winver", "psapi", "shellapi"] }

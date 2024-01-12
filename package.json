@@ -60,6 +60,7 @@
     "p-queue": "^7.3.4",
     "pinia": "^2.0.34",
     "svg.js": "^2.7.1",
+    "tauri-plugin-shion-synchronizer-api": "github:hanaTsuk1/shion-synchronizer",
     "vee-validate": "^4.11.8",
     "vue": "^3.3.7",
     "vue-component-type-helpers": "^1.8.24",
