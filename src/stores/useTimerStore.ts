@@ -1,6 +1,4 @@
 export const useTimerStore = defineStore('timer', () => {
-  const app = useApplication()
-
   const running = ref(false)
   const spend = ref(0)
   const text = ref('')
@@ -63,9 +61,8 @@ export const useTimerStore = defineStore('timer', () => {
       await finish()
   }
 
-  app.addCloseHook(appHook)
-
-  app.addSuspendHook(appHook)
+  onAppClose(appHook)
+  onAppSuspend(appHook)
 
   return {
     running,

@@ -43,6 +43,10 @@ await executor.load()
 
 export const db = createKyselyDatabaseWithModels(executor)
 
+onAppClose(() => db.close(), Priority.Low)
+onAppSuspend(() => db.close(), Priority.Low)
+onAppResume(() => db.load(), Priority.High)
+
 type DrainOuterGeneric<T> = [T] extends [unknown] ? T : never
 type IfNotNever<T, K> = T extends never ? never : K
 

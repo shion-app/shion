@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { ModalsContainer } from 'vue-final-modal'
 
-import { db } from './modules/database'
-
 if (isDesktop)
   useUpdateStore()
 
@@ -12,12 +10,6 @@ useActivityStore()
 const configStore = useConfigStore()
 
 const { config } = storeToRefs(configStore)
-
-const app = useApplication()
-
-app.addCloseHook(() => db.close())
-app.addSuspendHook(() => db.close())
-app.addResumeHook(() => db.load())
 </script>
 
 <template>

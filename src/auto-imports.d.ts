@@ -5,6 +5,7 @@
 export {}
 declare global {
   const EffectScope: typeof import('vue')['EffectScope']
+  const Priority: typeof import('./hooks/useApplication')['Priority']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
@@ -67,6 +68,9 @@ declare global {
   const markRaw: typeof import('vue')['markRaw']
   const nextTick: typeof import('vue')['nextTick']
   const onActivated: typeof import('vue')['onActivated']
+  const onAppClose: typeof import('./hooks/useApplication')['onAppClose']
+  const onAppResume: typeof import('./hooks/useApplication')['onAppResume']
+  const onAppSuspend: typeof import('./hooks/useApplication')['onAppSuspend']
   const onBeforeMount: typeof import('vue')['onBeforeMount']
   const onBeforeRouteLeave: typeof import('vue-router')['onBeforeRouteLeave']
   const onBeforeRouteUpdate: typeof import('vue-router')['onBeforeRouteUpdate']
@@ -105,6 +109,7 @@ declare global {
   const resolveComponent: typeof import('vue')['resolveComponent']
   const resolveRef: typeof import('@vueuse/core')['resolveRef']
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
+  const resumeApp: typeof import('./hooks/useApplication')['resumeApp']
   const setActivePinia: typeof import('pinia')['setActivePinia']
   const setMapStoreSuffix: typeof import('pinia')['setMapStoreSuffix']
   const shallowReactive: typeof import('vue')['shallowReactive']
@@ -113,6 +118,7 @@ declare global {
   const splitByDay: typeof import('./utils/time')['splitByDay']
   const splitByHour: typeof import('./utils/time')['splitByHour']
   const storeToRefs: typeof import('pinia')['storeToRefs']
+  const suspendApp: typeof import('./hooks/useApplication')['suspendApp']
   const syncRef: typeof import('@vueuse/core')['syncRef']
   const syncRefs: typeof import('@vueuse/core')['syncRefs']
   const templateRef: typeof import('@vueuse/core')['templateRef']
@@ -134,7 +140,6 @@ declare global {
   const useActiveElement: typeof import('@vueuse/core')['useActiveElement']
   const useActivityStore: typeof import('./stores/useActivityStore')['useActivityStore']
   const useAnimate: typeof import('@vueuse/core')['useAnimate']
-  const useApplication: typeof import('./hooks/useApplication')['useApplication']
   const useArrayDifference: typeof import('@vueuse/core')['useArrayDifference']
   const useArrayEvery: typeof import('@vueuse/core')['useArrayEvery']
   const useArrayFilter: typeof import('@vueuse/core')['useArrayFilter']
@@ -337,6 +342,7 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly Priority: UnwrapRef<typeof import('./hooks/useApplication')['Priority']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
@@ -399,6 +405,9 @@ declare module 'vue' {
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
+    readonly onAppClose: UnwrapRef<typeof import('./hooks/useApplication')['onAppClose']>
+    readonly onAppResume: UnwrapRef<typeof import('./hooks/useApplication')['onAppResume']>
+    readonly onAppSuspend: UnwrapRef<typeof import('./hooks/useApplication')['onAppSuspend']>
     readonly onBeforeMount: UnwrapRef<typeof import('vue')['onBeforeMount']>
     readonly onBeforeRouteLeave: UnwrapRef<typeof import('vue-router')['onBeforeRouteLeave']>
     readonly onBeforeRouteUpdate: UnwrapRef<typeof import('vue-router')['onBeforeRouteUpdate']>
@@ -437,6 +446,7 @@ declare module 'vue' {
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
+    readonly resumeApp: UnwrapRef<typeof import('./hooks/useApplication')['resumeApp']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
@@ -445,6 +455,7 @@ declare module 'vue' {
     readonly splitByDay: UnwrapRef<typeof import('./utils/time')['splitByDay']>
     readonly splitByHour: UnwrapRef<typeof import('./utils/time')['splitByHour']>
     readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
+    readonly suspendApp: UnwrapRef<typeof import('./hooks/useApplication')['suspendApp']>
     readonly syncRef: UnwrapRef<typeof import('@vueuse/core')['syncRef']>
     readonly syncRefs: UnwrapRef<typeof import('@vueuse/core')['syncRefs']>
     readonly templateRef: UnwrapRef<typeof import('@vueuse/core')['templateRef']>
@@ -466,7 +477,6 @@ declare module 'vue' {
     readonly useActiveElement: UnwrapRef<typeof import('@vueuse/core')['useActiveElement']>
     readonly useActivityStore: UnwrapRef<typeof import('./stores/useActivityStore')['useActivityStore']>
     readonly useAnimate: UnwrapRef<typeof import('@vueuse/core')['useAnimate']>
-    readonly useApplication: UnwrapRef<typeof import('./hooks/useApplication')['useApplication']>
     readonly useArrayDifference: UnwrapRef<typeof import('@vueuse/core')['useArrayDifference']>
     readonly useArrayEvery: UnwrapRef<typeof import('@vueuse/core')['useArrayEvery']>
     readonly useArrayFilter: UnwrapRef<typeof import('@vueuse/core')['useArrayFilter']>

@@ -10,7 +10,6 @@ const props = defineProps<{
 const { visible: visibleVModel } = useVModels(props)
 const { success, error } = useNotify()
 const { t } = useI18n()
-const app = useApplication()
 
 const authorized = ref(false)
 const syncing = ref(false)
@@ -48,7 +47,7 @@ async function handleSync() {
     await authorize()
     return
   }
-  await app.suspend()
+  await suspendApp()
   syncing.value = true
   syncText.value = t('sync.pulling')
   try {
@@ -63,7 +62,7 @@ async function handleSync() {
   finally {
     syncing.value = false
     syncText.value = t('sync.sync')
-    await app.resume()
+    await resumeApp()
   }
   success({})
 }
