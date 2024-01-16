@@ -56,6 +56,8 @@ export class Note extends Model<TransformNote> {
         sort: eb.ref('l.sort'),
         planId: eb.ref('l.planId'),
         deletedAt: eb.ref('l.deletedAt'),
+        createdAt: eb.ref('l.createdAt'),
+        updatedAt: eb.ref('l.updatedAt'),
         totalTime: eb.ref('l.totalTime'),
       }).as('label'),
       jsonBuildObject({
@@ -64,6 +66,8 @@ export class Note extends Model<TransformNote> {
         color: eb.ref('p.color'),
         sort: eb.ref('p.sort'),
         deletedAt: eb.ref('p.deletedAt'),
+        createdAt: eb.ref('p.createdAt'),
+        updatedAt: eb.ref('p.updatedAt'),
         totalTime: eb.ref('p.totalTime'),
       }).as('plan'),
     ]).selectAll(this.table).whereRef('note.labelId', '=', 'l.id').whereRef('note.planId', '=', 'p.id')

@@ -31,6 +31,8 @@ export class Program extends Model<TransformProgram> {
         'program.path',
         'program.sort',
         'program.deletedAt',
+        'program.createdAt',
+        'program.updatedAt',
         sql<number>`ifnull(sum(a.end - a.start), 0)`.as('totalTime'),
       ])
       .leftJoin('activity as a', join => join.onRef('a.programId', '=', 'program.id').on('a.deletedAt', '=', 0))

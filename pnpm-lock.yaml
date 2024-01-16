@@ -124,7 +124,7 @@ dependencies:
     version: git@github.com+hanaTsuk1/shion-synchronizer/df0667be54b2f047d81452adf9473a417edcef16
   tauri-plugin-shion-watcher-api:
     specifier: github:hanaTsuk1/shion-watcher
-    version: git@github.com+hanaTsuk1/shion-watcher/5dfe66b3b8fa3b87964d658c7d45573b6c6e3f2d
+    version: git@github.com+hanaTsuk1/shion-watcher/e77dec2943db294472e9a731eb95fafc642f98ef
   vee-validate:
     specifier: ^4.11.8
     version: 4.11.8(vue@3.3.7)
@@ -9082,8 +9082,8 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  git@github.com+hanaTsuk1/shion-watcher/5dfe66b3b8fa3b87964d658c7d45573b6c6e3f2d:
-    resolution: {commit: 5dfe66b3b8fa3b87964d658c7d45573b6c6e3f2d, repo: git@github.com:hanaTsuk1/shion-watcher.git, type: git}
+  git@github.com+hanaTsuk1/shion-watcher/e77dec2943db294472e9a731eb95fafc642f98ef:
+    resolution: {commit: e77dec2943db294472e9a731eb95fafc642f98ef, repo: git@github.com:hanaTsuk1/shion-watcher.git, type: git}
     name: tauri-plugin-shion-watcher-api
     version: 0.0.0
     dependencies:

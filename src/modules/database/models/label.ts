@@ -37,6 +37,8 @@ export class Label extends Model<TransformLabel> {
         'label.sort',
         'label.planId',
         'label.deletedAt',
+        'label.createdAt',
+        'label.updatedAt',
         sql<number>`ifnull(sum(n.end - n.start), 0)`.as('totalTime'),
       ])
       .leftJoin('note as n', join => join.onRef('n.labelId', '=', 'label.id').on('n.deletedAt', '=', 0))

@@ -49,6 +49,8 @@ export class Activity extends Model<TransformActivity> {
         path: eb.ref('p.path'),
         sort: eb.ref('p.sort'),
         deletedAt: eb.ref('p.deletedAt'),
+        createdAt: eb.ref('p.createdAt'),
+        updatedAt: eb.ref('p.updatedAt'),
         totalTime: eb.ref('p.totalTime'),
       }).as('program'),
     ).selectAll(this.table).whereRef('activity.programId', '=', 'p.id')

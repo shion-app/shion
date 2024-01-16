@@ -31,6 +31,8 @@ export class Plan extends Model<TransformPlan> {
         'plan.color',
         'plan.sort',
         'plan.deletedAt',
+        'plan.createdAt',
+        'plan.updatedAt',
         sql<number>`ifnull(sum(n.end - n.start), 0)`.as('totalTime'),
       ])
       .leftJoin('note as n', join => join.onRef('n.planId', '=', 'plan.id').on('n.deletedAt', '=', 0))
