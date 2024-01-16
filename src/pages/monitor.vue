@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import type * as backend from '@/interfaces/backend'
+import { type Program, getProgramList } from 'tauri-plugin-shion-watcher-api'
+import { UseObjectUrl } from '@vueuse/components'
+
 import { db } from '@/modules/database'
 import type { InsertProgram } from '@/modules/database'
 
 import { upload } from '@/modules/upload'
 
-import exe from '@/assets/exe.png'
 import { useConfirmDeleteModal } from '@/hooks/useConfirmModal'
 
 type ProgramForm = Pick<InsertProgram, 'name' | 'color'>
@@ -15,8 +16,8 @@ const store = useMonitorStore()
 const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
 
-const { getIconUrl, refresh } = store
-const { filtering, filterList, whiteList } = storeToRefs(store)
+const { refresh } = store
+const { whiteList } = storeToRefs(store)
 
 const { items, select, selectedList } = useGrid(whiteList)
 
@@ -30,6 +31,9 @@ const cardList = computed(() => whiteList.value.map(({ id, name, totalTime, colo
   prependImgUrl: icon,
   selected,
 })))
+
+const filtering = ref(false)
+const filterList = ref<Array<Program & { checked: boolean }>>([])
 
 const { open, close, setModelValue } = useFormModal<ProgramForm>(
   () => ({
@@ -117,12 +121,10 @@ function buildUpdateFn() {
   }
 }
 
-async function handleCreateProgram(program: backend.Program) {
+async function handleCreateProgram(program: Program) {
   const { name, path, icon } = program
   const color = randomColor()
-  const index = filterList.value.findIndex(i => i.path == path)
-  filterList.value.splice(index, 1)
-  const src = await upload(`${name}.png`, icon.length ? new Uint8Array(icon) : await (await fetch(exe)).arrayBuffer())
+  const src = await upload(`${name}.png`, new Uint8Array(icon))
   // todo: db event listener
   const { lastInsertId } = await db.program.insert({
     name,
@@ -142,8 +144,12 @@ async function handleSelect() {
   success({})
 }
 
-function showFilterDialog() {
+async function showFilterDialog() {
   filtering.value = true
+  filterList.value = (await getProgramList()).filter(p => !whiteList.value.find(w => w.path == p.path)).map(p => ({
+    ...p,
+    checked: false,
+  }))
 }
 
 async function handleGridChange(items: number[]) {
@@ -207,7 +213,9 @@ refresh()
               hover:shadow-xl
               transition-shadow
             >
-              <img :src="getIconUrl(program.path)" width="32" height="32" object-contain>
+              <UseObjectUrl v-slot="url" :object="createIconBlob(program.icon)">
+                <img :src="url.value" width="32" height="32" object-contain>
+              </UseObjectUrl>
               <div flex-1 min-w-0>
                 <div>
                   {{ program.name }}
@@ -219,7 +227,7 @@ refresh()
             </div>
           </div>
         </template>
-        <empty v-else :desc="$t('monitor.switchWindowTip')" />
+        <empty v-else />
       </v-card-text>
       <v-card-actions>
         <v-spacer />

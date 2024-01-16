@@ -84,7 +84,6 @@ overview:
   update: Update widget
 monitor:
   filterProgram: Filter Program to monitor
-  switchWindowTip: Switch to another application window to get data
 program:
   update: Update program
   name: Name

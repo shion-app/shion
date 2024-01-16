@@ -51,7 +51,6 @@ declare global {
   const isDefined: typeof import('@vueuse/core')['isDefined']
   const isDesktop: typeof import('./utils/shared')['isDesktop']
   const isMobile: typeof import('./utils/shared')['isMobile']
-  const isPathEqual: typeof import('./utils/path')['isPathEqual']
   const isProxy: typeof import('vue')['isProxy']
   const isReactive: typeof import('vue')['isReactive']
   const isReadonly: typeof import('vue')['isReadonly']
@@ -89,7 +88,6 @@ declare global {
   const onStartTyping: typeof import('@vueuse/core')['onStartTyping']
   const onUnmounted: typeof import('vue')['onUnmounted']
   const onUpdated: typeof import('vue')['onUpdated']
-  const pathToKey: typeof import('./utils/path')['pathToKey']
   const pausableWatch: typeof import('@vueuse/core')['pausableWatch']
   const provide: typeof import('vue')['provide']
   const randomColor: typeof import('./utils/index')['randomColor']
@@ -388,7 +386,6 @@ declare module 'vue' {
     readonly isDefined: UnwrapRef<typeof import('@vueuse/core')['isDefined']>
     readonly isDesktop: UnwrapRef<typeof import('./utils/shared')['isDesktop']>
     readonly isMobile: UnwrapRef<typeof import('./utils/shared')['isMobile']>
-    readonly isPathEqual: UnwrapRef<typeof import('./utils/path')['isPathEqual']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
@@ -426,7 +423,6 @@ declare module 'vue' {
     readonly onStartTyping: UnwrapRef<typeof import('@vueuse/core')['onStartTyping']>
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
-    readonly pathToKey: UnwrapRef<typeof import('./utils/path')['pathToKey']>
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly randomColor: UnwrapRef<typeof import('./utils/index')['randomColor']>

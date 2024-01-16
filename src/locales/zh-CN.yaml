@@ -84,7 +84,6 @@ overview:
   update: 更新展示组件
 monitor:
   filterProgram: 筛选要监听的程序
-  switchWindowTip: 切换到其他应用窗口，获取数据
 program:
   update: 更新程序
   name: 名称
