@@ -57,7 +57,6 @@
     "mitt": "^3.0.1",
     "nanoid": "^5.0.1",
     "notiwind": "^2.0.2",
-    "p-queue": "^7.3.4",
     "pinia": "^2.0.34",
     "svg.js": "^2.7.1",
     "tauri-plugin-shion-synchronizer-api": "github:hanaTsuk1/shion-synchronizer",
