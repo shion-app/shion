@@ -62,14 +62,7 @@ pub fn run() {
         use tauri::Manager;
         use tauri_plugin_autostart::MacosLauncher;
 
-        use std::{
-            collections::HashMap,
-            sync::{
-                atomic::{AtomicBool, Ordering::Relaxed},
-                Arc,
-            },
-            thread,
-        };
+        use std::collections::HashMap;
 
         #[derive(Clone, serde::Serialize)]
         struct Payload {
@@ -87,20 +80,6 @@ pub fn run() {
                     menu_item.set_text(value).unwrap();
                 }
             }
-        }
-
-        static IS_SEND_PROGRAM: AtomicBool = AtomicBool::new(false);
-
-        #[tauri::command]
-        fn toggle_filter_program(data: bool) {
-            IS_SEND_PROGRAM.store(data, Relaxed);
-        }
-
-        #[tauri::command]
-        fn is_audio_active(path: String) -> bool {
-            // TODO: upgrade
-            // unsafe { AUDIO_CONTEXT.as_ref().unwrap().is_active(path) }
-            false
         }
 
         builder = builder
@@ -122,11 +101,7 @@ pub fn run() {
                 }
                 _ => {}
             })
-            .invoke_handler(tauri::generate_handler![
-                update_tray_menu,
-                toggle_filter_program,
-                is_audio_active
-            ]);
+            .invoke_handler(tauri::generate_handler![update_tray_menu,]);
     }
 
     builder
@@ -164,45 +139,6 @@ pub fn run() {
                     })
                     .build(app)?;
             }
-
-            // TODO: upgrade
-
-            // let app_handle = Arc::new(app.handle());
-            // let app_handle_clone = app_handle.clone();
-            // let filter = {
-            //     let app_handle = app_handle_clone.clone();
-            //     move |program: Program| {
-            //         let is_send_program = IS_SEND_PROGRAM.load(Relaxed);
-            //         if is_send_program {
-            //             app_handle.emit_all("filter-program", program).unwrap();
-            //         }
-            //     }
-            // };
-            // let mouse = {
-            //     let app_handle = app_handle_clone.clone();
-            //     move |path| {
-            //         app_handle
-            //             .emit_all("window-activate", Activity { path })
-            //             .unwrap();
-            //     }
-            // };
-            // let audio = {
-            //     let app_handle = app_handle_clone.clone();
-            //     move |state, path| {
-            //         app_handle
-            //             .emit_all("audio-activity", AudioActivity { state, path })
-            //             .unwrap();
-            //     }
-            // };
-
-            // thread::spawn(|| {
-            //     monitor::run(WatchOption {
-            //         filter: Box::new(filter),
-            //         mouse: Box::new(mouse.clone()),
-            //         keyboard: Box::new(mouse),
-            //         audio: Box::new(audio),
-            //     });
-            // });
 
             Ok(())
         })
