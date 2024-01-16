@@ -1,4 +1,4 @@
-import { isActive, onStatusChanged } from 'tauri-plugin-shion-watcher-api'
+import { isActive, onStatusChanged, resume, suspend } from 'tauri-plugin-shion-watcher-api'
 import { debug } from '@tauri-apps/plugin-log'
 
 import type { SelectProgram } from '@/modules/database'
@@ -75,6 +75,11 @@ class Watcher {
     }
     this.pool = this.pool.filter(i => i.active)
   }
+
+  async clear(list: Array<SelectProgram>) {
+    await this.record(list)
+    this.pool = []
+  }
 }
 
 export const useActivityStore = defineStore('activity', () => {
@@ -119,5 +124,16 @@ export const useActivityStore = defineStore('activity', () => {
 
     else
       watcher.inactivate(path, time)
+  })
+
+  onAppSuspend(async () => {
+    timer.destroy()
+    await watcher.clear(monitor.whiteList)
+    await suspend()
+  })
+
+  onAppResume(async () => {
+    timer.restart()
+    await resume()
   })
 })
