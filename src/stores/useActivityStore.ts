@@ -1,4 +1,4 @@
-import { isActive, onStatusChanged, resume, suspend } from 'tauri-plugin-shion-watcher-api'
+import { onStatusChanged, resume, suspend } from 'tauri-plugin-shion-watcher-api'
 import { debug } from '@tauri-apps/plugin-log'
 
 import type { SelectProgram } from '@/modules/database'
@@ -91,26 +91,20 @@ export const useActivityStore = defineStore('activity', () => {
     watcher.record(monitor.whiteList)
   }, TIMER_INTERVAL)
 
-  watchArray(() => monitor.whiteList, async (_, __, added, removed) => {
-    const updated: number[] = []
-    for (const p1 of added) {
-      for (const p2 of removed) {
-        if (p1.id == p2.id)
-          updated.push(p1.id)
-      }
-    }
-    for (const program of added) {
-      if (updated.includes(program.id))
-        continue
-      const active = await isActive(program.path)
-      if (active)
-        watcher.activate(program.path, Date.now())
-    }
-    for (const program of removed) {
-      if (updated.includes(program.id))
-        continue
-      watcher.inactivate(program.path, Date.now())
-    }
+  async function handleSuspend() {
+    await suspend()
+    timer.destroy()
+    await watcher.clear(monitor.whiteList)
+  }
+
+  async function handleResume() {
+    await resume()
+    timer.restart()
+  }
+
+  watch(() => monitor.whiteList.length, async () => {
+    await handleSuspend()
+    await handleResume()
   })
 
   onStatusChanged(({ payload }) => {
@@ -126,14 +120,14 @@ export const useActivityStore = defineStore('activity', () => {
       watcher.inactivate(path, time)
   })
 
-  onAppSuspend(async () => {
+  onAppSuspend(handleSuspend)
+
+  onAppResume(handleResume)
+
+  onAppClose(async () => {
     timer.destroy()
     await watcher.clear(monitor.whiteList)
-    await suspend()
   })
 
-  onAppResume(async () => {
-    timer.restart()
-    await resume()
-  })
+  resume()
 })

@@ -2846,7 +2846,7 @@ dependencies = [
 [[package]]
 name = "nodio-core"
 version = "0.1.0"
-source = "git+https://github.com/hanaTsuk1/nodio#14dc43fde92fb2c1246e665c3d4ac65d4a7cbcf5"
+source = "git+https://github.com/hanaTsuk1/nodio#76121b8a11d39ab2f15b13ddc58dad7fcb847f0f"
 dependencies = [
  "serde",
  "serde_json",
@@ -2856,7 +2856,7 @@ dependencies = [
 [[package]]
 name = "nodio-win32"
 version = "0.1.0"
-source = "git+https://github.com/hanaTsuk1/nodio#14dc43fde92fb2c1246e665c3d4ac65d4a7cbcf5"
+source = "git+https://github.com/hanaTsuk1/nodio#76121b8a11d39ab2f15b13ddc58dad7fcb847f0f"
 dependencies = [
  "log 0.4.20",
  "nodio-core",
@@ -5110,7 +5110,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-shion-watcher"
 version = "0.0.0"
-source = "git+https://github.com/hanaTsuk1/shion-watcher#47828acc0e2b37b3f16e1e711982891d52645e5f"
+source = "git+https://github.com/hanaTsuk1/shion-watcher#80c983a96bc0f73bf9d14015751a3825aa11ff7d"
 dependencies = [
  "anyhow",
  "chrono",
