@@ -40,8 +40,8 @@ class Watcher {
   }
 
   async #insert(activity: Activity, program: SelectProgram) {
-    const { start, end } = activity
-    if (end - start < MIN_TIME_SLICE)
+    const { start, end, active } = activity
+    if (!active && end - start < MIN_TIME_SLICE)
       return
 
     const { lastInsertId } = await db.activity.insert({
