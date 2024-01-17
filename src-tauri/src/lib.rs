@@ -95,9 +95,9 @@ pub fn run() {
                 MacosLauncher::LaunchAgent,
                 None,
             ))
-            .on_window_event(|event| match event.event() {
+            .on_window_event(|window, event| match event {
                 tauri::WindowEvent::CloseRequested { api, .. } => {
-                    event.window().hide().unwrap();
+                    window.hide().unwrap();
                     api.prevent_close();
                 }
                 _ => {}

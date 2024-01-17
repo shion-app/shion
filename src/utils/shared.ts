@@ -1,4 +1,3 @@
-// TODO: cli bug
 export const isWindows = import.meta.env.TAURI_ENV_PLATFORM == 'windows'
 
 export const isDesktop = isWindows
