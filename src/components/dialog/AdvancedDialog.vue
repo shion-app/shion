@@ -45,11 +45,11 @@ const dragHandler = ({ movement: [x], dragging }) => {
   <v-dialog
     v-model="visibleVModel"
     v-bind="{
-      width: props.page ? '' : 400,
       fullscreen: props.page,
       scrim: !props.page,
     }"
     :transition="page ? 'dialog-slide-transition' : 'dialog-transition'"
+    class="sm:w-[500px] sm:max-w-[600px]" :class="props.page ? 'w-screen' : 'w-[90vw]'"
   >
     <v-card v-drag="dragHandler" v-motion="'dialog'">
       <v-toolbar v-if="props.page" class="bg-transparent!">

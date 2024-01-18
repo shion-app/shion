@@ -13,7 +13,7 @@ const currentWindow = getCurrent()
 <template>
   <div data-tauri-drag-region flex h-full select-none justify-between items-center>
     <div flex>
-      <img :src="logo" object-contain width="20" height="20" alt="logo" mx-2>
+      <img :src="logo" object-contain width="20" height="20" alt="logo" mx-4>
       <v-menu>
         <template #activator="{ props }">
           <v-btn

@@ -41,7 +41,7 @@ const formFactory = ref<ComponentExposed<typeof FormFactory>>()
       $emit('afterCancel')
     }"
   >
-    <v-card :title="title" max-height="360" max-width="600" class="w-[24rem]">
+    <v-card :title="title" max-height="360" class="w-[90vw] sm:w-[400px] sm:max-w-[500px]">
       <v-card-text class="overflow-auto!">
         <FormFactory
           ref="formFactory"
