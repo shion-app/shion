@@ -4,5 +4,5 @@
 )]
 
 fn main() {
-    shion::run();
+    shion_lib::run();
 }
