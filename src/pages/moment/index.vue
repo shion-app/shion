@@ -100,7 +100,7 @@ refresh()
       v-for="moment in list" :key="moment.id"
       v-model:selected="moment.selected"
       :title="moment.title"
-      :subtitle="format(moment.time, isThisYear(moment.time) ? 'MM-dd' : 'yyyy-MM-dd')"
+      :subtitle="format(moment.createdAt, isThisYear(moment.createdAt) ? 'MM-dd' : 'yyyy-MM-dd')"
       mx-4 mb-6
       @click="viewDetail(moment.id)"
     >

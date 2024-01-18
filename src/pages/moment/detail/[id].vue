@@ -13,7 +13,7 @@ const detail = ref<SelectMoment>()
 const content = computed(() => detail.value?.content || '')
 const time = computed(() =>
   detail.value
-    ? isThisYear(detail.value.time) ? format(detail.value.time, 'MM-dd HH:mm') : format(detail.value.time, 'yyyy-MM-dd HH:mm')
+    ? isThisYear(detail.value.createdAt) ? format(detail.value.createdAt, 'MM-dd HH:mm') : format(detail.value.createdAt, 'yyyy-MM-dd HH:mm')
     : '')
 
 async function init() {

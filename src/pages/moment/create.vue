@@ -12,7 +12,6 @@ onEditGuard(hasChanged)
 
 function handleSubmit() {
   submit(title, () => db.moment.insert({
-    time: Date.now(),
     title: title.value,
     content: content.value,
   }))

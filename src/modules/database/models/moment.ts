@@ -7,6 +7,6 @@ export class Moment extends Model<TransformMoment> {
   @get
   select(value?: { id?: number }) {
     const query = this.selectByLooseType(value)
-    return query.selectAll(this.table).orderBy('time desc')
+    return query.selectAll(this.table).orderBy('createdAt desc')
   }
 }
