@@ -54,7 +54,9 @@ class Watcher {
   }
 
   async #update(activity: Activity) {
-    activity.end = Date.now()
+    if (activity.active)
+      activity.end = Date.now()
+
     await db.activity.update(activity.id!, {
       end: activity.end,
     })
