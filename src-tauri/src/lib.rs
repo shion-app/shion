@@ -1,7 +1,7 @@
 #[cfg(mobile)]
 mod mobile;
 
-use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy, WEBVIEW_TARGET};
+use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
 use tauri_plugin_sql::{Migration, MigrationKind};
 
 pub fn run() {
@@ -37,26 +37,18 @@ pub fn run() {
                 .build(),
         )
         .plugin(tauri_plugin_shion_synchronizer::init())
-        .plugin(tauri_plugin_shion_watcher::init());
-    // TODO: log bug
-    // .plugin(
-    //     tauri_plugin_log::Builder::new()
-    //         .clear_targets()
-    //         .targets([
-    //             Target::new(TargetKind::LogDir {
-    //                 file_name: Some("webview".into()),
-    //             })
-    //             .filter(|metadata| metadata.target() == WEBVIEW_TARGET),
-    //             Target::new(TargetKind::LogDir {
-    //                 file_name: Some("rust".into()),
-    //             })
-    //             .filter(|metadata| metadata.target() != WEBVIEW_TARGET),
-    //             Target::new(TargetKind::Stdout),
-    //             Target::new(TargetKind::Webview),
-    //         ])
-    //         .timezone_strategy(TimezoneStrategy::UseLocal)
-    //         .build(),
-    // );
+        .plugin(tauri_plugin_shion_watcher::init())
+        // TODO: log bug
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .targets([
+                    Target::new(TargetKind::Stdout),
+                    Target::new(TargetKind::LogDir { file_name: None }),
+                    Target::new(TargetKind::Webview),
+                ])
+                .timezone_strategy(TimezoneStrategy::UseLocal)
+                .build(),
+        );
 
     #[cfg(desktop)]
     {
