@@ -60,6 +60,8 @@ pub fn run() {
 
     #[cfg(desktop)]
     {
+        use tauri::menu::MenuBuilder;
+        use tauri::menu::MenuItemBuilder;
         use tauri::Manager;
         use tauri_plugin_autostart::MacosLauncher;
 
@@ -73,13 +75,12 @@ pub fn run() {
 
         #[tauri::command]
         fn update_tray_menu(app: tauri::AppHandle, data: HashMap<String, String>) {
-            for (key, value) in data {
-                let menu = app.menu();
-                if let Some(menu) = menu {
-                    let item = menu.get(key.as_str()).unwrap();
-                    let menu_item = item.as_menuitem().unwrap();
-                    menu_item.set_text(value).unwrap();
-                }
+            let tray = app.tray();
+            if let Some(tray) = tray {
+                let quit = data.get("quit").unwrap();
+                let quit = MenuItemBuilder::with_id("quit", quit).build(&app);
+                let menu = MenuBuilder::new(&app).items(&[&quit]).build().unwrap();
+                tray.set_menu(Some(menu)).unwrap();
             }
         }
 
@@ -102,18 +103,15 @@ pub fn run() {
                 }
                 _ => {}
             })
-            .invoke_handler(tauri::generate_handler![update_tray_menu,]);
+            .invoke_handler(tauri::generate_handler![update_tray_menu]);
     }
 
     builder
         .setup(|app| {
             #[cfg(desktop)]
             {
-                use tauri::{
-                    menu::{MenuBuilder, MenuItemBuilder},
-                    tray::{ClickType, TrayIconBuilder},
-                    Manager,
-                };
+                use tauri::menu::{MenuBuilder, MenuItemBuilder};
+                use tauri::{tray::ClickType, Manager};
                 use window_shadows::set_shadow;
 
                 let window = app.get_window("main").unwrap();
@@ -121,24 +119,23 @@ pub fn run() {
 
                 let quit = MenuItemBuilder::with_id("quit", "Quit").build(app);
                 let menu = MenuBuilder::new(app).items(&[&quit]).build()?;
-                let tray = TrayIconBuilder::new()
-                    .menu(&menu)
-                    .on_menu_event(move |app, event| match event.id().as_ref() {
-                        "quit" => {
-                            let window = app.get_window("main").unwrap();
-                            window.hide().unwrap();
-                            app.emit_to("main", "quit", ()).unwrap();
-                        }
-                        _ => (),
-                    })
-                    .on_tray_icon_event(|tray, event| {
-                        if event.click_type == ClickType::Double {
-                            let app = tray.app_handle();
-                            let window = app.get_window("main").unwrap();
-                            window.show().unwrap();
-                        }
-                    })
-                    .build(app)?;
+                let tray = app.tray().unwrap();
+                tray.on_menu_event(move |app, event| match event.id().as_ref() {
+                    "quit" => {
+                        let window = app.get_window("main").unwrap();
+                        window.hide().unwrap();
+                        app.emit_to("main", "quit", ()).unwrap();
+                    }
+                    _ => (),
+                });
+                tray.on_tray_icon_event(|tray, event| {
+                    if event.click_type == ClickType::Double {
+                        let app = tray.app_handle();
+                        let window = app.get_window("main").unwrap();
+                        window.show().unwrap();
+                    }
+                });
+                tray.set_menu(Some(menu)).unwrap();
             }
 
             Ok(())
