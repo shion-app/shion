@@ -5120,7 +5120,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-shion-watcher"
 version = "0.0.0"
-source = "git+https://github.com/hanaTsuk1/shion-watcher#c5b7f6b79490dc39e86e055849bd6a87c8b5e013"
+source = "git+https://github.com/hanaTsuk1/shion-watcher#6b76882694a5115d025a2bce8c2c90881ab51af3"
 dependencies = [
  "anyhow",
  "chrono",
