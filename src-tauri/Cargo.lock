@@ -2755,6 +2755,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "nanoid"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3ffa00dec017b5b1a8b7cf5e2c008bfda1aa7e0697ac1508b491fdf2622fb4d8"
+dependencies = [
+ "rand 0.8.5",
+]
+
+[[package]]
 name = "native-tls"
 version = "0.2.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5087,11 +5096,12 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-shion-synchronizer"
 version = "0.0.0"
-source = "git+https://github.com/hanaTsuk1/shion-synchronizer#df0667be54b2f047d81452adf9473a417edcef16"
+source = "git+https://github.com/hanaTsuk1/shion-synchronizer#05508ea7095a163cc872747d6ecbaefe82c1dcce"
 dependencies = [
  "google-drive3",
  "hyper-proxy",
  "lazy_static 1.4.0",
+ "nanoid",
  "once_cell",
  "port_check",
  "reqwest",
@@ -5110,7 +5120,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-shion-watcher"
 version = "0.0.0"
-source = "git+https://github.com/hanaTsuk1/shion-watcher#80c983a96bc0f73bf9d14015751a3825aa11ff7d"
+source = "git+https://github.com/hanaTsuk1/shion-watcher#c5b7f6b79490dc39e86e055849bd6a87c8b5e013"
 dependencies = [
  "anyhow",
  "chrono",
