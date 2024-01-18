@@ -24,7 +24,6 @@ model Plan {
   notes      Note[]
 
   @@unique([name, deleted_at])
-  @@unique([color, deleted_at])
   @@map("plan")
 }
 
@@ -41,7 +40,6 @@ model Label {
   notes      Note[]
 
   @@unique([name, deleted_at])
-  @@unique([color, deleted_at])
   @@map("label")
 }
 
@@ -73,7 +71,6 @@ model Program {
   activities Activity[]
 
   @@unique([name, deleted_at])
-  @@unique([color, deleted_at])
   @@unique([path, deleted_at])
   @@map("program")
 }
@@ -93,7 +90,6 @@ model Activity {
 
 model Moment {
   id         Int    @id @default(autoincrement())
-  time       Int
   title      String
   content    String
   deleted_at Int    @default(0)

@@ -1,0 +1,113 @@
+/*
+  Warnings:
+
+  - You are about to drop the column `time` on the `moment` table. All the data in the column will be lost.
+
+*/
+-- RedefineTables
+COMMIT TRANSACTION;
+PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
+CREATE TABLE "new_plan" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "color" TEXT NOT NULL,
+    "sort" INTEGER NOT NULL DEFAULT 0,
+    "deleted_at" INTEGER NOT NULL DEFAULT 0,
+    "created_at" INTEGER NOT NULL DEFAULT (ROUND((julianday('now') - 2440587.5) * 86400000)),
+    "updated_at" INTEGER NOT NULL DEFAULT (ROUND((julianday('now') - 2440587.5) * 86400000))
+);
+INSERT INTO "new_plan" ("color", "created_at", "deleted_at", "id", "name", "sort", "updated_at") SELECT "color", "created_at", "deleted_at", "id", "name", "sort", "updated_at" FROM "plan";
+DROP TABLE "plan";
+ALTER TABLE "new_plan" RENAME TO "plan";
+CREATE UNIQUE INDEX "plan_name_deleted_at_key" ON "plan"("name", "deleted_at");
+CREATE TABLE "new_activity" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "start" INTEGER NOT NULL,
+    "end" INTEGER NOT NULL,
+    "program_id" INTEGER NOT NULL,
+    "deleted_at" INTEGER NOT NULL DEFAULT 0,
+    "created_at" INTEGER NOT NULL DEFAULT (ROUND((julianday('now') - 2440587.5) * 86400000)),
+    "updated_at" INTEGER NOT NULL DEFAULT (ROUND((julianday('now') - 2440587.5) * 86400000)),
+    CONSTRAINT "activity_program_id_fkey" FOREIGN KEY ("program_id") REFERENCES "program" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+INSERT INTO "new_activity" ("created_at", "deleted_at", "end", "id", "program_id", "start", "updated_at") SELECT "created_at", "deleted_at", "end", "id", "program_id", "start", "updated_at" FROM "activity";
+DROP TABLE "activity";
+ALTER TABLE "new_activity" RENAME TO "activity";
+CREATE TABLE "new_moment" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "title" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "deleted_at" INTEGER NOT NULL DEFAULT 0,
+    "created_at" INTEGER NOT NULL DEFAULT (ROUND((julianday('now') - 2440587.5) * 86400000)),
+    "updated_at" INTEGER NOT NULL DEFAULT (ROUND((julianday('now') - 2440587.5) * 86400000))
+);
+INSERT INTO "new_moment" ("content", "created_at", "deleted_at", "id", "title", "updated_at") SELECT "content", "created_at", "deleted_at", "id", "title", "updated_at" FROM "moment";
+DROP TABLE "moment";
+ALTER TABLE "new_moment" RENAME TO "moment";
+CREATE UNIQUE INDEX "moment_title_deleted_at_key" ON "moment"("title", "deleted_at");
+CREATE TABLE "new_program" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "color" TEXT NOT NULL,
+    "path" TEXT NOT NULL,
+    "icon" TEXT NOT NULL,
+    "sort" INTEGER NOT NULL DEFAULT 0,
+    "deleted_at" INTEGER NOT NULL DEFAULT 0,
+    "created_at" INTEGER NOT NULL DEFAULT (ROUND((julianday('now') - 2440587.5) * 86400000)),
+    "updated_at" INTEGER NOT NULL DEFAULT (ROUND((julianday('now') - 2440587.5) * 86400000))
+);
+INSERT INTO "new_program" ("color", "created_at", "deleted_at", "icon", "id", "name", "path", "sort", "updated_at") SELECT "color", "created_at", "deleted_at", "icon", "id", "name", "path", "sort", "updated_at" FROM "program";
+DROP TABLE "program";
+ALTER TABLE "new_program" RENAME TO "program";
+CREATE UNIQUE INDEX "program_name_deleted_at_key" ON "program"("name", "deleted_at");
+CREATE UNIQUE INDEX "program_path_deleted_at_key" ON "program"("path", "deleted_at");
+CREATE TABLE "new_note" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "start" INTEGER NOT NULL,
+    "end" INTEGER NOT NULL,
+    "plan_id" INTEGER NOT NULL,
+    "label_id" INTEGER NOT NULL,
+    "deleted_at" INTEGER NOT NULL DEFAULT 0,
+    "created_at" INTEGER NOT NULL DEFAULT (ROUND((julianday('now') - 2440587.5) * 86400000)),
+    "updated_at" INTEGER NOT NULL DEFAULT (ROUND((julianday('now') - 2440587.5) * 86400000)),
+    CONSTRAINT "note_plan_id_fkey" FOREIGN KEY ("plan_id") REFERENCES "plan" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "note_label_id_fkey" FOREIGN KEY ("label_id") REFERENCES "label" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+INSERT INTO "new_note" ("created_at", "deleted_at", "end", "id", "label_id", "plan_id", "start", "updated_at") SELECT "created_at", "deleted_at", "end", "id", "label_id", "plan_id", "start", "updated_at" FROM "note";
+DROP TABLE "note";
+ALTER TABLE "new_note" RENAME TO "note";
+CREATE TABLE "new_label" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "color" TEXT NOT NULL,
+    "sort" INTEGER NOT NULL DEFAULT 0,
+    "plan_id" INTEGER NOT NULL,
+    "deleted_at" INTEGER NOT NULL DEFAULT 0,
+    "created_at" INTEGER NOT NULL DEFAULT (ROUND((julianday('now') - 2440587.5) * 86400000)),
+    "updated_at" INTEGER NOT NULL DEFAULT (ROUND((julianday('now') - 2440587.5) * 86400000)),
+    CONSTRAINT "label_plan_id_fkey" FOREIGN KEY ("plan_id") REFERENCES "plan" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+INSERT INTO "new_label" ("color", "created_at", "deleted_at", "id", "name", "plan_id", "sort", "updated_at") SELECT "color", "created_at", "deleted_at", "id", "name", "plan_id", "sort", "updated_at" FROM "label";
+DROP TABLE "label";
+ALTER TABLE "new_label" RENAME TO "label";
+CREATE UNIQUE INDEX "label_name_deleted_at_key" ON "label"("name", "deleted_at");
+CREATE TABLE "new_overview" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "type" INTEGER NOT NULL,
+    "x" INTEGER NOT NULL,
+    "y" INTEGER NOT NULL,
+    "w" INTEGER NOT NULL,
+    "h" INTEGER NOT NULL,
+    "data" TEXT NOT NULL,
+    "deleted_at" INTEGER NOT NULL DEFAULT 0,
+    "created_at" INTEGER NOT NULL DEFAULT (ROUND((julianday('now') - 2440587.5) * 86400000)),
+    "updated_at" INTEGER NOT NULL DEFAULT (ROUND((julianday('now') - 2440587.5) * 86400000))
+);
+INSERT INTO "new_overview" ("created_at", "data", "deleted_at", "h", "id", "type", "updated_at", "w", "x", "y") SELECT "created_at", "data", "deleted_at", "h", "id", "type", "updated_at", "w", "x", "y" FROM "overview";
+DROP TABLE "overview";
+ALTER TABLE "new_overview" RENAME TO "overview";
+PRAGMA foreign_key_check;
+COMMIT TRANSACTION;
+PRAGMA foreign_keys=ON;
+BEGIN TRANSACTION;

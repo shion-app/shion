@@ -24,6 +24,12 @@ pub fn run() {
             sql: include_str!("../../prisma/migrations/20240109024738_/migration.sql"),
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 4,
+            description: "delete unique key color and moment property",
+            sql: include_str!("../../prisma/migrations/20240118085015_/migration.sql"),
+            kind: MigrationKind::Up,
+        },
     ];
 
     let mut builder = tauri::Builder::default()

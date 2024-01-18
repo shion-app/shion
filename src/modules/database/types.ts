@@ -25,7 +25,6 @@ export interface Label {
 }
 export interface Moment {
   id: Generated<number>
-  time: number
   title: string
   content: string
   deletedAt: Generated<number>
