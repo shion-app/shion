@@ -63,7 +63,7 @@
           "$APPDATA/**"
         ]
       },
-      "csp": "default-src 'self' 'unsafe-inline'; img-src 'self' asset: https://asset.localhost data: blob:; connect-src ipc: http://ipc.localhost ipc: http://ipc.localhost"
+      "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data: blob:; style-src 'self' 'unsafe-inline'; connect-src ipc: http://ipc.localhost"
     },
     "trayIcon": {
       "iconAsTemplate": true,
