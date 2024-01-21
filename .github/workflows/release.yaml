@@ -10,6 +10,10 @@ jobs:
     permissions: write-all
     runs-on: windows-latest
     steps:
+      - uses: de-vri-es/setup-git-credentials@v2
+        with:
+          credentials: ${{secrets.GIT_CREDENTIALS}}
+
       - uses: actions/checkout@v3
 
       - name: Rust setup
