@@ -149,6 +149,7 @@ widget:
     ACTIVE_STATUS_CALENDAR: Active status calendar
     SINGLE_CATEGORY_BAR: Single category bar
     TEXT_SUMMARY: Text Summary
+    DAILY_ACTIVIRY: Daily activity
   column: Occupy column
   row: Occupy row
   singleCategoryBar:

@@ -66,7 +66,7 @@ export function calcTotalTime(list: Array<TimeRange>) {
   return list.reduce((acc, cur) => acc += (cur.end - cur.start), 0)
 }
 
-function complement(num: number) {
+export function complement(num: number) {
   return num < 10 ? `0${num}` : `${num}`
 }
 

@@ -6,6 +6,7 @@ export enum WidgetType {
   ACTIVE_STATUS_CALENDAR,
   SINGLE_CATEGORY_BAR,
   TEXT_SUMMARY,
+  DAILY_ACTIVIRY,
 }
 
 @injectModel<OriginOverview, TransformOverview>({

@@ -17,6 +17,7 @@ declare module '@vue/runtime-core' {
     Cascader: typeof import('./components/form/Cascader.vue')['default']
     ColorPicker: typeof import('./components/form/ColorPicker.vue')['default']
     ConfirmModal: typeof import('./components/modal/ConfirmModal.vue')['default']
+    DailyActivity: typeof import('./components/widget/DailyActivity.vue')['default']
     Empty: typeof import('./components/shared/Empty.vue')['default']
     FormFactory: typeof import('./components/form/FormFactory.vue')['default']
     FormModal: typeof import('./components/modal/FormModal.vue')['default']

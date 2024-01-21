@@ -149,6 +149,7 @@ widget:
     ACTIVE_STATUS_CALENDAR: 活跃状态日历
     SINGLE_CATEGORY_BAR: 单独类别柱状图
     TEXT_SUMMARY: 文本总结
+    DAILY_ACTIVIRY: 每日活跃
   column: 占用列数
   row: 占用行数
   singleCategoryBar:
