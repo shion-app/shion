@@ -9,6 +9,7 @@ const props = defineProps<{
 }>()
 
 const { format, formatHHmmss } = useDateFns()
+const { position } = useEcharts()
 
 const noteList = ref<Array<SelectNote>>([])
 const activityList = ref<Array<SelectActivity>>([])
@@ -77,6 +78,7 @@ const option = computed<EChartsOption>(() => {
         }).join('')
         return chart
       },
+      position,
     },
     xAxis: {
       type: 'category',

@@ -13,6 +13,7 @@ const { selectedDate: selectedDateVModel } = useVModels(props)
 const configStore = useConfigStore()
 
 const { format, formatHHmmss } = useDateFns()
+const { position } = useEcharts()
 
 const { config } = storeToRefs(configStore)
 
@@ -123,6 +124,7 @@ const option = computed<EChartsOption>(() => {
                 </div>
                 `
       },
+      position,
     },
     series: {
       type: 'heatmap',

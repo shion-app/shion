@@ -9,6 +9,7 @@ const props = defineProps<{
 const { selectedDate: selectedDateVModel } = useVModels(props)
 
 const { formatHHmmss, formatYYYYmmdd } = useDateFns()
+const { position } = useEcharts()
 
 const noteList = ref<Array<SelectNote>>([])
 const activityList = ref<Array<SelectActivity>>([])
@@ -67,6 +68,7 @@ const option = computed(() => {
           return `${marker}  <span style="font-size:14px;color:#666;font-weight:400;margin-left:2px">${seriesName}</span>  <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatHHmmss(value)}</span>`
         }).join('<br/>')
       },
+      position,
     },
     grid: {
       left: '2%',

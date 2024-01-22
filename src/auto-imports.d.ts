@@ -59,6 +59,8 @@ declare global {
   const isRef: typeof import('vue')['isRef']
   const isWindows: typeof import('./utils/shared')['isWindows']
   const layoutInject: typeof import('./hooks/useLayout')['layoutInject']
+  const layoutMainInject: typeof import('./hooks/useLayout')['layoutMainInject']
+  const layoutMainProvide: typeof import('./hooks/useLayout')['layoutMainProvide']
   const layoutProvide: typeof import('./hooks/useLayout')['layoutProvide']
   const makeDestructurable: typeof import('@vueuse/core')['makeDestructurable']
   const mapActions: typeof import('pinia')['mapActions']
@@ -190,6 +192,7 @@ declare global {
   const useDocumentVisibility: typeof import('@vueuse/core')['useDocumentVisibility']
   const useDraggable: typeof import('@vueuse/core')['useDraggable']
   const useDropZone: typeof import('@vueuse/core')['useDropZone']
+  const useEcharts: typeof import('./hooks/useEcharts')['useEcharts']
   const useElementBounding: typeof import('@vueuse/core')['useElementBounding']
   const useElementByPoint: typeof import('@vueuse/core')['useElementByPoint']
   const useElementHover: typeof import('@vueuse/core')['useElementHover']
@@ -396,6 +399,8 @@ declare module 'vue' {
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
     readonly isWindows: UnwrapRef<typeof import('./utils/shared')['isWindows']>
     readonly layoutInject: UnwrapRef<typeof import('./hooks/useLayout')['layoutInject']>
+    readonly layoutMainInject: UnwrapRef<typeof import('./hooks/useLayout')['layoutMainInject']>
+    readonly layoutMainProvide: UnwrapRef<typeof import('./hooks/useLayout')['layoutMainProvide']>
     readonly layoutProvide: UnwrapRef<typeof import('./hooks/useLayout')['layoutProvide']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
     readonly mapActions: UnwrapRef<typeof import('pinia')['mapActions']>
@@ -527,6 +532,7 @@ declare module 'vue' {
     readonly useDocumentVisibility: UnwrapRef<typeof import('@vueuse/core')['useDocumentVisibility']>
     readonly useDraggable: UnwrapRef<typeof import('@vueuse/core')['useDraggable']>
     readonly useDropZone: UnwrapRef<typeof import('@vueuse/core')['useDropZone']>
+    readonly useEcharts: UnwrapRef<typeof import('./hooks/useEcharts')['useEcharts']>
     readonly useElementBounding: UnwrapRef<typeof import('@vueuse/core')['useElementBounding']>
     readonly useElementByPoint: UnwrapRef<typeof import('@vueuse/core')['useElementByPoint']>
     readonly useElementHover: UnwrapRef<typeof import('@vueuse/core')['useElementHover']>
