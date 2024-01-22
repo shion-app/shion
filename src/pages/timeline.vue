@@ -11,6 +11,7 @@ const configStore = useConfigStore()
 
 const { xs, sm } = useTailwindBreakpoints()
 const { format } = useDateFns()
+const route = useRoute()
 
 const { config } = storeToRefs(configStore)
 
@@ -18,8 +19,8 @@ const noteList = ref<Array<SelectNote>>([])
 const activityList = ref<Array<SelectActivity>>([])
 const date = ref(new Date())
 
-const filterCategory = ref<'plan' | 'label' | 'monitor' | string & {}>()
-const filterTargetId = ref<number>()
+const filterCategory = ref<'plan' | 'label' | 'monitor' | string & {}>(route.query.category as string || '')
+const filterTargetId = ref<number>(route.query.id ? Number(route.query.id) : 0)
 
 const list = computed(() => {
   const list = filterCategory.value

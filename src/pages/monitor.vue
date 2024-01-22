@@ -15,6 +15,7 @@ const { t } = useI18n()
 const store = useMonitorStore()
 const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
+const router = useRouter()
 
 const { refresh } = store
 const { whiteList } = storeToRefs(store)
@@ -164,6 +165,16 @@ async function handleGridChange(items: number[]) {
   await refresh()
 }
 
+function navigate(id: number) {
+  router.push({
+    path: '/timeline',
+    query: {
+      category: 'monitor',
+      id,
+    },
+  })
+}
+
 refresh()
 </script>
 
@@ -181,6 +192,7 @@ refresh()
         @update="showUpdateForm"
         @remove="handleRemove"
         @update:selected="v => select(componentProps.id, v)"
+        @click="navigate(componentProps.id)"
       />
     </template>
   </grid>

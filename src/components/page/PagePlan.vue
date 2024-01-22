@@ -10,6 +10,7 @@ type PlanForm = Pick<InsertPlan, 'name' | 'color'>
 const { t } = useI18n()
 const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
+const router = useRouter()
 
 const list = ref<GridList<SelectPlan>>([])
 
@@ -146,6 +147,16 @@ async function handleGridChange(items: number[]) {
   await refresh()
 }
 
+function navigate(id: number) {
+  router.push({
+    path: '/timeline',
+    query: {
+      category: 'plan',
+      id,
+    },
+  })
+}
+
 refresh()
 </script>
 
@@ -163,6 +174,7 @@ refresh()
         @update="showUpdateForm"
         @remove="handleRemove"
         @update:selected="v => select(componentProps.id, v)"
+        @click="navigate(componentProps.id)"
       />
     </template>
   </grid>

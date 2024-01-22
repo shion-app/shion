@@ -76,7 +76,7 @@ const { open, close, setModelValue } = useFormModal<Props, {
               type: 'select',
               key: 'id',
               label: t(`timeline.${model.category}`),
-              visible: typeof model.category == 'string',
+              visible: typeof model.category == 'string' && !!model.category,
               props: {
                 items: idItems,
               },

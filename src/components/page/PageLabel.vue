@@ -188,6 +188,16 @@ function getCardList(list: GridList<SelectLabel>) {
   }))
 }
 
+function navigate(id: number) {
+  router.push({
+    path: '/timeline',
+    query: {
+      category: 'label',
+      id,
+    },
+  })
+}
+
 refresh()
 </script>
 
@@ -210,6 +220,7 @@ refresh()
               @update="id => showUpdateForm(id, list)"
               @remove="handleRemove"
               @update:selected="v => select(componentProps.id, v)"
+              @click="navigate(componentProps.id)"
             >
               <template v-if="!timerRunning" #menu>
                 <v-list-item value="timer" :title="$t('label.button.start')" append-icon="mdi-timer-outline" @click="handleStart(componentProps)" />
