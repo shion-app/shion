@@ -4,6 +4,12 @@ import { addDays, getDay, isBefore, isSameDay, isSameYear } from 'date-fns'
 
 import { type SelectActivity, type SelectNote, db } from '@/modules/database'
 
+const props = defineProps<{
+  selectedDate: Date
+}>()
+
+const { selectedDate: selectedDateVModel } = useVModels(props)
+
 const configStore = useConfigStore()
 
 const { format, formatHHmmss } = useDateFns()
@@ -87,11 +93,15 @@ const option = computed<EChartsOption>(() => {
       },
     },
     tooltip: {
+      borderColor: 'transparent',
       formatter(params) {
         const [time, value] = params.value
         const date = new Date(time)
         const dateText = isSameYear(new Date(), date) ? format(date, 'MM-dd') : format(date, 'yyyy-MM-dd')
         const detail = list.value.filter(i => isSameDay(i.start, date))
+        if (detail.length == 0)
+          return ''
+
         const colorMap = new Map<string, string>()
         const timeMap = new Map<string, number>()
         for (const { name, start, end, type, color } of detail) {
@@ -136,9 +146,14 @@ async function init() {
   ])
 }
 
+function handleClick(params) {
+  const [dateText] = params.data
+  selectedDateVModel.value = new Date(dateText)
+}
+
 init()
 </script>
 
 <template>
-  <vue-echarts :option="option" autoresize />
+  <vue-echarts :option="option" autoresize @click="handleClick" />
 </template>

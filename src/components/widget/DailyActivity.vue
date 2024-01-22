@@ -2,11 +2,16 @@
 import { isSameHour } from 'date-fns'
 import { type SelectActivity, type SelectNote, db } from '@/modules/database'
 
-const { formatHHmmss } = useDateFns()
+const props = defineProps<{
+  selectedDate: Date
+}>()
+
+const { selectedDate: selectedDateVModel } = useVModels(props)
+
+const { formatHHmmss, formatYYYYmmdd } = useDateFns()
 
 const noteList = ref<Array<SelectNote>>([])
 const activityList = ref<Array<SelectActivity>>([])
-const selectedDate = ref(new Date())
 
 const x = new Array(24).fill(0).map((_, i) => i)
 
@@ -21,7 +26,7 @@ const option = computed(() => {
       name,
       type: 'bar',
       stack: 'label',
-      data: x.map(time => calcTotalTime(transformNoteList.filter(i => i.label.name == name && (isSameHour(selectedDate.value.setHours(time), i.start))))),
+      data: x.map(time => calcTotalTime(transformNoteList.filter(i => i.label.name == name && (isSameHour(new Date(selectedDateVModel.value).setHours(time), i.start))))),
       itemStyle: {
         color: transformNoteList.find(i => i.label.name == name)!.label.color,
       },
@@ -38,7 +43,7 @@ const option = computed(() => {
       name,
       type: 'bar',
       stack: 'label',
-      data: x.map(time => calcTotalTime(transformactivityList.filter(i => i.program.name == name && (isSameHour(selectedDate.value.setHours(time), i.start))))),
+      data: x.map(time => calcTotalTime(transformactivityList.filter(i => i.program.name == name && (isSameHour(new Date(selectedDateVModel.value).setHours(time), i.start))))),
       itemStyle: {
         color: transformactivityList.find(i => i.program.name == name)!.program.color,
       },
@@ -49,6 +54,9 @@ const option = computed(() => {
   })
 
   return {
+    title: {
+      text: formatYYYYmmdd(selectedDateVModel.value),
+    },
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -64,7 +72,7 @@ const option = computed(() => {
       left: '2%',
       right: '2%',
       bottom: '2%',
-      top: '8%',
+      top: 36,
       containLabel: true,
     },
     xAxis: [
@@ -79,14 +87,15 @@ const option = computed(() => {
         axisLabel: {
           formatter: formatHHmmss,
         },
+        splitNumber: 3,
       },
     ],
     series: [...labelData, ...programData],
   }
 })
 
-async function init() {
-  const range = generateRange(1)
+async function init(date: Date) {
+  const range = generateRange(1, date)
   const [start, end] = range.map(date => date.getTime())
     ;[noteList.value, activityList.value] = await Promise.all([
     db.note.select({
@@ -100,7 +109,7 @@ async function init() {
   ])
 }
 
-init()
+watchImmediate(selectedDateVModel, init)
 </script>
 
 <template>

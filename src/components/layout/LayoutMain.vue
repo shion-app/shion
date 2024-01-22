@@ -4,7 +4,7 @@ const { railWidth, footerHeight, headerHeight } = layoutInject()
 
 <template>
   <main
-    absolute right-0 overflow-y-auto
+    absolute right-0 overflow-y-auto overflow-x-hidden
     :style="{
       left: `${railWidth}px`,
       top: `${headerHeight}px`,

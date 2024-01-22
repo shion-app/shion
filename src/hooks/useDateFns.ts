@@ -1,5 +1,5 @@
 import { enUS, zhCN } from 'date-fns/locale'
-import { format as _format, formatDuration as _formatDuration } from 'date-fns'
+import { format as _format, formatDuration as _formatDuration, isSameYear } from 'date-fns'
 
 export function useDateFns() {
   const { locale: l } = useI18n()
@@ -42,8 +42,13 @@ export function useDateFns() {
     })
   }
 
+  function formatYYYYmmdd(date: Date) {
+    return isSameYear(new Date(), date) ? format(date, 'MM-dd') : format(date, 'yyyy-MM-dd')
+  }
+
   return {
     format,
     formatHHmmss,
+    formatYYYYmmdd,
   }
 }

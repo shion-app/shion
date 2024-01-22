@@ -14,6 +14,7 @@ const { t } = useI18n()
 const { success } = useNotify()
 const { parseFieldsError } = useDatabase()
 const { open: openNoteCreate } = useNoteCreate()
+const selectedDate = ref(new Date())
 
 const list = ref<GridList<SelectOverview>>([])
 
@@ -340,7 +341,7 @@ refresh()
     @change="handleGridChange"
   >
     <template #default="{ componentProps }">
-      <grid-card :selected="componentProps.selected" @update:selected="v => select(componentProps.id, v)">
+      <grid-card :selected="componentProps.selected" class="overflow-visible! hover:z-1" @update:selected="v => select(componentProps.id, v)">
         <template #menu>
           <v-list-item value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="handleRemove(componentProps.id)" />
           <v-list-item value="button.update" :title="$t('button.update')" append-icon="mdi-pencil-outline" @click="showUpdateForm(componentProps.id, list)" />
@@ -350,10 +351,10 @@ refresh()
             'pr-11!': isDesktop,
           }"
         >
-          <active-status-calendar v-if="componentProps.type == WidgetType.ACTIVE_STATUS_CALENDAR" />
+          <active-status-calendar v-if="componentProps.type == WidgetType.ACTIVE_STATUS_CALENDAR" v-model:selected-date="selectedDate" />
           <single-category-bar v-else-if="componentProps.type == WidgetType.SINGLE_CATEGORY_BAR" :data="componentProps.data" />
           <text-summary v-else-if="componentProps.type == WidgetType.TEXT_SUMMARY" :data="componentProps.data" />
-          <daily-activity v-else-if="componentProps.type == WidgetType.DAILY_ACTIVIRY" />
+          <daily-activity v-else-if="componentProps.type == WidgetType.DAILY_ACTIVIRY" :selected-date="selectedDate" />
         </v-card-text>
       </grid-card>
     </template>

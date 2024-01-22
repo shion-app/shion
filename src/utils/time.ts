@@ -5,8 +5,8 @@ interface TimeRange {
   end: number
 }
 
-export function generateRange(day: number) {
-  return [startOfDay(addDays(new Date(), 1 - day)), endOfDay(new Date())] as [Date, Date]
+export function generateRange(day: number, date = new Date()) {
+  return [startOfDay(addDays(date, 1 - day)), endOfDay(date)] as [Date, Date]
 }
 
 export function splitByDay<T extends TimeRange>(list: T[], range: [Date, Date]) {
