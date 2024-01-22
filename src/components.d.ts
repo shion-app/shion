@@ -16,6 +16,7 @@ declare module '@vue/runtime-core' {
     CalendarMonth: typeof import('./components/timeline/calendar/CalendarMonth.vue')['default']
     Cascader: typeof import('./components/form/Cascader.vue')['default']
     ColorPicker: typeof import('./components/form/ColorPicker.vue')['default']
+    ColorPickerButton: typeof import('./components/shared/ColorPickerButton.vue')['default']
     ConfirmModal: typeof import('./components/modal/ConfirmModal.vue')['default']
     DailyActivity: typeof import('./components/widget/DailyActivity.vue')['default']
     Empty: typeof import('./components/shared/Empty.vue')['default']
