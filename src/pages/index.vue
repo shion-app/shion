@@ -36,18 +36,6 @@ const cardList = computed(() => list.value.map(({ id, type, data, selected }) =>
 
 const { setUpdateId, handleUpdate } = buildUpdateFn()
 
-function filterWidgetType() {
-  let types = Object.values(WidgetType).filter(i => typeof i == 'string')
-  for (const item of list.value) {
-    if (item.type == WidgetType.ACTIVE_STATUS_CALENDAR)
-      types = types.filter(i => i != 'ACTIVE_STATUS_CALENDAR')
-
-    if (item.type == WidgetType.DAILY_ACTIVIRY)
-      types = types.filter(i => i != 'DAILY_ACTIVIRY')
-  }
-  return types
-}
-
 const { open, close, setModelValue } = useFormModal<
   OverviewForm,
   {
@@ -69,7 +57,7 @@ const { open, close, setModelValue } = useFormModal<
             key: 'type',
             label: t('widget.type'),
             props: {
-              'items': filterWidgetType().map(i => ({
+              'items': Object.values(WidgetType).filter(i => typeof i == 'string').map(i => ({
                 title: t(`widget.typeDesc.${i}`),
                 value: WidgetType[i],
               })),
