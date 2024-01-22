@@ -16,11 +16,13 @@ config:
   checkUpdate: Check update
   autostart: Auto start
   timelineMinMinute: Minimum time
+  themeColor: Theme color
   desc:
     timelineMinMinute: When displaying the timeline, filter out segments smaller than the current minute
   header:
     general: General
     behavior: Behavior
+    appearance: Appearance
 plan:
   create: Create plan
   update: Update plan

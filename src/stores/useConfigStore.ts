@@ -3,6 +3,7 @@ import { Store } from '@tauri-apps/plugin-store'
 import { disable, enable, isEnabled } from '@tauri-apps/plugin-autostart'
 import { core } from '@tauri-apps/api'
 import i18next from 'i18next'
+import { useTheme } from 'vuetify/lib/framework.mjs'
 
 interface Config {
   version: string
@@ -10,6 +11,7 @@ interface Config {
   checkUpdate: boolean
   autostart: boolean
   timelineMinMinute: number
+  themeColor: string
 }
 
 const PATH = 'config.json'
@@ -19,6 +21,7 @@ export const useConfigStore = defineStore('config', () => {
 
   const store = new Store(PATH)
   const config = ref({} as Config)
+  const theme = useTheme()
 
   async function init() {
     const data: Config = {
@@ -28,6 +31,7 @@ export const useConfigStore = defineStore('config', () => {
       checkUpdate: false,
       autostart: false,
       timelineMinMinute: 1,
+      themeColor: '#512DA8',
     }
     const len = await store.length()
     if (len == 0)
@@ -90,6 +94,9 @@ export const useConfigStore = defineStore('config', () => {
         disable()
     })
   }
+  watch(() => config.value.themeColor, (v) => {
+    theme.themes.value.light.colors.primary = v
+  })
 
   return {
     config,

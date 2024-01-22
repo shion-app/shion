@@ -23,8 +23,14 @@ const localeOptions = [
 
 <template>
   <advanced-dialog v-model:visible="visibleVModel" :title="$t('titleBar.view.setting')">
-    <v-card-text>
+    <v-card-text class="sm:max-h-[400px]" overflow-y-auto>
       <v-list lines="two">
+        <v-list-subheader>{{ $t('config.header.appearance') }}</v-list-subheader>
+        <v-list-item :title="$t('config.themeColor')">
+          <template #append>
+            <color-picker-button v-model="config.themeColor" />
+          </template>
+        </v-list-item>
         <v-list-subheader>{{ $t('config.header.general') }}</v-list-subheader>
         <v-list-item>
           <v-list-item-title>{{ $t('config.locale') }}</v-list-item-title>
