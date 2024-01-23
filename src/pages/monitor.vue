@@ -13,8 +13,8 @@ type ProgramForm = Pick<InsertProgram, 'name' | 'color'>
 
 const { t } = useI18n()
 const store = useMonitorStore()
-const { parseFieldsError } = useDatabase()
-const { success } = useNotify()
+const { parseFieldsError, getI18nMessage } = useDatabase()
+const { success, error } = useNotify()
 const router = useRouter()
 
 const { refresh } = store
@@ -139,10 +139,20 @@ async function handleCreateProgram(program: Program) {
 }
 
 async function handleSelect() {
-  await Promise.all(filterList.value.filter(i => i.checked).map(handleCreateProgram))
+  const result = await Promise.allSettled(filterList.value.filter(i => i.checked).map(handleCreateProgram))
+  const vaild = result.every(i => i.status == 'fulfilled')
+  if (!vaild) {
+    const first = result.find(i => i.status == 'rejected')! as any
+    const text = getI18nMessage(first.reason)
+    error({
+      text,
+    })
+  }
+  else {
+    success({})
+  }
   filtering.value = false
   await refresh()
-  success({})
 }
 
 async function showFilterDialog() {
