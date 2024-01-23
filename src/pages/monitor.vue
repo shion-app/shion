@@ -212,31 +212,19 @@ refresh()
       <v-card-title>{{ $t('monitor.filterProgram') }}</v-card-title>
       <v-card-text overflow-y-auto>
         <template v-if="filterList.length">
-          <div v-for="program in filterList" :key="program.path" flex space-x-4 mb-4>
-            <div>
-              <v-checkbox v-model="program.checked" />
-            </div>
-            <div
-              flex-1 min-w-0
-              p-4 flex space-x-4 items-center
-              rounded-2
-              bg-white
-              shadow-lg
-              hover:shadow-xl
-              transition-shadow
-            >
-              <UseObjectUrl v-slot="url" :object="createIconBlob(program.icon)">
-                <img :src="url.value" width="32" height="32" object-contain>
-              </UseObjectUrl>
-              <div flex-1 min-w-0>
-                <div>
+          <div grid grid-cols-2>
+            <v-card v-for="program in filterList" :key="program.path" m-2 :color="program.checked ? 'primary' : ''" @click="program.checked = !program.checked">
+              <template #prepend>
+                <UseObjectUrl v-slot="url" :object="createIconBlob(program.icon)">
+                  <img :src="url.value" width="32" height="32" object-contain>
+                </UseObjectUrl>
+              </template>
+              <template #title>
+                <div :title="program.path" truncate>
                   {{ program.name }}
                 </div>
-                <div truncate :title="program.path">
-                  {{ program.path }}
-                </div>
-              </div>
-            </div>
+              </template>
+            </v-card>
           </div>
         </template>
         <empty v-else />
