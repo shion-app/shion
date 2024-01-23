@@ -20,7 +20,7 @@ const activityList = ref<Array<SelectActivity>>([])
 const date = ref(new Date())
 
 const filterCategory = ref<'plan' | 'label' | 'monitor' | string & {}>(route.query.category as string || '')
-const filterTargetId = ref<number>(route.query.id ? Number(route.query.id) : 0)
+const filterTargetId = ref<number | undefined>(route.query.id ? Number(route.query.id) : undefined)
 
 const list = computed(() => {
   const list = filterCategory.value
@@ -140,7 +140,7 @@ watch(date, refresh, {
       <timeline-graph v-if="list.length" :list="list" flex-1 />
       <empty v-else />
     </div>
-    <calendar v-if="sm" v-model:date="date" />
+    <calendar v-if="sm" :id="filterTargetId" v-model:date="date" :category="filterCategory" />
   </div>
   <timeline-filter v-model:category="filterCategory" v-model:id="filterTargetId" />
   <status-bar-teleport>

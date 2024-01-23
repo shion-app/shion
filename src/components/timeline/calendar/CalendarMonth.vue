@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { endOfMonth, isSameDay, isSameMonth, isToday, set } from 'date-fns'
+import { UseElementVisibility } from '@vueuse/components'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   year: number
   month: number
   weekdays: number[]
   selected: Date
-}>()
+  activeStatusMap: Map<string, { color: string; time: number }>
+}>(), {
+  activeStatusMap: () => new Map(),
+})
 
 const emit = defineEmits<{
   (e: 'inViewport', year: number): void
@@ -19,7 +23,7 @@ defineExpose({
 
 const { locale } = useI18n()
 const { selected: selectedVModel } = useVModels(props)
-const { format } = useDateFns()
+const { format, formatHHmmss } = useDateFns()
 
 interface CalendarDate {
   date: Date
@@ -81,6 +85,10 @@ function scrollToViewIfThisMonth(date: Date) {
     target.value.scrollIntoView({ block: 'center' })
 }
 
+function get(date: Date) {
+  return props.activeStatusMap.get(format(date, 'yyyy-MM-dd'))
+}
+
 watchDeep(() => props.weekdays, generate, {
   immediate: true,
 })
@@ -99,15 +107,18 @@ watchDeep(() => props.weekdays, generate, {
           invisible: !item.visible,
         }"
       >
-        <v-btn
-          :variant="isToday(item.date) && !isSameDay(props.selected, item.date) ? 'outlined' : 'flat'"
-          :color="isSameDay(props.selected, item.date) || isToday(item.date) ? 'primary' : ''"
-          icon
-          :ripple="false"
-          @click="selectDate(item)"
-        >
-          {{ item.date.getDate() }}
-        </v-btn>
+        <UseElementVisibility v-slot="{ isVisible }">
+          <v-btn
+            :variant="isToday(item.date) && !isSameDay(props.selected, item.date) ? 'outlined' : 'flat'"
+            :color="isSameDay(props.selected, item.date) || isToday(item.date) ? 'primary' : get(item.date)?.color"
+            icon
+            :ripple="false"
+            @click="selectDate(item)"
+          >
+            {{ item.date.getDate() }}
+            <v-tooltip v-if="isVisible && get(item.date)?.time" location="bottom" :text="formatHHmmss(get(item.date)?.time || 0)" activator="parent" />
+          </v-btn>
+        </UseElementVisibility>
       </div>
     </div>
   </div>
