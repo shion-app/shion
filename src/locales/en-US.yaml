@@ -16,9 +16,11 @@ config:
   checkUpdate: Check update
   autostart: Auto start
   timelineMinMinute: Minimum time
+  timelineGroupGapMinute: Grouping Intervals
   themeColor: Theme color
   desc:
     timelineMinMinute: When displaying the timeline, filter out segments smaller than the current minute
+    timelineGroupGapMinute: When displaying the timeline, separate segments of the same type that are separated by the current minute
   header:
     general: General
     behavior: Behavior

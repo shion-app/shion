@@ -16,9 +16,11 @@ config:
   checkUpdate: 检查更新
   autostart: 开机启动
   timelineMinMinute: 最小时间
+  timelineGroupGapMinute: 分组间隔
   themeColor: 主题色
   desc:
     timelineMinMinute: 时间线显示时，筛选掉小于当前分钟的片段
+    timelineGroupGapMinute: 时间线显示时，分离同类型相隔当前分钟的片段
   header:
     general: 通用
     behavior: 行为

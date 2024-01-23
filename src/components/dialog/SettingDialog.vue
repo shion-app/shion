@@ -76,6 +76,19 @@ const localeOptions = [
             {{ $t('config.desc.timelineMinMinute') }}
           </v-list-item-subtitle>
         </v-list-item>
+        <v-list-item>
+          <v-list-item-title>
+            <div>
+              {{ $t('config.timelineGroupGapMinute') }}
+            </div>
+            <div px-4 py-2>
+              <v-slider v-model="config.timelineGroupGapMinute" thumb-label hide-details :min="5" :max="60" :step="5" @touchmove.stop />
+            </div>
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            {{ $t('config.desc.timelineGroupGapMinute') }}
+          </v-list-item-subtitle>
+        </v-list-item>
       </v-list>
     </v-card-text>
   </advanced-dialog>

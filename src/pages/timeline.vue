@@ -102,7 +102,7 @@ function compress(list: Array<computedTimeLineNode>): Array<TimeLineNode> {
     let groupItemindex = i
     const group: Array<computedTimeLineNode> = []
     // 相同类别相距30分钟以内，合为一组
-    while (list[groupItemindex]?.id == list[i].id && (groupItemindex == i || isBefore(subMinutes(list[groupItemindex].start, 30), list[groupItemindex - 1].end))) {
+    while (list[groupItemindex]?.id == list[i].id && (groupItemindex == i || isBefore(subMinutes(list[groupItemindex].start, config.value.timelineGroupGapMinute), list[groupItemindex - 1].end))) {
       group.push(list[groupItemindex])
       groupItemindex++
     }

@@ -11,6 +11,7 @@ interface Config {
   checkUpdate: boolean
   autostart: boolean
   timelineMinMinute: number
+  timelineGroupGapMinute: number
   themeColor: string
 }
 
@@ -31,6 +32,7 @@ export const useConfigStore = defineStore('config', () => {
       checkUpdate: false,
       autostart: false,
       timelineMinMinute: 1,
+      timelineGroupGapMinute: 30,
       themeColor: '#512DA8',
     }
     const len = await store.length()
