@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { endOfDay, startOfDay } from 'date-fns'
+import { endOfDay, isBefore, startOfDay, subMinutes } from 'date-fns'
 
 import type { SelectActivity, SelectNote } from '@/modules/database'
 import { db } from '@/modules/database'
@@ -99,14 +99,15 @@ async function refresh() {
 function compress(list: Array<computedTimeLineNode>): Array<TimeLineNode> {
   const temp: Array<Array<computedTimeLineNode>> = []
   for (let i = 0; i < list.length; i++) {
-    let index = i
+    let groupItemindex = i
     const group: Array<computedTimeLineNode> = []
-    while (list[index]?.id == list[i].id) {
-      group.push(list[index])
-      index++
+    // 相同类别相距30分钟以内，合为一组
+    while (list[groupItemindex]?.id == list[i].id && (groupItemindex == i || isBefore(subMinutes(list[groupItemindex].start, 30), list[groupItemindex - 1].end))) {
+      group.push(list[groupItemindex])
+      groupItemindex++
     }
     temp.push(group)
-    i = index - 1
+    i = groupItemindex - 1
   }
   return temp.map((list) => {
     const [first] = list
