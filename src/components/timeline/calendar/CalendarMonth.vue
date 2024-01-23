@@ -35,6 +35,9 @@ useIntersectionObserver(
     if (isIntersecting)
       emit('inViewport', props.year)
   },
+  {
+    threshold: 1,
+  },
 )
 
 const startDate = set(new Date(), {
