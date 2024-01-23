@@ -171,6 +171,7 @@ statusBar:
   timeline: 筛选类别
   lock: 拖拽锁定
   unlock: 拖拽解锁
+  refresh: 刷新
 gridCard:
   move: 移动
 sync:

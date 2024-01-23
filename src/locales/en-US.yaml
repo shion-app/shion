@@ -171,6 +171,7 @@ statusBar:
   timeline: Filter Categories
   lock: Drag lock
   unlock: Drag unlock
+  refresh: Refresh
 gridCard:
   move: Move
 sync:

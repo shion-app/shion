@@ -12,6 +12,7 @@ const router = useRouter()
 const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
 const noteCreate = useNoteCreate()
+const { onRefresh } = usePageRefresh()
 
 const labelList = ref<GridList<SelectLabel>>([])
 const { wrap, getItemsByOrder, select, selectedList } = useGrid(labelList)
@@ -197,6 +198,8 @@ function navigate(id: number) {
     },
   })
 }
+
+onRefresh(refresh)
 
 refresh()
 </script>

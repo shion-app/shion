@@ -16,6 +16,7 @@ const store = useMonitorStore()
 const { parseFieldsError, getI18nMessage } = useDatabase()
 const { success, error } = useNotify()
 const router = useRouter()
+const { onRefresh } = usePageRefresh()
 
 const { refresh } = store
 const { whiteList } = storeToRefs(store)
@@ -184,6 +185,8 @@ function navigate(id: number) {
     },
   })
 }
+
+onRefresh(refresh)
 
 refresh()
 </script>

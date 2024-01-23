@@ -11,6 +11,7 @@ const { t } = useI18n()
 const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
 const router = useRouter()
+const { onRefresh } = usePageRefresh()
 
 const list = ref<GridList<SelectPlan>>([])
 
@@ -156,6 +157,8 @@ function navigate(id: number) {
     },
   })
 }
+
+onRefresh(refresh)
 
 refresh()
 </script>

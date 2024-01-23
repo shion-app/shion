@@ -6,6 +6,7 @@ type Events = {
     id: string
     show: boolean
   }
+  'page-refresh': void
 }
 
 export const emitter = mitt<Events>()

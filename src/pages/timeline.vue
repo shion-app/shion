@@ -12,6 +12,7 @@ const configStore = useConfigStore()
 const { xs, sm } = useTailwindBreakpoints()
 const { format } = useDateFns()
 const route = useRoute()
+const { onRefresh } = usePageRefresh()
 
 const { config } = storeToRefs(configStore)
 
@@ -133,6 +134,8 @@ function compress(list: Array<computedTimeLineNode>): Array<TimeLineNode> {
 watch(date, refresh, {
   immediate: true,
 })
+
+onRefresh(refresh)
 </script>
 
 <template>

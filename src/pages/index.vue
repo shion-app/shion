@@ -14,8 +14,9 @@ const { t } = useI18n()
 const { success } = useNotify()
 const { parseFieldsError } = useDatabase()
 const { open: openNoteCreate } = useNoteCreate()
-const selectedDate = ref(new Date())
+const { onRefresh } = usePageRefresh()
 
+const selectedDate = ref(new Date())
 const list = ref<GridList<SelectOverview>>([])
 
 const { wrap, select, selectedList } = useGrid(list)
@@ -315,6 +316,11 @@ async function handleGridChange(items: number[], widgets: GridStackWidget[]) {
   await db.overview.batchUpdate(overviewList)
   await refresh()
 }
+
+onRefresh(async () => {
+  list.value = []
+  await refresh()
+})
 
 refresh()
 </script>
