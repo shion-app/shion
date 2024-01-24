@@ -27,7 +27,7 @@ function navigateTimer() {
       variant="text"
       @click="navigateTimer"
     />
-    <v-tooltip :text="dragged ? $t('statusBar.unlock') : $t('statusBar.lock')" location="top">
+    <v-tooltip :text="dragged ? $t('statusBar.lock') : $t('statusBar.unlock')" location="top">
       <template #activator="{ props }">
         <v-btn
           v-if="isGrid"
