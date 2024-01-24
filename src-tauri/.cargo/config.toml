@@ -2,3 +2,6 @@
 target = "x86_64-pc-windows-msvc"
 
 [target]
+
+[net]
+git-fetch-with-cli = true
