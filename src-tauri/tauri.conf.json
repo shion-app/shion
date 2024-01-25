@@ -37,6 +37,7 @@
       ],
       "identifier": "hanaTsuk1.shion.dev",
       "publisher": "hanaTsuk1",
+      "copyright": "Copyright © 2024 shion-app",
       "targets": [
         "nsis",
         "updater",
