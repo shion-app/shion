@@ -69,9 +69,9 @@ function uploadImage(files: File[]) {
 
   Promise.all(images.filter(isWebImage).map((file) => {
     return new Promise<ImageNode>((resolve) => {
-      uploadFile(file).then(src =>
+      uploadFile(file).then(({ asset }) =>
         resolve({
-          src,
+          src: asset,
           alt: file.name,
           title: file.name,
         }))
@@ -99,9 +99,9 @@ function uploadVideo(files: File[]) {
 
   Promise.all(videos.filter(isWebVideo).map((file) => {
     return new Promise<VideoNode>((resolve) => {
-      uploadFile(file).then(src =>
+      uploadFile(file).then(({ asset }) =>
         resolve({
-          src,
+          src: asset,
         }))
     })
   })).then((files) => {

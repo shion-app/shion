@@ -4,9 +4,7 @@ import { UseObjectUrl } from '@vueuse/components'
 
 import { db } from '@/modules/database'
 import type { InsertProgram } from '@/modules/database'
-
 import { upload } from '@/modules/upload'
-
 import { useConfirmDeleteModal } from '@/hooks/useConfirmModal'
 
 type ProgramForm = Pick<InsertProgram, 'name' | 'color'>
@@ -126,17 +124,23 @@ function buildUpdateFn() {
 async function handleCreateProgram(program: Program) {
   const { name, path, icon } = program
   const color = randomColor()
-  const src = await upload(`${name}.png`, new Uint8Array(icon))
+  const { asset, remove } = await upload(`${name}.png`, new Uint8Array(icon))
   // todo: db event listener
-  const { lastInsertId } = await db.program.insert({
-    name,
-    path,
-    icon: src,
-    color,
-  })
-  await db.program.update(lastInsertId, {
-    sort: lastInsertId,
-  })
+  try {
+    const { lastInsertId } = await db.program.insert({
+      name,
+      path,
+      icon: asset,
+      color,
+    })
+    await db.program.update(lastInsertId, {
+      sort: lastInsertId,
+    })
+  }
+  catch (error) {
+    await remove()
+    throw error
+  }
 }
 
 async function handleSelect() {

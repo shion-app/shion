@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { BaseDirectory, mkdir, writeFile } from '@tauri-apps/plugin-fs'
+import { BaseDirectory, mkdir, remove, writeFile } from '@tauri-apps/plugin-fs'
 import { appDataDir, extname, resolve } from '@tauri-apps/api/path'
 import { core } from '@tauri-apps/api'
 
@@ -33,7 +33,12 @@ export async function upload(name: string, buffer: ArrayBuffer) {
   await writeFile(target, new Uint8Array(buffer), { baseDir: BaseDirectory.AppData })
   const appDataDirPath = await appDataDir()
   const path = await resolve(appDataDirPath, target)
-  return core.convertFileSrc(path)
+  return {
+    asset: core.convertFileSrc(path),
+    remove: () => remove(target, {
+      baseDir: BaseDirectory.AppData,
+    }),
+  }
 }
 
 export function isImage(file: File) {
