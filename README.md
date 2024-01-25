@@ -1,6 +1,6 @@
 <p align="center">
    <a href="https://shion.app/" target="_blank">
-     <img src="./docs/logo.svg" width="128" height="128" alt="logo">
+     <img src="./docs/logo.png" width="128" height="128" alt="logo">
    </a>
 </p>
 <br/>
