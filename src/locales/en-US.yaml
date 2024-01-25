@@ -118,6 +118,8 @@ moment:
     listBulleted: List bulleted
     listNumbered: List numbered
     quote: Quote
+    image: Image
+    video: Video
 notiwind:
   success: Success
   info: Info

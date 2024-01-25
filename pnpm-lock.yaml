@@ -20,6 +20,9 @@ dependencies:
   '@tauri-apps/plugin-autostart':
     specifier: 2.0.0-alpha.5
     version: 2.0.0-alpha.5
+  '@tauri-apps/plugin-dialog':
+    specifier: 2.0.0-alpha.5
+    version: 2.0.0-alpha.5
   '@tauri-apps/plugin-fs':
     specifier: 2.0.0-alpha.5
     version: 2.0.0-alpha.5
@@ -1728,6 +1731,12 @@ packages:
 
   /@tauri-apps/plugin-autostart@2.0.0-alpha.5:
     resolution: {integrity: sha512-FRB0bMqVViAkYD4499NoIwqXIytil96QL5vu69UBwopGBmsWj1VEseYU/2itRNIHGQvrTSybUTRJue3CfPGjwQ==}
+    dependencies:
+      '@tauri-apps/api': 2.0.0-alpha.13
+    dev: false
+
+  /@tauri-apps/plugin-dialog@2.0.0-alpha.5:
+    resolution: {integrity: sha512-OHodi10R5an4nVq/kavU9HOATkc20RYNVdFYWMvPSVyI7rL1n55llPmbGXdWiZO94Tn10XZyZDVs7eJ1uKOkeA==}
     dependencies:
       '@tauri-apps/api': 2.0.0-alpha.13
     dev: false

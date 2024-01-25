@@ -54,7 +54,8 @@ pub fn run() {
                 ])
                 .timezone_strategy(TimezoneStrategy::UseLocal)
                 .build(),
-        );
+        )
+        .plugin(tauri_plugin_dialog::init());
 
     #[cfg(desktop)]
     {

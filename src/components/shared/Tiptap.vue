@@ -3,17 +3,14 @@ import type { ChainedCommands } from '@tiptap/vue-3'
 import { EditorContent, useEditor } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
+import { open } from '@tauri-apps/plugin-dialog'
 
-import { isImage, isVideo, isWebImage, isWebVideo, uploadFile } from '@/modules/upload'
+import { uploadByPath, uploadExtension } from '@/modules/upload'
 import { Video } from '@/plugins/tiptap-video'
 
-interface ImageNode {
-  src: string
-  alt: string
-  title: string
-}
-interface VideoNode {
-  src: string
+interface DialogFilter {
+  name: string
+  extensions: string[]
 }
 
 const props = withDefaults(defineProps<{
@@ -25,7 +22,6 @@ const props = withDefaults(defineProps<{
 
 const { content: contentVModel } = useVModels(props)
 const { t } = useI18n()
-const { info } = useNotify()
 
 const editor = useEditor({
   content: contentVModel.value,
@@ -39,80 +35,54 @@ const editor = useEditor({
     attributes: {
       class: 'prose outline-none min-h-full',
     },
-    handleDrop: (view, event, slice, moved) => {
-      const hasFile = Number(event.dataTransfer?.files.length) > 0
-      if (moved || !hasFile)
-        return
-
-      const files = [...event.dataTransfer!.files]
-
-      uploadImage(files)
-      uploadVideo(files)
-
-      event.preventDefault()
-    },
   },
   onUpdate: () => {
     contentVModel.value = editor.value!.getHTML()
   },
 })
 
-function uploadImage(files: File[]) {
-  const images = files.filter(isImage)
-  const hasNonWebImage = images.some(file => !isWebImage(file))
-
-  if (hasNonWebImage) {
-    info({
-      text: t('upload.webImage'),
-    })
-  }
-
-  Promise.all(images.filter(isWebImage).map((file) => {
-    return new Promise<ImageNode>((resolve) => {
-      uploadFile(file).then(({ asset }) =>
-        resolve({
-          src: asset,
-          alt: file.name,
-          title: file.name,
-        }))
-    })
-  })).then((files) => {
-    if (!files.length)
-      return
-
-    editor.value?.commands.insertContent(files.map(attrs => ({
-      type: 'image',
-      attrs,
-    })))
+async function openFileDialog(filter: DialogFilter) {
+  const selected = await open({
+    multiple: true,
+    filters: [
+      filter,
+    ],
   })
+  if (selected?.length)
+    return await Promise.all(selected.map(({ path }) => uploadByPath(path)))
+  return []
 }
 
-function uploadVideo(files: File[]) {
-  const videos = files.filter(isVideo)
-  const hasNonWebVideo = videos.some(file => !isWebVideo(file))
-
-  if (hasNonWebVideo) {
-    info({
-      text: t('upload.webVideo'),
-    })
-  }
-
-  Promise.all(videos.filter(isWebVideo).map((file) => {
-    return new Promise<VideoNode>((resolve) => {
-      uploadFile(file).then(({ asset }) =>
-        resolve({
-          src: asset,
-        }))
-    })
-  })).then((files) => {
-    if (!files.length)
-      return
-
-    editor.value?.commands.insertContent(files.map(attrs => ({
-      type: 'video',
-      attrs,
-    })))
+async function uploadImage() {
+  const files = await openFileDialog({
+    name: t('moment.editor.image'),
+    extensions: uploadExtension.image,
   })
+  if (!files.length)
+    return
+
+  editor.value?.commands.insertContent(files.map(src => ({
+    type: 'image',
+    attrs: {
+      src,
+    },
+  })))
+}
+
+async function uploadVideo() {
+  const files = await openFileDialog({
+    name: t('moment.editor.video'),
+    extensions: uploadExtension.video,
+  })
+  if (!files.length)
+    return
+
+  editor.value?.commands.insertContent(files.map(src => ({
+    type: 'video',
+    attrs: {
+      src,
+    },
+  })))
 }
 
 const utils = computed(() => [
@@ -152,6 +122,16 @@ const utils = computed(() => [
     icon: 'i-mdi:format-quote-close',
     tip: t('moment.editor.quote'),
     handler: call(c => c.toggleBlockquote()),
+  },
+  {
+    icon: 'i-mdi:image',
+    tip: t('moment.editor.image'),
+    handler: uploadImage,
+  },
+  {
+    icon: 'i-mdi:video',
+    tip: t('moment.editor.video'),
+    handler: uploadVideo,
   },
 ])
 

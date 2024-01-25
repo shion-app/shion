@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { BaseDirectory, mkdir, remove, writeFile } from '@tauri-apps/plugin-fs'
+import { BaseDirectory, copyFile, mkdir, remove, writeFile } from '@tauri-apps/plugin-fs'
 import { appDataDir, extname, resolve } from '@tauri-apps/api/path'
 import { core } from '@tauri-apps/api'
 
@@ -19,40 +19,39 @@ function readFile(file: File): Promise<{ name: string; buffer: ArrayBuffer }> {
   })
 }
 
-export async function uploadFile(file: File) {
-  const { name, buffer } = await readFile(file)
-  return await upload(name, buffer)
-}
-
-export async function upload(name: string, buffer: ArrayBuffer) {
+async function getUploadPath(name: string) {
   const id = nanoid()
   const ext = await extname(name)
   const uploadDir = 'upload'
-  const target = `${uploadDir}/${id}.${ext}`
+  return {
+    uploadDir,
+    dest: `${uploadDir}/${id}.${ext}`,
+  }
+}
+
+export async function upload(name: string, buffer: ArrayBuffer) {
+  const { uploadDir, dest } = await getUploadPath(name)
   await mkdir(uploadDir, { baseDir: BaseDirectory.AppData, recursive: true })
-  await writeFile(target, new Uint8Array(buffer), { baseDir: BaseDirectory.AppData })
+  await writeFile(dest, new Uint8Array(buffer), { baseDir: BaseDirectory.AppData })
   const appDataDirPath = await appDataDir()
-  const path = await resolve(appDataDirPath, target)
+  const path = await resolve(appDataDirPath, dest)
   return {
     asset: core.convertFileSrc(path),
-    remove: () => remove(target, {
+    remove: () => remove(dest, {
       baseDir: BaseDirectory.AppData,
     }),
   }
 }
 
-export function isImage(file: File) {
-  return file.type.includes('image')
+export async function uploadByPath(path: string) {
+  const { dest } = await getUploadPath(path)
+  await copyFile(path, dest, {
+    toPathBaseDir: BaseDirectory.AppData,
+  })
+  return core.convertFileSrc(path)
 }
 
-export function isWebImage(file: File) {
-  return ['image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/webp'].includes(file.type)
-}
-
-export function isVideo(file: File) {
-  return file.type.includes('video')
-}
-
-export function isWebVideo(file: File) {
-  return ['video/mp4', 'video/webm'].includes(file.type)
+export const uploadExtension = {
+  image: ['gif', 'jpeg', 'jpg', 'png', 'svg', 'webp'],
+  video: ['mp4', 'webm'],
 }
