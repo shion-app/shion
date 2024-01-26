@@ -13,6 +13,15 @@ export interface Activity {
   createdAt: Generated<number>
   updatedAt: Generated<number>
 }
+export interface Box {
+  id: Generated<number>
+  name: string
+  color: string
+  sort: Generated<number>
+  deletedAt: Generated<number>
+  createdAt: Generated<number>
+  updatedAt: Generated<number>
+}
 export interface Label {
   id: Generated<number>
   name: string
@@ -23,10 +32,18 @@ export interface Label {
   createdAt: Generated<number>
   updatedAt: Generated<number>
 }
+export interface Link {
+  id: Generated<number>
+  deletedAt: Generated<number>
+  createdAt: Generated<number>
+  updatedAt: Generated<number>
+}
 export interface Moment {
   id: Generated<number>
   title: string
   content: string
+  boxId: number
+  linkId: Generated<number>
   deletedAt: Generated<number>
   createdAt: Generated<number>
   updatedAt: Generated<number>
@@ -75,7 +92,9 @@ export interface Program {
 }
 export interface DB {
   activity: Activity
+  box: Box
   label: Label
+  link: Link
   moment: Moment
   note: Note
   overview: Overview

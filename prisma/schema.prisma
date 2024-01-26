@@ -92,12 +92,40 @@ model Moment {
   id         Int    @id @default(autoincrement())
   title      String
   content    String
+  box_id     Int
+  link_id    Int    @default(0)
   deleted_at Int    @default(0)
   created_at Int    @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
   updated_at Int    @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  box        Box    @relation(fields: [box_id], references: [id])
+  link       Link   @relation(fields: [link_id], references: [id])
 
   @@unique([title, deleted_at])
   @@map("moment")
+}
+
+model Box {
+  id         Int      @id @default(autoincrement())
+  name       String
+  color      String
+  sort       Int      @default(0)
+  deleted_at Int      @default(0)
+  created_at Int      @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at Int      @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  moments    Moment[]
+
+  @@unique([name, deleted_at])
+  @@map("box")
+}
+
+model Link {
+  id         Int      @id @default(autoincrement())
+  deleted_at Int      @default(0)
+  created_at Int      @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at Int      @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  moments    Moment[]
+
+  @@map("link")
 }
 
 model Overview {
