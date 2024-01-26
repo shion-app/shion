@@ -124,23 +124,18 @@ function buildUpdateFn() {
 async function handleCreateProgram(program: Program) {
   const { name, path, icon } = program
   const color = randomColor()
-  const { asset, remove } = await upload(`${name}.png`, new Uint8Array(icon))
   // todo: db event listener
-  try {
-    const { lastInsertId } = await db.program.insert({
-      name,
-      path,
-      icon: asset,
-      color,
-    })
-    await db.program.update(lastInsertId, {
-      sort: lastInsertId,
-    })
-  }
-  catch (error) {
-    await remove()
-    throw error
-  }
+  const { lastInsertId } = await db.program.insert({
+    name,
+    path,
+    icon: '',
+    color,
+  })
+  const asset = await upload(`${name}.png`, new Uint8Array(icon))
+  await db.program.update(lastInsertId, {
+    sort: lastInsertId,
+    icon: asset,
+  })
 }
 
 async function handleSelect() {
