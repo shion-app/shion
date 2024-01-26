@@ -39,6 +39,12 @@ label:
   color: 颜色
   button:
     start: 开始计时
+box:
+  create: 创建匣子
+  update: 修改匣子
+  name: 名称
+  color: 颜色
+  count: '{count} 项'
 error:
   unique: '{field}已存在'
   unhandle: '未处理异常({error})'

@@ -39,6 +39,12 @@ label:
   color: Color
   button:
     start: Start timing
+  box:
+    create: Create box
+    update: Update box
+    name: Name
+    color: Color
+    count: '{count} items'
 error:
   unique: '{field} already exists'
   unhandle: Unhandled exception({error})

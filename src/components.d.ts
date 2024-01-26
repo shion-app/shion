@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     AboutDialog: typeof import('./components/dialog/AboutDialog.vue')['default']
     ActiveStatusCalendar: typeof import('./components/widget/ActiveStatusCalendar.vue')['default']
     AdvancedDialog: typeof import('./components/dialog/AdvancedDialog.vue')['default']
+    BoxCard: typeof import('./components/widget/BoxCard.vue')['default']
     Calendar: typeof import('./components/timeline/calendar/Calendar.vue')['default']
     CalendarMonth: typeof import('./components/timeline/calendar/CalendarMonth.vue')['default']
     Cascader: typeof import('./components/form/Cascader.vue')['default']
