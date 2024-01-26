@@ -102,7 +102,7 @@ about:
   github: Github
 moment:
   create: Record the moment
-  inputTitle: Input title
+  inputTitle: Input title...
   submit: Submit
   edit: Edit
   placeholder: '[Image]'
@@ -185,3 +185,5 @@ sync:
   pushing: Pushing...
   updating: Updating...
   mergeConflict: Merge conflicts need to be manually resolved
+tiptap:
+  placeholder: Write something...

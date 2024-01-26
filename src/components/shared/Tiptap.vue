@@ -3,6 +3,7 @@ import type { ChainedCommands } from '@tiptap/vue-3'
 import { EditorContent, useEditor } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
+import Placeholder from '@tiptap/extension-placeholder'
 import { open } from '@tauri-apps/plugin-dialog'
 
 import { uploadByPath, uploadExtension } from '@/modules/upload'
@@ -30,10 +31,13 @@ const editor = useEditor({
     StarterKit,
     Image,
     Video,
+    Placeholder.configure({
+      placeholder: t('tiptap.placeholder'),
+    }),
   ],
   editorProps: {
     attributes: {
-      class: 'prose outline-none min-h-full',
+      class: 'prose prose-slate outline-none min-h-full mx-auto',
     },
   },
   onUpdate: () => {
@@ -165,3 +169,13 @@ watchOnce(contentVModel, (v) => {
   <v-divider mx-4 my-2 />
   <EditorContent :editor="editor" h-full overflow-y-auto p-4 />
 </template>
+
+<style>
+.tiptap p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+</style>

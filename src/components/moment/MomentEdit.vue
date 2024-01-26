@@ -15,6 +15,7 @@ const { title: titleVModel, content: contentVModel } = useVModels(props)
       <v-text-field
         v-model="titleVModel"
         text-6 variant="plain" :placeholder="$t('moment.inputTitle')"
+        hide-details
       />
       <div flex-1 />
       <v-btn color="primary" @click="$emit('submit')">

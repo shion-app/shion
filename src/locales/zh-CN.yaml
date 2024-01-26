@@ -102,7 +102,7 @@ about:
   github: Github
 moment:
   create: 记录下瞬间
-  inputTitle: 输入标题
+  inputTitle: 输入标题...
   submit: 提交
   edit: 编辑
   placeholder: '[图片]'
@@ -185,3 +185,5 @@ sync:
   pushing: 推送中...
   updating: 更新中...
   mergeConflict: 合并发生冲突，需手动解决
+tiptap:
+  placeholder: 写些什么...

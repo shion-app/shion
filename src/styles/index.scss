@@ -41,3 +41,7 @@ html, body {
 * {
   text-transform: none !important;
 }
+
+::selection {
+  background-color: #dae3ea;
+}
