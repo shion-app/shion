@@ -4,8 +4,8 @@ const { t } = useI18n()
 
 const menu = computed(() => [
   {
-    icon: 'i-mdi:eye-outline',
-    activeIcon: 'i-mdi:eye',
+    icon: 'i-mdi:view-dashboard-outline',
+    activeIcon: 'i-mdi:view-dashboard',
     name: t('nav.overview'),
     to: '/',
     visible: true,
@@ -18,15 +18,15 @@ const menu = computed(() => [
     visible: true,
   },
   {
-    icon: 'i-mdi:list-box-outline',
-    activeIcon: 'i-mdi:list-box',
+    icon: 'i-mdi:sitemap-outline',
+    activeIcon: 'i-mdi:sitemap',
     name: t('nav.plan'),
     to: '/plan',
     visible: sm.value,
   },
   {
-    icon: 'i-mdi:label-outline',
-    activeIcon: 'i-mdi:label',
+    icon: 'i-mdi:label-variant-outline',
+    activeIcon: 'i-mdi:label-variant',
     name: t('nav.label'),
     to: '/label',
     visible: sm.value,
@@ -39,10 +39,17 @@ const menu = computed(() => [
     visible: sm.value,
   },
   {
-    icon: 'i-mdi:application-brackets-outline',
-    activeIcon: 'i-mdi:application-brackets',
+    icon: 'i-mdi:eye-outline',
+    activeIcon: 'i-mdi:eye',
     name: t('nav.monitor'),
     to: '/monitor',
+    visible: sm.value,
+  },
+  {
+    icon: 'i-mdi:cube-outline',
+    activeIcon: 'i-mdi:cube',
+    name: t('nav.box'),
+    to: '/box',
     visible: sm.value,
   },
   {

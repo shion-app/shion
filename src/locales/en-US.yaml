@@ -9,6 +9,7 @@ nav:
   config: Config
   about: About
   moment: Moment
+  box: Box
   list: List
   account: Account
 config:
