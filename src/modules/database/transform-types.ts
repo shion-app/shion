@@ -18,6 +18,10 @@ export type Note = origin.Note & { plan: ColumnType<Plan, never, never>; label: 
 
 export type Moment = origin.Moment
 
+export type Box = origin.Box & { itemCount: ColumnType<number, never, never> }
+
+export type Link = origin.Link
+
 export type Overview = Replace<origin.Overview, {
   type: WidgetType
   data: {
@@ -38,4 +42,6 @@ export interface DB {
   note: Note
   moment: Moment
   overview: Overview
+  box: Box
+  link: Link
 }

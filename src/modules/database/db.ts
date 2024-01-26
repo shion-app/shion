@@ -24,6 +24,8 @@ import { Label } from './models/label'
 import { Note } from './models/note'
 import { Moment } from './models/moment'
 import { Overview } from './models/overview'
+import { Box } from './models/box'
+import { Link } from './models/link'
 export type { QueryResult } from '@tauri-apps/plugin-sql'
 
 type IsSelectQueryBuilder<T> = T extends SelectQueryBuilder<any, any, any> ? true : false
@@ -239,6 +241,8 @@ const label = new Label(kysely)
 const note = new Note(kysely, label, plan)
 const moment = new Moment(kysely)
 const overview = new Overview(kysely)
+const box = new Box(kysely)
+const link = new Link(kysely)
 const models = {
   program,
   activity,
@@ -247,6 +251,8 @@ const models = {
   note,
   moment,
   overview,
+  box,
+  link,
 }
 
 export type Executor<U = typeof models> = { [K in keyof U]: Transform<U[K]> }
