@@ -18,7 +18,11 @@ export class Model<T extends DB[TableName]> {
   }
 
   insert(@set value: Insertable<T>) {
-    return this.kysely.insertInto(this.table).values(value)
+    const sql = this.kysely.insertInto(this.table)
+    if (Object.keys(value).length > 0)
+      return sql.values(value)
+
+    return sql.defaultValues()
   }
 
   update(id: number, @set value: Updateable<T>) {
