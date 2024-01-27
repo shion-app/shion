@@ -115,6 +115,10 @@ moment:
   placeholder: '[图片]'
   boxLabel: 保存至
   createdAt: '创建于: {date}'
+  link:
+    desc: 链接
+    snackbar: 正处于链接候选状态, 选中需要链接的对象
+    confirmTip: 所选中{count}项将与目标链接在一起, 是否确认?
   box:
     all: 全部
   tip:

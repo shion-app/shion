@@ -12,6 +12,7 @@ interface Image {
 
 type Moment = SelectMoment & {
   selected: boolean
+  disabled: boolean
   summary: {
     data: string
     images: Array<Image>
@@ -51,6 +52,7 @@ const activeBox = ref(Number(route.query.id as string) || 0)
 
 const filterMomentList = computed(() => activeBox.value == 0 ? momentList.value : momentList.value.filter(i => i.boxId == activeBox.value))
 const selectedList = computed(() => filterMomentList.value.filter(i => i.selected).map(i => i.id))
+const linkActive = computed(() => momentList.value.some(i => i.disabled))
 
 const { open: openBatchRemoveModal } = useConfirmDeleteModal(async () => {
   await db.moment.batchRemove(selectedList.value)
@@ -92,6 +94,7 @@ async function refresh() {
       ...i,
       summary,
       selected: false,
+      disabled: false,
     }
   })
 }
@@ -179,6 +182,43 @@ function switchBox(id: number) {
     item.selected = false
 }
 
+function handleLink(moment: Moment) {
+  moment.disabled = true
+  moment.selected = false
+}
+
+function handleLinkCancel() {
+  for (const item of momentList.value) {
+    item.disabled = false
+    item.selected = false
+  }
+}
+
+function handleLinkConfirm() {
+  const { open, close } = useConfirmModal({
+    attrs: {
+      title: t('moment.link.confirmTip', {
+        count: selectedList.value.length,
+      }),
+      async onConfirm() {
+        const target = momentList.value.find(i => i.disabled)!
+        let linkId = target.linkId
+        if (!linkId) {
+          const { lastInsertId } = await db.link.insert({})
+          linkId = lastInsertId
+        }
+        await Promise.all([target.id, ...selectedList.value].map(id => db.moment.update(id, {
+          linkId,
+        })))
+        close()
+        success({})
+        await refresh()
+      },
+    },
+  })
+  open()
+}
+
 refresh()
 </script>
 
@@ -200,6 +240,7 @@ refresh()
     <grid-card
       v-for="moment in filterMomentList" :key="moment.id" v-model:selected="moment.selected" :title="moment.title"
       :subtitle="formatYYYYmmdd(moment.createdAt, true)" mx-4 mb-6
+      :disabled="moment.disabled"
       @click="viewDetail(moment)"
     >
       <v-card-text flex space-x-4>
@@ -217,12 +258,36 @@ refresh()
           value="moment.edit" :title="$t('moment.edit')" append-icon="mdi-pencil-outline"
           @click="update(moment)"
         />
+        <v-list-item v-if="!linkActive" value="moment.link.desc" :title="$t('moment.link.desc')" append-icon="mdi-link" @click="handleLink(moment)" />
       </template>
     </grid-card>
   </template>
   <empty v-else />
+  <v-snackbar
+    :model-value="linkActive"
+    timeout="-1"
+  >
+    {{ $t('moment.link.snackbar') }}
+
+    <template #actions>
+      <v-btn
+        color="red"
+        variant="text"
+        @click="handleLinkCancel"
+      >
+        {{ $t('modal.cancel') }}
+      </v-btn>
+      <v-btn
+        color="primary"
+        variant="text"
+        @click="handleLinkConfirm"
+      >
+        {{ $t('modal.submit') }}
+      </v-btn>
+    </template>
+  </v-snackbar>
   <more-menu>
-    <v-list>
+    <v-list v-if="!linkActive">
       <v-list-item
         v-if="selectedList.length" value="button.remove" :title="$t('button.remove')"
         append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal"
