@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { type SelectMoment, db } from '@/modules/database'
+import { db } from '@/modules/database'
+import type { SelectBox, SelectMoment } from '@/modules/database'
+
 import { useConfirmDeleteModal } from '@/hooks/useConfirmModal'
 
 interface Image {
@@ -20,8 +22,10 @@ const { success, error } = useNotify()
 const { getI18nMessage, isUniqueError } = useDatabase()
 const { t } = useI18n()
 const { formatYYYYmmdd } = useDateFns()
+const route = useRoute()
 
-const list = ref<Array<Moment>>([])
+const momentList = ref<Array<Moment>>([])
+const boxtList = ref<Array<Pick<SelectBox, 'id' | 'color' | 'name'>>>([])
 const createDialogVisible = ref(false)
 const updateDialog = reactive<{
   visible: boolean
@@ -43,7 +47,10 @@ const detailDialog = reactive<{
   visible: false,
   moment: {} as SelectMoment,
 })
-const selectedList = computed(() => list.value.filter(i => i.selected).map(i => i.id))
+const activeBox = ref(Number(route.query.id as string) || 0)
+
+const filterMomentList = computed(() => activeBox.value == 0 ? momentList.value : momentList.value.filter(i => i.boxId == activeBox.value))
+const selectedList = computed(() => filterMomentList.value.filter(i => i.selected).map(i => i.id))
 
 const { open: openBatchRemoveModal } = useConfirmDeleteModal(async () => {
   await db.moment.batchRemove(selectedList.value)
@@ -74,7 +81,12 @@ function buildRemoveFn() {
 }
 
 async function refresh() {
-  list.value = (await db.moment.select()).map((i) => {
+  boxtList.value = [{
+    id: 0,
+    name: t('moment.box.all'),
+    color: '#000000',
+  }, ...await db.box.select()]
+  momentList.value = (await db.moment.select()).map((i) => {
     const summary = filterImagesAndContent(i.content)
     return {
       ...i,
@@ -161,13 +173,32 @@ async function handleUpdate(v: Pick<SelectMoment, 'title' | 'content' | 'boxId'>
   await refresh()
 }
 
+function switchBox(id: number) {
+  activeBox.value = id
+  for (const item of momentList.value)
+    item.selected = false
+}
+
 refresh()
 </script>
 
 <template>
-  <template v-if="list.length">
+  <div space-x-2 mx-4 my-2>
+    <v-chip
+      v-for="{ id, name, color } in boxtList"
+      :key="id"
+      label
+      :color="color"
+      :variant="activeBox == id ? 'tonal' : 'outlined'"
+      link
+      @click="switchBox(id)"
+    >
+      {{ name }}
+    </v-chip>
+  </div>
+  <template v-if="filterMomentList.length">
     <grid-card
-      v-for="moment in list" :key="moment.id" v-model:selected="moment.selected" :title="moment.title"
+      v-for="moment in filterMomentList" :key="moment.id" v-model:selected="moment.selected" :title="moment.title"
       :subtitle="formatYYYYmmdd(moment.createdAt, true)" mx-4 mb-6
       @click="viewDetail(moment)"
     >

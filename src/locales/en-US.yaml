@@ -115,6 +115,8 @@ moment:
   placeholder: '[Image]'
   boxLabel: Save to
   createdAt: 'Created at: {date}'
+  box:
+    all: All
   tip:
     required: Required
     duplicateTitle: This title already exists

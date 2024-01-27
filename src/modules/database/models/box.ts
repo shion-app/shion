@@ -34,5 +34,6 @@ export class Box extends Model<TransformBox> {
       ])
       .leftJoin('moment as m', join => join.onRef('m.boxId', '=', 'box.id').on('m.deletedAt', '=', 0))
       .groupBy('box.id')
+      .orderBy(['box.sort'])
   }
 }

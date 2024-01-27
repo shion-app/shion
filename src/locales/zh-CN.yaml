@@ -115,6 +115,8 @@ moment:
   placeholder: '[图片]'
   boxLabel: 保存至
   createdAt: '创建于: {date}'
+  box:
+    all: 全部
   tip:
     required: 需要输入
     duplicateTitle: 已存在此标题
