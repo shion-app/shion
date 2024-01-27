@@ -165,16 +165,21 @@ watchOnce(contentVModel, (v) => {
       @click="handler"
     />
   </div>
-  <v-divider my-4 />
+  <v-divider my-2 />
   <EditorContent :editor="editor" overflow-y-auto :class="contentClass" />
 </template>
 
-<style>
-.tiptap p.is-editor-empty:first-child::before {
-  color: #adb5bd;
-  content: attr(data-placeholder);
-  float: left;
-  height: 0;
-  pointer-events: none;
+<style lang="scss">
+.tiptap {
+  *:first-child {
+    margin-top: 0;
+  }
+  p.is-editor-empty:first-child::before {
+    color: #adb5bd;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
 }
 </style>
