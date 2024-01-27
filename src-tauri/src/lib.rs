@@ -36,6 +36,12 @@ pub fn run() {
             sql: include_str!("../../prisma/migrations/20240126103453_/migration.sql"),
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 6,
+            description: "link_id foreign key",
+            sql: include_str!("../../prisma/migrations/20240127051919_/migration.sql"),
+            kind: MigrationKind::Up,
+        },
     ];
 
     let mut builder = tauri::Builder::default()

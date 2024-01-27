@@ -43,7 +43,7 @@ export interface Moment {
   title: string
   content: string
   boxId: number
-  linkId: Generated<number>
+  linkId: number | null
   deletedAt: Generated<number>
   createdAt: Generated<number>
   updatedAt: Generated<number>
