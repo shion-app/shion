@@ -42,8 +42,12 @@ export function useDateFns() {
     })
   }
 
-  function formatYYYYmmdd(date: Date) {
-    return isSameYear(new Date(), date) ? format(date, 'MM-dd') : format(date, 'yyyy-MM-dd')
+  function formatYYYYmmdd(date: Date | number, minute = false) {
+    let formatStr = isSameYear(new Date(), date) ? 'MM-dd' : 'yyyy-MM-dd'
+    if (minute)
+      formatStr += ' HH:mm'
+
+    return format(date, formatStr)
   }
 
   return {

@@ -3,7 +3,7 @@ import { useMotions } from '@vueuse/motion'
 
 const props = withDefaults(defineProps<{
   visible: boolean
-  title: string
+  title?: string
   page?: boolean
 }>(), {
   page: false,
@@ -49,14 +49,14 @@ const dragHandler = ({ movement: [x], dragging }) => {
       scrim: !props.page,
     }"
     :transition="page ? 'dialog-slide-transition' : 'dialog-transition'"
-    class="sm:w-[500px] sm:max-w-[600px]" :class="props.page ? 'w-screen' : 'w-[90vw]'"
+    class="sm:min-w-[500px] sm:max-w-[600px]" :class="[props.page ? 'w-screen' : 'w-[90vw]']"
   >
     <v-card v-drag="dragHandler" v-motion="'dialog'">
       <v-toolbar v-if="props.page" class="bg-transparent!">
         <v-btn icon="mdi-arrow-left" @click="visibleVModel = false" />
         <v-toolbar-title>{{ props.title }}</v-toolbar-title>
       </v-toolbar>
-      <v-card-title v-if="!props.page">
+      <v-card-title v-if="!props.page && props.title">
         {{ props.title }}
       </v-card-title>
       <slot />

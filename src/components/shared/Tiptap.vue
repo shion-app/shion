@@ -14,12 +14,11 @@ interface DialogFilter {
   extensions: string[]
 }
 
-const props = withDefaults(defineProps<{
+const props = defineProps<{
   content: string
-  editable?: boolean
-}>(), {
-  editable: true,
-})
+  editable: boolean
+  contentClass?: string
+}>()
 
 const { content: contentVModel } = useVModels(props)
 const { t } = useI18n()
@@ -153,7 +152,7 @@ watchOnce(contentVModel, (v) => {
 </script>
 
 <template>
-  <div v-if="$props.editable" flex px-4>
+  <div v-if="$props.editable" flex>
     <tooltip-button
       v-for="{ icon, tip, handler, disabled } in utils"
       :key="icon"
@@ -166,8 +165,8 @@ watchOnce(contentVModel, (v) => {
       @click="handler"
     />
   </div>
-  <v-divider mx-4 my-2 />
-  <EditorContent :editor="editor" h-full overflow-y-auto p-4 />
+  <v-divider my-4 />
+  <EditorContent :editor="editor" overflow-y-auto :class="contentClass" />
 </template>
 
 <style>

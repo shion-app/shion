@@ -113,8 +113,10 @@ moment:
   submit: 提交
   edit: 编辑
   placeholder: '[图片]'
+  boxLabel: 保存至
+  createdAt: '创建于: {date}'
   tip:
-    emptyTitle: 需要输入标题
+    required: 需要输入
     duplicateTitle: 已存在此标题
     notSave: 内容未保存，确定退出吗?
   editor:

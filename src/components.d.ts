@@ -31,6 +31,7 @@ declare module '@vue/runtime-core' {
     LayoutMain: typeof import('./components/layout/LayoutMain.vue')['default']
     LayoutNav: typeof import('./components/layout/LayoutNav.vue')['default']
     LayoutProvider: typeof import('./components/layout/LayoutProvider.vue')['default']
+    MomentDetail: typeof import('./components/moment/MomentDetail.vue')['default']
     MomentEdit: typeof import('./components/moment/MomentEdit.vue')['default']
     MoreMenu: typeof import('./components/menu/MoreMenu.vue')['default']
     MoreMenuButton: typeof import('./components/menu/MoreMenuButton.vue')['default']

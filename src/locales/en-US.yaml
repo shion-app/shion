@@ -113,8 +113,10 @@ moment:
   submit: Submit
   edit: Edit
   placeholder: '[Image]'
+  boxLabel: Save to
+  createdAt: 'Created at: {date}'
   tip:
-    emptyTitle: Need to input title
+    required: Required
     duplicateTitle: This title already exists
     notSave: The content has not been saved. Are you sure to exit?
   editor:
