@@ -3,19 +3,28 @@ import { nanoid } from 'nanoid'
 
 import { emitter } from '@/plugins/mitt'
 
+const props = withDefaults(defineProps<{
+  visible?: boolean
+}>(), {
+  visible: true,
+})
+
 const id = nanoid()
 
-emitter.emit('toggle-more-menu', {
-  id,
-  show: true,
-})
-
-onUnmounted(() => {
+function show(show: boolean) {
   emitter.emit('toggle-more-menu', {
     id,
-    show: false,
+    show,
   })
+}
+
+show(true)
+
+onUnmounted(() => {
+  show(false)
 })
+
+watch(() => props.visible, show)
 </script>
 
 <template>
