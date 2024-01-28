@@ -25,7 +25,7 @@ const currentWindow = getCurrent()
         </template>
         <v-list min-width="150">
           <v-list-item value="titleBar.view.setting" :title="$t('titleBar.view.setting')" @click="setting = true" />
-          <v-list-item value="titleBar.view.sync" :title="$t('titleBar.view.sync')" @click="sync = true" />
+          <v-list-item v-if="isDev" value="titleBar.view.sync" :title="$t('titleBar.view.sync')" @click="sync = true" />
         </v-list>
       </v-menu>
       <v-menu>
