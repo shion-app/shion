@@ -14,6 +14,8 @@ const { formatYYYYmmdd } = useDateFns()
 const momentList = ref<Array<SelectMoment>>()
 const activeMoment = ref<SelectMoment>()
 
+const timelineVisible = computed(() => (momentList.value?.length || 0) > 1)
+
 async function init() {
   activeMoment.value = props.moment
   momentList.value = [props.moment]
@@ -51,7 +53,7 @@ whenever(visibleVModel, init)
         </v-window-item>
       </v-window>
     </v-card-text>
-    <v-card-actions v-if="momentList?.length">
+    <v-card-actions v-if="timelineVisible">
       <div flex justify-around w-full relative mt-2>
         <div absolute left-0 right-0 top-1.5 bg-gray h-0.5 class="z-[-1]" />
         <div v-for="m in momentList" :key="m.id" flex flex-col items-center flex-1>

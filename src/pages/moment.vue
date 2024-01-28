@@ -187,6 +187,23 @@ function handleLink(moment: Moment) {
   moment.selected = false
 }
 
+function handleCancelLink(moment: Moment) {
+  const { open, close } = useConfirmModal({
+    attrs: {
+      title: t('moment.link.cancelTip'),
+      async onConfirm() {
+        await db.moment.update(moment.id, {
+          linkId: null,
+        })
+        close()
+        success({})
+        await refresh()
+      },
+    },
+  })
+  open()
+}
+
 function handleLinkCancel() {
   for (const item of momentList.value) {
     item.disabled = false
@@ -197,7 +214,7 @@ function handleLinkCancel() {
 function handleLinkConfirm() {
   const { open, close } = useConfirmModal({
     attrs: {
-      title: t('moment.link.confirmTip', {
+      title: t('moment.link.submitTip', {
         count: selectedList.value.length,
       }),
       async onConfirm() {
@@ -249,7 +266,7 @@ refresh()
           {{ moment.summary.data }}
         </div>
       </v-card-text>
-      <template #menu>
+      <template v-if="!linkActive" #menu>
         <v-list-item
           value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline"
           base-color="red" @click="handleRemove(moment.id)"
@@ -258,7 +275,8 @@ refresh()
           value="moment.edit" :title="$t('moment.edit')" append-icon="mdi-pencil-outline"
           @click="update(moment)"
         />
-        <v-list-item v-if="!linkActive" value="moment.link.desc" :title="$t('moment.link.desc')" append-icon="mdi-link" @click="handleLink(moment)" />
+        <v-list-item v-if="Number(moment.linkId)" value="moment.link.remove" :title="$t('moment.link.remove')" base-color="red" append-icon="mdi-link-variant-off" @click="handleCancelLink(moment)" />
+        <v-list-item value="moment.link.submit" :title="$t('moment.link.submit')" append-icon="mdi-link-variant" @click="handleLink(moment)" />
       </template>
     </grid-card>
   </template>
@@ -286,8 +304,8 @@ refresh()
       </v-btn>
     </template>
   </v-snackbar>
-  <more-menu>
-    <v-list v-if="!linkActive">
+  <more-menu :visible="!linkActive">
+    <v-list>
       <v-list-item
         v-if="selectedList.length" value="button.remove" :title="$t('button.remove')"
         append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal"

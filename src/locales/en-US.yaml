@@ -116,9 +116,11 @@ moment:
   boxLabel: Save to
   createdAt: 'Created at: {date}'
   link:
-    desc: Link
+    submit: Link
+    remove: Remove link
     snackbar: Currently in candidate state, select the object that needs to be linked
-    confirmTip: The selected {count} item will be linked to the target. Are you sure?
+    submitTip: The selected {count} item will be linked to the target. Are you sure?
+    cancelTip: The link is about to be cancelled. Are you sure?
   box:
     all: All
   tip:
