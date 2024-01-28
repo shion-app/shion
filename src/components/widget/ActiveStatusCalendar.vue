@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { EChartsOption } from 'echarts'
 import { addDays, getDay, isBefore, isSameDay, isSameYear } from 'date-fns'
+import colors from 'vuetify/util/colors'
 
 import { type SelectActivity, type SelectNote, db } from '@/modules/database'
 
@@ -55,20 +56,44 @@ const calendarList = computed(() => {
   return [...map.entries()]
 })
 
-const min = computed(() => Math.min(...calendarList.value.map(([_, value]) => value)))
-const max = computed(() => Math.max(...calendarList.value.map(([_, value]) => value)))
-
 const buildMarker = color => `<span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:${color};"></span>`
+
+const hour = (h: number) => 1000 * 60 * 60 * h
 
 const option = computed<EChartsOption>(() => {
   return {
     visualMap: {
       show: false,
-      min: min.value,
-      max: max.value,
-      inRange: {
-        color: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
-      },
+      type: 'piecewise',
+      pieces: [
+        {
+          lte: hour(0), color: colors.grey.lighten2,
+        },
+        {
+          lte: hour(1), color: colors.green.lighten4,
+        },
+        {
+          lte: hour(3), color: colors.green.lighten3,
+        },
+        {
+          lte: hour(6), color: colors.green.lighten2,
+        },
+        {
+          lte: hour(9), color: colors.green.lighten1,
+        },
+        {
+          lte: hour(12), color: colors.green.darken1,
+        },
+        {
+          lte: hour(15), color: colors.green.darken2,
+        },
+        {
+          lte: hour(18), color: colors.green.darken3,
+        },
+        {
+          gt: hour(18), color: colors.green.darken4,
+        },
+      ],
     },
     calendar: {
       left: 50,
