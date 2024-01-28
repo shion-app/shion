@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getCurrent } from '@tauri-apps/api/window'
 
-import logo from '@/assets/logo.png'
+import logo from '@/assets/logo.svg'
 
 const setting = ref(false)
 const sync = ref(false)

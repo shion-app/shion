@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { open } from '@tauri-apps/plugin-shell'
 
-import logo from '@/assets/logo.png'
+import logo from '@/assets/logo.svg'
 
 const props = defineProps<{
   visible: boolean
