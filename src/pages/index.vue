@@ -15,6 +15,7 @@ const { success } = useNotify()
 const { parseFieldsError } = useDatabase()
 const { open: openNoteCreate } = useNoteCreate()
 const { onRefresh } = usePageRefresh()
+const { xs } = useTailwindBreakpoints()
 
 const selectedDate = ref(new Date())
 const list = ref<GridList<SelectOverview>>([])
@@ -358,7 +359,7 @@ refresh()
     <v-list>
       <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal" />
       <v-list-item value="overview.create" :title="$t('overview.create')" append-icon="mdi-plus" @click="showCreateForm" />
-      <v-list-item value="label.button.start" :title="$t('label.button.start')" append-icon="mdi-timer-outline" @click="openNoteCreate" />
+      <v-list-item v-if="xs" value="label.button.start" :title="$t('label.button.start')" append-icon="mdi-timer-outline" @click="openNoteCreate" />
     </v-list>
   </more-menu>
   <status-bar-teleport>
