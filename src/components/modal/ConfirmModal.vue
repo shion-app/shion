@@ -8,6 +8,8 @@ defineProps<{
 
 const emit = defineEmits<{
   (e: 'confirm'): void
+  (e: 'closed'): void
+  (e: 'cancel'): void
 }>()
 </script>
 
@@ -15,6 +17,8 @@ const emit = defineEmits<{
   <VueFinalModal
     content-transition="dialog-transition"
     flex justify-center items-center
+    @closed="$emit('closed')"
+    @click-outside="$emit('cancel')"
   >
     <v-card :title="title" class="w-[90vw] sm:w-[400px] sm:max-w-[500px]">
       <v-card-text>
