@@ -80,7 +80,7 @@ watch(visibleVModel, (v) => {
 </script>
 
 <template>
-  <advanced-dialog v-model:visible="visibleVModel" :persistent="true">
+  <advanced-dialog v-model:visible="visibleVModel" :persistent="true" class="sm:w-[800px]">
     <v-card-text>
       <v-form ref="form" validate-on="submit">
         <div flex items-center>
@@ -93,7 +93,7 @@ watch(visibleVModel, (v) => {
               return $t('moment.tip.required')
             }]"
           />
-          <div class="w-[150px]">
+          <div class="w-[180px]">
             <v-select
               v-model="state.boxId"
               density="comfortable"
@@ -107,11 +107,11 @@ watch(visibleVModel, (v) => {
           </div>
         </div>
       </v-form>
-      <tiptap v-model:content="state.content" :editable="true" content-class="h-[250px]" />
+      <tiptap v-model:content="state.content" :editable="true" content-class="h-[300px]" />
     </v-card-text>
     <v-card-actions>
       <div flex-1 />
-      <v-btn @click="handleCancel">
+      <v-btn color="red" @click="handleCancel">
         {{ $t('modal.cancel') }}
       </v-btn>
       <v-btn

@@ -173,6 +173,7 @@ watchOnce(contentVModel, (v) => {
 .tiptap {
   *:first-child {
     margin-top: 0;
+    padding-top: 16px;
   }
   p.is-editor-empty:first-child::before {
     color: #adb5bd;
