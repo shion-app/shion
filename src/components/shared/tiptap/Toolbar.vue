@@ -1,19 +1,14 @@
-<script lang="ts" setup>
-import type { ChainedCommands } from '@tiptap/vue-3'
-import { EditorContent, useEditor } from '@tiptap/vue-3'
-import StarterKit from '@tiptap/starter-kit'
-import Image from '@tiptap/extension-image'
-import Placeholder from '@tiptap/extension-placeholder'
-import Underline from '@tiptap/extension-underline'
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
-import Link from '@tiptap/extension-link'
-import TaskItem from '@tiptap/extension-task-item'
-import TaskList from '@tiptap/extension-task-list'
+<script setup lang="ts">
+import type { ChainedCommands, Editor } from '@tiptap/vue-3'
 import { open } from '@tauri-apps/plugin-dialog'
-import * as lowlight from 'lowlight'
 
 import { uploadByPath, uploadExtension } from '@/modules/upload'
-import { Video } from '@/plugins/tiptap-video'
+
+const props = defineProps<{
+  editor: Editor
+}>()
+
+const { t } = useI18n()
 
 interface DialogFilter {
   name: string
@@ -32,94 +27,6 @@ interface Button {
 }
 
 type Util = Divider | Button
-
-const props = defineProps<{
-  content: string
-  editable: boolean
-  contentClass?: string
-}>()
-
-const { content: contentVModel } = useVModels(props)
-const { t } = useI18n()
-
-const editor = useEditor({
-  content: contentVModel.value,
-  editable: props.editable,
-  extensions: [
-    StarterKit.configure({
-      codeBlock: false,
-    }),
-    Image,
-    Video,
-    Placeholder.configure({
-      placeholder: t('tiptap.placeholder'),
-    }),
-    Underline,
-    CodeBlockLowlight.configure({
-      lowlight: lowlight.lowlight,
-      defaultLanguage: null,
-    }),
-    Link.configure({
-      protocols: ['ftp', 'mailto'],
-    }),
-    TaskList,
-    TaskItem.configure({
-      nested: true,
-    }),
-  ],
-  editorProps: {
-    attributes: {
-      class: 'prose prose-slate outline-none min-h-full mx-auto',
-    },
-  },
-  onUpdate: () => {
-    contentVModel.value = editor.value!.getHTML()
-  },
-})
-
-async function openFileDialog(filter: DialogFilter) {
-  const selected = await open({
-    multiple: true,
-    filters: [
-      filter,
-    ],
-  })
-  if (selected?.length)
-    return await Promise.all(selected.map(({ path }) => uploadByPath(path)))
-  return []
-}
-
-async function uploadImage() {
-  const files = await openFileDialog({
-    name: t('moment.editor.image'),
-    extensions: uploadExtension.image,
-  })
-  if (!files.length)
-    return
-
-  editor.value?.commands.insertContent(files.map(src => ({
-    type: 'image',
-    attrs: {
-      src,
-    },
-  })))
-}
-
-async function uploadVideo() {
-  const files = await openFileDialog({
-    name: t('moment.editor.video'),
-    extensions: uploadExtension.video,
-  })
-  if (!files.length)
-    return
-
-  editor.value?.commands.insertContent(files.map(src => ({
-    type: 'video',
-    attrs: {
-      src,
-    },
-  })))
-}
 
 const utils = computed(() => [
   {
@@ -204,29 +111,65 @@ const utils = computed(() => [
   },
 ] as Array<Util>)
 
+async function openFileDialog(filter: DialogFilter) {
+  const selected = await open({
+    multiple: true,
+    filters: [
+      filter,
+    ],
+  })
+  if (selected?.length)
+    return await Promise.all(selected.map(({ path }) => uploadByPath(path)))
+  return []
+}
+
+async function uploadImage() {
+  const files = await openFileDialog({
+    name: t('moment.editor.image'),
+    extensions: uploadExtension.image,
+  })
+  if (!files.length)
+    return
+
+  props.editor.commands.insertContent(files.map(src => ({
+    type: 'image',
+    attrs: {
+      src,
+    },
+  })))
+}
+
+async function uploadVideo() {
+  const files = await openFileDialog({
+    name: t('moment.editor.video'),
+    extensions: uploadExtension.video,
+  })
+  if (!files.length)
+    return
+
+  props.editor.commands.insertContent(files.map(src => ({
+    type: 'video',
+    attrs: {
+      src,
+    },
+  })))
+}
+
 function isDivider(util: Util): util is Divider {
   return (util as Divider).type == 'divider'
 }
 
 function call(command: (chain: ChainedCommands) => ChainedCommands) {
-  if (!editor.value)
-    return () => {}
-
-  const chain = editor.value.chain()
-  return () => command(chain).run()
+  return () => command(props.editor.chain()).run()
 }
 
 function isActive(name: string) {
-  return () => editor.value?.isActive(name) || false
+  return () => props.editor.isActive(name) || false
 }
-
-watchOnce(contentVModel, (v) => {
-  editor.value?.commands.setContent(v, false)
-})
 </script>
 
 <template>
-  <div v-if="$props.editable" flex>
+  <div flex>
     <template v-for="item, index in utils">
       <template v-if="isDivider(item)">
         <v-divider :key="item.type + index" vertical class="mx-2!" />
@@ -245,22 +188,4 @@ watchOnce(contentVModel, (v) => {
       </template>
     </template>
   </div>
-  <v-divider my-2 />
-  <EditorContent :editor="editor" overflow-y-auto :class="contentClass" />
 </template>
-
-<style lang="scss">
-.tiptap {
-  & > *:first-child {
-    margin-top: 0;
-    padding-top: 16px;
-  }
-  p.is-editor-empty:first-child::before {
-    color: #adb5bd;
-    content: attr(data-placeholder);
-    float: left;
-    height: 0;
-    pointer-events: none;
-  }
-}
-</style>
