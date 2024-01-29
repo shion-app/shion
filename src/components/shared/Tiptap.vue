@@ -4,7 +4,13 @@ import { EditorContent, useEditor } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import Placeholder from '@tiptap/extension-placeholder'
+import Underline from '@tiptap/extension-underline'
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+import Link from '@tiptap/extension-link'
+import TaskItem from '@tiptap/extension-task-item'
+import TaskList from '@tiptap/extension-task-list'
 import { open } from '@tauri-apps/plugin-dialog'
+import * as lowlight from 'lowlight'
 
 import { uploadByPath, uploadExtension } from '@/modules/upload'
 import { Video } from '@/plugins/tiptap-video'
@@ -27,11 +33,25 @@ const editor = useEditor({
   content: contentVModel.value,
   editable: props.editable,
   extensions: [
-    StarterKit,
+    StarterKit.configure({
+      codeBlock: false,
+    }),
     Image,
     Video,
     Placeholder.configure({
       placeholder: t('tiptap.placeholder'),
+    }),
+    Underline,
+    CodeBlockLowlight.configure({
+      lowlight: lowlight.lowlight,
+      defaultLanguage: null,
+    }),
+    Link.configure({
+      protocols: ['ftp', 'mailto'],
+    }),
+    TaskList,
+    TaskItem.configure({
+      nested: true,
     }),
   ],
   editorProps: {
@@ -90,16 +110,9 @@ async function uploadVideo() {
 
 const utils = computed(() => [
   {
-    icon: 'i-mdi:undo',
-    tip: t('moment.editor.uodo'),
-    handler: call(c => c.undo()),
-    disabled: !editor.value?.can().undo(),
-  },
-  {
-    icon: 'i-mdi:redo',
-    tip: t('moment.editor.redo'),
-    handler: call(c => c.redo()),
-    disabled: !editor.value?.can().redo(),
+    icon: 'i-mdi:format-quote-close',
+    tip: t('moment.editor.quote'),
+    handler: call(c => c.toggleBlockquote()),
   },
   {
     icon: 'i-mdi:format-bold',
@@ -112,6 +125,31 @@ const utils = computed(() => [
     handler: call(c => c.toggleItalic()),
   },
   {
+    icon: 'i-mdi:format-underline',
+    tip: t('moment.editor.underline'),
+    handler: call(c => c.toggleUnderline()),
+  },
+  {
+    icon: 'i-mdi:format-strikethrough',
+    tip: t('moment.editor.strikethrough'),
+    handler: call(c => c.toggleStrike()),
+  },
+  // {
+  //   icon: 'i-mdi:code-tags',
+  //   tip: t('moment.editor.code'),
+  //   handler: call(c => c.toggleCode()),
+  // },
+  {
+    icon: 'i-mdi:xml',
+    tip: t('moment.editor.codeBlock'),
+    handler: call(c => c.toggleCodeBlock()),
+  },
+  // {
+  //   icon: 'i-mdi:link-variant',
+  //   tip: t('moment.editor.link'),
+  //   handler: call(c => c.toggleLink()),
+  // },
+  {
     icon: 'i-mdi:format-list-bulleted',
     tip: t('moment.editor.listBulleted'),
     handler: call(c => c.toggleBulletList()),
@@ -122,9 +160,9 @@ const utils = computed(() => [
     handler: call(c => c.toggleOrderedList()),
   },
   {
-    icon: 'i-mdi:format-quote-close',
-    tip: t('moment.editor.quote'),
-    handler: call(c => c.toggleBlockquote()),
+    icon: 'i-mdi:checkbox-marked-outline',
+    tip: t('moment.editor.taskList'),
+    handler: call(c => c.toggleTaskList()),
   },
   {
     icon: 'i-mdi:image',
@@ -154,12 +192,11 @@ watchOnce(contentVModel, (v) => {
 <template>
   <div v-if="$props.editable" flex>
     <tooltip-button
-      v-for="{ icon, tip, handler, disabled } in utils"
+      v-for="{ icon, tip, handler } in utils"
       :key="icon"
       :tooltip="tip"
       location="bottom"
       :icon="icon"
-      :disabled="disabled"
       size="small"
       variant="text"
       @click="handler"
@@ -171,7 +208,7 @@ watchOnce(contentVModel, (v) => {
 
 <style lang="scss">
 .tiptap {
-  *:first-child {
+  & > *:first-child {
     margin-top: 0;
     padding-top: 16px;
   }

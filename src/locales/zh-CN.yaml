@@ -134,6 +134,12 @@ moment:
     redo: 重做
     bold: 加粗
     italic: 斜体
+    underline: 下划线
+    strikethrough: 删除线
+    code: 代码
+    codeBlock: 代码块
+    link: 链接
+    taskList: 任务列表
     listBulleted: 列表
     listNumbered: 有序列表
     quote: 引用

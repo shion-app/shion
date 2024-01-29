@@ -134,8 +134,14 @@ moment:
     redo: Redo
     bold: Bold
     italic: Italic
-    listBulleted: List bulleted
-    listNumbered: List numbered
+    underline: Underline
+    strikethrough: Strikethrough
+    code: Code
+    codeBlock: Code block
+    link: Link
+    taskList: Task list
+    listBulleted: Bullet list
+    listNumbered: Numbered List
     quote: Quote
     image: Image
     video: Video
