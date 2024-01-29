@@ -10,7 +10,10 @@ const props = defineProps<{
 const { visible: visibleVModel } = useVModels(props)
 
 const configStore = useConfigStore()
+const updateStore = useUpdateStore()
 const { config } = storeToRefs(configStore)
+const { start } = updateStore
+const { updating } = storeToRefs(updateStore)
 
 const repository = 'https://github.com/shion-app/shion'
 
@@ -20,9 +23,9 @@ const version = computed(() => `v${config.value.version}`)
 
 <template>
   <advanced-dialog v-model:visible="visibleVModel" :title="$t('titleBar.help.about')">
-    <v-card-text flex flex-col items-center class="max-h-[200px]">
+    <v-card-text flex flex-col items-center class="max-h-[250px]">
       <img width="96" height="96" :src="logo" alt="logo">
-      <div flex items-baseline mt-4>
+      <div flex items-baseline my-4>
         <div text-6 font-bold>
           shion
         </div>
@@ -30,6 +33,7 @@ const version = computed(() => `v${config.value.version}`)
           ({{ version }})
         </div>
       </div>
+      <v-btn :text="$t('about.checkUpdate')" :loading="updating" @click="start" />
     </v-card-text>
     <v-card-actions flex justify-center>
       <v-tooltip :text="$t('about.website')" location="bottom">

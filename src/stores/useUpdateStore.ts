@@ -1,11 +1,7 @@
+import type { Update } from '@tauri-apps/plugin-updater'
 import { check } from '@tauri-apps/plugin-updater'
 import { relaunch } from '@tauri-apps/plugin-process'
-import { error, info } from '@tauri-apps/plugin-log'
-
-interface Payload {
-  chunkLength: number
-  contentLength: number
-}
+import { error } from '@tauri-apps/plugin-log'
 
 export const useUpdateStore = defineStore('update', () => {
   const { t } = useI18n()
@@ -14,39 +10,55 @@ export const useUpdateStore = defineStore('update', () => {
 
   const { config } = storeToRefs(configStore)
 
-  const precent = ref(0)
-  const downloading = ref(false)
-
-  let downloaded = 0
+  const updating = ref(false)
 
   async function start() {
-    downloaded = 0
+    updating.value = true
+    let update: Update | null
     try {
-      const update = await check()
-
-      if (update?.version) {
-        const { open, close } = useConfirmModal({
-          attrs: {
-            title: t('updater.title'),
-            content: t('updater.content', {
-              version: update?.version,
-            }),
-            async onConfirm() {
-              close()
-              downloading.value = true
-              await update.downloadAndInstall()
-              await relaunch()
-            },
-          },
-        })
-        open()
-      }
+      update = await check({
+        timeout: 6,
+      })
     }
     catch (e) {
+      updating.value = false
       notify.error({
         text: t('updater.checkUpdate'),
       })
-      error(e as string)
+      return error(e as string)
+    }
+
+    if (update?.version) {
+      if (update?.version == config.value.version) {
+        return notify.info({
+          text: t('updater.latest'),
+        })
+      }
+      const { open, close } = useConfirmModal({
+        attrs: {
+          title: t('updater.title'),
+          content: t('updater.content', {
+            version: update!.version,
+          }),
+          async onConfirm() {
+            try {
+              await update!.downloadAndInstall()
+              await relaunch()
+            }
+            catch (e) {
+              close()
+              notify.error({
+                text: t('updater.updating'),
+              })
+              error(e as string)
+            }
+          },
+          onClosed() {
+            updating.value = false
+          },
+        },
+      })
+      open()
     }
   }
 
@@ -55,35 +67,8 @@ export const useUpdateStore = defineStore('update', () => {
       start()
   })
 
-  const logDownloadProgress = useThrottleFn((total: number) => {
-    info(`Downloading updater downloaded: ${downloaded}, total: ${total}, precent: ${precent.value}%`)
-  }, 1000)
-
-  // TODO: upgrade
-
-  // onUpdaterEvent(({ error: e, status }) => {
-  //   if (downloading.value && e) {
-  //     downloading.value = false
-  //     notify.error({
-  //       text: t('updater.updating'),
-  //     })
-  //     error(`Updater event ${e}, ${status}`)
-  //   }
-  // })
-
-  // listen<Payload>(TauriEvent.DOWNLOAD_PROGRESS, ({ payload }: { payload: Payload }) => {
-  //   const { contentLength, chunkLength } = payload
-  //   downloaded += chunkLength
-  //   precent.value = ~~(downloaded / contentLength * 100)
-  //   downloading.value = precent.value != 100
-  //   logDownloadProgress(contentLength)
-  //   if (!downloading.value)
-  //     info('Download completed')
-  // })
-
   return {
     start,
-    precent,
-    downloading,
+    updating,
   }
 })

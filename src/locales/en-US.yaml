@@ -83,6 +83,7 @@ updater:
   content: The new version {version} has been released. Are you sure to update it?
   checkUpdate: An error occurred while pulling the latest version
   error: An error occurred while updating
+  latest: You have the latest version
 timer:
   countdown: The countdown has reached the target time
   timing: Timing
@@ -107,6 +108,7 @@ activity:
 about:
   website: Website
   github: Github
+  checkUpdate: Check for updates
 moment:
   create: Record the moment
   inputTitle: Input title...
