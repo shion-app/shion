@@ -20,7 +20,7 @@ const emit = defineEmits<{
     @closed="$emit('closed')"
     @click-outside="$emit('cancel')"
   >
-    <v-card :title="title" class="w-[90vw] sm:w-[400px] sm:max-w-[500px]">
+    <v-card :title="title" class="w-[90vw] sm:w-[400px]">
       <v-card-text>
         {{ content }}
       </v-card-text>

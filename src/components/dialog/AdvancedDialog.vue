@@ -49,7 +49,7 @@ const dragHandler = ({ movement: [x], dragging }) => {
       scrim: !props.page,
     }"
     :transition="page ? 'dialog-slide-transition' : 'dialog-transition'"
-    class="sm:min-w-[500px] sm:max-w-[600px]" :class="[props.page ? 'w-screen' : 'w-[90vw]']"
+    class="sm:w-[600px]" :class="[props.page ? 'w-screen' : 'w-[90vw]']"
   >
     <v-card v-drag="dragHandler" v-motion="'dialog'">
       <v-toolbar v-if="props.page" class="bg-transparent!">
