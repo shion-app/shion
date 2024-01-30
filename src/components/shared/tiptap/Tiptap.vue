@@ -5,12 +5,11 @@ import Image from '@tiptap/extension-image'
 import Placeholder from '@tiptap/extension-placeholder'
 import Underline from '@tiptap/extension-underline'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
-import Link from '@tiptap/extension-link'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
 import * as lowlight from 'lowlight'
 
-import { Video } from '@/extensions/tiptap/video'
+import { Link, Video } from '@/extensions/tiptap/'
 
 const props = defineProps<{
   content: string
@@ -39,7 +38,7 @@ const editor = useEditor({
       defaultLanguage: null,
     }),
     Link.configure({
-      protocols: ['ftp', 'mailto'],
+      openOnClick: false,
     }),
     TaskList,
     TaskItem.configure({
@@ -66,6 +65,7 @@ watchOnce(contentVModel, (v) => {
     <Toolbar v-if="$props.editable" :editor="editor" />
     <v-divider my />
     <EditorContent :editor="editor" overflow-y-auto :class="contentClass" />
+    <link-menu :editor="editor" />
   </template>
 </template>
 

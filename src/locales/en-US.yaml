@@ -212,3 +212,8 @@ sync:
   mergeConflict: Merge conflicts need to be manually resolved
 tiptap:
   placeholder: Write something...
+  link:
+    edit: Edit link
+    remove: Remove link
+    enter: Enter link
+    set: Set link

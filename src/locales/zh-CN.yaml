@@ -212,3 +212,8 @@ sync:
   mergeConflict: 合并发生冲突，需手动解决
 tiptap:
   placeholder: 写些什么...
+  link:
+    edit: 编辑链接
+    remove: 删除链接
+    enter: 输入链接
+    set: 设置链接

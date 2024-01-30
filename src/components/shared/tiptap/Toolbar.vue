@@ -4,12 +4,6 @@ import { open } from '@tauri-apps/plugin-dialog'
 
 import { uploadByPath, uploadExtension } from '@/modules/upload'
 
-const props = defineProps<{
-  editor: Editor
-}>()
-
-const { t } = useI18n()
-
 interface DialogFilter {
   name: string
   extensions: string[]
@@ -22,11 +16,19 @@ interface Divider {
 interface Button {
   icon: string
   tip: string
-  handler: () => Promise<void>
+  handler?: () => Promise<void>
   isActive?: () => boolean
 }
 
 type Util = Divider | Button
+
+const props = defineProps<{
+  editor: Editor
+}>()
+
+const { t } = useI18n()
+
+const linkPopoverVisible = ref(false)
 
 const utils = computed(() => [
   {
@@ -70,11 +72,10 @@ const utils = computed(() => [
     handler: call(c => c.toggleCodeBlock()),
     isActive: isActive('codeBlock'),
   },
-  // {
-  //   icon: 'i-mdi:link-variant',
-  //   tip: t('moment.editor.link'),
-  //   handler: call(c => c.toggleLink()),
-  // },
+  {
+    icon: 'i-mdi:link-variant',
+    tip: t('moment.editor.link'),
+  },
   {
     type: 'divider',
   },
@@ -166,6 +167,15 @@ function call(command: (chain: ChainedCommands) => ChainedCommands) {
 function isActive(name: string) {
   return () => props.editor.isActive(name) || false
 }
+
+function onSetLink(url: string) {
+  linkPopoverVisible.value = false
+  props.editor
+    .chain()
+    .focus()
+    .setLink({ href: url, target: '_blank' })
+    .run()
+}
 </script>
 
 <template>
@@ -173,6 +183,23 @@ function isActive(name: string) {
     <template v-for="item, index in utils">
       <template v-if="isDivider(item)">
         <v-divider :key="item.type + index" vertical class="mx-2!" />
+      </template>
+      <template v-else-if="item.icon == 'i-mdi:link-variant'">
+        <v-overlay :key="item.icon" v-model="linkPopoverVisible" location="bottom center" offset="10" location-strategy="connected" scrim="transparent">
+          <template #activator="{ props: overlayProps }">
+            <tooltip-button
+              :key="item.icon"
+              :tooltip="item.tip"
+              location="bottom"
+              :icon="item.icon"
+              size="small"
+              variant="text"
+              :active="item.isActive?.()"
+              v-bind="overlayProps"
+            />
+          </template>
+          <LinkEditorPanel :on-set-link="onSetLink" />
+        </v-overlay>
       </template>
       <template v-else>
         <tooltip-button
@@ -183,7 +210,7 @@ function isActive(name: string) {
           size="small"
           variant="text"
           :active="item.isActive?.()"
-          @click="item.handler"
+          @click="item.handler?.()"
         />
       </template>
     </template>
