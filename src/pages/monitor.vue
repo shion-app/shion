@@ -130,6 +130,7 @@ async function handleCreateProgram(program: Program) {
     path,
     icon: '',
     color,
+    platform: PLATFORM,
   })
   const asset = await upload(`${name}.png`, new Uint8Array(icon))
   await db.program.update(lastInsertId, {

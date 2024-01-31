@@ -30,6 +30,7 @@ export class Program extends Model<TransformProgram> {
         'program.name',
         'program.path',
         'program.sort',
+        'program.platform',
         'program.deletedAt',
         'program.createdAt',
         'program.updatedAt',

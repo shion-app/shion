@@ -85,6 +85,7 @@ export interface Program {
   color: string
   path: string
   icon: string
+  platform: string
   sort: Generated<number>
   deletedAt: Generated<number>
   createdAt: Generated<number>

@@ -5,44 +5,12 @@ use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
 use tauri_plugin_sql::{Migration, MigrationKind};
 
 pub fn run() {
-    let migrations = vec![
-        Migration {
-            version: 1,
-            description: "create table",
-            sql: include_str!("../../prisma/migrations/20230923052127_/migration.sql"),
-            kind: MigrationKind::Up,
-        },
-        Migration {
-            version: 2,
-            description: "add overview",
-            sql: include_str!("../../prisma/migrations/20231201100249_/migration.sql"),
-            kind: MigrationKind::Up,
-        },
-        Migration {
-            version: 3,
-            description: "add created_at updated_at",
-            sql: include_str!("../../prisma/migrations/20240109024738_/migration.sql"),
-            kind: MigrationKind::Up,
-        },
-        Migration {
-            version: 4,
-            description: "delete unique key color and moment property",
-            sql: include_str!("../../prisma/migrations/20240118085015_/migration.sql"),
-            kind: MigrationKind::Up,
-        },
-        Migration {
-            version: 5,
-            description: "add box, link",
-            sql: include_str!("../../prisma/migrations/20240126103453_/migration.sql"),
-            kind: MigrationKind::Up,
-        },
-        Migration {
-            version: 6,
-            description: "link_id foreign key",
-            sql: include_str!("../../prisma/migrations/20240127051919_/migration.sql"),
-            kind: MigrationKind::Up,
-        },
-    ];
+    let migrations = vec![Migration {
+        version: 1,
+        description: "create table",
+        sql: include_str!("../../prisma/migrations/20240131101926_/migration.sql"),
+        kind: MigrationKind::Up,
+    }];
 
     let mut builder = tauri::Builder::default()
         .plugin(tauri_plugin_process::init())

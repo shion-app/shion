@@ -5,6 +5,7 @@
 export {}
 declare global {
   const EffectScope: typeof import('vue')['EffectScope']
+  const PLATFORM: typeof import('./utils/shared')['PLATFORM']
   const Priority: typeof import('./hooks/useApplication')['Priority']
   const Timer: typeof import('./utils/timer')['Timer']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
@@ -346,6 +347,7 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly PLATFORM: UnwrapRef<typeof import('./utils/shared')['PLATFORM']>
     readonly Priority: UnwrapRef<typeof import('./hooks/useApplication')['Priority']>
     readonly Timer: UnwrapRef<typeof import('./utils/timer')['Timer']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>

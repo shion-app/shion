@@ -142,6 +142,7 @@ async function createActivityData() {
     color: '#ffffff',
     path: 'D:\\folder',
     icon: '',
+    platform: '',
   })
   const [_, second] = await Promise.all([
     db.activity.insert({
