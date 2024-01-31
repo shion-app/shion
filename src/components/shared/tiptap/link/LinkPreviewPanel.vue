@@ -14,7 +14,6 @@ const props = defineProps<Props>()
       <a :href="props.url" target="_blank" rel="noopener noreferrer" class="text-sm underline">
         {{ props.url }}
       </a>
-      <v-divider vertical />
       <v-tooltip location="bottom" :text="$t('tiptap.link.edit')">
         <template #activator="{ props: tooltipProps }">
           <v-btn icon variant="text" v-bind="tooltipProps" size="small" @click="props.onEdit">

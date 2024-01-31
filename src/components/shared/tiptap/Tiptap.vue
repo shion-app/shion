@@ -19,6 +19,8 @@ const props = defineProps<{
 const { content: contentVModel } = useVModels(props)
 const { t } = useI18n()
 
+const tiptapWrapper = ref<HTMLElement>()
+
 const editor = useEditor({
   content: contentVModel.value,
   editable: props.editable,
@@ -60,20 +62,20 @@ watchOnce(contentVModel, (v) => {
 </script>
 
 <template>
-  <template v-if="editor">
-    <Toolbar v-if="$props.editable" :editor="editor" />
+  <div v-if="editor" ref="tiptapWrapper">
+    <Toolbar v-if="props.editable" :editor="editor" />
     <v-divider my />
     <EditorContent :editor="editor" overflow-y-auto :class="contentClass" />
-    <link-menu :editor="editor" />
-    <image-block-menu :editor="editor" />
-  </template>
+    <link-menu v-if="props.editable" :editor="editor" :append-to="tiptapWrapper" />
+    <image-block-menu v-if="props.editable" :editor="editor" :append-to="tiptapWrapper" />
+  </div>
 </template>
 
 <style lang="scss">
 .tiptap {
+  padding-top: 16px;
   & > *:first-child {
     margin-top: 0;
-    padding-top: 16px;
   }
   p.is-editor-empty:first-child::before {
     color: #adb5bd;

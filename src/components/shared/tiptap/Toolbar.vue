@@ -161,7 +161,7 @@ function isDivider(util: Util): util is Divider {
 }
 
 function call(command: (chain: ChainedCommands) => ChainedCommands) {
-  return () => command(props.editor.chain()).run()
+  return () => command(props.editor.chain().focus()).run()
 }
 
 function isActive(name: string) {
@@ -170,11 +170,7 @@ function isActive(name: string) {
 
 function onSetLink(url: string) {
   linkPopoverVisible.value = false
-  props.editor
-    .chain()
-    .focus()
-    .setLink({ href: url, target: '_blank' })
-    .run()
+  call(c => c.setLink({ href: url, target: '_blank' }))()
 }
 </script>
 

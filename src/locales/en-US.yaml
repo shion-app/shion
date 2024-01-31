@@ -217,3 +217,7 @@ tiptap:
     remove: Remove link
     enter: Enter link
     set: Set link
+  image:
+    left: Align left
+    center: Align center
+    right: Align right

@@ -217,3 +217,7 @@ tiptap:
     remove: 删除链接
     enter: 输入链接
     set: 设置链接
+  image:
+    left: 左对齐
+    center: 居中
+    right: 右对齐
