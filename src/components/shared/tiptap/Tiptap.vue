@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { EditorContent, useEditor } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
-import Image from '@tiptap/extension-image'
 import Placeholder from '@tiptap/extension-placeholder'
 import Underline from '@tiptap/extension-underline'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
@@ -9,7 +8,7 @@ import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
 import * as lowlight from 'lowlight'
 
-import { Link, Video } from '@/extensions/tiptap/'
+import { ImageBlock, Link, Video } from '@/extensions/tiptap/'
 
 const props = defineProps<{
   content: string
@@ -27,7 +26,6 @@ const editor = useEditor({
     StarterKit.configure({
       codeBlock: false,
     }),
-    Image,
     Video,
     Placeholder.configure({
       placeholder: t('tiptap.placeholder'),
@@ -44,6 +42,7 @@ const editor = useEditor({
     TaskItem.configure({
       nested: true,
     }),
+    ImageBlock,
   ],
   editorProps: {
     attributes: {
@@ -66,6 +65,7 @@ watchOnce(contentVModel, (v) => {
     <v-divider my />
     <EditorContent :editor="editor" overflow-y-auto :class="contentClass" />
     <link-menu :editor="editor" />
+    <image-block-menu :editor="editor" />
   </template>
 </template>
 

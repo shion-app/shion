@@ -133,7 +133,7 @@ async function uploadImage() {
     return
 
   props.editor.commands.insertContent(files.map(src => ({
-    type: 'image',
+    type: 'imageBlock',
     attrs: {
       src,
     },
