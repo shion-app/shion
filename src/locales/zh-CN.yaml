@@ -199,6 +199,13 @@ statusBar:
   lock: 拖拽锁定
   unlock: 拖拽解锁
   refresh: 刷新
+  calendar:
+    year: 年
+    month: 月
+    switch:
+      year: 切换到年
+      month: 切换到月
+
 gridCard:
   move: 移动
 sync:

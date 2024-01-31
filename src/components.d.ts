@@ -64,5 +64,6 @@ declare module '@vue/runtime-core' {
     TitleBar: typeof import('./desktop/components/TitleBar.vue')['default']
     Toolbar: typeof import('./components/shared/tiptap/Toolbar.vue')['default']
     TooltipButton: typeof import('./components/shared/TooltipButton.vue')['default']
+    YearGrid: typeof import('./components/timeline/calendar/YearGrid.vue')['default']
   }
 }

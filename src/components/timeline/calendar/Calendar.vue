@@ -19,6 +19,7 @@ let generatedYear = new Date().getFullYear()
 
 const list = ref<Array<CalendarMonthType>>([])
 const currentYear = ref(new Date().getFullYear())
+const [isMonthMode, toggleMode] = useToggle(true)
 
 const scrollContainer = ref<HTMLElement>()
 
@@ -137,6 +138,20 @@ init()
 
 <template>
   <div ref="scrollContainer" h-full overflow-y-auto overflow-x-hidden relative ml-2>
-    <month-grid v-model:date="dateVModel" :current-year="currentYear" :active-status-map="activeStatusMap" :list="list" />
+    <template v-if="isMonthMode">
+      <month-grid v-model:date="dateVModel" v-model:current-year="currentYear" :active-status-map="activeStatusMap" :list="list" />
+    </template>
+    <template v-else>
+      <year-grid v-model:date="dateVModel" :active-status-map="activeStatusMap" :list="list" />
+    </template>
   </div>
+  <status-bar-teleport :xs="false">
+    <tooltip-button
+      :tooltip="isMonthMode ? $t('statusBar.calendar.switch.year') : $t('statusBar.calendar.switch.month')"
+      location="top"
+      :text="isMonthMode ? $t('statusBar.calendar.month') : $t('statusBar.calendar.year')"
+      variant="text"
+      @click="() => toggleMode()"
+    />
+  </status-bar-teleport>
 </template>

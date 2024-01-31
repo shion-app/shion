@@ -1,15 +1,20 @@
 <script setup lang="ts">
 import { endOfMonth, isSameDay, isSameMonth, isToday, set } from 'date-fns'
 import { UseElementVisibility } from '@vueuse/components'
+import classNames from 'classnames'
+
 import type { ActiveStatusMap } from './types'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   year: number
   month: number
   weekdays: number[]
   selected: Date
   activeStatusMap: ActiveStatusMap
-}>()
+  small?: boolean
+}>(), {
+  small: false,
+})
 
 const emit = defineEmits<{
   (e: 'inViewport', year: number): void
@@ -94,20 +99,24 @@ watchDeep(() => props.weekdays, generate, {
 </script>
 
 <template>
-  <div ref="target" w-fit mt-8>
-    <div text-6 px-2>
+  <div ref="target" w-fit :class="small ? 'mt-2' : 'mt-8'">
+    <div :class="small ? 'text-5' : 'text-6 px-2'" mb-2>
       {{ monthName }}
     </div>
-    <div grid grid-cols-7 w-84 gap-y-2>
+    <div grid grid-cols-7 :class="small ? 'w-26' : 'w-84 gap-y-2'">
       <div
         v-for="item in list" :key="format(item.date, 'yyyy-MM-dd')"
-        w-12 h-12 flex justify-center items-center
-        :class="{
-          invisible: !item.visible,
-        }"
+        flex justify-center items-center
+        :class="classNames(
+          {
+            invisible: !item.visible,
+          },
+          small ? 'w-4 h-4' : 'w-12 h-12',
+        )"
       >
-        <UseElementVisibility v-slot="{ isVisible }">
+        <template v-if="small">
           <v-btn
+            class="w-[90%]! h-[90%]! text-2!"
             :variant="isToday(item.date) && !isSameDay(props.selected, item.date) ? 'outlined' : 'flat'"
             :color="isSameDay(props.selected, item.date) || isToday(item.date) ? 'primary' : get(item.date)?.color"
             icon
@@ -115,9 +124,22 @@ watchDeep(() => props.weekdays, generate, {
             @click="selectDate(item)"
           >
             {{ item.date.getDate() }}
-            <v-tooltip v-if="isVisible && get(item.date)?.time" location="bottom" :text="formatHHmmss(get(item.date)?.time || 0)" activator="parent" />
           </v-btn>
-        </UseElementVisibility>
+        </template>
+        <template v-else>
+          <UseElementVisibility v-slot="{ isVisible }" w-full h-full>
+            <v-btn
+              :variant="isToday(item.date) && !isSameDay(props.selected, item.date) ? 'outlined' : 'flat'"
+              :color="isSameDay(props.selected, item.date) || isToday(item.date) ? 'primary' : get(item.date)?.color"
+              icon
+              :ripple="false"
+              @click="selectDate(item)"
+            >
+              {{ item.date.getDate() }}
+              <v-tooltip v-if="isVisible && get(item.date)?.time" location="bottom" :text="formatHHmmss(get(item.date)?.time || 0)" activator="parent" />
+            </v-btn>
+          </UseElementVisibility>
+        </template>
       </div>
     </div>
   </div>

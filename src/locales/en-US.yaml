@@ -199,6 +199,12 @@ statusBar:
   lock: Drag lock
   unlock: Drag unlock
   refresh: Refresh
+  calendar:
+    year: Year
+    month: Month
+    switch:
+      year: Switch to year
+      month: Switch to month
 gridCard:
   move: Move
 sync:
