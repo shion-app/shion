@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { startOfMonth } from 'date-fns'
+import colors from 'vuetify/util/colors'
 
 import type { ActiveStatusMap, CalendarMonthType } from './types'
 import type { SelectActivity, SelectNote } from '@/modules/database'
@@ -96,12 +97,16 @@ const activeStatusMap = computedAsync<ActiveStatusMap>(async () => {
 function getColorByTime(time: number) {
   const { hour } = extractTime(time).raw
   if (hour < 1)
-    return '#9be9a8'
+    return colors.green.lighten2
   if (hour < 2)
-    return '#40c463'
+    return colors.green.lighten1
   if (hour < 3)
-    return '#30a14e'
-  return '#216e39'
+    return colors.green.darken1
+  if (hour < 5)
+    return colors.green.darken2
+  if (hour < 7)
+    return colors.green.darken3
+  return colors.green.darken4
 }
 
 const { arrivedState } = useScroll(scrollContainer, {
