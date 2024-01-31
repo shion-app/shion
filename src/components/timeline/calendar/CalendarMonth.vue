@@ -114,9 +114,9 @@ watchDeep(() => props.weekdays, generate, {
           small ? 'w-4 h-4' : 'w-12 h-12',
         )"
       >
-        <template v-if="small">
+        <UseElementVisibility v-slot="{ isVisible }" w-full h-full>
           <v-btn
-            class="w-[90%]! h-[90%]! text-2!"
+            :class="small ? 'w-[90%]! h-[90%]! text-2!' : ''"
             :variant="isToday(item.date) && !isSameDay(props.selected, item.date) ? 'outlined' : 'flat'"
             :color="isSameDay(props.selected, item.date) || isToday(item.date) ? 'primary' : get(item.date)?.color"
             icon
@@ -124,22 +124,9 @@ watchDeep(() => props.weekdays, generate, {
             @click="selectDate(item)"
           >
             {{ item.date.getDate() }}
+            <v-tooltip v-if="isVisible && get(item.date)?.time" location="bottom" :text="formatHHmmss(get(item.date)?.time || 0)" activator="parent" />
           </v-btn>
-        </template>
-        <template v-else>
-          <UseElementVisibility v-slot="{ isVisible }" w-full h-full>
-            <v-btn
-              :variant="isToday(item.date) && !isSameDay(props.selected, item.date) ? 'outlined' : 'flat'"
-              :color="isSameDay(props.selected, item.date) || isToday(item.date) ? 'primary' : get(item.date)?.color"
-              icon
-              :ripple="false"
-              @click="selectDate(item)"
-            >
-              {{ item.date.getDate() }}
-              <v-tooltip v-if="isVisible && get(item.date)?.time" location="bottom" :text="formatHHmmss(get(item.date)?.time || 0)" activator="parent" />
-            </v-btn>
-          </UseElementVisibility>
-        </template>
+        </UseElementVisibility>
       </div>
     </div>
   </div>
