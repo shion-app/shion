@@ -1,18 +1,18 @@
 <script setup lang="ts">
 interface Props {
-  url: string
+  url?: string
   onSetLink: (url: string) => void
 }
 
 const props = defineProps<Props>()
 
-const url = ref(props.url)
+const url = ref(props.url || '')
 
 const isValidUrl = computed(() => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(url.value))
 
 const handleSubmit = () => props.onSetLink(url.value)
 
-watch(() => props.url, v => url.value = v)
+watch(() => props.url, v => url.value = v || '')
 </script>
 
 <template>
