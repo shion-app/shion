@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { isSameHour } from 'date-fns'
-import { type SelectActivity, type SelectNote, db } from '@/modules/database'
+import { db } from '@/modules/database'
+import type { SelectActivity, SelectLabel, SelectNote, SelectProgram } from '@/modules/database'
 
 const props = defineProps<{
   selectedDate: Date
@@ -12,7 +13,9 @@ const { formatHHmmss, formatYYYYmmdd } = useDateFns()
 const { position } = useEcharts()
 
 const noteList = ref<Array<SelectNote>>([])
+const labelList = ref<Array<SelectLabel>>([])
 const activityList = ref<Array<SelectActivity>>([])
+const programList = ref<Array<SelectProgram>>([])
 
 const x = new Array(24).fill(0).map((_, i) => i)
 
@@ -20,16 +23,14 @@ const option = computed(() => {
   const transformNoteList = splitByHour(noteList.value)
   const transformactivityList = splitByHour(activityList.value)
 
-  const labelList = [...new Set(transformNoteList.map(i => i.label.name))]
-
-  const labelData = labelList.map((name) => {
+  const labelData = labelList.value.map(({ id, name }) => {
     return {
       name,
       type: 'bar',
       stack: 'label',
-      data: x.map(time => calcTotalTime(transformNoteList.filter(i => i.label.name == name && (isSameHour(new Date(selectedDateVModel.value).setHours(time), i.start))))),
+      data: x.map(time => calcTotalTime(transformNoteList.filter(i => i.label.id == id && (isSameHour(new Date(selectedDateVModel.value).setHours(time), i.start))))),
       itemStyle: {
-        color: transformNoteList.find(i => i.label.name == name)!.label.color,
+        color: transformNoteList.find(i => i.label.id == id)?.label.color,
       },
       emphasis: {
         focus: 'series',
@@ -37,16 +38,14 @@ const option = computed(() => {
     }
   })
 
-  const programList = [...new Set(transformactivityList.map(i => i.program.name))]
-
-  const programData = programList.map((name) => {
+  const programData = programList.value.map(({ id, name }) => {
     return {
       name,
       type: 'bar',
       stack: 'label',
-      data: x.map(time => calcTotalTime(transformactivityList.filter(i => i.program.name == name && (isSameHour(new Date(selectedDateVModel.value).setHours(time), i.start))))),
+      data: x.map(time => calcTotalTime(transformactivityList.filter(i => i.program.id == id && (isSameHour(new Date(selectedDateVModel.value).setHours(time), i.start))))),
       itemStyle: {
-        color: transformactivityList.find(i => i.program.name == name)!.program.color,
+        color: transformactivityList.find(i => i.program.id == id)?.program.color,
       },
       emphasis: {
         focus: 'series',
@@ -99,7 +98,7 @@ const option = computed(() => {
 async function init(date: Date) {
   const range = generateRange(1, date)
   const [start, end] = range.map(date => date.getTime())
-    ;[noteList.value, activityList.value] = await Promise.all([
+    ;[noteList.value, activityList.value, labelList.value, programList.value] = await Promise.all([
     db.note.select({
       start,
       end,
@@ -108,6 +107,8 @@ async function init(date: Date) {
       start,
       end,
     }),
+    db.label.select(),
+    db.program.select(),
   ])
 }
 
