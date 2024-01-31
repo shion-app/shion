@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { startOfMonth } from 'date-fns'
 
+import type { ActiveStatusMap, CalendarMonthType } from './types'
 import type { SelectActivity, SelectNote } from '@/modules/database'
 import { db } from '@/modules/database'
 
@@ -12,27 +13,16 @@ const props = defineProps<{
 
 const { date: dateVModel } = useVModels(props)
 
-const { locale } = useI18n()
 const { format } = useDateFns()
-
-interface CalendarMonthType {
-  year: number
-  month: number
-}
 
 let generatedYear = new Date().getFullYear()
 
 const list = ref<Array<CalendarMonthType>>([])
 const currentYear = ref(new Date().getFullYear())
 
-const calendarMonthRef = useTemplateRefsList<{
-  scrollToViewIfThisMonth(date: Date): void
-}>()
-const scrollContainer = templateRef<HTMLElement>('scrollContainer')
+const scrollContainer = ref<HTMLElement>()
 
-const weekdays = computed(() => locale.value == 'zh-CN' ? [1, 2, 3, 4, 5, 6, 0] : [0, 1, 2, 3, 4, 5, 6])
-const weekdaysName = computed(() => weekdays.value.map(i => dayMap[locale.value][i]))
-const activeStatusMap = computedAsync(async () => {
+const activeStatusMap = computedAsync<ActiveStatusMap>(async () => {
   if (typeof props.id != 'number')
     return new Map()
 
@@ -91,7 +81,7 @@ const activeStatusMap = computedAsync(async () => {
     const date = format(start, 'yyyy-MM-dd')
     timeMap.set(date, (timeMap.get(date) || 0) + end - start)
   }
-  const map = new Map<string, { color: string; time: number }>()
+  const map: ActiveStatusMap = new Map()
   for (const key of timeMap.keys()) {
     const value = timeMap.get(key)!
     map.set(key, {
@@ -136,15 +126,6 @@ function init() {
   generatedYear = year - 1
 }
 
-function scrollToView() {
-  for (const item of calendarMonthRef.value)
-    item.scrollToViewIfThisMonth(new Date())
-}
-
-function handleSelectDate(date: Date) {
-  dateVModel.value = date
-}
-
 function onScroll() {
   const { top } = arrivedState
   if (top)
@@ -152,29 +133,10 @@ function onScroll() {
 }
 
 init()
-
-onMounted(scrollToView)
 </script>
 
 <template>
   <div ref="scrollContainer" h-full overflow-y-auto overflow-x-hidden relative ml-2>
-    <div sticky top-0 left-0 right-0 bg-white z-1 shadow>
-      <div text-5>
-        {{ currentYear }}
-      </div>
-      <div flex>
-        <div v-for="name in weekdaysName" :key="name" w-12 h-12 flex justify-center items-center>
-          {{ name }}
-        </div>
-      </div>
-    </div>
-    <CalendarMonth
-      v-for="{ year, month } in list"
-      :ref="calendarMonthRef.set"
-      :key="`${year}-${month}`"
-      v-model:selected="dateVModel" :year="year" :month="month" :weekdays="weekdays" :active-status-map="activeStatusMap"
-      @select="handleSelectDate"
-      @in-viewport="year => currentYear = year"
-    />
+    <month-grid v-model:date="dateVModel" :current-year="currentYear" :active-status-map="activeStatusMap" :list="list" />
   </div>
 </template>

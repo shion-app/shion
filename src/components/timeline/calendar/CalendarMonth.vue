@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { endOfMonth, isSameDay, isSameMonth, isToday, set } from 'date-fns'
 import { UseElementVisibility } from '@vueuse/components'
+import type { ActiveStatusMap } from './types'
 
-const props = withDefaults(defineProps<{
+const props = defineProps<{
   year: number
   month: number
   weekdays: number[]
   selected: Date
-  activeStatusMap: Map<string, { color: string; time: number }>
-}>(), {
-  activeStatusMap: () => new Map(),
-})
+  activeStatusMap: ActiveStatusMap
+}>()
 
 const emit = defineEmits<{
   (e: 'inViewport', year: number): void

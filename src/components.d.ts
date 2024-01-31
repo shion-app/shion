@@ -38,6 +38,7 @@ declare module '@vue/runtime-core' {
     LinkPreviewPanel: typeof import('./components/shared/tiptap/link/LinkPreviewPanel.vue')['default']
     MomentDetail: typeof import('./components/moment/MomentDetail.vue')['default']
     MomentEdit: typeof import('./components/moment/MomentEdit.vue')['default']
+    MonthGrid: typeof import('./components/timeline/calendar/MonthGrid.vue')['default']
     MoreMenu: typeof import('./components/menu/MoreMenu.vue')['default']
     MoreMenuButton: typeof import('./components/menu/MoreMenuButton.vue')['default']
     MoreMenuFab: typeof import('./components/menu/MoreMenuFab.vue')['default']
