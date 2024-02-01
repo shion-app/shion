@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { open } from '@tauri-apps/plugin-shell'
 
-import logo from '@/assets/logo.svg'
-
 const props = defineProps<{
   visible: boolean
 }>()
@@ -24,7 +22,7 @@ const version = computed(() => `v${config.value.version}`)
 <template>
   <advanced-dialog v-model:visible="visibleVModel" :title="$t('titleBar.help.about')">
     <v-card-text flex flex-col items-center class="max-h-[250px]">
-      <img width="96" height="96" :src="logo" alt="logo">
+      <dynamic-logo />
       <div flex items-baseline my-4>
         <div text-6 font-bold>
           shion

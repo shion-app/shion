@@ -20,6 +20,7 @@ declare module '@vue/runtime-core' {
     ColorPickerButton: typeof import('./components/shared/ColorPickerButton.vue')['default']
     ConfirmModal: typeof import('./components/modal/ConfirmModal.vue')['default']
     DailyActivity: typeof import('./components/widget/DailyActivity.vue')['default']
+    DynamicLogo: typeof import('./components/shared/DynamicLogo.vue')['default']
     Empty: typeof import('./components/shared/Empty.vue')['default']
     FormFactory: typeof import('./components/form/FormFactory.vue')['default']
     FormModal: typeof import('./components/modal/FormModal.vue')['default']
