@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { open } from '@tauri-apps/plugin-shell'
+import { writeText } from '@tauri-apps/plugin-clipboard-manager'
 
 const props = defineProps<{
   visible: boolean
 }>()
 
 const { visible: visibleVModel } = useVModels(props)
+const { info } = useNotify()
+const { t } = useI18n()
 
 const configStore = useConfigStore()
 const updateStore = useUpdateStore()
@@ -17,6 +20,13 @@ const repository = 'https://github.com/shion-app/shion'
 
 const website = computed(() => config.value.locale == 'zh-CN' ? 'https://shion.app/zh/' : 'https://shion.app/')
 const version = computed(() => `v${config.value.version}`)
+
+async function copy() {
+  await writeText(version.value)
+  info({
+    text: t('about.copy'),
+  })
+}
 </script>
 
 <template>
@@ -27,7 +37,7 @@ const version = computed(() => `v${config.value.version}`)
         <div text-6 font-bold>
           shion
         </div>
-        <div>
+        <div cursor-pointer @click="copy">
           ({{ version }})
         </div>
       </div>

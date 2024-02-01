@@ -109,6 +109,7 @@ about:
   website: Website
   github: Github
   checkUpdate: Check for updates
+  copy: Copied to clipboard
 moment:
   create: Record the moment
   inputTitle: Input title...

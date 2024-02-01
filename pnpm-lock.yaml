@@ -20,6 +20,9 @@ dependencies:
   '@tauri-apps/plugin-autostart':
     specifier: 2.0.0-alpha.5
     version: 2.0.0-alpha.5
+  '@tauri-apps/plugin-clipboard-manager':
+    specifier: 2.0.0-alpha.5
+    version: 2.0.0-alpha.5
   '@tauri-apps/plugin-dialog':
     specifier: 2.0.0-alpha.5
     version: 2.0.0-alpha.5
@@ -49,7 +52,7 @@ dependencies:
     version: 2.2.0(@tiptap/pm@2.2.0)
   '@tiptap/extension-code-block-lowlight':
     specifier: ^2.2.0
-    version: 2.2.0(@tiptap/core@2.2.0)(@tiptap/extension-code-block@2.1.12)(@tiptap/pm@2.2.0)
+    version: 2.2.0(@tiptap/core@2.2.0)(@tiptap/extension-code-block@2.2.0)(@tiptap/pm@2.2.0)
   '@tiptap/extension-image':
     specifier: ^2.2.0
     version: 2.2.0(@tiptap/core@2.2.0)
@@ -1722,6 +1725,12 @@ packages:
       '@tauri-apps/api': 2.0.0-alpha.13
     dev: false
 
+  /@tauri-apps/plugin-clipboard-manager@2.0.0-alpha.5:
+    resolution: {integrity: sha512-BkoSHnB557SyzkRpEZ4Q3nXGdBpjwNj9xsK5irQs9yhuK0P2iMB7vlRb2lE96TEHUi4jakrjyqJoIDPHZDDkmA==}
+    dependencies:
+      '@tauri-apps/api': 2.0.0-alpha.13
+    dev: false
+
   /@tauri-apps/plugin-dialog@2.0.0-alpha.5:
     resolution: {integrity: sha512-OHodi10R5an4nVq/kavU9HOATkc20RYNVdFYWMvPSVyI7rL1n55llPmbGXdWiZO94Tn10XZyZDVs7eJ1uKOkeA==}
     dependencies:
@@ -1813,7 +1822,7 @@ packages:
       '@tiptap/core': 2.2.0(@tiptap/pm@2.2.0)
     dev: false
 
-  /@tiptap/extension-code-block-lowlight@2.2.0(@tiptap/core@2.2.0)(@tiptap/extension-code-block@2.1.12)(@tiptap/pm@2.2.0):
+  /@tiptap/extension-code-block-lowlight@2.2.0(@tiptap/core@2.2.0)(@tiptap/extension-code-block@2.2.0)(@tiptap/pm@2.2.0):
     resolution: {integrity: sha512-s/ZvePEwyovQtoTHFq/TYZU/+rTdWEAhocsnbRD6BVolwFi5NiE9iRtIt2gTL1PVxi6UNK/zxqrtBaQpBffeqg==}
     peerDependencies:
       '@tiptap/core': ^2.0.0
@@ -1821,17 +1830,7 @@ packages:
       '@tiptap/pm': ^2.0.0
     dependencies:
       '@tiptap/core': 2.2.0(@tiptap/pm@2.2.0)
-      '@tiptap/extension-code-block': 2.1.12(@tiptap/core@2.2.0)(@tiptap/pm@2.2.0)
-      '@tiptap/pm': 2.2.0
-    dev: false
-
-  /@tiptap/extension-code-block@2.1.12(@tiptap/core@2.2.0)(@tiptap/pm@2.2.0):
-    resolution: {integrity: sha512-RXtSYCVsnk8D+K80uNZShClfZjvv1EgO42JlXLVGWQdIgaNyuOv/6I/Jdf+ZzhnpsBnHufW+6TJjwP5vJPSPHA==}
-    peerDependencies:
-      '@tiptap/core': ^2.0.0
-      '@tiptap/pm': ^2.0.0
-    dependencies:
-      '@tiptap/core': 2.2.0(@tiptap/pm@2.2.0)
+      '@tiptap/extension-code-block': 2.2.0(@tiptap/core@2.2.0)(@tiptap/pm@2.2.0)
       '@tiptap/pm': 2.2.0
     dev: false
 
