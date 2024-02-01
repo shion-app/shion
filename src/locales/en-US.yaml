@@ -164,6 +164,7 @@ titleBar:
     desc: Help
     about: About
     log: Open log dir
+    devtools: Open developer tools
 timeline:
   plan: Plan
   label: Label

@@ -41,7 +41,7 @@ pub fn run() {
     {
         use tauri::menu::MenuBuilder;
         use tauri::menu::MenuItemBuilder;
-        use tauri::Manager;
+        use tauri::{Manager, Window};
         use tauri_plugin_autostart::MacosLauncher;
 
         use std::collections::HashMap;
@@ -68,6 +68,11 @@ pub fn run() {
             open::that(path).unwrap();
         }
 
+        #[tauri::command]
+        fn open_devtools(window: Window) {
+            window.open_devtools();
+        }
+
         builder = builder
             .plugin(tauri_plugin_updater::Builder::new().build())
             .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
@@ -87,7 +92,11 @@ pub fn run() {
                 }
                 _ => {}
             })
-            .invoke_handler(tauri::generate_handler![update_tray_menu, open_folder]);
+            .invoke_handler(tauri::generate_handler![
+                update_tray_menu,
+                open_folder,
+                open_devtools
+            ]);
     }
 
     builder

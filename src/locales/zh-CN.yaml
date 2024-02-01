@@ -164,6 +164,7 @@ titleBar:
     desc: 帮助
     about: 关于
     log: 打开日志文件夹
+    devtools: 打开开发者工具
 timeline:
   plan: 计划
   label: 标签

@@ -17,6 +17,10 @@ async function openLogDir() {
     path: appLogDirPath,
   })
 }
+
+function openDevtools() {
+  core.invoke('open_devtools')
+}
 </script>
 
 <template>
@@ -43,6 +47,7 @@ async function openLogDir() {
         <v-list min-width="150">
           <v-list-item value="titleBar.help.about" :title="$t('titleBar.help.about')" @click="about = true" />
           <v-list-item value="titleBar.help.log" :title="$t('titleBar.help.log')" @click="openLogDir" />
+          <v-list-item value="titleBar.help.devtools" :title="$t('titleBar.help.devtools')" @click="openDevtools" />
         </v-list>
       </v-menu>
     </div>
