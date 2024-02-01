@@ -34,7 +34,7 @@ const menu = computed(() => [
   {
     icon: 'i-mdi:timer-outline',
     activeIcon: 'i-mdi:timer',
-    name: t('nav.time'),
+    name: t('nav.timer'),
     to: '/timer',
     visible: sm.value,
   },

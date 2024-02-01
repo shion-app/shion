@@ -2,7 +2,7 @@ nav:
   overview: 总览
   timeline: 时间线
   plan: 计划
-  time: 计时
+  timer: 计时
   label: 标签
   monitor: 监听
   activity: 活动
@@ -172,7 +172,7 @@ timeline:
   filter: 筛选类别
   reset: 重置筛选条件
 timelineGraph:
-  include: (共包含{count}项，实际耗时{totalTime})
+  include: '包含{count}项，耗时{totalTime}'
 upload:
   webImage: 已过滤不支持的图片类型
   webVideo: 已过滤不支持的视频类型

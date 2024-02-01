@@ -2,7 +2,7 @@ nav:
   overview: Overview
   timeline: Timeline
   plan: Plan
-  time: Time
+  timer: Timer
   label: Label
   monitor: Monitor
   activity: Activity
@@ -39,12 +39,12 @@ label:
   color: Color
   button:
     start: Start timing
-  box:
-    create: Create box
-    update: Update box
-    name: Name
-    color: Color
-    count: '{count} items'
+box:
+  create: Create box
+  update: Update box
+  name: Name
+  color: Color
+  count: '{count} items'
 error:
   unique: '{field} already exists'
   unhandle: Unhandled exception({error})
@@ -82,7 +82,7 @@ updater:
   title: Update
   content: The new version {version} has been released. Are you sure to update it?
   checkUpdate: An error occurred while pulling the latest version
-  error: An error occurred while updating
+  updating: An error occurred while updating
   latest: You have the latest version
 timer:
   countdown: The countdown has reached the target time
@@ -172,7 +172,7 @@ timeline:
   filter: Filter Categories
   reset: Reset Filter condition
 timelineGraph:
-  include: (Including {count} items, the actual time spent is {totalTime})
+  include: '{count} items, spent {totalTime}'
 upload:
   webImage: Unsupported image types filtered
   webVideo: Unsupported video types filtered
