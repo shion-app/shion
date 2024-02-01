@@ -4,6 +4,7 @@ import { endOfDay, isBefore, startOfDay, subMinutes } from 'date-fns'
 import type { SelectActivity, SelectNote } from '@/modules/database'
 import { db } from '@/modules/database'
 import type { TimeLineNode } from '@/interfaces'
+import type { Filter } from '@/components/timeline/types'
 
 type computedTimeLineNode = TimeLineNode & { id: string }
 
@@ -20,8 +21,8 @@ const noteList = ref<Array<SelectNote>>([])
 const activityList = ref<Array<SelectActivity>>([])
 const date = ref(new Date())
 
-const filterCategory = ref<'plan' | 'label' | 'monitor' | string & {}>(route.query.category as string || '')
-const filterTargetId = ref<number | undefined>(route.query.id ? Number(route.query.id) : undefined)
+const filterCategory = ref(route.query.category as Filter['category'])
+const filterTargetId = ref<Filter['id']>(route.query.id ? Number(route.query.id) : undefined)
 
 const list = computed(() => {
   const list = filterCategory.value

@@ -2,14 +2,15 @@
 import { startOfMonth } from 'date-fns'
 import colors from 'vuetify/util/colors'
 
+import type { Filter } from '../types'
 import type { ActiveStatusMap, CalendarMonthType } from './types'
 import type { SelectActivity, SelectNote } from '@/modules/database'
 import { db } from '@/modules/database'
 
 const props = defineProps<{
   date: Date
-  category: 'plan' | 'label' | 'monitor' | string & {} | undefined
-  id: number | undefined
+  category: Filter['category']
+  id: Filter['id']
 }>()
 
 const { date: dateVModel } = useVModels(props)
