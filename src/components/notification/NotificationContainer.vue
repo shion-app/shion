@@ -28,7 +28,7 @@ import { Notification, NotificationGroup } from '@/plugins/notiwind'
             :text="text"
             variant="tonal"
             mt-4
-            class="bg-white!"
+            class="bg-white! elevation-4"
           />
         </Notification>
       </div>
