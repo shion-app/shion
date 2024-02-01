@@ -28,7 +28,8 @@ const labelGroup = computed(() => {
     const list = map.get(label.planId)
     map.set(label.planId, [...(list || []), label])
   }
-  return map
+  const planIdList = planList.value.map(i => i.id)
+  return [...map.entries()].sort((a, b) => planIdList.indexOf(a[0]) - planIdList.indexOf(b[0]))
 })
 
 const { setUpdateId, handleUpdate } = buildUpdateFn()
