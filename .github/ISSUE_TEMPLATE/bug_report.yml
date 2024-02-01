@@ -1,0 +1,35 @@
+name: "\U0001F41E Bug report"
+title: '[bug] '
+description: Create a report to help us improve
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      placeholder: I am doing ... What I expect is ... What actually happening is ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Find the `About` option in the help menu bar and copy the version.
+      placeholder: v0.8
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: Steps to reproduce
+      description: Please provide any reproduction steps that may need to be described.
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional information
+      description: If necessary, find the `Open log dir` option in the help menu bar and upload the log file
+
