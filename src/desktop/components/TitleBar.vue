@@ -2,6 +2,7 @@
 import { getCurrent } from '@tauri-apps/api/window'
 import { appLogDir } from '@tauri-apps/api/path'
 import { core } from '@tauri-apps/api'
+import { attachConsole } from '@tauri-apps/plugin-log'
 
 import logo from '@/assets/logo.svg'
 
@@ -10,6 +11,9 @@ const sync = ref(false)
 const about = ref(false)
 
 const currentWindow = getCurrent()
+
+if (isProd)
+  attachConsole()
 
 async function openLogDir() {
   const appLogDirPath = await appLogDir()

@@ -10,6 +10,8 @@ export const isMobile = isAndorid
 
 export const isDev = !!import.meta.env.TAURI_ENV_DEBUG
 
+export const isProd = !isDev
+
 export const dayMap = {
   'zh-CN': ['日', '一', '二', '三', '四', '五', '六'],
   'en-US': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
