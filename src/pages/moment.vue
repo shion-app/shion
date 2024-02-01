@@ -240,47 +240,51 @@ refresh()
 </script>
 
 <template>
-  <div space-x-2 mx-4 my-2>
-    <v-chip
-      v-for="{ id, name, color } in boxtList"
-      :key="id"
-      label
-      :color="color"
-      :variant="activeBox == id ? 'tonal' : 'outlined'"
-      link
-      @click="switchBox(id)"
-    >
-      {{ name }}
-    </v-chip>
-  </div>
-  <template v-if="filterMomentList.length">
-    <grid-card
-      v-for="moment in filterMomentList" :key="moment.id" v-model:selected="moment.selected" :title="moment.title"
-      :subtitle="formatYYYYmmdd(moment.createdAt, true)" mx-4 mb-6
-      :disabled="moment.disabled"
-      @click="viewDetail(moment)"
-    >
-      <v-card-text flex space-x-4>
-        <v-img v-if="moment.summary.images.length" :max-width="200" v-bind="moment.summary.images[0]" />
-        <div flex-1 line-clamp-4 h-max break-all mb-6>
-          {{ moment.summary.data }}
-        </div>
-      </v-card-text>
-      <template v-if="!linkActive" #menu>
-        <v-list-item
-          value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline"
-          base-color="red" @click="handleRemove(moment.id)"
-        />
-        <v-list-item
-          value="moment.edit" :title="$t('moment.edit')" append-icon="mdi-pencil-outline"
-          @click="update(moment)"
-        />
-        <v-list-item v-if="Number(moment.linkId)" value="moment.link.remove" :title="$t('moment.link.remove')" base-color="red" append-icon="mdi-link-variant-off" @click="handleCancelLink(moment)" />
-        <v-list-item value="moment.link.submit" :title="$t('moment.link.submit')" append-icon="mdi-link-variant" @click="handleLink(moment)" />
+  <div flex flex-col h-full>
+    <div space-x-2 mx-4 my-2>
+      <v-chip
+        v-for="{ id, name, color } in boxtList"
+        :key="id"
+        label
+        :color="color"
+        :variant="activeBox == id ? 'tonal' : 'outlined'"
+        link
+        @click="switchBox(id)"
+      >
+        {{ name }}
+      </v-chip>
+    </div>
+    <div flex-1 overflow-y-auto>
+      <template v-if="filterMomentList.length">
+        <grid-card
+          v-for="moment in filterMomentList" :key="moment.id" v-model:selected="moment.selected" :title="moment.title"
+          :subtitle="formatYYYYmmdd(moment.createdAt, true)" mx-4 mb-6
+          :disabled="moment.disabled"
+          @click="viewDetail(moment)"
+        >
+          <v-card-text flex space-x-4>
+            <v-img v-if="moment.summary.images.length" :max-width="200" v-bind="moment.summary.images[0]" />
+            <div flex-1 line-clamp-4 h-max break-all mb-6>
+              {{ moment.summary.data }}
+            </div>
+          </v-card-text>
+          <template v-if="!linkActive" #menu>
+            <v-list-item
+              value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline"
+              base-color="red" @click="handleRemove(moment.id)"
+            />
+            <v-list-item
+              value="moment.edit" :title="$t('moment.edit')" append-icon="mdi-pencil-outline"
+              @click="update(moment)"
+            />
+            <v-list-item v-if="Number(moment.linkId)" value="moment.link.remove" :title="$t('moment.link.remove')" base-color="red" append-icon="mdi-link-variant-off" @click="handleCancelLink(moment)" />
+            <v-list-item value="moment.link.submit" :title="$t('moment.link.submit')" append-icon="mdi-link-variant" @click="handleLink(moment)" />
+          </template>
+        </grid-card>
       </template>
-    </grid-card>
-  </template>
-  <empty v-else />
+      <empty v-else />
+    </div>
+  </div>
   <v-snackbar
     :model-value="linkActive"
     timeout="-1"
