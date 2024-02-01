@@ -63,6 +63,11 @@ pub fn run() {
             }
         }
 
+        #[tauri::command]
+        fn open_folder(path: String) {
+            open::that(path).unwrap();
+        }
+
         builder = builder
             .plugin(tauri_plugin_updater::Builder::new().build())
             .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
@@ -82,7 +87,7 @@ pub fn run() {
                 }
                 _ => {}
             })
-            .invoke_handler(tauri::generate_handler![update_tray_menu]);
+            .invoke_handler(tauri::generate_handler![update_tray_menu, open_folder]);
     }
 
     builder

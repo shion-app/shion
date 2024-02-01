@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { getCurrent } from '@tauri-apps/api/window'
+import { appLogDir } from '@tauri-apps/api/path'
+import { core } from '@tauri-apps/api'
 
 import logo from '@/assets/logo.svg'
 
@@ -8,6 +10,13 @@ const sync = ref(false)
 const about = ref(false)
 
 const currentWindow = getCurrent()
+
+async function openLogDir() {
+  const appLogDirPath = await appLogDir()
+  core.invoke('open_folder', {
+    path: appLogDirPath,
+  })
+}
 </script>
 
 <template>
@@ -16,10 +25,7 @@ const currentWindow = getCurrent()
       <img :src="logo" object-contain width="20" height="20" alt="logo" mx-4>
       <v-menu>
         <template #activator="{ props }">
-          <v-btn
-            variant="text"
-            v-bind="props"
-          >
+          <v-btn variant="text" v-bind="props">
             {{ $t('titleBar.view.desc') }}
           </v-btn>
         </template>
@@ -30,15 +36,13 @@ const currentWindow = getCurrent()
       </v-menu>
       <v-menu>
         <template #activator="{ props }">
-          <v-btn
-            variant="text"
-            v-bind="props"
-          >
+          <v-btn variant="text" v-bind="props">
             {{ $t('titleBar.help.desc') }}
           </v-btn>
         </template>
         <v-list min-width="150">
           <v-list-item value="titleBar.help.about" :title="$t('titleBar.help.about')" @click="about = true" />
+          <v-list-item value="titleBar.help.log" :title="$t('titleBar.help.log')" @click="openLogDir" />
         </v-list>
       </v-menu>
     </div>

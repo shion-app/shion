@@ -163,6 +163,7 @@ titleBar:
   help:
     desc: Help
     about: About
+    log: Open log dir
 timeline:
   plan: Plan
   label: Label
