@@ -70,7 +70,8 @@
     "trayIcon": {
       "iconAsTemplate": true,
       "iconPath": "icons/icon.png",
-      "menuOnLeftClick": false
+      "menuOnLeftClick": false,
+      "tooltip": "shion"
     },
     "windows": [
       {
