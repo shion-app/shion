@@ -35,6 +35,9 @@ export const useUpdateStore = defineStore('update', () => {
           content: t('updater.content', {
             version: update!.version,
           }),
+          options: {
+            loading: true,
+          },
           async onConfirm() {
             try {
               await update!.downloadAndInstall()

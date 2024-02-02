@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { VueFinalModal } from 'vue-final-modal'
 
-defineProps<{
+const props = defineProps<{
   title: string
   content?: string
+  options?: {
+    loading: boolean
+  }
 }>()
 
 const emit = defineEmits<{
@@ -11,6 +14,15 @@ const emit = defineEmits<{
   (e: 'closed'): void
   (e: 'cancel'): void
 }>()
+
+const loading = ref(false)
+
+function handleConfirm() {
+  if (props.options?.loading)
+    loading.value = true
+
+  emit('confirm')
+}
 </script>
 
 <template>
@@ -28,8 +40,9 @@ const emit = defineEmits<{
         <v-spacer />
         <v-btn
           color="primary"
+          :loading="loading"
           :text="$t('modal.submit')"
-          @click="emit('confirm')"
+          @click="handleConfirm"
         />
       </v-card-actions>
     </v-card>
