@@ -14,6 +14,7 @@ const { visible: visibleVModel } = useVModels(props)
 const { width: deviceWidth } = useWindowSize()
 const motions = useMotions()
 const { xs } = useTailwindBreakpoints()
+const { toggleDialog } = useDialogStore()
 
 const dragHandler = ({ movement: [x], dragging }) => {
   if (!xs.value)
@@ -39,6 +40,8 @@ const dragHandler = ({ movement: [x], dragging }) => {
     x,
   })
 }
+
+watch(visibleVModel, v => toggleDialog(v))
 </script>
 
 <template>

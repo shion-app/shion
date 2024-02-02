@@ -43,6 +43,8 @@ class ModalPromise {
 export function useFormModal<
   T, V = any, C extends ComponentProps<typeof FormModal<T>> = ComponentProps<typeof FormModal<T>>, O extends UseModalOptions<C> = UseModalOptions<C>,
 >(source: (model: Readonly<Partial<T>>, modalValue: Readonly<Partial<V>>) => O, setModalValue?: () => Promise<V>) {
+  const { toggleDialog } = useDialogStore()
+
   const model: Ref<Partial<T>> = ref({})
   const modalValue: Ref<Partial<V>> = ref({})
 
@@ -88,7 +90,7 @@ export function useFormModal<
     await promise.open()
   }
 
-  const unwatch = watchDeep(() => source(model.value, modalValue.value), (v) => {
+  const unwatchSource = watchDeep(() => source(model.value, modalValue.value), (v) => {
     const values = modal.options.attrs?.form.values
     if (Object.keys(values || {}).length > 0) {
       for (const key in values) {
@@ -111,7 +113,12 @@ export function useFormModal<
     modal.patchOptions(newOptions)
   })
 
-  onScopeDispose(unwatch)
+  const unwatchDialog = watch(() => modal.options.modelValue, v => toggleDialog(v))
+
+  onScopeDispose(() => {
+    unwatchSource()
+    unwatchDialog()
+  })
 
   function setModelValue(values: Partial<T>) {
     const validKeys = (modal.options.attrs?.form.fields || []).map(({ key }) => key)

@@ -6,10 +6,18 @@ import mergeOptions from 'merge-options'
 import ConfirmModal from '@/components/modal/ConfirmModal.vue'
 
 export function useConfirmModal(options: UseModalOptions<ComponentProps<typeof ConfirmModal>>) {
-  return useModal({
+  const { toggleDialog } = useDialogStore()
+
+  const modal = useModal({
     component: ConfirmModal,
     ...options,
   })
+
+  const unwatch = watch(() => modal.options.modelValue, v => toggleDialog(v))
+
+  onScopeDispose(unwatch)
+
+  return modal
 }
 
 export function useConfirmDeleteModal(onConfirm: () => any) {

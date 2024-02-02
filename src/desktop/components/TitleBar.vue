@@ -10,6 +10,9 @@ const setting = ref(false)
 const sync = ref(false)
 const about = ref(false)
 
+const dialogStore = useDialogStore()
+const { dialog } = storeToRefs(dialogStore)
+
 const currentWindow = getCurrent()
 
 if (isProd)
@@ -28,6 +31,7 @@ function openDevtools() {
 </script>
 
 <template>
+  <div v-if="dialog" data-tauri-drag-region absolute z-10000 inset-0 />
   <div data-tauri-drag-region flex h-full select-none justify-between items-center>
     <div flex>
       <img :src="logo" object-contain width="20" height="20" alt="logo" mx-4>
