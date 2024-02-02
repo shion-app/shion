@@ -12,6 +12,23 @@ export const useUpdateStore = defineStore('update', () => {
 
   const updating = ref(false)
 
+  let handleConfrim = () => {}
+
+  const modal = useConfirmModal({
+    attrs: {
+      title: t('updater.title'),
+      options: {
+        loading: true,
+      },
+      onConfirm() {
+        handleConfrim()
+      },
+      onClosed() {
+        updating.value = false
+      },
+    },
+  })
+
   async function start(showInfo = false) {
     updating.value = true
     let update: Update | null
@@ -29,34 +46,27 @@ export const useUpdateStore = defineStore('update', () => {
     }
 
     if (update) {
-      const { open, close } = useConfirmModal({
-        attrs: {
-          title: t('updater.title'),
-          content: t('updater.content', {
-            version: update!.version,
-          }),
-          options: {
-            loading: true,
-          },
-          async onConfirm() {
-            try {
-              await update!.downloadAndInstall()
-              await relaunch()
-            }
-            catch (e) {
-              close()
-              notify.error({
-                text: t('updater.updating'),
-              })
-              error(e as string)
-            }
-          },
-          onClosed() {
-            updating.value = false
-          },
-        },
+      modal.patchOptions({
+        content: t('updater.content', {
+          version: update!.version,
+        }),
       })
-      return open
+
+      handleConfrim = async () => {
+        try {
+          await update!.downloadAndInstall()
+          await relaunch()
+        }
+        catch (e) {
+          close()
+          notify.error({
+            text: t('updater.updating'),
+          })
+          error(e as string)
+        }
+      }
+
+      return modal.open
     }
     else {
       updating.value = false

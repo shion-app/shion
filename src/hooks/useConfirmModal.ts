@@ -5,7 +5,9 @@ import mergeOptions from 'merge-options'
 
 import ConfirmModal from '@/components/modal/ConfirmModal.vue'
 
-export function useConfirmModal(options: UseModalOptions<ComponentProps<typeof ConfirmModal>>) {
+type Options = UseModalOptions<ComponentProps<typeof ConfirmModal>>
+
+export function useConfirmModal(options: Options) {
   const { toggleDialog } = useDialogStore()
 
   const modal = useModal({
@@ -17,7 +19,22 @@ export function useConfirmModal(options: UseModalOptions<ComponentProps<typeof C
 
   onScopeDispose(unwatch)
 
-  return modal
+  function patchOptions(attrs: Partial<Options['attrs']>) {
+    const newOptions = mergeOptions(
+      {
+        attrs: modal.options.attrs,
+      },
+      {
+        attrs,
+      },
+    )
+    modal.patchOptions(newOptions)
+  }
+
+  return {
+    ...modal,
+    patchOptions,
+  }
 }
 
 export function useConfirmDeleteModal(onConfirm: () => any) {
@@ -34,17 +51,9 @@ export function useConfirmDeleteModal(onConfirm: () => any) {
   })
 
   const unwatch = watch(locale, () => {
-    const newOptions = mergeOptions(
-      {
-        attrs: modal.options.attrs,
-      },
-      {
-        attrs: {
-          title: t('modal.confirmDelete'),
-        },
-      },
-    )
-    modal.patchOptions(newOptions)
+    modal.patchOptions({
+      title: t('modal.confirmDelete'),
+    })
   })
 
   onScopeDispose(unwatch)

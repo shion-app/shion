@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { db } from '@/modules/database'
 import type { SelectBox, SelectMoment } from '@/modules/database'
-
 import { useConfirmDeleteModal } from '@/hooks/useConfirmModal'
 
 interface Image {
@@ -187,21 +186,36 @@ function handleLink(moment: Moment) {
   moment.selected = false
 }
 
-function handleCancelLink(moment: Moment) {
-  const { open, close } = useConfirmModal({
-    attrs: {
-      title: t('moment.link.cancelTip'),
-      async onConfirm() {
-        await db.moment.update(moment.id, {
-          linkId: null,
-        })
-        close()
-        success({})
-        await refresh()
-      },
+function buildCancelLinkFn() {
+  let id = 0
+  return {
+    setCancelId: (removeId: number) => {
+      id = removeId
     },
-  })
-  open()
+    cancel: async () => {
+      await db.moment.update(id, {
+        linkId: null,
+      })
+      success({})
+      refresh()
+    },
+  }
+}
+
+const { setCancelId, cancel: cancelLink } = buildCancelLinkFn()
+const { open: openCancelLink, close: closeCancelLink } = useConfirmModal({
+  attrs: {
+    title: t('moment.link.cancelTip'),
+    onConfirm() {
+      cancelLink()
+      closeCancelLink()
+    },
+  },
+})
+
+function handleCancelLink(moment: Moment) {
+  openCancelLink()
+  setCancelId(moment.id)
 }
 
 function handleLinkCancel() {
@@ -211,29 +225,33 @@ function handleLinkCancel() {
   }
 }
 
-function handleLinkConfirm() {
-  const { open, close } = useConfirmModal({
-    attrs: {
-      title: t('moment.link.submitTip', {
-        count: selectedList.value.length,
-      }),
-      async onConfirm() {
-        const target = momentList.value.find(i => i.disabled)!
-        let linkId = target.linkId
-        if (!linkId) {
-          const { lastInsertId } = await db.link.insert({})
-          linkId = lastInsertId
-        }
-        await Promise.all([target.id, ...selectedList.value].map(id => db.moment.update(id, {
-          linkId,
-        })))
-        close()
-        success({})
-        await refresh()
-      },
+const linkModal = useConfirmModal({
+  attrs: {
+    title: '',
+    async onConfirm() {
+      const target = momentList.value.find(i => i.disabled)!
+      let linkId = target.linkId
+      if (!linkId) {
+        const { lastInsertId } = await db.link.insert({})
+        linkId = lastInsertId
+      }
+      await Promise.all([target.id, ...selectedList.value].map(id => db.moment.update(id, {
+        linkId,
+      })))
+      linkModal.close()
+      success({})
+      await refresh()
     },
+  },
+})
+
+function handleLinkConfirm() {
+  linkModal.patchOptions({
+    title: t('moment.link.submitTip', {
+      count: selectedList.value.length,
+    }),
   })
-  open()
+  linkModal.open()
 }
 
 refresh()
