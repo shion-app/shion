@@ -1,6 +1,6 @@
 [package]
 name = "shion"
-version = "0.7.0-beta.3"
+version = "0.8.0"
 authors = ["hanaTsuk1"]
 license = "GPL-3.0-only"
 repository = "https://github.com/shion-app/shion"

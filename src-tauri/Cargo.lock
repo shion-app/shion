@@ -4512,7 +4512,7 @@ dependencies = [
 
 [[package]]
 name = "shion"
-version = "0.7.0-beta.3"
+version = "0.8.0"
 dependencies = [
  "log 0.4.20",
  "open 5.0.1",
