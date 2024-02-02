@@ -116,6 +116,7 @@ export function useFormModal<
   const unwatchDialog = watch(() => modal.options.modelValue, v => toggleDialog(v))
 
   onScopeDispose(() => {
+    toggleDialog(false)
     unwatchSource()
     unwatchDialog()
   })

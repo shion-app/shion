@@ -42,6 +42,10 @@ const dragHandler = ({ movement: [x], dragging }) => {
 }
 
 watch(visibleVModel, v => toggleDialog(v))
+
+onUnmounted(() => {
+  toggleDialog(false)
+})
 </script>
 
 <template>

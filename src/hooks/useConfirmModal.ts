@@ -17,7 +17,10 @@ export function useConfirmModal(options: Options) {
 
   const unwatch = watch(() => modal.options.modelValue, v => toggleDialog(v))
 
-  onScopeDispose(unwatch)
+  onScopeDispose(() => {
+    toggleDialog(false)
+    unwatch()
+  })
 
   function patchOptions(attrs: Partial<Options['attrs']>) {
     const newOptions = mergeOptions(
