@@ -216,38 +216,31 @@ refresh()
       <v-list-item value="monitor.filterProgram" :title="$t('monitor.filterProgram')" append-icon="mdi-filter-outline" @click="showFilterDialog" />
     </v-list>
   </more-menu>
-  <v-dialog
-    v-model="filtering"
-    width="550"
-    max-height="400"
-  >
-    <v-card>
-      <v-card-title>{{ $t('monitor.filterProgram') }}</v-card-title>
-      <v-card-text overflow-y-auto>
-        <template v-if="filterList.length">
-          <div grid grid-cols-2>
-            <v-card v-for="program in filterList" :key="program.path" m-2 :color="program.checked ? 'primary' : ''" @click="program.checked = !program.checked">
-              <template #prepend>
-                <UseObjectUrl v-slot="url" :object="createIconBlob(program.icon)">
-                  <img :src="url.value" width="32" height="32" object-contain>
-                </UseObjectUrl>
-              </template>
-              <template #title>
-                <div :title="program.path" truncate>
-                  {{ program.name }}
-                </div>
-              </template>
-            </v-card>
-          </div>
-        </template>
-        <empty v-else />
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer />
-        <v-btn color="primary" @click="handleSelect">
-          {{ $t('modal.submit') }}
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+  <advanced-dialog v-model:visible="filtering" :title="$t('monitor.filterProgram')" max-height="400">
+    <v-card-text overflow-y-auto>
+      <template v-if="filterList.length">
+        <div grid grid-cols-2>
+          <v-card v-for="program in filterList" :key="program.path" m-2 :color="program.checked ? 'primary' : ''" @click="program.checked = !program.checked">
+            <template #prepend>
+              <UseObjectUrl v-slot="url" :object="createIconBlob(program.icon)">
+                <img :src="url.value" width="32" height="32" object-contain>
+              </UseObjectUrl>
+            </template>
+            <template #title>
+              <div :title="program.path" truncate>
+                {{ program.name }}
+              </div>
+            </template>
+          </v-card>
+        </div>
+      </template>
+      <empty v-else />
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer />
+      <v-btn color="primary" @click="handleSelect">
+        {{ $t('modal.submit') }}
+      </v-btn>
+    </v-card-actions>
+  </advanced-dialog>
 </template>
