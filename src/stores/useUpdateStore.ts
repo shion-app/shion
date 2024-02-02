@@ -53,21 +53,23 @@ export const useUpdateStore = defineStore('update', () => {
           },
         },
       })
-      open()
+      return open
     }
     else {
       updating.value = false
       if (showInfo) {
-        return notify.info({
+        notify.info({
           text: t('updater.latest'),
         })
       }
     }
   }
 
-  watchOnce(() => config.value.checkUpdate, (v) => {
-    if (v)
-      start()
+  watchOnce(() => config.value.checkUpdate, async (v) => {
+    if (v) {
+      const open = await start()
+      open?.()
+    }
   })
 
   return {

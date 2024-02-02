@@ -28,8 +28,12 @@ async function copy() {
   })
 }
 
-function update() {
-  start(true)
+async function update() {
+  const open = await start(true)
+  if (open) {
+    visibleVModel.value = false
+    open()
+  }
 }
 </script>
 
