@@ -27,6 +27,10 @@ async function copy() {
     text: t('about.copy'),
   })
 }
+
+function update() {
+  start(true)
+}
 </script>
 
 <template>
@@ -41,7 +45,7 @@ async function copy() {
           ({{ version }})
         </div>
       </div>
-      <v-btn :text="$t('about.checkUpdate')" :loading="updating" @click="start" />
+      <v-btn :text="$t('about.checkUpdate')" :loading="updating" @click="update" />
     </v-card-text>
     <v-card-actions flex justify-center>
       <v-tooltip :text="$t('about.website')" location="bottom">

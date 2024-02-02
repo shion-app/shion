@@ -12,7 +12,7 @@ export const useUpdateStore = defineStore('update', () => {
 
   const updating = ref(false)
 
-  async function start() {
+  async function start(showInfo = false) {
     updating.value = true
     let update: Update | null
     try {
@@ -28,12 +28,7 @@ export const useUpdateStore = defineStore('update', () => {
       return error(e as string)
     }
 
-    if (update?.version) {
-      if (update?.version == config.value.version) {
-        return notify.info({
-          text: t('updater.latest'),
-        })
-      }
+    if (update) {
       const { open, close } = useConfirmModal({
         attrs: {
           title: t('updater.title'),
@@ -59,6 +54,14 @@ export const useUpdateStore = defineStore('update', () => {
         },
       })
       open()
+    }
+    else {
+      updating.value = false
+      if (showInfo) {
+        return notify.info({
+          text: t('updater.latest'),
+        })
+      }
     }
   }
 
