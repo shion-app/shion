@@ -98,15 +98,13 @@ const activeStatusMap = computedAsync<ActiveStatusMap>(async () => {
 function getColorByTime(time: number) {
   const { hour } = extractTime(time).raw
   if (hour < 1)
-    return colors.green.lighten2
+    return colors.green.lighten5
   if (hour < 2)
-    return colors.green.lighten1
+    return colors.green.lighten3
   if (hour < 3)
-    return colors.green.darken1
+    return colors.green.lighten1
   if (hour < 5)
     return colors.green.darken2
-  if (hour < 7)
-    return colors.green.darken3
   return colors.green.darken4
 }
 
