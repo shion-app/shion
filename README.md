@@ -17,55 +17,25 @@
 
 # Shion🍂
 
-> **Warning**
-> In development stage, use with caution🚧
+> **info**
+> In beta🥳
 >
 > Document from machine translation🤖
 
-
-
 ## Introduction
 
->A book I once read, a piece of music I played. Maybe one afternoon, you can still recall that breath when you open it.
+Shion is a time tracking software used to record specific situations that occur during a certain time period. You can manually record what is happening, or have the ship automatically monitor the activity of specific software. Of course, it's not just a simple record of the start and end times, but you can also add text, pictures, and videos like writing a diary
 
-A time tracking software to help you record a period of time
+Each data item provides grouping, and you can package the related data together to present them in a clear and organized manner in charts and timelines. Customize your overview interface with multiple charts, so you can have a clearer understanding of the passage of time ⌛
 
-+ 📊Data display card
-+ 📅Daily timeline
-+ 🏷️Label
-+ 👀Watch program activity
-+ 📖Diary
-
-
++ 📊Overview Data Card
++ 📅Timeline
++ 🏷️Record classification
++ 👀Monitor program activities
++ 📖Record the moment
 
 > Under construction🚧
 
 - [ ] 📱Android version adaptation
 - [ ] 💡More features
 
-
-
-
-## Screenshot
-
-+ Add a variety of cards to display collected data
-
-![](./docs/en-1.png)
-
-
-
-+ Timeline showing one-day itinerary
-
-![](./docs/en-2.png)
-
-
-
-+ Manually record for a period of time
-
-![](./docs/en-3.png)
-
-
-
-+ Program monitor list
-
-![](./docs/en-4.png)
