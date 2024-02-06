@@ -20,11 +20,13 @@ export async function upload(name: string, buffer: ArrayBuffer) {
   return core.convertFileSrc(path)
 }
 
-export async function uploadByPath(path: string) {
-  const dest = await getUploadPath(path)
-  await copyFile(path, dest, {
+export async function uploadByPath(target: string) {
+  const dest = await getUploadPath(target)
+  await copyFile(target, dest, {
     toPathBaseDir: BaseDirectory.AppData,
   })
+  const appDataDirPath = await appDataDir()
+  const path = await resolve(appDataDirPath, dest)
   return core.convertFileSrc(path)
 }
 
