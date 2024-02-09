@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://shion.app/" target="_blank">
+  <a href="https://shion.app/zh" target="_blank">
     <img src="./docs/logo.svg" width="128" height="128" alt="logo">
   </a>
 </p>
@@ -8,7 +8,6 @@
 <p align="center">
   <img src="https://img.shields.io/badge/tauri-%2324C8DB.svg?style=for-the-badge&logo=tauri&logoColor=%23FFFFFF" alt="Tauri">
   <img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows">
-  <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android">
 </p>
 
 <p align="center">
@@ -20,6 +19,8 @@
 
 > **info**
 > 现已进入测试阶段🥳
+
+<a href="https://shion.app/zh/download" target="_blank">下载</a>
 
 
 ## 介绍
