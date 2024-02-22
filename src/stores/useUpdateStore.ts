@@ -58,7 +58,8 @@ export const useUpdateStore = defineStore('update', () => {
           await relaunch()
         }
         catch (e) {
-          close()
+          updating.value = false
+          modal.close()
           notify.error({
             text: t('updater.updating'),
           })
