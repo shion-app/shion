@@ -26,6 +26,7 @@ tauri-plugin-dialog = "2.0.0-alpha"
 tauri-plugin-clipboard-manager = "2.0.0-alpha"
 tauri-plugin-shion-synchronizer = { git = "https://github.com/hanaTsuk1/shion-synchronizer" }
 tauri-plugin-shion-watcher = { git = "https://github.com/hanaTsuk1/shion-watcher" }
+sys-locale = "0.3.1"
 
 [target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
 window-shadows = "0.2.2"

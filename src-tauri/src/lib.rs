@@ -12,6 +12,11 @@ pub fn run() {
         kind: MigrationKind::Up,
     }];
 
+    #[tauri::command]
+    fn get_sys_locale() -> String {
+        sys_locale::get_locale().unwrap_or_else(|| String::from("en-US"))
+    }
+
     let mut builder = tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_fs::init())
@@ -96,7 +101,8 @@ pub fn run() {
             .invoke_handler(tauri::generate_handler![
                 update_tray_menu,
                 open_folder,
-                open_devtools
+                open_devtools,
+                get_sys_locale
             ]);
     }
 

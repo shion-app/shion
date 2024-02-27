@@ -28,7 +28,7 @@ export const useConfigStore = defineStore('config', () => {
     const data: Config = {
       // TODO: upgrade
       version: await core.invoke('plugin:app|version'),
-      locale: 'en-US',
+      locale: await core.invoke('get_sys_locale'),
       checkUpdate: false,
       autostart: false,
       timelineMinMinute: 1,
