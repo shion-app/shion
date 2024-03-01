@@ -7,7 +7,7 @@ import { attachConsole } from '@tauri-apps/plugin-log'
 import logo from '@/assets/logo.svg'
 
 const setting = ref(false)
-const sync = ref(false)
+// const sync = ref(false)
 const about = ref(false)
 
 const dialogStore = useDialogStore()
@@ -43,7 +43,7 @@ function openDevtools() {
         </template>
         <v-list min-width="150">
           <v-list-item value="titleBar.view.setting" :title="$t('titleBar.view.setting')" @click="setting = true" />
-          <v-list-item v-if="isDev" value="titleBar.view.sync" :title="$t('titleBar.view.sync')" @click="sync = true" />
+          <!-- <v-list-item v-if="isDev" value="titleBar.view.sync" :title="$t('titleBar.view.sync')" @click="sync = true" /> -->
         </v-list>
       </v-menu>
       <v-menu>
@@ -72,6 +72,6 @@ function openDevtools() {
     </div>
     <setting-dialog v-model:visible="setting" />
     <about-dialog v-model:visible="about" />
-    <sync-dialog v-model:visible="sync" />
+    <!-- <sync-dialog v-model:visible="sync" /> -->
   </div>
 </template>

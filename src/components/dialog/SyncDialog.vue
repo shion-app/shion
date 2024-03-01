@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { Status, getAuthUrl, isAuthorized, onMergeConflict, onStatusChanged, prepare, sync } from 'tauri-plugin-shion-synchronizer-api'
 import { open } from '@tauri-apps/plugin-shell'
 import { getCurrent } from '@tauri-apps/api/window'
@@ -94,4 +94,7 @@ onMergeConflict((e) => {
       </v-btn>
     </v-card-actions>
   </advanced-dialog>
+</template> -->
+<template>
+  <div />
 </template>
