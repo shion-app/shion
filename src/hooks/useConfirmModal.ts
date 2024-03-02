@@ -7,12 +7,12 @@ import ConfirmModal from '@/components/modal/ConfirmModal.vue'
 
 type Options = UseModalOptions<ComponentProps<typeof ConfirmModal>>
 
-export function useConfirmModal(options: Options) {
+export function useConfirmModal() {
+  const { t } = useI18n()
   const { toggleDialog } = useDialogStore()
 
   const modal = useModal({
     component: ConfirmModal,
-    ...options,
   })
 
   const unwatch = watch(() => modal.options.modelValue, v => toggleDialog(v))
@@ -22,7 +22,7 @@ export function useConfirmModal(options: Options) {
     unwatch()
   })
 
-  function patchOptions(attrs: Partial<Options['attrs']>) {
+  function require(attrs: Partial<Options['attrs']>) {
     const newOptions = mergeOptions(
       {
         attrs: modal.options.attrs,
@@ -30,38 +30,29 @@ export function useConfirmModal(options: Options) {
       {
         attrs,
       },
+      {
+        attrs: {
+          onConfirm: async () => {
+            if (attrs?.onConfirm)
+              await attrs.onConfirm()
+
+            modal.close()
+          },
+        },
+      },
     )
     modal.patchOptions(newOptions)
+    modal.open()
   }
 
   return {
-    ...modal,
-    patchOptions,
-  }
-}
-
-export function useConfirmDeleteModal(onConfirm: () => any) {
-  const { t, locale } = useI18n()
-
-  const modal = useConfirmModal({
-    attrs: {
-      title: t('modal.confirmDelete'),
-      onConfirm() {
-        onConfirm()
-        modal.close()
-      },
+    close: modal.close,
+    require,
+    delete: (attrs: Partial<Options['attrs']>) => {
+      require({
+        title: t('modal.confirmDelete'),
+        ...attrs,
+      })
     },
-  })
-
-  const unwatch = watch(locale, () => {
-    modal.patchOptions({
-      title: t('modal.confirmDelete'),
-    })
-  })
-
-  onScopeDispose(unwatch)
-
-  return {
-    open: modal.open,
   }
 }

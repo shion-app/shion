@@ -5,7 +5,7 @@ import { UseObjectUrl } from '@vueuse/components'
 import { db } from '@/modules/database'
 import type { InsertProgram } from '@/modules/database'
 import { upload } from '@/modules/upload'
-import { useConfirmDeleteModal } from '@/hooks/useConfirmModal'
+import { useConfirmModal } from '@/hooks/useConfirmModal'
 
 type ProgramForm = Pick<InsertProgram, 'name' | 'color'>
 
@@ -15,6 +15,7 @@ const { parseFieldsError, getI18nMessage } = useDatabase()
 const { success, error } = useNotify()
 const router = useRouter()
 const { onRefresh } = usePageRefresh()
+const confirm = useConfirmModal()
 
 const { refresh } = store
 const { whiteList } = storeToRefs(store)
@@ -71,32 +72,24 @@ const { open, close, setModelValue } = useFormModal<ProgramForm>(
     },
   }))
 
-const { open: openBatchRemoveModal } = useConfirmDeleteModal(async () => {
-  await Promise.all(selectedList.value.map(id => db.program.removeRelation(id)))
-  success({})
-  refresh()
-})
-
-const { setRemoveId, remove } = buildRemoveFn()
-const { open: openRemoveModal } = useConfirmDeleteModal(remove)
-
-function handleRemove(id: number) {
-  setRemoveId(id)
-  openRemoveModal()
+function openBatchRemoveModal() {
+  confirm.delete({
+    onConfirm: async () => {
+      await db.program.batchRemove(selectedList.value)
+      success({})
+      await refresh()
+    },
+  })
 }
 
-function buildRemoveFn() {
-  let id = 0
-  return {
-    setRemoveId: (removeId: number) => {
-      id = removeId
-    },
-    remove: async () => {
+function handleRemove(id: number) {
+  confirm.delete({
+    onConfirm: async () => {
       await db.program.removeRelation(id)
       success({})
-      refresh()
+      await refresh()
     },
-  }
+  })
 }
 
 function showUpdateForm(id: number) {

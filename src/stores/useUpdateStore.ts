@@ -6,28 +6,13 @@ import { error } from '@tauri-apps/plugin-log'
 export const useUpdateStore = defineStore('update', () => {
   const { t } = useI18n()
   const notify = useNotify()
+  const confirm = useConfirmModal()
+
   const configStore = useConfigStore()
 
   const { config } = storeToRefs(configStore)
 
   const updating = ref(false)
-
-  let handleConfrim = () => {}
-
-  const modal = useConfirmModal({
-    attrs: {
-      title: t('updater.title'),
-      options: {
-        loading: true,
-      },
-      onConfirm() {
-        handleConfrim()
-      },
-      onClosed() {
-        updating.value = false
-      },
-    },
-  })
 
   async function start(showInfo = false) {
     updating.value = true
@@ -46,28 +31,35 @@ export const useUpdateStore = defineStore('update', () => {
     }
 
     if (update) {
-      modal.patchOptions({
-        content: t('updater.content', {
-          version: update!.version,
-        }),
-      })
-
-      handleConfrim = async () => {
-        try {
-          await update!.downloadAndInstall()
-          await relaunch()
-        }
-        catch (e) {
-          updating.value = false
-          modal.close()
-          notify.error({
-            text: t('updater.updating'),
-          })
-          error(e as string)
-        }
+      const openModal = () => {
+        confirm.require({
+          title: t('updater.title'),
+          content: t('updater.content', {
+            version: update!.version,
+          }),
+          options: {
+            loading: true,
+          },
+          onConfirm: async () => {
+            try {
+              await update!.downloadAndInstall()
+              await relaunch()
+            }
+            catch (e) {
+              updating.value = false
+              notify.error({
+                text: t('updater.updating'),
+              })
+              error(e as string)
+            }
+          },
+          onClosed() {
+            updating.value = false
+          },
+        })
       }
 
-      return modal.open
+      return openModal
     }
     else {
       updating.value = false

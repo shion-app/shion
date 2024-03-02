@@ -171,7 +171,6 @@ declare global {
   const useCloned: typeof import('@vueuse/core')['useCloned']
   const useColorMode: typeof import('@vueuse/core')['useColorMode']
   const useConfigStore: typeof import('./stores/useConfigStore')['useConfigStore']
-  const useConfirmDeleteModal: typeof import('./hooks/useConfirmModal')['useConfirmDeleteModal']
   const useConfirmDialog: typeof import('@vueuse/core')['useConfirmDialog']
   const useConfirmModal: typeof import('./hooks/useConfirmModal')['useConfirmModal']
   const useCounter: typeof import('@vueuse/core')['useCounter']
@@ -515,7 +514,6 @@ declare module 'vue' {
     readonly useCloned: UnwrapRef<typeof import('@vueuse/core')['useCloned']>
     readonly useColorMode: UnwrapRef<typeof import('@vueuse/core')['useColorMode']>
     readonly useConfigStore: UnwrapRef<typeof import('./stores/useConfigStore')['useConfigStore']>
-    readonly useConfirmDeleteModal: UnwrapRef<typeof import('./hooks/useConfirmModal')['useConfirmDeleteModal']>
     readonly useConfirmDialog: UnwrapRef<typeof import('@vueuse/core')['useConfirmDialog']>
     readonly useConfirmModal: UnwrapRef<typeof import('./hooks/useConfirmModal')['useConfirmModal']>
     readonly useCounter: UnwrapRef<typeof import('@vueuse/core')['useCounter']>

@@ -6,7 +6,7 @@ import type { InsertOverview, SelectLabel, SelectOverview, SelectPlan, SelectPro
 import { WidgetType } from '@/modules/database/models/overview'
 import Grid from '@/components/grid/Grid.vue'
 import type { GridList } from '@/hooks/useGrid'
-import { useConfirmDeleteModal } from '@/hooks/useConfirmModal'
+import { useConfirmModal } from '@/hooks/useConfirmModal'
 
 type OverviewForm = Pick<InsertOverview, 'type' | 'w' | 'h'> & { category?: [string, number] }
 
@@ -16,6 +16,7 @@ const { parseFieldsError } = useDatabase()
 const { open: openNoteCreate } = useNoteCreate()
 const { onRefresh } = usePageRefresh()
 const { xs } = useTailwindBreakpoints()
+const confirm = useConfirmModal()
 
 const selectedDate = ref(new Date())
 const list = ref<GridList<SelectOverview>>([])
@@ -174,32 +175,24 @@ const { open, close, setModelValue } = useFormModal<
   return { planList, labelList, programList }
 })
 
-const { open: openBatchRemoveModal } = useConfirmDeleteModal(async () => {
-  await db.overview.batchRemove(selectedList.value)
-  success({})
-  await refresh()
-})
-
-const { setRemoveId, remove } = buildRemoveFn()
-const { open: openRemoveModal } = useConfirmDeleteModal(remove)
-
-function handleRemove(id: number) {
-  setRemoveId(id)
-  openRemoveModal()
+function openBatchRemoveModal() {
+  confirm.delete({
+    onConfirm: async () => {
+      await db.overview.batchRemove(selectedList.value)
+      success({})
+      await refresh()
+    },
+  })
 }
 
-function buildRemoveFn() {
-  let id = 0
-  return {
-    setRemoveId: (removeId: number) => {
-      id = removeId
-    },
-    remove: async () => {
+function handleRemove(id: number) {
+  confirm.delete({
+    onConfirm: async () => {
       await db.overview.remove(id)
       success({})
       await refresh()
     },
-  }
+  })
 }
 
 function buildUpdateFn() {

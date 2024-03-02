@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { db } from '@/modules/database'
 import type { SelectBox, SelectMoment } from '@/modules/database'
-import { useConfirmDeleteModal } from '@/hooks/useConfirmModal'
+import { useConfirmModal } from '@/hooks/useConfirmModal'
 
 interface Image {
   src: string
@@ -23,6 +23,7 @@ const { getI18nMessage, isUniqueError } = useDatabase()
 const { t } = useI18n()
 const { formatYYYYmmdd } = useDateFns()
 const route = useRoute()
+const confirm = useConfirmModal()
 
 const momentList = ref<Array<Moment>>([])
 const boxtList = ref<Array<Pick<SelectBox, 'id' | 'color' | 'name'>>>([])
@@ -53,32 +54,24 @@ const filterMomentList = computed(() => activeBox.value == 0 ? momentList.value 
 const selectedList = computed(() => filterMomentList.value.filter(i => i.selected).map(i => i.id))
 const linkActive = computed(() => momentList.value.some(i => i.disabled))
 
-const { open: openBatchRemoveModal } = useConfirmDeleteModal(async () => {
-  await db.moment.batchRemove(selectedList.value)
-  success({})
-  refresh()
-})
-
-const { setRemoveId, remove } = buildRemoveFn()
-const { open: openRemoveModal } = useConfirmDeleteModal(remove)
-
-function handleRemove(id: number) {
-  setRemoveId(id)
-  openRemoveModal()
+function openBatchRemoveModal() {
+  confirm.delete({
+    onConfirm: async () => {
+      await db.moment.batchRemove(selectedList.value)
+      success({})
+      await refresh()
+    },
+  })
 }
 
-function buildRemoveFn() {
-  let id = 0
-  return {
-    setRemoveId: (removeId: number) => {
-      id = removeId
-    },
-    remove: async () => {
+function handleRemove(id: number) {
+  confirm.delete({
+    onConfirm: async () => {
       await db.moment.remove(id)
       success({})
-      refresh()
+      await refresh()
     },
-  }
+  })
 }
 
 async function refresh() {
@@ -186,36 +179,17 @@ function handleLink(moment: Moment) {
   moment.selected = false
 }
 
-function buildCancelLinkFn() {
-  let id = 0
-  return {
-    setCancelId: (removeId: number) => {
-      id = removeId
-    },
-    cancel: async () => {
-      await db.moment.update(id, {
+function handleCancelLink(moment: Moment) {
+  confirm.require({
+    title: t('moment.link.cancelTip'),
+    onConfirm: async () => {
+      await db.moment.update(moment.id, {
         linkId: null,
       })
       success({})
-      refresh()
+      await refresh()
     },
-  }
-}
-
-const { setCancelId, cancel: cancelLink } = buildCancelLinkFn()
-const { open: openCancelLink, close: closeCancelLink } = useConfirmModal({
-  attrs: {
-    title: t('moment.link.cancelTip'),
-    onConfirm() {
-      cancelLink()
-      closeCancelLink()
-    },
-  },
-})
-
-function handleCancelLink(moment: Moment) {
-  openCancelLink()
-  setCancelId(moment.id)
+  })
 }
 
 function handleLinkCancel() {
@@ -225,10 +199,12 @@ function handleLinkCancel() {
   }
 }
 
-const linkModal = useConfirmModal({
-  attrs: {
-    title: '',
-    async onConfirm() {
+function handleLinkConfirm() {
+  confirm.require({
+    title: t('moment.link.submitTip', {
+      count: selectedList.value.length,
+    }),
+    onConfirm: async () => {
       const target = momentList.value.find(i => i.disabled)!
       let linkId = target.linkId
       if (!linkId) {
@@ -238,20 +214,10 @@ const linkModal = useConfirmModal({
       await Promise.all([target.id, ...selectedList.value].map(id => db.moment.update(id, {
         linkId,
       })))
-      linkModal.close()
       success({})
       await refresh()
     },
-  },
-})
-
-function handleLinkConfirm() {
-  linkModal.patchOptions({
-    title: t('moment.link.submitTip', {
-      count: selectedList.value.length,
-    }),
   })
-  linkModal.open()
 }
 
 refresh()

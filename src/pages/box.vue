@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useConfirmDeleteModal } from '@/hooks/useConfirmModal'
+import { useConfirmModal } from '@/hooks/useConfirmModal'
 import type { GridList } from '@/hooks/useGrid'
 import { useGrid } from '@/hooks/useGrid'
 import type { InsertBox, SelectBox } from '@/modules/database'
@@ -12,6 +12,7 @@ const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
 const router = useRouter()
 const { onRefresh } = usePageRefresh()
+const confirm = useConfirmModal()
 
 const list = ref<GridList<SelectBox>>([])
 
@@ -65,32 +66,24 @@ const cardList = computed(() => list.value.map(({ id, name, itemCount, color, se
   selected,
 })))
 
-const { open: openBatchRemoveModal } = useConfirmDeleteModal(async () => {
-  await Promise.all(selectedList.value.map(id => db.box.removeRelation(id)))
-  success({})
-  refresh()
-})
-
-const { setRemoveId, remove } = buildRemoveFn()
-const { open: openRemoveModal } = useConfirmDeleteModal(remove)
-
-function handleRemove(id: number) {
-  setRemoveId(id)
-  openRemoveModal()
+function openBatchRemoveModal() {
+  confirm.delete({
+    onConfirm: async () => {
+      await db.box.batchRemove(selectedList.value)
+      success({})
+      await refresh()
+    },
+  })
 }
 
-function buildRemoveFn() {
-  let id = 0
-  return {
-    setRemoveId: (removeId: number) => {
-      id = removeId
-    },
-    remove: async () => {
+function handleRemove(id: number) {
+  confirm.delete({
+    onConfirm: async () => {
       await db.box.removeRelation(id)
       success({})
-      refresh()
+      await refresh()
     },
-  }
+  })
 }
 
 async function refresh() {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useConfirmDeleteModal } from '@/hooks/useConfirmModal'
+import { useConfirmModal } from '@/hooks/useConfirmModal'
 import type { GridList } from '@/hooks/useGrid'
 import { db } from '@/modules/database'
 import type { InsertLabel, SelectLabel, SelectPlan } from '@/modules/database'
@@ -13,6 +13,7 @@ const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
 const noteCreate = useNoteCreate()
 const { onRefresh } = usePageRefresh()
+const confirm = useConfirmModal()
 
 const labelList = ref<GridList<SelectLabel>>([])
 const { wrap, getItemsByOrder, select, selectedList } = useGrid(labelList)
@@ -82,32 +83,24 @@ const { open, close, setModelValue } = useFormModal<LabelForm>(
     },
   }))
 
-const { open: openBatchRemoveModal } = useConfirmDeleteModal(async () => {
-  await Promise.all(selectedList.value.map(id => db.label.removeRelation(id)))
-  success({})
-  refresh()
-})
-
-const { setRemoveId, remove } = buildRemoveFn()
-const { open: openRemoveModal } = useConfirmDeleteModal(remove)
-
-function handleRemove(id: number) {
-  setRemoveId(id)
-  openRemoveModal()
+function openBatchRemoveModal() {
+  confirm.delete({
+    onConfirm: async () => {
+      await db.label.batchRemove(selectedList.value)
+      success({})
+      refresh()
+    },
+  })
 }
 
-function buildRemoveFn() {
-  let id = 0
-  return {
-    setRemoveId: (removeId: number) => {
-      id = removeId
-    },
-    remove: async () => {
+function handleRemove(id: number) {
+  confirm.delete({
+    onConfirm: async () => {
       await db.label.removeRelation(id)
       success({})
       refresh()
     },
-  }
+  })
 }
 
 async function refresh() {
