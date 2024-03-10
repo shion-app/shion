@@ -32,7 +32,7 @@ function goBack() {
       <div i-mdi:arrow-left text-6 @click="goBack" />
     </v-btn>
     <div
-      :class="$props.vertical ? ['space-y-2'] : ['flex', 'flex-1', 'justify-around', 'h-full', 'items-center']"
+      :class="$props.vertical ? ['space-y-1'] : ['flex', 'flex-1', 'justify-around', 'h-full', 'items-center']"
     >
       <router-link
         v-for="{ icon, activeIcon, name, to } in $props.menu" :key="icon" v-slot="{ isActive }"

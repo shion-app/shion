@@ -14,7 +14,7 @@ emitter.on('toggle-more-menu', (v) => {
 
 <template>
   <v-btn
-    id="more-menu" icon variant="text" size="small"
+    id="more-menu" icon variant="elevated"
     :class="{
       invisible: !moreMenu.show,
     }"
