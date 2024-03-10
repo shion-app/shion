@@ -17,3 +17,7 @@ export function includeKeys<T extends object, K extends keyof T>(obj: T, keys: K
   })
   return result
 }
+
+export function sleep(timeout: number) {
+  return new Promise(resolve => setTimeout(resolve, timeout))
+}

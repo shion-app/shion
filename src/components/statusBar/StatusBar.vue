@@ -5,7 +5,7 @@ const { time, running, text } = storeToRefs(timeStore)
 const route = useRoute()
 const { xs, sm } = useTailwindBreakpoints()
 const router = useRouter()
-const { refresh, registered } = usePageRefresh()
+const { refresh, registered, loading } = usePageRefresh()
 const { dragged, isGrid, toggleDrag } = layoutInject()
 
 const timerText = computed(() => route.fullPath == '/timer' ? text.value : `#${text.value}# ${time.value}`)
@@ -45,9 +45,13 @@ function navigateTimer() {
           v-if="registered"
           v-bind="props"
           variant="text"
+          :loading="loading"
           @click="() => refresh()"
         >
           <div class="i-mdi:refresh" text-6 />
+          <template #loader>
+            <div class="i-mdi:refresh animate-[spin_300ms_linear_infinite]" text-6 />
+          </template>
         </v-btn>
       </template>
     </v-tooltip>

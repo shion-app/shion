@@ -120,6 +120,7 @@ declare global {
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']
+  const sleep: typeof import('./utils/index')['sleep']
   const splitByDay: typeof import('./utils/time')['splitByDay']
   const splitByHour: typeof import('./utils/time')['splitByHour']
   const storeToRefs: typeof import('pinia')['storeToRefs']
@@ -463,6 +464,7 @@ declare module 'vue' {
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
+    readonly sleep: UnwrapRef<typeof import('./utils/index')['sleep']>
     readonly splitByDay: UnwrapRef<typeof import('./utils/time')['splitByDay']>
     readonly splitByHour: UnwrapRef<typeof import('./utils/time')['splitByHour']>
     readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
