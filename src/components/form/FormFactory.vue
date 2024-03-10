@@ -20,6 +20,7 @@ const emit = defineEmits<{
   (e: 'formUpdate', v): void
 }>()
 
+const formItemRef = useTemplateRefsList<HTMLElement>()
 const validationSchema = computed(() => toTypedSchema(props.schema(z)))
 
 const { handleSubmit, setErrors, handleReset } = useForm({
@@ -71,6 +72,15 @@ watchDeep(() => props.form.values, (v) => {
 
 const submit = handleSubmit((values) => {
   emit('confirm', values, setErrors)
+}, (invalid) => {
+  const { errors } = invalid
+  for (const key in errors) {
+    const formItem = formItemRef.value.find(item => item.dataset.key == key)
+    if (formItem) {
+      formItem.scrollIntoView()
+      break
+    }
+  }
 })
 
 function component(type: keyof FormItemProps) {
@@ -89,14 +99,14 @@ function component(type: keyof FormItemProps) {
 
 <template>
   <form :id="formId" @submit.prevent="submit">
-    <component
-      :is="component(type)"
-      v-for="{ type, key, field, label, props: itemProps } in transformForm"
-      :key="key"
-      v-model="field.value.value"
-      :label="label"
-      :error-messages="field.errorMessage.value"
-      v-bind="itemProps"
-    />
+    <div
+      v-for="{ type, key, field, label, props: itemProps } in transformForm" :key="key" :ref="formItemRef.set"
+      :data-key="key"
+    >
+      <component
+        :is="component(type)" v-model="field.value.value" :label="label"
+        :error-messages="field.errorMessage.value" v-bind="itemProps"
+      />
+    </div>
   </form>
 </template>
