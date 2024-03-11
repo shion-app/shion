@@ -75,11 +75,14 @@ function handleRemove(id: number) {
 }
 
 async function refresh() {
-  boxtList.value = [{
-    id: 0,
-    name: t('moment.box.all'),
-    color: '#000000',
-  }, ...await db.box.select()]
+  const data = await db.box.select()
+  if (data.length) {
+    boxtList.value = [{
+      id: 0,
+      name: t('moment.box.all'),
+      color: '#000000',
+    }, ...data]
+  }
   momentList.value = (await db.moment.select()).map((i) => {
     const summary = filterImagesAndContent(i.content)
     return {
