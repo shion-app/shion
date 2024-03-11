@@ -63,6 +63,9 @@ const { open, close, setModelValue } = useFormModal<
               'items': Object.values(WidgetType).filter(i => typeof i == 'string').map(i => ({
                 title: t(`widget.typeDesc.${i}`),
                 value: WidgetType[i],
+                props: {
+                  subtitle: t(`widget.subtitle.${i}`),
+                },
               })),
               'onUpdate:modelValue': (v) => {
                 if (v == WidgetType.ACTIVE_STATUS_CALENDAR) {

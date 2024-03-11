@@ -191,6 +191,11 @@ widget:
     SINGLE_CATEGORY_BAR: 单独类别柱状图
     TEXT_SUMMARY: 文本总结
     DAILY_ACTIVIRY: 每日活跃
+  subtitle:
+    ACTIVE_STATUS_CALENDAR: 近一年每日记录总结
+    SINGLE_CATEGORY_BAR: 近30天每日单项记录
+    TEXT_SUMMARY: 单项类别平均时长
+    DAILY_ACTIVIRY: 24小时内每小时记录
   column: 占用列数
   row: 占用行数
   singleCategoryBar:
