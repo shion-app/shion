@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useLocale } from 'vuetify/lib/framework.mjs'
+
 import type { NestedMenuItem, NestedMenuItemValue } from '@/interfaces'
 
 const props = withDefaults(defineProps<{
@@ -12,6 +14,7 @@ const props = withDefaults(defineProps<{
 defineEmits(['update:modelValue'])
 
 const { modelValue } = useVModels(props)
+const { t } = useLocale()
 
 const isRoot = computed(() => props.prefix.length == 0)
 const location = computed(() => isRoot.value ? 'bottom' : 'right')
@@ -29,12 +32,18 @@ function menuItemActive(value: NestedMenuItemValue) {
 <template>
   <v-menu :location="location" min-width="100">
     <v-list max-height="200">
-      <template v-for="{ title, value, children } in props.items" :key="value">
-        <v-list-item v-if="children && children.length > 0" :title="title" :value="value" append-icon="mdi-chevron-right" :active="menuItemActive(value)">
-          <nested-menu v-model="modelValue" :items="children" :prefix="[...props.prefix, value]" activator="parent" />
-        </v-list-item>
-        <v-list-item v-else :title="title" :value="value" :active="menuItemActive(value)" @click="select(value)" />
+      <template v-if="props.items.length">
+        <template v-for="{ title, value, children } in props.items" :key="value">
+          <v-list-item
+            v-if="children" :title="title" :value="value" append-icon="mdi-chevron-right"
+            :active="menuItemActive(value)"
+          >
+            <nested-menu v-model="modelValue" :items="children" :prefix="[...props.prefix, value]" activator="parent" />
+          </v-list-item>
+          <v-list-item v-else :title="title" :value="value" :active="menuItemActive(value)" @click="select(value)" />
+        </template>
       </template>
+      <v-list-item v-else :title="t('$vuetify.noDataText')" />
     </v-list>
   </v-menu>
 </template>

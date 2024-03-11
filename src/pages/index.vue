@@ -7,6 +7,7 @@ import { WidgetType } from '@/modules/database/models/overview'
 import Grid from '@/components/grid/Grid.vue'
 import type { GridList } from '@/hooks/useGrid'
 import { useConfirmModal } from '@/hooks/useConfirmModal'
+import type { NestedMenuItem } from '@/interfaces'
 
 type OverviewForm = Pick<InsertOverview, 'type' | 'w' | 'h'> & { category?: [string, number] }
 
@@ -50,6 +51,37 @@ const { open, close, setModelValue } = useFormModal<
 ((model, modal) => {
   const singleCategoryBarvisible = model.type == WidgetType.SINGLE_CATEGORY_BAR || model.type == WidgetType.TEXT_SUMMARY
   const unrealColumnCount = count(column.value)
+  const categoryItems: Array<NestedMenuItem> = []
+  if (modal.planList?.length) {
+    categoryItems.push({
+      title: t('widget.singleCategoryBar.plan'),
+      value: 'planId',
+      children: modal.planList?.map(i => ({
+        title: i.name,
+        value: i.id,
+      })),
+    })
+  }
+  if (modal.labelList?.length) {
+    categoryItems.push({
+      title: t('widget.singleCategoryBar.label'),
+      value: 'labelId',
+      children: modal.labelList?.map(i => ({
+        title: i.name,
+        value: i.id,
+      })),
+    })
+  }
+  if (modal.programList?.length) {
+    categoryItems.push({
+      title: t('widget.singleCategoryBar.program'),
+      value: 'programId',
+      children: modal.programList?.map(i => ({
+        title: i.name,
+        value: i.id,
+      })),
+    })
+  }
   return {
     attrs: {
       title: isCreate.value ? t('overview.create') : t('overview.update'),
@@ -103,32 +135,7 @@ const { open, close, setModelValue } = useFormModal<
             label: t('widget.singleCategoryBar.table'),
             visible: singleCategoryBarvisible,
             props: {
-              items: [
-                {
-                  title: t('widget.singleCategoryBar.plan'),
-                  value: 'planId',
-                  children: modal.planList?.map(i => ({
-                    title: i.name,
-                    value: i.id,
-                  })),
-                },
-                {
-                  title: t('widget.singleCategoryBar.label'),
-                  value: 'labelId',
-                  children: modal.labelList?.map(i => ({
-                    title: i.name,
-                    value: i.id,
-                  })),
-                },
-                {
-                  title: t('widget.singleCategoryBar.program'),
-                  value: 'programId',
-                  children: modal.programList?.map(i => ({
-                    title: i.name,
-                    value: i.id,
-                  })),
-                },
-              ],
+              items: categoryItems,
             },
           },
         ],
