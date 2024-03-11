@@ -50,7 +50,7 @@ function navigateTimer() {
         >
           <div class="i-mdi:refresh" text-6 />
           <template #loader>
-            <div class="i-mdi:refresh animate-[spin_300ms_linear_infinite]" text-6 />
+            <div class="i-mdi:refresh animate-spin animate-duration-300" text-6 />
           </template>
         </v-btn>
       </template>
