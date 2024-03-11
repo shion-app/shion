@@ -51,12 +51,15 @@ onMounted(() => {
 })
 
 watchArray(() => props.items, (newList, oldList) => {
-  for (const { id } of newList) {
-    if (!oldList.find(i => i.id == id)) {
+  for (const gridItem of newList) {
+    if (!oldList.find(i => i.id == gridItem.id)) {
       nextTick(() => {
-        grid?.makeWidget(`#${item(id!)}`)
+        grid?.makeWidget(`#${item(gridItem.id!)}`)
         compact()
       })
+    }
+    else {
+      grid?.update(`#${item(gridItem.id!)}`, gridItem)
     }
   }
   for (const { id } of oldList) {
