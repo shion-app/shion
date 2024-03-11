@@ -347,7 +347,7 @@ refresh()
       </grid-card>
     </template>
   </Grid>
-  <empty v-else />
+  <empty v-else type="overview" :width="250" :desc="$t('hint.overview')" />
   <more-menu>
     <v-list>
       <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal" />

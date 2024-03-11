@@ -156,6 +156,13 @@ database:
   SQLITE_CONSTRAINT_UNIQUE: 已存在重复值
 hint:
   empty: 暂无数据
+  overview: 收集数据, 创建图表
+  plan: 制定计划, 分门别类
+  timeline: 此刻无事发生
+  box: 日常发生的瞬间, 存放在此处
+  moment: 每一份思考与记忆
+  monitor: 点击、浏览, 然后记录
+  label: 在计划之下, 细分类型
 titleBar:
   view:
     desc: 视图

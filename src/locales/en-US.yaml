@@ -156,6 +156,13 @@ database:
   SQLITE_CONSTRAINT_UNIQUE: Duplicate value already exists
 hint:
   empty: No data
+  overview: Collect data, create charts
+  plan: Make a plan, classify it into categories
+  timeline: Nothing happened at this moment
+  box: Store daily moments here
+  moment: Every thought and memory
+  monitor: Click, browse, and then record
+  label: Under the plan, subdivide types
 titleBar:
   view:
     desc: View

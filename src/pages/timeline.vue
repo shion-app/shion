@@ -143,7 +143,7 @@ onRefresh(refresh)
   <div h-full flex>
     <div flex-1>
       <timeline-graph v-if="list.length" :list="list" flex-1 />
-      <empty v-else />
+      <empty v-else type="timeline" :desc="$t('hint.timeline')" />
     </div>
     <calendar v-if="sm" :id="filterTargetId" v-model:date="date" :category="filterCategory" />
   </div>

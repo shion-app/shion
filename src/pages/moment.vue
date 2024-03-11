@@ -266,7 +266,7 @@ refresh()
           </template>
         </grid-card>
       </template>
-      <empty v-else />
+      <empty v-else type="moment" :desc="$t('hint.moment')" :width="250" />
     </div>
   </div>
   <v-snackbar

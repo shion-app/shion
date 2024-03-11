@@ -228,7 +228,7 @@ refresh()
       </template>
     </div>
   </div>
-  <empty v-else />
+  <empty v-else type="label" :desc="$t('hint.label')" :width="250" />
   <more-menu>
     <v-list>
       <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal" />

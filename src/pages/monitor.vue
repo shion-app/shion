@@ -202,14 +202,14 @@ refresh()
       />
     </template>
   </grid>
-  <empty v-else />
+  <empty v-else type="monitor" :desc="$t('hint.monitor')" :width="300" />
   <more-menu>
     <v-list>
       <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal" />
       <v-list-item value="monitor.filterProgram" :title="$t('monitor.filterProgram')" append-icon="mdi-filter-outline" @click="showFilterDialog" />
     </v-list>
   </more-menu>
-  <advanced-dialog v-model:visible="filtering" :title="$t('monitor.filterProgram')" max-height="400">
+  <advanced-dialog v-model:visible="filtering" :title="$t('monitor.filterProgram')" max-height="450">
     <v-card-text overflow-y-auto>
       <template v-if="filterList.length">
         <div grid grid-cols-2>

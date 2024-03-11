@@ -167,7 +167,7 @@ refresh()
       />
     </template>
   </grid>
-  <empty v-else />
+  <empty v-else type="box" :desc="$t('hint.box')" :width="300" />
   <more-menu>
     <v-list>
       <v-list-item
