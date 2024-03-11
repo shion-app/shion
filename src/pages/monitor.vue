@@ -212,6 +212,9 @@ refresh()
   <advanced-dialog v-model:visible="filtering" :title="$t('monitor.filterProgram')" max-height="450">
     <v-card-text overflow-y-auto>
       <template v-if="filterList.length">
+        <div text-3.5 mb-4 text-gray>
+          {{ $t('monitor.tip') }}
+        </div>
         <div grid grid-cols-2>
           <v-card v-for="program in filterList" :key="program.path" m-2 :color="program.checked ? 'primary' : ''" @click="program.checked = !program.checked">
             <template #prepend>

@@ -96,6 +96,7 @@ overview:
   update: Update widget
 monitor:
   filterProgram: Filter Program to monitor
+  tip: The following list is of running programs
 program:
   update: Update program
   name: Name
