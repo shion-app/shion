@@ -166,7 +166,7 @@ function drawPoint(svg: SVG.Doc, item: GraphItem) {
 }
 
 onMounted(() => {
-  svg.value = SVG('timeline')
+  svg.value = SVG('timeline-svg')
   draw()
 })
 
@@ -177,5 +177,5 @@ watchDeep(() => props.list, () => {
 </script>
 
 <template>
-  <div id="timeline" h-full overflow-y-auto p-4 />
+  <div id="timeline-svg" h-full overflow-y-auto p-4 />
 </template>
