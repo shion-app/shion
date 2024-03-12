@@ -10,6 +10,8 @@ useActivityStore()
 const configStore = useConfigStore()
 
 const { config } = storeToRefs(configStore)
+
+useTour()
 </script>
 
 <template>

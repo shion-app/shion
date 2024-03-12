@@ -9,6 +9,7 @@ const menu = computed(() => [
     name: t('nav.overview'),
     to: '/',
     visible: true,
+    key: 'overview',
   },
   {
     icon: 'i-mdi:timeline-text-outline',
@@ -16,6 +17,7 @@ const menu = computed(() => [
     name: t('nav.timeline'),
     to: '/timeline',
     visible: true,
+    key: 'timeline',
   },
   {
     icon: 'i-mdi:sitemap-outline',
@@ -23,6 +25,7 @@ const menu = computed(() => [
     name: t('nav.plan'),
     to: '/plan',
     visible: sm.value,
+    key: 'plan',
   },
   {
     icon: 'i-mdi:label-variant-outline',
@@ -30,6 +33,7 @@ const menu = computed(() => [
     name: t('nav.label'),
     to: '/label',
     visible: sm.value,
+    key: 'label',
   },
   {
     icon: 'i-mdi:timer-outline',
@@ -37,6 +41,7 @@ const menu = computed(() => [
     name: t('nav.timer'),
     to: '/timer',
     visible: sm.value,
+    key: 'timer',
   },
   {
     icon: 'i-mdi:eye-outline',
@@ -44,6 +49,7 @@ const menu = computed(() => [
     name: t('nav.monitor'),
     to: '/monitor',
     visible: sm.value,
+    key: 'monitor',
   },
   {
     icon: 'i-mdi:cube-outline',
@@ -51,6 +57,7 @@ const menu = computed(() => [
     name: t('nav.box'),
     to: '/box',
     visible: sm.value,
+    key: 'box',
   },
   {
     icon: 'i-mdi:lightning-bolt-outline',
@@ -58,6 +65,7 @@ const menu = computed(() => [
     name: t('nav.moment'),
     to: '/moment',
     visible: sm.value,
+    key: 'moment',
   },
   {
     icon: 'i-mdi:view-grid-plus-outline',
@@ -65,6 +73,7 @@ const menu = computed(() => [
     name: t('nav.list'),
     to: '/list',
     visible: xs.value,
+    key: 'list',
   },
   {
     icon: 'i-mdi:account-outline',
@@ -72,6 +81,7 @@ const menu = computed(() => [
     name: t('nav.account'),
     to: '/account',
     visible: isMobile,
+    key: 'account',
   },
 ].filter(({ visible }) => visible))
 </script>

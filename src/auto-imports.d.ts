@@ -306,6 +306,7 @@ declare global {
   const useToNumber: typeof import('@vueuse/core')['useToNumber']
   const useToString: typeof import('@vueuse/core')['useToString']
   const useToggle: typeof import('@vueuse/core')['useToggle']
+  const useTour: typeof import('./hooks/useTour')['useTour']
   const useTransition: typeof import('@vueuse/core')['useTransition']
   const useUpdateStore: typeof import('./stores/useUpdateStore')['useUpdateStore']
   const useUrlSearchParams: typeof import('@vueuse/core')['useUrlSearchParams']
@@ -650,6 +651,7 @@ declare module 'vue' {
     readonly useToNumber: UnwrapRef<typeof import('@vueuse/core')['useToNumber']>
     readonly useToString: UnwrapRef<typeof import('@vueuse/core')['useToString']>
     readonly useToggle: UnwrapRef<typeof import('@vueuse/core')['useToggle']>
+    readonly useTour: UnwrapRef<typeof import('./hooks/useTour')['useTour']>
     readonly useTransition: UnwrapRef<typeof import('@vueuse/core')['useTransition']>
     readonly useUpdateStore: UnwrapRef<typeof import('./stores/useUpdateStore')['useUpdateStore']>
     readonly useUrlSearchParams: UnwrapRef<typeof import('@vueuse/core')['useUrlSearchParams']>

@@ -172,6 +172,7 @@ titleBar:
   help:
     desc: Help
     about: About
+    tour: Tutorial
     log: Open log dir
     devtools: Open developer tools
 timeline:
@@ -243,3 +244,49 @@ tiptap:
     left: Align left
     center: Align center
     right: Align right
+tour:
+  doneBtnText: Done
+  nextBtnText: Next
+  prevBtnText: Previous
+  step1:
+    title: Start
+    description: Thank you for using shion. Next, let's quickly introduce the usage method 🎉
+  step2:
+    title: Navigation bar
+    description: This is the navigation bar, no need to say more 🧭
+  step3:
+    title: Take a closer look
+    description: The operation buttons for each page are hidden here 👀
+  step4:
+    title: Home page
+    description: Creating a chart here can provide a visual understanding of the data, but it's not the time yet. Let's first learn about manual timing and automatic timing 📊
+  step5:
+    title: Timeline
+    description: Collaborate with the calendar, filter categories to view daily records 📅
+  step6:
+    title: Manual Timing
+    description: First, create a plan here, which is the maximum set for manual timing
+  step7:
+    title: Manual Timing
+    description: Then, create a new label, this is a small collection in the plan 🔖
+  step8:
+    title: Manual Timing
+    description: Timing here ⏱️
+  step9:
+    title: Automatic Timing
+    description: Add the software that needs to be monitored, and shion will capture the software you have already opened 💻
+  step10:
+    title: Diary
+    description: Box for storing diary 📦
+  step11:
+    title: Diary
+    description: Use text, pictures, and videos to record the moments of life 📷
+  step12:
+    title: Status bar
+    description: The shortcut operations and status of the current page are all here 👆
+  step13:
+    title: Title bar
+    description: Settings, updates, and information about the application are all here ⚙️
+  step14:
+    title: End
+    description: All the functions have been introduced. Let's start using them now 🥳

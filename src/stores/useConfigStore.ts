@@ -13,6 +13,7 @@ interface Config {
   timelineMinMinute: number
   timelineGroupGapMinute: number
   themeColor: string
+  tour: boolean
 }
 
 const PATH = 'config.json'
@@ -22,6 +23,7 @@ export const useConfigStore = defineStore('config', () => {
 
   const store = new Store(PATH)
   const config = ref({} as Config)
+  const ready = ref(false)
   const theme = useTheme()
 
   async function init() {
@@ -34,6 +36,7 @@ export const useConfigStore = defineStore('config', () => {
       timelineMinMinute: 1,
       timelineGroupGapMinute: 30,
       themeColor: '#512DA8',
+      tour: true,
     }
     const len = await store.length()
     if (len == 0)
@@ -41,6 +44,7 @@ export const useConfigStore = defineStore('config', () => {
 
     await read()
     update(data)
+    ready.value = true
   }
 
   async function create(data: Config) {
@@ -102,5 +106,6 @@ export const useConfigStore = defineStore('config', () => {
 
   return {
     config,
+    ready,
   }
 })

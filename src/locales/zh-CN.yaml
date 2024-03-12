@@ -172,6 +172,7 @@ titleBar:
   help:
     desc: 帮助
     about: 关于
+    tour: 使用教程
     log: 打开日志文件夹
     devtools: 打开开发者工具
 timeline:
@@ -243,3 +244,49 @@ tiptap:
     left: 左对齐
     center: 居中
     right: 右对齐
+tour:
+  doneBtnText: 结束
+  nextBtnText: 下一步
+  prevBtnText: 上一步
+  step1:
+    title: 开始
+    description: 感谢使用shion, 接下来快速介绍一下使用方法🎉
+  step2:
+    title: 导航栏
+    description: 这里是导航栏, 无需多言🧭
+  step3:
+    title: 仔细看清
+    description: 每个页面的操作按钮都藏在了这里👀
+  step4:
+    title: 首页
+    description: 在这里创建图表, 可以直观了解数据, 但现在还不是时候, 先了解一下手动计时与自动计时吧📊
+  step5:
+    title: 时间线
+    description: 配合日历, 筛选类别查看每天的记录📅
+  step6:
+    title: 手动计时
+    description: 先在这里创建计划, 这是手动计时的一个最大集合
+  step7:
+    title: 手动计时
+    description: 再创建标签, 这是计划中的一个小集合🔖
+  step8:
+    title: 手动计时
+    description: 在这里计时⏱️
+  step9:
+    title: 自动计时
+    description: 添加需要监听的软件, shion将会捕捉到你已经打开的软件💻
+  step10:
+    title: 日记
+    description: 存放日记的匣子📦
+  step11:
+    title: 日记
+    description: 用文字、图片、视频, 记录下生活的瞬间📷
+  step12:
+    title: 状态栏
+    description: 当前页面的快捷操作、状态都在这里👆
+  step13:
+    title: 顶栏
+    description: 设置、更新, 有关应用的信息都在这里⚙️
+  step14:
+    title: 结束
+    description: 所有功能介绍完毕, 现在开始使用吧🥳

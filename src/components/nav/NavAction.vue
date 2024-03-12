@@ -4,6 +4,7 @@ interface NavButton {
   activeIcon: string
   name: string
   to: string
+  key: string
 }
 
 withDefaults(defineProps<{
@@ -35,7 +36,7 @@ function goBack() {
       :class="$props.vertical ? ['space-y-1'] : ['flex', 'flex-1', 'justify-around', 'h-full', 'items-center']"
     >
       <router-link
-        v-for="{ icon, activeIcon, name, to } in $props.menu" :key="icon" v-slot="{ isActive }"
+        v-for="{ icon, activeIcon, name, to, key } in $props.menu" :id="key" :key="key" v-slot="{ isActive }"
         :to="to"
         block w-20 text-center
       >

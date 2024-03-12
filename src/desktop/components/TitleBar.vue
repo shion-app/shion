@@ -11,7 +11,9 @@ const setting = ref(false)
 const about = ref(false)
 
 const dialogStore = useDialogStore()
+const configStore = useConfigStore()
 const { dialog } = storeToRefs(dialogStore)
+const { config } = storeToRefs(configStore)
 
 const currentWindow = getCurrent()
 
@@ -54,6 +56,7 @@ function openDevtools() {
         </template>
         <v-list min-width="150">
           <v-list-item value="titleBar.help.about" :title="$t('titleBar.help.about')" @click="about = true" />
+          <v-list-item value="titleBar.help.tour" :title="$t('titleBar.help.tour')" @click="config.tour = true" />
           <v-list-item value="titleBar.help.log" :title="$t('titleBar.help.log')" @click="openLogDir" />
           <v-list-item value="titleBar.help.devtools" :title="$t('titleBar.help.devtools')" @click="openDevtools" />
         </v-list>

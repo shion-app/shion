@@ -4,6 +4,7 @@ const { railWidth, footerHeight, headerHeight } = layoutInject()
 
 <template>
   <nav
+    id="nav"
     absolute
     left-0
     :style="{
