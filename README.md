@@ -24,6 +24,8 @@
 
 <a href="https://shion.app/download" target="_blank">Download</a>
 
+
+
 ## Introduction
 
 Shion is a time tracking software used to record specific situations that occur during a certain time period. You can manually record what is happening, or have the ship automatically monitor the activity of specific software. Of course, it's not just a simple record of the start and end times, but you can also add text, pictures, and videos like writing a diary
@@ -41,3 +43,8 @@ Each data item provides grouping, and you can package the related data together 
 - [ ] 📱Android version adaptation
 - [ ] 💡More features
 
+
+
+## Tutorial
+
+https://github.com/shion-app/shion/assets/101488209/eb099e62-0518-4003-97c3-fada2b8e222d
