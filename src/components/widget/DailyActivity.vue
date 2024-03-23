@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isSameHour } from 'date-fns'
+import { isSameDay, isSameHour } from 'date-fns'
 import { db } from '@/modules/database'
 import type { SelectActivity, SelectLabel, SelectNote, SelectProgram } from '@/modules/database'
 
@@ -20,8 +20,8 @@ const programList = ref<Array<SelectProgram>>([])
 const x = new Array(24).fill(0).map((_, i) => i)
 
 const option = computed(() => {
-  const transformNoteList = splitByHour(noteList.value)
-  const transformactivityList = splitByHour(activityList.value)
+  const transformNoteList = splitByHour(noteList.value).filter(i => isSameDay(selectedDateVModel.value, i.start))
+  const transformactivityList = splitByHour(activityList.value).filter(i => isSameDay(selectedDateVModel.value, i.start))
 
   const labelData = labelList.value.map(({ id, name }) => {
     return {

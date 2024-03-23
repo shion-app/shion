@@ -1,4 +1,4 @@
-import { addDays, endOfDay, isAfter, isSameDay, startOfDay, startOfHour } from 'date-fns'
+import { addDays, addHours, endOfDay, getHours, getTime, isAfter, set, startOfDay } from 'date-fns'
 
 interface TimeRange {
   start: number
@@ -37,19 +37,19 @@ export function splitByDay<T extends TimeRange>(list: T[], range: [Date, Date]) 
 export function splitByHour<T extends TimeRange>(list: T[]) {
   return list.flatMap((data) => {
     const { start, end } = data
-    const startHour = new Date(start).getHours()
-    const endHour = isSameDay(start, end) ? new Date(end).getHours() : 23
+    const startHour = getHours(start)
+    let current = getTime(set(start, {
+      hours: startHour + 1,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
+    }))
     const timeList: Array<number> = [start]
-    for (let i = startHour + 1; i <= endHour; i++) {
-      const date = startOfHour(new Date(start).setHours(i))
-      const time = date.getTime()
-      if (time > end)
-        break
-
-      else
-        timeList.push(time)
+    while (current < end) {
+      timeList.push(current)
+      current = getTime(addHours(current, 1))
     }
-    timeList.push(isSameDay(start, end) ? end : new Date(startOfDay(addDays(start, 1))).getTime())
+    timeList.push(end)
     const result: T[] = []
     for (let i = 0; i < timeList.length - 1; i++) {
       result.push({
