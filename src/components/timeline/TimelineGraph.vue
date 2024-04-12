@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import SVG from 'svg.js'
+import classNames from 'classnames'
 
 import type { TimeLineNode } from '@/interfaces'
 
@@ -78,6 +79,11 @@ const graph = computed(() => {
   }
 })
 
+const nodeList = computed(() => {
+  const { primary, secondary } = graph.value
+  return [...primary, ...secondary]
+})
+
 function draw() {
   const pointCount = props.list.length * 2
   const height = (pointCount - 1) * pointDistance + pointSize
@@ -152,9 +158,10 @@ function drawPoint(svg: SVG.Doc, item: GraphItem) {
   const startPointTranslateY = item.start.y - pointOffset
   const endPointTranslateX = offsetLeft + item.end.x - pointOffset
   const endPointTranslateY = item.end.y - pointOffset
-  svg.text(format(item.start.time, 'HH:mm:ss')).translate(0, startPointTranslateY)
+  const textYOffset = pointOffset / 2
+  svg.text(format(item.start.time, 'HH:mm:ss')).translate(0, startPointTranslateY - textYOffset)
   svg.circle(pointRadius).fill(item.color).translate(startPointTranslateX, startPointTranslateY)
-  svg.text(item.name).fill(item.color).translate(startPointTranslateX + textOffsetLeft, startPointTranslateY)
+  svg.text(item.name).fill(item.color).translate(startPointTranslateX + textOffsetLeft, startPointTranslateY - textYOffset)
   if (item.children) {
     svg.text(t('timelineGraph.include', {
       count: item.children,
@@ -162,7 +169,7 @@ function drawPoint(svg: SVG.Doc, item: GraphItem) {
     })).fill(item.color).translate(startPointTranslateX + textOffsetLeft, startPointTranslateY + 30)
   }
   svg.circle(pointRadius).fill(item.color).translate(endPointTranslateX, endPointTranslateY)
-  svg.text(format(item.end.time, 'HH:mm:ss')).translate(0, endPointTranslateY)
+  svg.text(format(item.end.time, 'HH:mm:ss')).translate(0, endPointTranslateY - textYOffset)
 }
 
 onMounted(() => {
@@ -177,5 +184,41 @@ watchDeep(() => props.list, () => {
 </script>
 
 <template>
-  <div id="timeline-svg" h-full overflow-y-auto p-4 />
+  <div relative h-full overflow-y-auto>
+    <div id="timeline-svg" p-4 />
+    <v-hover v-for="{ start, end, color } in nodeList" :key="start.y">
+      <template #default="{ isHovering, props: hoverProps }">
+        <div
+          v-bind="hoverProps" absolute w-full hover:z-1 :style="{
+            top: `${start.y}px`,
+            left: `${start.x}px`,
+            height: `${end.y - start.y + pointOffset * 3}px`,
+            color,
+          }"
+        >
+          <div absolute inset-0 bg-current transition-opacity rounded-md :class="isHovering ? 'opacity-20' : 'opacity-0'" />
+          <v-menu>
+            <template #activator="{ props: menuProps }">
+              <v-btn
+                icon v-bind="menuProps" size="x-small" bottom-2 right-2
+                :class="classNames('absolute! transition-opacity!', isHovering ? 'opacity-100' : 'opacity-0')"
+              >
+                <div i-mdi:menu-down text-6 />
+              </v-btn>
+            </template>
+            <v-list min-width="100">
+              <v-list-item
+                value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline"
+                base-color="red" @click="() => {}"
+              />
+              <v-list-item
+                value="button.update" :title="$t('button.update')" append-icon="mdi-pencil-outline"
+                @click="() => { }"
+              />
+            </v-list>
+          </v-menu>
+        </div>
+      </template>
+    </v-hover>
+  </div>
 </template>
