@@ -3,7 +3,8 @@ import type { EChartsOption } from 'echarts'
 import { addDays, getDay, isBefore, isSameDay, isSameYear } from 'date-fns'
 import colors from 'vuetify/util/colors'
 
-import { type SelectActivity, type SelectNote, db } from '@/modules/database'
+import { db } from '@/modules/database'
+import type { SelectActivity, SelectMoment, SelectNote } from '@/modules/database'
 
 const props = defineProps<{
   selectedDate: Date
@@ -20,6 +21,7 @@ const { config } = storeToRefs(configStore)
 
 const noteList = ref<Array<SelectNote>>([])
 const activityList = ref<Array<SelectActivity>>([])
+const momentList = ref<Array<SelectMoment>>([])
 
 const day = 51 * 7 + getDay(new Date())
 const range = generateRange(day)
@@ -53,7 +55,19 @@ const calendarList = computed(() => {
     if (!map.get(date))
       map.set(date, 0)
   }
-  return [...map.entries()]
+  return [...map.entries()].map((v) => {
+    const [time] = v
+    const hasMoment = momentList.value.find(i => isSameDay(i.createdAt, new Date(time)))
+    if (hasMoment) {
+      return {
+        value: v,
+        itemStyle: {
+          borderColor: config.value.themeColor,
+        },
+      }
+    }
+    return v
+  })
 })
 
 const buildMarker = color => `<span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:${color};"></span>`
@@ -124,13 +138,14 @@ const option = computed<EChartsOption>(() => {
         const [time, value] = params.value
         const date = new Date(time)
         const dateText = isSameYear(new Date(), date) ? format(date, 'MM-dd') : format(date, 'yyyy-MM-dd')
-        const detail = list.value.filter(i => isSameDay(i.start, date))
-        if (detail.length == 0)
+        const timeDetail = list.value.filter(i => isSameDay(i.start, date))
+        const momentDetail = momentList.value.filter(i => isSameDay(i.createdAt, date))
+        if (timeDetail.length == 0 && momentDetail.length == 0)
           return ''
 
         const colorMap = new Map<string, string>()
         const timeMap = new Map<string, number>()
-        for (const { name, start, end, type, color } of detail) {
+        for (const { name, start, end, type, color } of timeDetail) {
           const key = `${type}|${name}`
           timeMap.set(key, (timeMap.get(key) || 0) + end - start)
           colorMap.set(key, color)
@@ -139,13 +154,17 @@ const option = computed<EChartsOption>(() => {
           .map(([key, value]) => [key, value] as [string, number])
           .sort((a, b) => b[1] - a[1])
           .map(([key, value]) => [key.split('|').pop(), value, colorMap.get(key)] as [string, number, string])
-        const template = displayList.map(([name, time, color]) => `<div style="display: flex; align-items: center;">${buildMarker(color)}<span style="margin-left: 6px;">${name}</span><div style="min-width: 50px; flex-grow: 1;"></div>${formatHHmmss(time)}<span></span></div>`).join('')
+        const timeDetailTemplate = displayList.map(([name, time, color]) => `<div style="display: flex; align-items: center;">${buildMarker(color)}<span style="margin-left: 6px;">${name}</span><div style="min-width: 50px; flex-grow: 1;"></div><span>${formatHHmmss(time)}</span></div>`).join('')
+        const momentDetailTemplate = momentDetail.map(({ title, box }) => `<div style="display: flex; align-items: center;">${buildMarker(box.color)}<span style="margin-left: 6px;">${title}</span><div style="min-width: 50px; flex-grow: 1;"></div></div>`).join('')
         return `<div style="margin-bottom: 6px;">
                   <span>${dateText}</span>
                   <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatHHmmss(value)}</span>
                 </div>
                 <div>
-                  ${template}
+                  ${timeDetailTemplate}
+                </div>
+                <div>
+                  ${momentDetailTemplate}
                 </div>
                 `
       },
@@ -161,12 +180,16 @@ const option = computed<EChartsOption>(() => {
 
 async function init() {
   const [start, end] = range.map(date => date.getTime())
-    ;[noteList.value, activityList.value] = await Promise.all([
+    ;[noteList.value, activityList.value, momentList.value] = await Promise.all([
     db.note.select({
       start,
       end,
     }),
     db.activity.select({
+      start,
+      end,
+    }),
+    db.moment.select({
       start,
       end,
     }),

@@ -239,9 +239,9 @@ const activity = new Activity(kysely, program)
 const plan = new Plan(kysely)
 const label = new Label(kysely)
 const note = new Note(kysely, label, plan)
-const moment = new Moment(kysely)
-const overview = new Overview(kysely)
 const box = new Box(kysely)
+const moment = new Moment(kysely, box)
+const overview = new Overview(kysely)
 const link = new Link(kysely)
 const models = {
   program,

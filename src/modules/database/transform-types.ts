@@ -16,7 +16,7 @@ export type Plan = origin.Plan & { totalTime: TotalTime }
 
 export type Note = origin.Note & { plan: ColumnType<Plan, never, never>; label: ColumnType<Label, never, never> }
 
-export type Moment = origin.Moment
+export type Moment = origin.Moment & { box: ColumnType<Box, never, never> }
 
 export type Box = origin.Box & { itemCount: ColumnType<number, never, never> }
 
