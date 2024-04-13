@@ -20,6 +20,7 @@ const { config } = storeToRefs(configStore)
 const noteList = ref<Array<SelectNote>>([])
 const activityList = ref<Array<SelectActivity>>([])
 const date = ref(new Date())
+const [compressed, toggleCompressed] = useToggle(true)
 
 const filterCategory = ref(route.query.category as Filter['category'])
 const filterTargetId = ref<Filter['id']>(route.query.id ? Number(route.query.id) : undefined)
@@ -80,7 +81,8 @@ const list = computed(() => {
           id: `program-${i.programId}`,
         })),
       ]
-  return compress(list.filter(i => i.end - i.start > config.value.timelineMinMinute * 1000 * 60).sort((a, b) => a.start - b.start))
+  const data = list.filter(i => i.end - i.start > config.value.timelineMinMinute * 1000 * 60).sort((a, b) => a.start - b.start)
+  return compressed.value ? compress(data) : data
 })
 
 async function refresh() {
@@ -159,5 +161,14 @@ onRefresh(refresh)
         </v-btn>
       </template>
     </status-bar-content>
+  </status-bar-teleport>
+  <status-bar-teleport :xs="false">
+    <v-tooltip :text="compressed ? $t('statusBar.decompress') : $t('statusBar.compress')" location="top">
+      <template #activator="{ props }">
+        <v-btn v-bind="props" variant="text" @click="() => toggleCompressed()">
+          <div :class="compressed ? 'i-mdi:arrow-split-vertical' : 'i-mdi:arrow-collapse-horizontal'" text-6 />
+        </v-btn>
+      </template>
+    </v-tooltip>
   </status-bar-teleport>
 </template>

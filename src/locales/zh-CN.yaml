@@ -222,6 +222,8 @@ statusBar:
     switch:
       year: 切换到年
       month: 切换到月
+  compress: 合并数据
+  decompress: 展开数据
 gridCard:
   move: 移动
 sync:
