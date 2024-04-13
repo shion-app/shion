@@ -14,6 +14,7 @@ const { xs, sm } = useTailwindBreakpoints()
 const { format } = useDateFns()
 const route = useRoute()
 const { onRefresh } = usePageRefresh()
+const { success } = useNotify()
 
 const { config } = storeToRefs(configStore)
 
@@ -25,6 +26,11 @@ const [compressed, toggleCompressed] = useToggle(true)
 const filterCategory = ref(route.query.category as Filter['category'])
 const filterTargetId = ref<Filter['id']>(route.query.id ? Number(route.query.id) : undefined)
 
+async function handleSuccess() {
+  success({})
+  await refresh()
+}
+
 const list = computed(() => {
   const list = filterCategory.value
     ? [
@@ -32,22 +38,38 @@ const list = computed(() => {
           filterCategory.value == 'plan'
             ? noteList.value
               .filter(i => typeof filterTargetId.value == 'number' ? i.planId == filterTargetId.value : true)
-              .map(i => ({
+              .map<computedTimeLineNode>(i => ({
                 start: i.start,
                 end: i.end,
                 name: i.plan.name,
                 color: i.plan.color,
                 id: `plan-${i.planId}`,
+                remove: async () => {
+                  await db.note.remove(i.id)
+                  await handleSuccess()
+                },
+                update: async (data) => {
+                  await db.note.update(i.id, data)
+                  await handleSuccess()
+                },
               }))
             : filterCategory.value == 'label'
               ? noteList.value
                 .filter(i => typeof filterTargetId.value == 'number' ? i.labelId == filterTargetId.value : true)
-                .map(i => ({
+                .map<computedTimeLineNode>(i => ({
                   start: i.start,
                   end: i.end,
                   name: i.label.name,
                   color: i.label.color,
                   id: `label-${i.labelId}`,
+                  remove: async () => {
+                    await db.note.remove(i.id)
+                    await handleSuccess()
+                  },
+                  update: async (data) => {
+                    await db.note.update(i.id, data)
+                    await handleSuccess()
+                  },
                 }))
               : []
         ),
@@ -55,30 +77,46 @@ const list = computed(() => {
           filterCategory.value == 'monitor'
             ? activityList.value
               .filter(i => typeof filterTargetId.value == 'number' ? i.programId == filterTargetId.value : true)
-              .map(i => ({
+              .map<computedTimeLineNode>(i => ({
                 start: i.start,
                 end: i.end,
                 name: i.program.name,
                 color: i.program.color,
                 id: `program-${i.programId}`,
+                remove: async () => {
+                  await db.activity.remove(i.id)
+                  await handleSuccess()
+                },
               }))
             : []
         ),
       ]
     : [
-        ...noteList.value.map(i => ({
+        ...noteList.value.map<computedTimeLineNode>(i => ({
           start: i.start,
           end: i.end,
           name: i.label.name,
           color: i.label.color,
           id: `label-${i.labelId}`,
+          remove: async () => {
+            await db.note.remove(i.id)
+            await handleSuccess()
+          },
+          update: async (data) => {
+            await db.note.update(i.id, data)
+            await handleSuccess()
+          },
         })),
-        ...activityList.value.map(i => ({
+        ...activityList.value.map<computedTimeLineNode>(i => ({
           start: i.start,
           end: i.end,
           name: i.program.name,
           color: i.program.color,
           id: `program-${i.programId}`,
+          remove: async () => {
+            await db.activity.remove(i.id)
+            await handleSuccess()
+          },
         })),
       ]
   const data = list.filter(i => i.end - i.start > config.value.timelineMinMinute * 1000 * 60).sort((a, b) => a.start - b.start)

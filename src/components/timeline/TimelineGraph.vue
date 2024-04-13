@@ -11,6 +11,10 @@ interface GraphItem {
   end: PointWithTime
   children: number
   totalTime: number
+  actions: {
+    remove: TimeLineNode['remove']
+    update: TimeLineNode['update']
+  }
 }
 
 interface Point {
@@ -65,6 +69,10 @@ const graph = computed(() => {
       },
       children: item.children?.length || 0,
       totalTime: (item.children || []).reduce((acc, prev) => acc += prev.end - prev.start, 0),
+      actions: {
+        update: item.update,
+        remove: item.remove,
+      },
     }
     if (isSibling)
       primary.push(graphItem)
@@ -186,7 +194,7 @@ watchDeep(() => props.list, () => {
 <template>
   <div relative h-full overflow-y-auto>
     <div id="timeline-svg" p-4 />
-    <v-hover v-for="{ start, end, color } in nodeList" :key="start.y">
+    <v-hover v-for="{ start, end, color, actions } in nodeList" :key="start.y">
       <template #default="{ isHovering, props: hoverProps }">
         <div
           v-bind="hoverProps" absolute w-full hover:z-1 :style="{
@@ -196,8 +204,11 @@ watchDeep(() => props.list, () => {
             color,
           }"
         >
-          <div absolute inset-0 bg-current transition-opacity rounded-md :class="isHovering ? 'opacity-20' : 'opacity-0'" />
-          <v-menu>
+          <div
+            absolute inset-0 bg-current transition-opacity rounded-md
+            :class="isHovering ? 'opacity-20' : 'opacity-0'"
+          />
+          <v-menu v-if="actions.remove || actions.update">
             <template #activator="{ props: menuProps }">
               <v-btn
                 icon v-bind="menuProps" size="x-small" bottom-2 right-2
@@ -208,13 +219,13 @@ watchDeep(() => props.list, () => {
             </template>
             <v-list min-width="100">
               <v-list-item
-                value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline"
-                base-color="red" @click="() => {}"
+                v-if="actions.remove" value="button.remove" :title="$t('button.remove')"
+                append-icon="mdi-trash-can-outline" base-color="red" @click="() => actions.remove?.()"
               />
-              <v-list-item
-                value="button.update" :title="$t('button.update')" append-icon="mdi-pencil-outline"
-                @click="() => { }"
-              />
+              <!-- <v-list-item
+                v-if="actions.update" value="button.update" :title="$t('button.update')"
+                append-icon="mdi-pencil-outline" @click="() => { }"
+              /> -->
             </v-list>
           </v-menu>
         </div>

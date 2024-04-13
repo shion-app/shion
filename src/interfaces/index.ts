@@ -8,6 +8,8 @@ export interface TimeLineNode {
   name: string
   color: string
   children?: TimeLineNode[]
+  remove?: () => Promise<void>
+  update?: (data: { start?: number; end?: number }) => Promise<void>
 }
 
 export interface NestedMenuItem {
