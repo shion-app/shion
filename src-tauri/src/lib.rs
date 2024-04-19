@@ -6,12 +6,20 @@ use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
 use tauri_plugin_sql::{Migration, MigrationKind};
 
 pub fn run() {
-    let migrations = vec![Migration {
-        version: 1,
-        description: "create table",
-        sql: include_str!("../../prisma/migrations/20240131101926_/migration.sql"),
-        kind: MigrationKind::Up,
-    }];
+    let migrations = vec![
+        Migration {
+            version: 1,
+            description: "create table",
+            sql: include_str!("../../prisma/migrations/20240131101926_/migration.sql"),
+            kind: MigrationKind::Up,
+        },
+        Migration {
+            version: 2,
+            description: "add domain and history",
+            sql: include_str!("../../prisma/migrations/20240419081000_/migration.sql"),
+            kind: MigrationKind::Up,
+        },
+    ];
 
     #[tauri::command]
     fn get_sys_locale() -> String {

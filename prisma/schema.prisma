@@ -98,7 +98,7 @@ model Moment {
   created_at Int    @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
   updated_at Int    @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
   box        Box    @relation(fields: [box_id], references: [id])
-  link       Link?   @relation(fields: [link_id], references: [id])
+  link       Link?  @relation(fields: [link_id], references: [id])
 
   @@unique([title, deleted_at])
   @@map("moment")
@@ -141,4 +141,32 @@ model Overview {
   updated_at Int    @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
 
   @@map("overview")
+}
+
+model Domain {
+  id         Int       @id @default(autoincrement())
+  name       String
+  color      String
+  pattern    String
+  sort       Int       @default(0)
+  deleted_at Int       @default(0)
+  created_at Int       @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at Int       @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  histories  History[]
+
+  @@map("domain")
+}
+
+model History {
+  id           Int     @id @default(autoincrement())
+  title        String
+  url          String
+  last_visited Int
+  domain_id    Int
+  deleted_at   Int     @default(0)
+  created_at   Int     @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at   Int     @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  domian       Domain? @relation(fields: [domain_id], references: [id])
+
+  @@map("history")
 }

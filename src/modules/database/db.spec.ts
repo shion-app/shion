@@ -20,7 +20,10 @@ function readMigrations(paths: string[]) {
 }
 
 function init() {
-  addMigrations(readMigrations(['../../../prisma/migrations/20230923052127_/migration.sql']))
+  addMigrations(readMigrations([
+    '../../../prisma/migrations/20240131101926_/migration.sql',
+    '../../../prisma/migrations/20240419081000_/migration.sql',
+  ]))
 }
 
 function reset() {
@@ -59,6 +62,10 @@ const executor: DatabaseExecutor<Database.Database> = {
 beforeEach(reset)
 
 const db = createKyselyDatabaseWithModels(executor)
+
+function filterField(list: Array<Object>, fields: string[] = []) {
+  return deepFilter(list, ['createdAt', 'updatedAt', 'deletedAt', ...fields])
+}
 
 describe('model', () => {
   it('insert', async () => {
@@ -169,11 +176,10 @@ describe('plan', () => {
   beforeEach(createNoteData)
 
   it('select all', async () => {
-    expect(await db.plan.select()).toMatchInlineSnapshot(`
+    expect(filterField(await db.plan.select())).toMatchInlineSnapshot(`
       [
         {
           "color": "#ffffff",
-          "deletedAt": 0,
           "id": 1,
           "name": "plan1",
           "sort": 0,
@@ -195,11 +201,10 @@ describe('label', () => {
   beforeEach(createNoteData)
 
   it('select all', async () => {
-    expect(await db.label.select()).toMatchInlineSnapshot(`
+    expect(filterField(await db.label.select())).toMatchInlineSnapshot(`
       [
         {
           "color": "#ffffff",
-          "deletedAt": 0,
           "id": 1,
           "name": "label1",
           "planId": 1,
@@ -208,7 +213,6 @@ describe('label', () => {
         },
         {
           "color": "#000000",
-          "deletedAt": 0,
           "id": 2,
           "name": "label2",
           "planId": 1,
@@ -230,18 +234,16 @@ describe('note', () => {
   beforeEach(createNoteData)
 
   it('select by start and end', async () => {
-    expect(await db.note.select({
+    expect(filterField(await db.note.select({
       start: 1696394545000 - 1000,
       end: 1696396545000 + 1000,
-    })).toMatchInlineSnapshot(`
+    }))).toMatchInlineSnapshot(`
       [
         {
-          "deletedAt": 0,
           "end": 1696394605000,
           "id": 1,
           "label": {
             "color": "#ffffff",
-            "deletedAt": 0,
             "id": 1,
             "name": "label1",
             "planId": 1,
@@ -251,7 +253,6 @@ describe('note', () => {
           "labelId": 1,
           "plan": {
             "color": "#ffffff",
-            "deletedAt": 0,
             "id": 1,
             "name": "plan1",
             "sort": 0,
@@ -261,12 +262,10 @@ describe('note', () => {
           "start": 1696394545000,
         },
         {
-          "deletedAt": 0,
           "end": 1696396605000,
           "id": 3,
           "label": {
             "color": "#ffffff",
-            "deletedAt": 0,
             "id": 1,
             "name": "label1",
             "planId": 1,
@@ -276,7 +275,6 @@ describe('note', () => {
           "labelId": 1,
           "plan": {
             "color": "#ffffff",
-            "deletedAt": 0,
             "id": 1,
             "name": "plan1",
             "sort": 0,
@@ -303,15 +301,15 @@ describe('program', () => {
   beforeEach(createActivityData)
 
   it('select all', async () => {
-    expect(await db.program.select()).toMatchInlineSnapshot(`
+    expect(filterField(await db.program.select())).toMatchInlineSnapshot(`
       [
         {
           "color": "#ffffff",
-          "deletedAt": 0,
           "icon": "",
           "id": 1,
           "name": "program1",
-          "path": "D:\\\\folder",
+          "path": "D:\\folder",
+          "platform": "",
           "sort": 0,
           "totalTime": 120000,
         },
@@ -330,22 +328,20 @@ describe('activity', () => {
   beforeEach(createActivityData)
 
   it('select by start and end', async () => {
-    expect(await db.activity.select({
+    expect(filterField(await db.activity.select({
       start: 1696394545000 - 1000,
       end: 1696396545000 + 1000,
-    })).toMatchInlineSnapshot(`
+    }))).toMatchInlineSnapshot(`
       [
         {
-          "deletedAt": 0,
           "end": 1696394605000,
           "id": 1,
           "program": {
             "color": "#ffffff",
-            "deletedAt": 0,
             "icon": "",
             "id": 1,
             "name": "program1",
-            "path": "D:\\\\folder",
+            "path": "D:\\folder",
             "sort": 0,
             "totalTime": 120000,
           },
@@ -353,21 +349,106 @@ describe('activity', () => {
           "start": 1696394545000,
         },
         {
-          "deletedAt": 0,
           "end": 1696396605000,
           "id": 3,
           "program": {
             "color": "#ffffff",
-            "deletedAt": 0,
             "icon": "",
             "id": 1,
             "name": "program1",
-            "path": "D:\\\\folder",
+            "path": "D:\\folder",
             "sort": 0,
             "totalTime": 120000,
           },
           "programId": 1,
           "start": 1696396545000,
+        },
+      ]
+    `)
+  })
+})
+
+describe('history', () => {
+  it('batch insert', async () => {
+    await db.history.batchInsert([
+      {
+        title: '大型纪录片《浓缩的意林精华》_哔哩哔哩_bilibili',
+        url: 'https://www.bilibili.com/video/BV15M4m1X71N/?spm_id_from=trigger_reload&vd_source=1cd42b0f9b2e7d48f3c4d471f842db25',
+        lastVisited: 1713328866000,
+      },
+      {
+        title: '蜜柑计划 - Mikan Project',
+        url: 'https://mikanani.me/',
+        lastVisited: 1713506976000,
+      },
+      {
+        title: '美版意林第二期：入关自有大儒为我辩经（下）比亚迪比特斯拉好，中国街面干 净卫生_哔哩哔哩_bilibili',
+        url: 'https://www.bilibili.com/video/BV15M4m1X71N/?spm_id_from=trigger_reload',
+        lastVisited: 1713328865000,
+      },
+    ])
+    expect(filterField(await db.history.select(), ['color'])).toMatchInlineSnapshot(`
+      [
+        {
+          "domain": {
+            "id": 1,
+            "itemCount": 2,
+            "name": "bilibili.com",
+            "pattern": "bilibili.com",
+            "sort": 1,
+          },
+          "domainId": 1,
+          "id": 1,
+          "lastVisited": 1713328866000,
+          "title": "大型纪录片《浓缩的意林精华》_哔哩哔哩_bilibili",
+          "url": "https://www.bilibili.com/video/BV15M4m1X71N/?spm_id_from=trigger_reload&vd_source=1cd42b0f9b2e7d48f3c4d471f842db25",
+        },
+        {
+          "domain": {
+            "id": 2,
+            "itemCount": 1,
+            "name": "mikanani.me",
+            "pattern": "mikanani.me",
+            "sort": 2,
+          },
+          "domainId": 2,
+          "id": 2,
+          "lastVisited": 1713506976000,
+          "title": "蜜柑计划 - Mikan Project",
+          "url": "https://mikanani.me/",
+        },
+        {
+          "domain": {
+            "id": 1,
+            "itemCount": 2,
+            "name": "bilibili.com",
+            "pattern": "bilibili.com",
+            "sort": 1,
+          },
+          "domainId": 1,
+          "id": 3,
+          "lastVisited": 1713328865000,
+          "title": "美版意林第二期：入关自有大儒为我辩经（下）比亚迪比特斯拉好，中国街面干 净卫生_哔哩哔哩_bilibili",
+          "url": "https://www.bilibili.com/video/BV15M4m1X71N/?spm_id_from=trigger_reload",
+        },
+      ]
+      `)
+
+    expect(filterField(await db.domain.select(), ['color'])).toMatchInlineSnapshot(`
+      [
+        {
+          "id": 1,
+          "itemCount": 2,
+          "name": "bilibili.com",
+          "pattern": "bilibili.com",
+          "sort": 1,
+        },
+        {
+          "id": 2,
+          "itemCount": 1,
+          "name": "mikanani.me",
+          "pattern": "mikanani.me",
+          "sort": 2,
         },
       ]
     `)

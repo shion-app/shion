@@ -22,6 +22,26 @@ export interface Box {
   createdAt: Generated<number>
   updatedAt: Generated<number>
 }
+export interface Domain {
+  id: Generated<number>
+  name: string
+  color: string
+  pattern: string
+  sort: Generated<number>
+  deletedAt: Generated<number>
+  createdAt: Generated<number>
+  updatedAt: Generated<number>
+}
+export interface History {
+  id: Generated<number>
+  title: string
+  url: string
+  lastVisited: number
+  domainId: number
+  deletedAt: Generated<number>
+  createdAt: Generated<number>
+  updatedAt: Generated<number>
+}
 export interface Label {
   id: Generated<number>
   name: string
@@ -94,6 +114,8 @@ export interface Program {
 export interface DB {
   activity: Activity
   box: Box
+  domain: Domain
+  history: History
   label: Label
   link: Link
   moment: Moment
