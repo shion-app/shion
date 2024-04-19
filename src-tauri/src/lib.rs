@@ -1,6 +1,7 @@
 #[cfg(mobile)]
 mod mobile;
 
+use tauri::menu::{Menu, MenuItem};
 use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
 use tauri_plugin_sql::{Migration, MigrationKind};
 
@@ -44,9 +45,7 @@ pub fn run() {
 
     #[cfg(desktop)]
     {
-        use tauri::menu::MenuBuilder;
-        use tauri::menu::MenuItemBuilder;
-        use tauri::{Manager, Window};
+        use tauri::{Manager, WebviewWindow};
         use tauri_plugin_autostart::MacosLauncher;
 
         use std::collections::HashMap;
@@ -59,11 +58,10 @@ pub fn run() {
 
         #[tauri::command]
         fn update_tray_menu(app: tauri::AppHandle, data: HashMap<String, String>) {
-            let tray = app.tray();
-            if let Some(tray) = tray {
+            if let Some(tray) = app.tray_by_id("tray") {
                 let quit = data.get("quit").unwrap();
-                let quit = MenuItemBuilder::with_id("quit", quit).build(&app);
-                let menu = MenuBuilder::new(&app).items(&[&quit]).build().unwrap();
+                let quit = MenuItem::with_id(&app, "quit", quit, true, None::<&str>).unwrap();
+                let menu = Menu::with_items(&app, &[&quit]).unwrap();
                 tray.set_menu(Some(menu)).unwrap();
             }
         }
@@ -74,7 +72,7 @@ pub fn run() {
         }
 
         #[tauri::command]
-        fn open_devtools(window: Window) {
+        fn open_devtools(window: WebviewWindow) {
             window.open_devtools();
         }
 
@@ -83,7 +81,7 @@ pub fn run() {
             .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
                 app.emit("single-instance", Payload { args: argv, cwd })
                     .unwrap();
-                let window = app.get_window("main").unwrap();
+                let window = app.get_webview_window("main").unwrap();
                 window.show().unwrap();
             }))
             .plugin(tauri_plugin_autostart::init(
@@ -109,32 +107,35 @@ pub fn run() {
         .setup(|app| {
             #[cfg(desktop)]
             {
-                use tauri::menu::{MenuBuilder, MenuItemBuilder};
-                use tauri::{tray::ClickType, Manager};
-                use window_shadows::set_shadow;
+                use tauri::{
+                    tray::{ClickType, TrayIconBuilder},
+                    Manager,
+                };
 
-                let window = app.get_window("main").unwrap();
-                set_shadow(&window, true).unwrap();
+                let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
+                let menu = Menu::with_items(app, &[&quit])?;
 
-                let quit = MenuItemBuilder::with_id("quit", "Quit").build(app);
-                let menu = MenuBuilder::new(app).items(&[&quit]).build()?;
-                let tray = app.tray().unwrap();
-                tray.on_menu_event(move |app, event| match event.id().as_ref() {
-                    "quit" => {
-                        let window = app.get_window("main").unwrap();
-                        window.hide().unwrap();
-                        app.emit_to("main", "quit", ()).unwrap();
-                    }
-                    _ => (),
-                });
-                tray.on_tray_icon_event(|tray, event| {
-                    if event.click_type == ClickType::Double {
-                        let app = tray.app_handle();
-                        let window = app.get_window("main").unwrap();
-                        window.show().unwrap();
-                    }
-                });
-                tray.set_menu(Some(menu)).unwrap();
+                let _ = TrayIconBuilder::with_id("tray")
+                    .tooltip("shion")
+                    .icon(app.default_window_icon().unwrap().clone())
+                    .menu(&menu)
+                    .menu_on_left_click(false)
+                    .on_menu_event(move |app, event| match event.id().as_ref() {
+                        "quit" => {
+                            let window = app.get_webview_window("main").unwrap();
+                            window.hide().unwrap();
+                            app.emit_to("main", "quit", ()).unwrap();
+                        }
+                        _ => (),
+                    })
+                    .on_tray_icon_event(|tray, event| {
+                        if event.click_type == ClickType::Double {
+                            let app = tray.app_handle();
+                            let window = app.get_webview_window("main").unwrap();
+                            window.show().unwrap();
+                        }
+                    })
+                    .build(app);
             }
 
             Ok(())

@@ -1,10 +1,4 @@
 {
-  "package": {
-    "productName": "shion"
-  },
-  "tauri": {
-    "bundle": {
-      "identifier": "hanaTsuk1.shion"
-    }
-  }
+  "productName": "shion",
+  "identifier": "hanaTsuk1.shion"
 }
