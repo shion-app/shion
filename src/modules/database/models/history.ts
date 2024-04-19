@@ -23,18 +23,19 @@ export class History extends Model<TransformHistory> {
 
   batchInsert(@set value: Array<Omit<Insertable<TransformHistory>, 'domainId'>>) {
     return this.transaction().execute(async (trx) => {
+      const patternSet = new Set<string>()
       for (const item of value) {
         const pattern = psl.get(new URL(item.url).hostname)
-        if (!pattern)
-          continue
-
+        if (pattern)
+          patternSet.add(pattern)
+      }
+      const patternDomainMap = new Map<string, number>()
+      for (const pattern of patternSet) {
         const domain = (await trx.domain.select({
           pattern,
         })).pop()
-
-        let domainId = 0
         if (domain) {
-          domainId = domain.id
+          patternDomainMap.set(pattern, domain.id)
         }
         else {
           const { lastInsertId } = await trx.domain.insert({
@@ -45,8 +46,17 @@ export class History extends Model<TransformHistory> {
           await trx.domain.update(lastInsertId, {
             sort: lastInsertId,
           })
-          domainId = lastInsertId
+          patternDomainMap.set(pattern, lastInsertId)
         }
+      }
+      for (const item of value) {
+        const pattern = psl.get(new URL(item.url).hostname)
+        if (!pattern)
+          continue
+
+        const domainId = patternDomainMap.get(pattern)
+        if (!domainId)
+          continue
 
         const { title, url, lastVisited } = item
 

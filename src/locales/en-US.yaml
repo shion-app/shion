@@ -292,6 +292,9 @@ tour:
     title: End
     description: All the functions have been introduced. Let's start using them now 🥳
 history:
-  import: Import data
-  importConfirm: The historical data of {browsers} will be imported soon. Are you sure?
+  import:
+    button: Import data
+    confirm: The historical data of {browsers} will be imported soon. Are you sure?
+    success: Successfully imported
+    error: An error occurred during import
   tip: The imported browser will automatically synchronize data

@@ -294,6 +294,9 @@ tour:
     title: 结束
     description: 所有功能介绍完毕, 现在开始使用吧🥳
 history:
-  import: 导入数据
-  importConfirm: 即将导入{browsers}的历史数据, 是否确认?
+  import:
+    button: 导入数据
+    confirm: 即将导入{browsers}的历史数据, 是否确认?
+    success: 导入成功
+    error: 导入出错
   tip: 导入过的浏览器将会自动同步数据

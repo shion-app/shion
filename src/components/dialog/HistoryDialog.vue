@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { getConfig } from 'tauri-plugin-shion-history-api'
+import { getConfig, readHistory, setConfig } from 'tauri-plugin-shion-history-api'
+import { startOfDay } from 'date-fns'
+import { error as logError } from '@tauri-apps/plugin-log'
 
 import GoogleChrome from '@/assets/browser/Google Chrome.png'
 import MicrosoftEdge from '@/assets/browser/Microsoft Edge.png'
+import { db } from '@/modules/database'
 
 const props = defineProps<{
   visible: boolean
@@ -10,18 +13,22 @@ const props = defineProps<{
 
 const { state: historyConfig } = useAsyncState(getConfig(), {
   browsers: [],
+}, {
+  shallow: false,
 })
 
 const confirm = useConfirmModal()
 const { t } = useI18n()
+const { success, error } = useNotify()
+
+const running = ref(false)
 
 const browsers = computed(() => historyConfig.value.browsers.map(({ name, last_sync }) => ({
   name,
   url: getBrowserUrl(name),
   used: last_sync != 0,
 })))
-
-const isDisableImport = computed(() => browsers.value.filter(i => !i.used).length == 0)
+const isDisableImport = computed(() => running.value || browsers.value.filter(i => !i.used).length == 0)
 
 const { visible: visibleVModel } = useVModels(props)
 
@@ -39,14 +46,50 @@ function getBrowserUrl(name: string) {
 async function importBrowserData() {
   visibleVModel.value = false
   await nextTick()
+  const list = browsers.value.filter(i => !i.used).map(i => i.name)
   confirm.require({
     title: t('modal.prompt'),
-    content: t('history.importConfirm', {
-      browsers: browsers.value.filter(i => !i.used).map(i => i.name),
-      onConfirm: async () => {
-
-      },
+    content: t('history.import.confirm', {
+      browsers: list,
     }),
+    options: {
+      loading: true,
+    },
+    onConfirm: async () => {
+      running.value = true
+      try {
+        const end = startOfDay(new Date()).getTime()
+        const historyList = await readHistory(list, 0, end)
+        await db.history.batchInsert(historyList.map(({ title, url, last_visited }) => ({
+          title,
+          url,
+          lastVisited: last_visited,
+        })))
+        const browsers = historyConfig.value.browsers.map(({ name }) => ({
+          name,
+          last_sync: end,
+        }))
+        const newConfig = {
+          browsers,
+        }
+        historyConfig.value = newConfig
+        await setConfig(newConfig)
+      }
+      catch (e) {
+        error({
+          text: t('history.import.error'),
+        })
+        logError(`history import: ${e}`)
+        return
+      }
+      success({
+        text: t('history.import.success'),
+      })
+    },
+    onClosed() {
+      running.value = false
+    },
+
   })
 }
 </script>
@@ -65,7 +108,7 @@ async function importBrowserData() {
     <v-card-actions>
       <div flex-1 />
       <v-btn color="primary" :disabled="isDisableImport" @click="importBrowserData">
-        {{ $t('history.import') }}
+        {{ $t('history.import.button') }}
       </v-btn>
     </v-card-actions>
   </advanced-dialog>
