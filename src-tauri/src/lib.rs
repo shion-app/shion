@@ -29,6 +29,7 @@ pub fn run() {
                 .build(),
         )
         .plugin(tauri_plugin_shion_watcher::init())
+        .plugin(tauri_plugin_shion_history::init())
         // TODO: log bug
         .plugin(
             tauri_plugin_log::Builder::new()

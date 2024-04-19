@@ -26,6 +26,7 @@ declare module '@vue/runtime-core' {
     FormModal: typeof import('./components/modal/FormModal.vue')['default']
     Grid: typeof import('./components/grid/Grid.vue')['default']
     GridCard: typeof import('./components/grid/GridCard.vue')['default']
+    HistoryDialog: typeof import('./components/dialog/HistoryDialog.vue')['default']
     ImageBlockMenu: typeof import('./components/shared/tiptap/imageBlock/ImageBlockMenu.vue')['default']
     ImageBlockView: typeof import('./components/shared/tiptap/imageBlock/ImageBlockView.vue')['default']
     Layout: typeof import('./components/layout/Layout.vue')['default']

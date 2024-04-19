@@ -169,6 +169,7 @@ titleBar:
     desc: View
     setting: Setting
     sync: Sync
+    history: Browser history
   help:
     desc: Help
     about: About
@@ -290,3 +291,7 @@ tour:
   step14:
     title: End
     description: All the functions have been introduced. Let's start using them now 🥳
+history:
+  import: Import data
+  importConfirm: The historical data of {browsers} will be imported soon. Are you sure?
+  tip: The imported browser will automatically synchronize data

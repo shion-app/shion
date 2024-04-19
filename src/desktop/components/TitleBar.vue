@@ -8,6 +8,7 @@ import logo from '@/assets/logo.svg'
 
 const setting = ref(false)
 // const sync = ref(false)
+const history = ref(false)
 const about = ref(false)
 
 const dialogStore = useDialogStore()
@@ -46,6 +47,7 @@ function openDevtools() {
         <v-list min-width="150">
           <v-list-item value="titleBar.view.setting" :title="$t('titleBar.view.setting')" @click="setting = true" />
           <!-- <v-list-item v-if="isDev" value="titleBar.view.sync" :title="$t('titleBar.view.sync')" @click="sync = true" /> -->
+          <v-list-item value="titleBar.view.history" :title="$t('titleBar.view.history')" @click="history = true" />
         </v-list>
       </v-menu>
       <v-menu>
@@ -76,5 +78,6 @@ function openDevtools() {
     <setting-dialog v-model:visible="setting" />
     <about-dialog v-model:visible="about" />
     <!-- <sync-dialog v-model:visible="sync" /> -->
+    <history-dialog v-model:visible="history" />
   </div>
 </template>
