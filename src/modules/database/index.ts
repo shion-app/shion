@@ -4,7 +4,7 @@ import type { Insertable, SelectType, Updateable } from 'kysely'
 
 import type { DatabaseExecutor } from './db'
 import { DatabaseError, SqliteErrorEnum, createKyselyDatabaseWithModels, findSqliteMessageFields } from './db'
-import type { Activity, Box, Label, Moment, Note, Overview, Plan, Program } from './transform-types'
+import type { Activity, Box, History, Label, Moment, Note, Overview, Plan, Program } from './transform-types'
 export { DatabaseError } from './db'
 
 class Executor implements DatabaseExecutor<Database> {
@@ -71,6 +71,7 @@ export type SelectNote = DeepSelectable<Note>
 export type SelectMoment = DeepSelectable<Moment>
 export type SelectOverview = DeepSelectable<Overview>
 export type SelectBox = DeepSelectable<Box>
+export type SelectHistory = DeepSelectable<History>
 
 export type InsertPlan = Insertable<Plan>
 export type InsertNote = Insertable<Note>

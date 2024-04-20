@@ -1,29 +1,24 @@
 <script setup lang="ts">
-import { getConfig, readHistory, setConfig } from 'tauri-plugin-shion-history-api'
-import { startOfDay } from 'date-fns'
 import { error as logError } from '@tauri-apps/plugin-log'
 
 import GoogleChrome from '@/assets/browser/Google Chrome.png'
 import MicrosoftEdge from '@/assets/browser/Microsoft Edge.png'
-import { db } from '@/modules/database'
 
 const props = defineProps<{
   visible: boolean
 }>()
 
-const { state: historyConfig } = useAsyncState(getConfig(), {
-  browsers: [],
-}, {
-  shallow: false,
-})
-
 const confirm = useConfirmModal()
 const { t } = useI18n()
 const { success, error } = useNotify()
 
+const store = useHistoryStore()
+const { config } = storeToRefs(store)
+const { pull } = store
+
 const running = ref(false)
 
-const browsers = computed(() => historyConfig.value.browsers.map(({ name, last_sync }) => ({
+const browsers = computed(() => config.value.browsers.map(({ name, last_sync }) => ({
   name,
   url: getBrowserUrl(name),
   used: last_sync != 0,
@@ -58,22 +53,8 @@ async function importBrowserData() {
     onConfirm: async () => {
       running.value = true
       try {
-        const end = startOfDay(new Date()).getTime()
-        const historyList = await readHistory(list, 0, end)
-        await db.history.batchInsert(historyList.map(({ title, url, last_visited }) => ({
-          title,
-          url,
-          lastVisited: last_visited,
-        })))
-        const browsers = historyConfig.value.browsers.map(({ name }) => ({
-          name,
-          last_sync: end,
-        }))
-        const newConfig = {
-          browsers,
-        }
-        historyConfig.value = newConfig
-        await setConfig(newConfig)
+        const end = new Date().getTime()
+        await pull(list, 0, end)
       }
       catch (e) {
         error({

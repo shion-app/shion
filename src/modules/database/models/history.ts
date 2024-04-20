@@ -1,4 +1,4 @@
-import type { Insertable, Kysely } from 'kysely'
+import { type Insertable, type Kysely, sql } from 'kysely'
 import { jsonBuildObject } from 'kysely/helpers/sqlite'
 import psl from 'psl'
 
@@ -72,7 +72,7 @@ export class History extends Model<TransformHistory> {
 
   @get
   select(value?: { id?: number; domainId?: number; start?: number; end?: number }) {
-    let query = this.kysely.with('d', () => this.#domain.select()).selectFrom(['history', 'd']).where('history.deletedAt', '=', 0)
+    let query = this.kysely.with('d', () => this.#domain.select()).selectFrom(['history', 'd']).where('history.deletedAt', '=', 0).where(sql`length(title)`, '!=', 0)
     if (value?.domainId)
       query = query.where('domainId', '=', value.domainId)
     if (value?.start)

@@ -220,6 +220,7 @@ declare global {
   const useGeolocation: typeof import('@vueuse/core')['useGeolocation']
   const useGrid: typeof import('./hooks/useGrid')['useGrid']
   const useGridColumn: typeof import('./hooks/useGrid')['useGridColumn']
+  const useHistoryStore: typeof import('./stores/useHistoryStore')['useHistoryStore']
   const useI18n: typeof import('vue-i18n')['useI18n']
   const useIdle: typeof import('@vueuse/core')['useIdle']
   const useImage: typeof import('@vueuse/core')['useImage']
@@ -566,6 +567,7 @@ declare module 'vue' {
     readonly useGeolocation: UnwrapRef<typeof import('@vueuse/core')['useGeolocation']>
     readonly useGrid: UnwrapRef<typeof import('./hooks/useGrid')['useGrid']>
     readonly useGridColumn: UnwrapRef<typeof import('./hooks/useGrid')['useGridColumn']>
+    readonly useHistoryStore: UnwrapRef<typeof import('./stores/useHistoryStore')['useHistoryStore']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useIdle: UnwrapRef<typeof import('@vueuse/core')['useIdle']>
     readonly useImage: UnwrapRef<typeof import('@vueuse/core')['useImage']>
