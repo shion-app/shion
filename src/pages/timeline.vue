@@ -126,6 +126,7 @@ const list = computed(() => {
           name: `${i.title} (${new URL(i.url).hostname})`,
           color: i.domain.color,
           compressGroupId: `domain-${i.domainId}`,
+          url: i.url,
         })),
       ]
   // i.end == i.start history两者相同
@@ -183,6 +184,7 @@ function compress(list: Array<computedTimeLineNode>): Array<TimeLineNode> {
           name: i.name,
           color: i.color,
         })),
+      url: first.url,
     }
   })
 }

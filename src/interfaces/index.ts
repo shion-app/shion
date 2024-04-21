@@ -10,6 +10,7 @@ export interface TimeLineNode {
   children?: TimeLineNode[]
   remove?: () => Promise<void>
   update?: (data: { start?: number; end?: number }) => Promise<void>
+  url?: string
 }
 
 export interface NestedMenuItem {

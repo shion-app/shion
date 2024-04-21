@@ -15,6 +15,8 @@ interface GraphItem {
     remove: TimeLineNode['remove']
     update: TimeLineNode['update']
   }
+  url?: string
+  level: 'primary' | 'secondary'
 }
 
 interface Point {
@@ -79,6 +81,8 @@ const graph = computed(() => {
         update: item.update,
         remove: item.remove,
       },
+      url: item.url,
+      level: isSibling ? 'primary' : 'secondary',
     }
     if (isSibling)
       primary.push(graphItem)
@@ -173,21 +177,10 @@ function drawPoint(svg: SVG.Doc, item: GraphItem) {
   const textYOffset = pointOffset / 2
   svg.text(format(item.start.time, 'HH:mm:ss')).translate(0, startPointTranslateY - textYOffset)
   svg.circle(pointRadius).fill(item.color).translate(startPointTranslateX, startPointTranslateY)
-  svg.text(item.name).fill(item.color).translate(startPointTranslateX + textOffsetLeft, startPointTranslateY - textYOffset)
-  if (item.children) {
-    // history 没有运行持续时间
-    const text = item.totalTime
-      ? t('timelineGraph.include', {
-        count: item.children,
-        totalTime: formatHHmmss(item.totalTime),
-      })
-      : t('timelineGraph.includeCount', {
-        count: item.children,
-      })
-    svg.text(text).fill(item.color).translate(startPointTranslateX + textOffsetLeft, startPointTranslateY + 30)
+  if (item.start.time != item.end.time) {
+    svg.text(format(item.end.time, 'HH:mm:ss')).translate(0, endPointTranslateY - textYOffset)
+    svg.circle(pointRadius).fill(item.color).translate(endPointTranslateX, endPointTranslateY)
   }
-  svg.circle(pointRadius).fill(item.color).translate(endPointTranslateX, endPointTranslateY)
-  svg.text(format(item.end.time, 'HH:mm:ss')).translate(0, endPointTranslateY - textYOffset)
 }
 
 onMounted(() => {
@@ -204,20 +197,46 @@ watchDeep(() => props.list, () => {
 <template>
   <div relative h-full overflow-y-auto>
     <div id="timeline-svg" p-4 />
-    <v-hover v-for="{ start, end, color, actions } in nodeList" :key="start.y">
+    <v-hover v-for="{ start, end, color, actions, name, children, totalTime, url, level } in nodeList" :key="start.y">
       <template #default="{ isHovering, props: hoverProps }">
         <div
-          v-bind="hoverProps" absolute w-full hover:z-1 :style="{
+          v-bind="hoverProps" absolute w-full :style="{
             top: `${start.y}px`,
             left: `${start.x}px`,
             height: `${end.y - start.y + pointOffset * 3}px`,
             color,
+          }"
+          :class="{
+            'z-1': level == 'primary',
           }"
         >
           <div
             absolute inset-0 bg-current transition-opacity rounded-md
             :class="isHovering ? 'opacity-20' : 'opacity-0'"
           />
+          <div
+            absolute inset-0 space-y-2 pr-2 :style="{
+              paddingLeft: `${offsetLeft + pointOffset + textOffsetLeft}px`,
+              paddingTop: `${pointOffset / 2}px`,
+            }"
+          >
+            <div :class="children ? 'line-clamp-2' : 'line-clamp-1'">
+              <a v-if="url" target="_blank" :href="url" :title="name">🌐{{ name }}</a>
+              <div v-else>
+                {{ name }}
+              </div>
+            </div>
+            <div v-if="children">
+              {{ totalTime
+                ? t('timelineGraph.include', {
+                  count: children,
+                  totalTime: formatHHmmss(totalTime),
+                })
+                : t('timelineGraph.includeCount', {
+                  count: children,
+                }) }}
+            </div>
+          </div>
           <v-menu v-if="actions.remove || actions.update">
             <template #activator="{ props: menuProps }">
               <v-btn
