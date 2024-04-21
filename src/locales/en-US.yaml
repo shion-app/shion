@@ -184,6 +184,7 @@ timeline:
   reset: Reset Filter condition
 timelineGraph:
   include: '{count} items, spent {totalTime}'
+  includeCount: '{count} items'
 upload:
   webImage: Unsupported image types filtered
   webVideo: Unsupported video types filtered

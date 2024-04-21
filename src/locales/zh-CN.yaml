@@ -184,6 +184,7 @@ timeline:
   reset: 重置筛选条件
 timelineGraph:
   include: '包含{count}项，耗时{totalTime}'
+  includeCount: '包含{count}项'
 upload:
   webImage: 已过滤不支持的图片类型
   webVideo: 已过滤不支持的视频类型

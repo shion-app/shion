@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { endOfDay, isBefore, startOfDay, subMinutes } from 'date-fns'
 
-import type { SelectActivity, SelectNote } from '@/modules/database'
+import type { SelectActivity, SelectHistory, SelectNote } from '@/modules/database'
 import { db } from '@/modules/database'
 import type { TimeLineNode } from '@/interfaces'
 import type { Filter } from '@/components/timeline/types'
 
-type computedTimeLineNode = TimeLineNode & { id: string }
+type computedTimeLineNode = TimeLineNode & { compressGroupId: string }
 
 const configStore = useConfigStore()
 
@@ -15,11 +15,13 @@ const { format } = useDateFns()
 const route = useRoute()
 const { onRefresh } = usePageRefresh()
 const { success } = useNotify()
+const { pullActiveBrowsers } = useHistoryStore()
 
 const { config } = storeToRefs(configStore)
 
 const noteList = ref<Array<SelectNote>>([])
 const activityList = ref<Array<SelectActivity>>([])
+const historyList = ref<Array<SelectHistory>>([])
 const date = ref(new Date())
 const [compressed, toggleCompressed] = useToggle(true)
 
@@ -43,7 +45,7 @@ const list = computed(() => {
                 end: i.end,
                 name: i.plan.name,
                 color: i.plan.color,
-                id: `plan-${i.planId}`,
+                compressGroupId: `plan-${i.planId}`,
                 remove: async () => {
                   await db.note.remove(i.id)
                   await handleSuccess()
@@ -61,7 +63,7 @@ const list = computed(() => {
                   end: i.end,
                   name: i.label.name,
                   color: i.label.color,
-                  id: `label-${i.labelId}`,
+                  compressGroupId: `label-${i.labelId}`,
                   remove: async () => {
                     await db.note.remove(i.id)
                     await handleSuccess()
@@ -82,7 +84,7 @@ const list = computed(() => {
                 end: i.end,
                 name: i.program.name,
                 color: i.program.color,
-                id: `program-${i.programId}`,
+                compressGroupId: `program-${i.programId}`,
                 remove: async () => {
                   await db.activity.remove(i.id)
                   await handleSuccess()
@@ -97,7 +99,7 @@ const list = computed(() => {
           end: i.end,
           name: i.label.name,
           color: i.label.color,
-          id: `label-${i.labelId}`,
+          compressGroupId: `label-${i.labelId}`,
           remove: async () => {
             await db.note.remove(i.id)
             await handleSuccess()
@@ -112,14 +114,22 @@ const list = computed(() => {
           end: i.end,
           name: i.program.name,
           color: i.program.color,
-          id: `program-${i.programId}`,
+          compressGroupId: `program-${i.programId}`,
           remove: async () => {
             await db.activity.remove(i.id)
             await handleSuccess()
           },
         })),
+        ...historyList.value.map<computedTimeLineNode>(i => ({
+          start: i.lastVisited,
+          end: i.lastVisited,
+          name: `${i.title} (${new URL(i.url).hostname})`,
+          color: i.domain.color,
+          compressGroupId: `domain-${i.domainId}`,
+        })),
       ]
-  const data = list.filter(i => i.end - i.start > config.value.timelineMinMinute * 1000 * 60).sort((a, b) => a.start - b.start)
+  // i.end == i.start history两者相同
+  const data = list.filter(i => i.end == i.start || i.end - i.start > config.value.timelineMinMinute * 1000 * 60).sort((a, b) => a.start - b.start)
   return compressed.value ? compress(data) : data
 })
 
@@ -136,6 +146,11 @@ async function refresh() {
       end,
     }),
   ])
+  await pullActiveBrowsers()
+  historyList.value = deduplicate(await db.history.select({
+    start,
+    end,
+  }))
 }
 
 function compress(list: Array<computedTimeLineNode>): Array<TimeLineNode> {
@@ -144,7 +159,7 @@ function compress(list: Array<computedTimeLineNode>): Array<TimeLineNode> {
     let groupItemindex = i
     const group: Array<computedTimeLineNode> = []
     // 相同类别相距30分钟以内，合为一组
-    while (list[groupItemindex]?.id == list[i].id && (groupItemindex == i || isBefore(subMinutes(list[groupItemindex].start, config.value.timelineGroupGapMinute), list[groupItemindex - 1].end))) {
+    while (list[groupItemindex]?.compressGroupId == list[i].compressGroupId && (groupItemindex == i || isBefore(subMinutes(list[groupItemindex].start, config.value.timelineGroupGapMinute), list[groupItemindex - 1].end))) {
       group.push(list[groupItemindex])
       groupItemindex++
     }
@@ -170,6 +185,21 @@ function compress(list: Array<computedTimeLineNode>): Array<TimeLineNode> {
         })),
     }
   })
+}
+
+/**
+ * history 浏览器源数据存在访问时间相同的项
+ */
+function deduplicate(list: Array<SelectHistory>) {
+  const set = new Set()
+  const result: Array<SelectHistory> = []
+  for (const item of list) {
+    if (!set.has(item.lastVisited)) {
+      result.push(item)
+      set.add(item.lastVisited)
+    }
+  }
+  return result
 }
 
 watch(date, refresh, {

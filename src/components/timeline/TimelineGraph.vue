@@ -33,27 +33,33 @@ const props = defineProps<{
 const { t } = useI18n()
 const { format, formatHHmmss } = useDateFns()
 
-const pointDistance = 80
+const pointDistance = 60
 const pointSize = 40
 const pointOffset = pointSize / 4
 const pointRadius = pointSize / 2
 const offsetLeft = 100
-const textOffsetLeft = 100
+const textOffsetLeft = 70
 const lineWidth = 10
 const secondaryLineOffset = textOffsetLeft - lineWidth * 2
 
 const svg = ref()
 
-const timeline = computed(() => props.list.flatMap(i => [i.start, i.end]).sort())
+const timeline = computed(() => props.list.flatMap((i) => {
+  if (i.start == i.end)
+    return [i.start]
+
+  return [i.start, i.end]
+}).sort())
 
 const graph = computed(() => {
   const primary: Array<GraphItem> = []
   const secondary: Array<GraphItem> = []
   for (const item of props.list) {
-    // fix: 前节点end和后节点start相同（暂时处理）
-    const startIndex = timeline.value.lastIndexOf(item.start)
+    const startIndex = timeline.value.indexOf(item.start)
     const endIndex = timeline.value.indexOf(item.end)
-    const isSibling = endIndex - startIndex == 1
+    // history start和end相同 endIndex - startIndex == 0
+    // 其他相邻数据 endIndex - startIndex == 1
+    const isSibling = endIndex - startIndex <= 1
     const graphItem: GraphItem = {
       name: item.name,
       color: item.color,
@@ -93,16 +99,14 @@ const nodeList = computed(() => {
 })
 
 function draw() {
-  const pointCount = props.list.length * 2
+  const pointCount = timeline.value.length
   const height = (pointCount - 1) * pointDistance + pointSize
   svg.value = svg.value!.size('100%', `${height}px`)
-  drawPrimaryPath(svg.value)
+  drawPrimaryPath(height, svg.value)
   drawSecondaryPath(svg.value)
 }
 
-function drawPrimaryPath(svg: SVG.Doc) {
-  const pointCount = props.list.length * 2
-  const height = (pointCount - 1) * pointDistance + pointSize
+function drawPrimaryPath(height: number, svg: SVG.Doc) {
   svg.line(0, pointRadius, 0, height - pointRadius).stroke({ width: lineWidth }).opacity(0.6).translate(offsetLeft, 0)
 
   for (const item of graph.value.primary) {
@@ -171,10 +175,16 @@ function drawPoint(svg: SVG.Doc, item: GraphItem) {
   svg.circle(pointRadius).fill(item.color).translate(startPointTranslateX, startPointTranslateY)
   svg.text(item.name).fill(item.color).translate(startPointTranslateX + textOffsetLeft, startPointTranslateY - textYOffset)
   if (item.children) {
-    svg.text(t('timelineGraph.include', {
-      count: item.children,
-      totalTime: formatHHmmss(item.totalTime),
-    })).fill(item.color).translate(startPointTranslateX + textOffsetLeft, startPointTranslateY + 30)
+    // history 没有运行持续时间
+    const text = item.totalTime
+      ? t('timelineGraph.include', {
+        count: item.children,
+        totalTime: formatHHmmss(item.totalTime),
+      })
+      : t('timelineGraph.includeCount', {
+        count: item.children,
+      })
+    svg.text(text).fill(item.color).translate(startPointTranslateX + textOffsetLeft, startPointTranslateY + 30)
   }
   svg.circle(pointRadius).fill(item.color).translate(endPointTranslateX, endPointTranslateY)
   svg.text(format(item.end.time, 'HH:mm:ss')).translate(0, endPointTranslateY - textYOffset)
