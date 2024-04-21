@@ -205,14 +205,19 @@ watchDeep(() => props.list, () => {
             left: `${start.x}px`,
             height: `${end.y - start.y + pointOffset * 3}px`,
             color,
-          }"
-          :class="{
+          }" :class="{
             'z-1': level == 'primary',
           }"
         >
           <div
-            absolute inset-0 bg-current transition-opacity rounded-md
-            :class="isHovering ? 'opacity-20' : 'opacity-0'"
+            absolute inset-0 transition-opacity rounded-md
+            :class="[
+              (actions.remove || actions.update)
+                ? isHovering
+                  ? 'opacity-20'
+                  : 'opacity-0'
+                : '',
+              (actions.remove || actions.update) ? 'bg-current' : '']"
           />
           <div
             absolute inset-0 space-y-2 pr-2 :style="{
