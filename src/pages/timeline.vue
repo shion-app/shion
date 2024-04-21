@@ -85,10 +85,6 @@ const list = computed(() => {
                 name: i.program.name,
                 color: i.program.color,
                 compressGroupId: `program-${i.programId}`,
-                remove: async () => {
-                  await db.activity.remove(i.id)
-                  await handleSuccess()
-                },
               }))
             : []
         ),
@@ -115,10 +111,6 @@ const list = computed(() => {
           name: i.program.name,
           color: i.program.color,
           compressGroupId: `program-${i.programId}`,
-          remove: async () => {
-            await db.activity.remove(i.id)
-            await handleSuccess()
-          },
         })),
         ...historyList.value.map<computedTimeLineNode>(i => ({
           start: i.lastVisited,
