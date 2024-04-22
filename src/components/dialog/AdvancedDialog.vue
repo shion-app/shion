@@ -5,6 +5,7 @@ const props = withDefaults(defineProps<{
   visible: boolean
   title?: string
   page?: boolean
+  persistent?: boolean
 }>(), {
   page: false,
 })
@@ -50,13 +51,12 @@ onUnmounted(() => {
 
 <template>
   <v-dialog
-    v-model="visibleVModel"
-    v-bind="{
+    v-model="visibleVModel" v-bind="{
       fullscreen: props.page,
       scrim: !props.page,
-    }"
-    :transition="page ? 'dialog-slide-transition' : 'dialog-transition'"
-    class="sm:w-[600px]" :class="[props.page ? 'w-screen' : 'w-[90vw]']"
+      persistent: props.persistent,
+    }" :transition="page ? 'dialog-slide-transition' : 'dialog-transition'" class="sm:w-[600px]"
+    :class="[props.page ? 'w-screen' : 'w-[90vw]']"
   >
     <v-card v-drag="dragHandler" v-motion="'dialog'">
       <v-toolbar v-if="props.page" class="bg-transparent!">

@@ -15,7 +15,8 @@ export const useHistoryStore = defineStore('history', () => {
   const completedCount = ref(0)
   const totalCount = ref(0)
   const requesting = ref(false)
-  const progress = computed(() => `${~~(completedCount.value * 100 / totalCount.value)}%`)
+  const progress = computed(() => ~~(completedCount.value * 100 / totalCount.value))
+  const progressText = computed(() => `(${completedCount.value}/${totalCount.value}) ${progress.value}%`)
 
   const { listen } = useDatabase()
 
@@ -84,6 +85,7 @@ export const useHistoryStore = defineStore('history', () => {
     pull,
     pullActiveBrowsers,
     progress,
+    progressText,
     requesting,
   }
 })

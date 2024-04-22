@@ -300,4 +300,6 @@ history:
     confirm: 即将导入{browsers}的历史数据, 是否确认?
     success: 导入成功
     error: 导入出错
+    running: 导入数据中
+    calculating: 计算中...
   tip: 导入过的浏览器将会自动同步数据

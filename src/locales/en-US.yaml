@@ -298,4 +298,6 @@ history:
     confirm: The historical data of {browsers} will be imported soon. Are you sure?
     success: Successfully imported
     error: An error occurred during import
+    running: Importing data
+    calculating: Calculating...
   tip: The imported browser will automatically synchronize data

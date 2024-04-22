@@ -13,17 +13,17 @@ const { t } = useI18n()
 const { success, error } = useNotify()
 
 const store = useHistoryStore()
-const { config } = storeToRefs(store)
+const { config, progress, progressText } = storeToRefs(store)
 const { pull } = store
 
-const running = ref(false)
+const pullDialogVisible = ref(false)
 
 const browsers = computed(() => config.value.browsers.map(({ name, last_sync }) => ({
   name,
   url: getBrowserUrl(name),
   used: last_sync != 0,
 })))
-const isDisableImport = computed(() => running.value || browsers.value.filter(i => !i.used).length == 0)
+const isDisableImport = computed(() => browsers.value.filter(i => !i.used).length == 0)
 
 const { visible: visibleVModel } = useVModels(props)
 
@@ -47,11 +47,10 @@ async function importBrowserData() {
     content: t('history.import.confirm', {
       browsers: list,
     }),
-    options: {
-      loading: true,
-    },
     onConfirm: async () => {
-      running.value = true
+      confirm.close()
+      await nextTick()
+      pullDialogVisible.value = true
       try {
         const end = new Date().getTime()
         await pull(list, 0, end)
@@ -63,14 +62,13 @@ async function importBrowserData() {
         logError(`history import: ${e}`)
         return
       }
+      finally {
+        pullDialogVisible.value = false
+      }
       success({
         text: t('history.import.success'),
       })
     },
-    onClosed() {
-      running.value = false
-    },
-
   })
 }
 </script>
@@ -92,5 +90,21 @@ async function importBrowserData() {
         {{ $t('history.import.button') }}
       </v-btn>
     </v-card-actions>
+  </advanced-dialog>
+  <advanced-dialog v-model:visible="pullDialogVisible" :title="$t('history.import.running')" persistent>
+    <v-card-text mb-4 space-y-2>
+      <v-progress-linear color="cyan-darken-2" :model-value="progress" rounded height="10" />
+      <div flex>
+        <div
+          :class="{
+            hidden: progress != 0,
+          }"
+        >
+          {{ $t('history.import.calculating') }}
+        </div>
+        <div flex-1 />
+        <div>{{ progressText }}</div>
+      </div>
+    </v-card-text>
   </advanced-dialog>
 </template>
