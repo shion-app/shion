@@ -93,7 +93,7 @@ async function importBrowserData() {
   </advanced-dialog>
   <advanced-dialog v-model:visible="pullDialogVisible" :title="$t('history.import.running')" persistent>
     <v-card-text mb-4 space-y-2>
-      <v-progress-linear color="cyan-darken-2" :model-value="progress" rounded height="10" />
+      <v-progress-linear color="primary" :model-value="progress" rounded height="10" />
       <div flex>
         <div
           :class="{
