@@ -17,43 +17,23 @@ function navigateTimer() {
 
 <template>
   <div v-show="xs" id="status-bar-xs" px-4 flex h-full items-center relative />
-  <div v-show="sm" id="status-bar-sm" px-4 flex>
+  <div v-show="sm" px-4 flex items-center>
     <div flex-1 />
-    <tooltip-button
-      v-if="running"
-      :tooltip="$t('statusBar.timer')"
-      location="top"
-      :text="timerText"
-      variant="text"
+    <div id="status-bar-sm" flex items-center />
+    <status-bar-button
+      v-if="running" :tooltip="$t('statusBar.timer')" :text="timerText" icon="i-mdi:timer-outline"
       @click="navigateTimer"
     />
-    <v-tooltip :text="dragged ? $t('statusBar.lock') : $t('statusBar.unlock')" location="top">
-      <template #activator="{ props }">
-        <v-btn
-          v-if="isGrid"
-          v-bind="props"
-          variant="text"
-          @click="() => toggleDrag()"
-        >
-          <div :class="dragged ? 'i-mdi:lock-open-variant-outline' : 'i-mdi:lock-outline'" text-6 />
-        </v-btn>
-      </template>
-    </v-tooltip>
-    <v-tooltip :text="$t('statusBar.refresh')" location="top">
-      <template #activator="{ props }">
-        <v-btn
-          v-if="registered"
-          v-bind="props"
-          variant="text"
-          :loading="loading"
-          @click="() => refresh()"
-        >
-          <div class="i-mdi:refresh" text-6 />
-          <template #loader>
-            <div class="i-mdi:refresh animate-spin animate-duration-300" text-6 />
-          </template>
-        </v-btn>
-      </template>
-    </v-tooltip>
+    <status-bar-button
+      v-if="isGrid"
+      :tooltip="dragged ? $t('statusBar.drag.tooltip.lock') : $t('statusBar.drag.tooltip.unlock')"
+      :text="$t('statusBar.drag.text')" :icon="dragged ? 'i-mdi:lock-open-variant-outline' : 'i-mdi:lock-outline'"
+      @click="() => toggleDrag()"
+    />
+    <status-bar-button
+      v-if="registered" :tooltip="$t('statusBar.refresh.tooltip')" :text="$t('statusBar.refresh.text')"
+      :loading="loading" icon="i-mdi:refresh" loader-icon="i-mdi:refresh animate-spin animate-duration-300"
+      @click="() => refresh()"
+    />
   </div>
 </template>

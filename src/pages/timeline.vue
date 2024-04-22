@@ -225,12 +225,11 @@ onRefresh(refresh)
     </status-bar-content>
   </status-bar-teleport>
   <status-bar-teleport :xs="false">
-    <v-tooltip :text="compressed ? $t('statusBar.decompress') : $t('statusBar.compress')" location="top">
-      <template #activator="{ props }">
-        <v-btn v-bind="props" variant="text" @click="() => toggleCompressed()">
-          <div :class="compressed ? 'i-mdi:arrow-split-vertical' : 'i-mdi:arrow-collapse-horizontal'" text-6 />
-        </v-btn>
-      </template>
-    </v-tooltip>
+    <status-bar-button
+      :tooltip="compressed ? $t('statusBar.timeline.node.tooltip.decompress') : $t('statusBar.timeline.node.tooltip.compress')"
+      :text="$t('statusBar.timeline.node.text')"
+      :icon="compressed ? 'i-mdi:arrow-split-vertical' : 'i-mdi:arrow-collapse-horizontal'"
+      @click="() => toggleCompressed()"
+    />
   </status-bar-teleport>
 </template>

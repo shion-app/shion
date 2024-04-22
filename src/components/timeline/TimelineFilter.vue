@@ -148,10 +148,16 @@ init()
 <template>
   <more-menu>
     <v-list>
-      <v-list-item value="timeline.filter" :title="$t('timeline.filter')" append-icon="mdi-filter-outline" @click="openFilterForm" />
+      <v-list-item
+        value="timeline.filter" :title="$t('timeline.filter')" append-icon="mdi-filter-outline"
+        @click="openFilterForm"
+      />
     </v-list>
   </more-menu>
   <status-bar-teleport :xs="false">
-    <tooltip-button v-if="statusBarText" :tooltip="$t('statusBar.timeline')" location="top" :text="statusBarText" variant="text" @click="openFilterForm" />
+    <status-bar-button
+      v-if="statusBarText" :tooltip="$t('statusBar.timeline.filter.tooltip')" :text="statusBarText"
+      icon="i-mdi:filter-outline" @click="openFilterForm"
+    />
   </status-bar-teleport>
 </template>

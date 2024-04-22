@@ -54,6 +54,7 @@ declare module '@vue/runtime-core' {
     SettingDialog: typeof import('./components/dialog/SettingDialog.vue')['default']
     SingleCategoryBar: typeof import('./components/widget/SingleCategoryBar.vue')['default']
     StatusBar: typeof import('./components/statusBar/StatusBar.vue')['default']
+    StatusBarButton: typeof import('./components/shared/StatusBarButton.vue')['default']
     StatusBarContent: typeof import('./components/statusBar/StatusBarContent.vue')['default']
     StatusBarTeleport: typeof import('./components/statusBar/StatusBarTeleport.vue')['default']
     SyncDialog: typeof import('./components/dialog/SyncDialog.vue')['default']

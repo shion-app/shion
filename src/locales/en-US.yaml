@@ -214,16 +214,28 @@ widget:
     monthAverage: 30 days average
 statusBar:
   timer: Timing...
-  timeline: Filter Categories
-  lock: Drag lock
-  unlock: Drag unlock
-  refresh: Refresh
+  drag:
+    text: Drag
+    tooltip:
+      lock: Lock
+      unlock: Unlock
+  refresh:
+    text: Refresh
+    tooltip: Refresh page
   calendar:
     year: Year
     month: Month
     switch:
       year: Switch to year
       month: Switch to month
+  timeline:
+    node:
+      text: Data Group
+      tooltip:
+        compress: Compress
+        decompress: Decompress
+    filter:
+      tooltip: Filter Categories
 gridCard:
   move: Move
 sync:

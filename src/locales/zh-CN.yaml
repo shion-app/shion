@@ -214,18 +214,28 @@ widget:
     monthAverage: 30天平均
 statusBar:
   timer: 计时中...
-  timeline: 筛选类别
-  lock: 拖拽锁定
-  unlock: 拖拽解锁
-  refresh: 刷新
+  drag:
+    text: 拖拽
+    tooltip:
+      lock: 锁定
+      unlock: 解锁
+  refresh:
+    text: 刷新
+    tooltip: 刷新页面
   calendar:
     year: 年
     month: 月
     switch:
       year: 切换到年
       month: 切换到月
-  compress: 合并数据
-  decompress: 展开数据
+  timeline:
+    node:
+      text: 数据分组
+      tooltip:
+        compress: 合并
+        decompress: 展开
+    filter:
+      tooltip: 筛选类别
 gridCard:
   move: 移动
 sync:

@@ -8,7 +8,7 @@ const toggleIsGrid = useToggle(isGrid)
 
 layoutProvide({
   headerHeight: sm.value ? 36 : 48,
-  footerHeight: sm.value ? 36 : 54,
+  footerHeight: sm.value ? 24 : 54,
   railWidth: sm.value ? 100 : 0,
   dragged,
   toggleDrag,
