@@ -36,14 +36,6 @@
     "licenseFile": "../LICENSE"
   },
   "plugins": {
-    "fs": {
-      "scope": [
-        "$APPDATA/**"
-      ]
-    },
-    "shell": {
-      "open": true
-    },
     "updater": {
       "endpoints": [
         "https://github.com/shion-app/shion/releases/latest/download/latest.json"
