@@ -49,7 +49,7 @@ whenever(visibleVModel, init)
               }) }}
             </v-chip>
           </div>
-          <tiptap :content="content" :editable="false" content-class="h-[350px]" />
+          <tiptap :content="content" :editable="false" content-class="h-[500px]" />
         </v-window-item>
       </v-window>
     </v-card-text>

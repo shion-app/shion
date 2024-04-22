@@ -107,7 +107,7 @@ watch(visibleVModel, (v) => {
           </div>
         </div>
       </v-form>
-      <tiptap v-model:content="state.content" :editable="true" content-class="h-[300px]" />
+      <tiptap v-model:content="state.content" :editable="true" content-class="h-[350px]" />
     </v-card-text>
     <v-card-actions>
       <div flex-1 />
