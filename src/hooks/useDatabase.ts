@@ -1,4 +1,5 @@
-import type { DatabaseError } from '@/modules/database'
+import { type DatabaseError, type Models, db } from '@/modules/database'
+
 import { SqliteErrorEnum } from '@/modules/database/db'
 
 export function useDatabase() {
@@ -28,9 +29,19 @@ export function useDatabase() {
     return (error as DatabaseError).code == SqliteErrorEnum.SQLITE_CONSTRAINT_UNIQUE
   }
 
+  function listen<T extends Extract<keyof M, string>, K extends Extract<keyof M[T], string>, M = Models>(key: `${T}.${K}`, cb: Function) {
+    db.on(key, cb)
+  }
+
+  function unlisten<T extends Extract<keyof M, string>, K extends Extract<keyof M[T], string>, M = Models>(key: `${T}.${K}`) {
+    db.off(key)
+  }
+
   return {
     parseFieldsError,
     getI18nMessage,
     isUniqueError,
+    listen,
+    unlisten,
   }
 }

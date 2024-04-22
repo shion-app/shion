@@ -79,5 +79,8 @@ export type InsertLabel = Insertable<Label>
 export type InsertProgram = Insertable<Program>
 export type InsertOverview = Insertable<Overview>
 export type InsertBox = Insertable<Box>
+export type InsertHistory = Insertable<History>
 
 export type UpdateOverview = Updateable<Overview>
+
+export type { Models } from './db'

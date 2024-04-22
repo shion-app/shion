@@ -15,6 +15,8 @@ import type { QueryResult } from '@tauri-apps/plugin-sql'
 import type Database from '@tauri-apps/plugin-sql'
 import camelcaseKeys from 'camelcase-keys'
 import { camelCase } from 'camel-case'
+import type { Emitter, EventType } from 'mitt'
+import mitt from 'mitt'
 
 import type { DB } from './transform-types'
 import { Program } from './models/program'
@@ -86,9 +88,11 @@ function createKyselyDatabase<D, U extends Record<string, object>>(executor: Dat
   class KyselyDatabase<M extends Record<string, object>> {
     #executor: DatabaseExecutor<D>
     #connectionMutex = new ConnectionMutex()
+    #emitter: Emitter<Record<EventType, unknown>>
 
-    constructor(executor: DatabaseExecutor<D>, models: M) {
+    constructor(executor: DatabaseExecutor<D>, models: M, emitter: Emitter<Record<EventType, unknown>>) {
       this.#executor = executor
+      this.#emitter = emitter
       for (const modelKey in models) {
         const obj = {
           [modelKey]: new Proxy(models[modelKey], {
@@ -127,6 +131,9 @@ function createKyselyDatabase<D, U extends Record<string, object>>(executor: Dat
                   }
 
                   return this.#execute(CompiledQuery)
+                }, () => {
+                  if (typeof p == 'string')
+                    this.#emitter.emit(`${modelKey}.${p}`)
                 })
               }
               else {
@@ -139,11 +146,13 @@ function createKyselyDatabase<D, U extends Record<string, object>>(executor: Dat
       }
     }
 
-    #provideConnection(consumer: (...args) => Promise<unknown>) {
+    #provideConnection(consumer: (...args) => Promise<unknown>, cb: Function) {
       return async (...args) => {
         await this.#acquireConnection()
         try {
-          return await consumer(...args)
+          const result = await consumer(...args)
+          cb()
+          return result
         }
         finally {
           this.#releaseConnection()
@@ -173,7 +182,7 @@ function createKyselyDatabase<D, U extends Record<string, object>>(executor: Dat
     }
 
     async #executeTransaction(callback: (trx) => Promise<unknown>) {
-      const transaction = new Transaction(executor, models)
+      const transaction = new Transaction(executor, models, this.#emitter)
       try {
         await this.#executor.execute('begin')
         const result = await callback(transaction)
@@ -193,10 +202,18 @@ function createKyselyDatabase<D, U extends Record<string, object>>(executor: Dat
     load() {
       return this.#executor.load()
     }
+
+    on(key: string, cb: Function) {
+      this.#emitter.on(key, () => cb())
+    }
+
+    off(key: string) {
+      this.#emitter.off(key)
+    }
   }
 
   class Transaction extends KyselyDatabase<Record<string, object>> {}
-  return new KyselyDatabase(executor, models) as KyselyDatabase<U> & Executor<U>
+  return new KyselyDatabase(executor, models, mitt()) as KyselyDatabase<U> & Executor<U>
 }
 
 class ConnectionMutex {
@@ -260,6 +277,8 @@ const models = {
   domain,
   history,
 }
+
+export type Models = typeof models
 
 export type Executor<U = typeof models> = { [K in keyof U]: Transform<U[K]> }
 
