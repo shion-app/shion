@@ -236,6 +236,9 @@ statusBar:
         decompress: Decompress
     filter:
       tooltip: Filter Categories
+    history:
+      text: Pulling record
+      tooltip: Browser history
 gridCard:
   move: Move
 sync:

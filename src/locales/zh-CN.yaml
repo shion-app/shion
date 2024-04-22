@@ -236,6 +236,9 @@ statusBar:
         decompress: 展开
     filter:
       tooltip: 筛选类别
+    history:
+      text: 拉取记录
+      tooltip: 浏览器历史
 gridCard:
   move: 移动
 sync:

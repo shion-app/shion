@@ -15,9 +15,12 @@ const { format } = useDateFns()
 const route = useRoute()
 const { onRefresh } = usePageRefresh()
 const { success } = useNotify()
-const { pullActiveBrowsers } = useHistoryStore()
+const historyStore = useHistoryStore()
 
 const { config } = storeToRefs(configStore)
+const { requesting, progress } = storeToRefs(historyStore)
+
+const { pullActiveBrowsers } = historyStore
 
 const noteList = ref<Array<SelectNote>>([])
 const activityList = ref<Array<SelectActivity>>([])
@@ -231,5 +234,17 @@ onRefresh(refresh)
       :icon="compressed ? 'i-mdi:arrow-split-vertical' : 'i-mdi:arrow-collapse-horizontal'"
       @click="() => toggleCompressed()"
     />
+
+    <status-bar-button
+      v-if="requesting && progress > 0" :tooltip="$t('statusBar.timeline.history.tooltip')"
+      class="-order-1"
+    >
+      <div flex items-center space-x-1>
+        <div>{{ $t('statusBar.timeline.history.text') }}</div>
+        <div class="w-[60px]">
+          <v-progress-linear color="primary" :model-value="progress" rounded height="8" />
+        </div>
+      </div>
+    </status-bar-button>
   </status-bar-teleport>
 </template>
