@@ -25,6 +25,9 @@ export const useHistoryStore = defineStore('history', () => {
   })
 
   async function insert(browserList: string[], historyList: Array<History>, end: number) {
+    if (historyList.length == 0)
+      return
+
     await db.history.batchInsert(historyList)
     for (const browser of state.value.browsers) {
       if (browserList.includes(browser.name))
