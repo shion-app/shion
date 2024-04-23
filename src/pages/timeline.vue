@@ -118,7 +118,7 @@ const list = computed(() => {
         ...historyList.value.map<computedTimeLineNode>(i => ({
           start: i.lastVisited,
           end: i.lastVisited,
-          name: `${i.title} (${new URL(i.url).hostname})`,
+          name: `${i.title} (🌐${new URL(i.url).hostname})`,
           color: i.domain.color,
           compressGroupId: `domain-${i.domainId}`,
           url: i.url,

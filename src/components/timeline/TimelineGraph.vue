@@ -197,21 +197,19 @@ watchDeep(() => props.list, () => {
 <template>
   <div relative h-full overflow-y-auto>
     <div id="timeline-svg" p-4 />
-    <v-hover v-for="{ start, end, color, actions, name, children, totalTime, url, level } in nodeList" :key="start.y">
+    <v-hover v-for="{ start, end, actions, name, children, totalTime, url, level } in nodeList" :key="start.y">
       <template #default="{ isHovering, props: hoverProps }">
         <div
           v-bind="hoverProps" absolute w-full :style="{
             top: `${start.y}px`,
             left: `${start.x}px`,
             height: `${end.y - start.y + pointOffset * 3}px`,
-            color,
           }" :class="{
             'z-1': level == 'primary',
           }"
         >
           <div
-            absolute inset-0 transition-opacity rounded-md
-            :class="[
+            absolute inset-0 transition-opacity rounded-md :class="[
               (actions.remove || actions.update)
                 ? isHovering
                   ? 'opacity-20'
@@ -226,7 +224,7 @@ watchDeep(() => props.list, () => {
             }"
           >
             <div :class="children ? 'line-clamp-2' : 'line-clamp-1'">
-              <a v-if="url" target="_blank" :href="url" :title="name">🌐{{ name }}</a>
+              <a v-if="url" target="_blank" :href="url" :title="name" break-all>{{ name }}</a>
               <div v-else>
                 {{ name }}
               </div>
