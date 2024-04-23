@@ -33,7 +33,7 @@ export const useConfigStore = defineStore('config', () => {
       locale: await core.invoke('get_sys_locale'),
       checkUpdate: false,
       autostart: false,
-      timelineMinMinute: 1,
+      timelineMinMinute: 0,
       timelineGroupGapMinute: 30,
       themeColor: '#512DA8',
       tour: true,
