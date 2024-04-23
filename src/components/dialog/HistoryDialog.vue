@@ -3,6 +3,7 @@ import { error as logError } from '@tauri-apps/plugin-log'
 
 import GoogleChrome from '@/assets/browser/Google Chrome.png'
 import MicrosoftEdge from '@/assets/browser/Microsoft Edge.png'
+import Firefox from '@/assets/browser/Firefox.png'
 
 const props = defineProps<{
   visible: boolean
@@ -33,6 +34,8 @@ function getBrowserUrl(name: string) {
       return GoogleChrome
     case 'Microsoft Edge':
       return MicrosoftEdge
+    case 'Firefox':
+      return Firefox
     default:
       return ''
   }
@@ -77,7 +80,7 @@ async function importBrowserData() {
   <advanced-dialog v-model:visible="visibleVModel" :title="$t('titleBar.view.history')">
     <v-card-text class="sm:max-h-[400px]" overflow-y-auto>
       <div>{{ $t('history.tip') }}</div>
-      <div flex>
+      <div grid grid-cols-3>
         <div v-for="{ name, url, used } in browsers" :key="name" p-4 flex flex-col items-center space-y-2>
           <img :src="url" :alt="name" width="64" height="64" :class="used ? '' : 'grayscale'">
           <div>{{ name }}</div>
