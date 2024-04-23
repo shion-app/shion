@@ -303,7 +303,7 @@ tour:
     description: 当前页面的快捷操作、状态都在这里👆
   step13:
     title: 顶栏
-    description: 设置、更新, 有关应用的信息都在这里⚙️
+    description: 设置、更新、导入浏览器历史记录, 有关应用的信息都在这里⚙️
   step14:
     title: 结束
     description: 所有功能介绍完毕, 现在开始使用吧🥳

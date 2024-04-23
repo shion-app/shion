@@ -303,7 +303,7 @@ tour:
     description: The shortcut operations and status of the current page are all here 👆
   step13:
     title: Title bar
-    description: Settings, updates, and information about the application are all here ⚙️
+    description: Settings, updates, importing browser history, and information about the application are all here ⚙️
   step14:
     title: End
     description: All the functions have been introduced. Let's start using them now 🥳
