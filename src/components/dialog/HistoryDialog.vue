@@ -11,7 +11,7 @@ const props = defineProps<{
 
 const confirm = useConfirmModal()
 const { t } = useI18n()
-const { success, error } = useNotify()
+const { success, error, info } = useNotify()
 
 const store = useHistoryStore()
 const { config, progress, progressText } = storeToRefs(store)
@@ -54,9 +54,9 @@ async function importBrowserData() {
       confirm.close()
       await nextTick()
       pullDialogVisible.value = true
+      let total = 0
       try {
-        const end = new Date().getTime()
-        await pull(list, 0, end)
+        total = await pull()
       }
       catch (e) {
         error({
@@ -68,9 +68,16 @@ async function importBrowserData() {
       finally {
         pullDialogVisible.value = false
       }
-      success({
-        text: t('history.import.success'),
-      })
+      if (total) {
+        success({
+          text: t('history.import.success'),
+        })
+      }
+      else {
+        info({
+          text: t('history.import.empty'),
+        })
+      }
     },
   })
 }

@@ -1,3 +1,4 @@
+import type { Browser } from 'tauri-plugin-shion-history-api'
 import { getConfig, readHistory, setConfig } from 'tauri-plugin-shion-history-api'
 
 import type { InsertHistory } from '@/modules/database'
@@ -12,75 +13,68 @@ export const useHistoryStore = defineStore('history', () => {
     shallow: false,
   })
 
+  const { listen } = useDatabase()
+
   const completedCount = ref(0)
   const totalCount = ref(0)
   const requesting = ref(false)
   const progress = computed(() => ~~(completedCount.value * 100 / totalCount.value))
   const progressText = computed(() => `(${completedCount.value}/${totalCount.value}) ${progress.value}%`)
 
-  const { listen } = useDatabase()
-
   listen('history.insert', () => {
     completedCount.value++
   })
 
-  async function insert(browserList: string[], historyList: Array<History>, end: number) {
+  async function insert(name: string, historyList: Array<History>, end: number) {
     if (historyList.length == 0)
       return
 
     await db.history.batchInsert(historyList)
     for (const browser of state.value.browsers) {
-      if (browserList.includes(browser.name))
+      if (browser.name == name) {
         browser.last_sync = end
+        break
+      }
     }
     await setConfig(state.value)
   }
 
-  async function getHistory(list: string[], start: number, end: number) {
-    return (await readHistory(list, start, end)).map(({ title, url, last_visited }) => ({
-      title,
-      url,
-      lastVisited: last_visited,
-    }))
-  }
-
-  async function pull(browserList: string[], start: number, end: number) {
+  async function pullBrowsers(browsers: Array<Browser>) {
     completedCount.value = 0
     totalCount.value = 0
     requesting.value = true
+    const map = new Map<string, Array<History>>()
+    const end = new Date().getTime()
     try {
-      const historyList = await getHistory(browserList, start, end)
-      totalCount.value += historyList.length
-      await insert(browserList, historyList, end)
+      for (const browser of browsers) {
+        const historyList = (await readHistory(browser.name, browser.last_sync, end)).map(({ title, url, last_visited }) => ({
+          title,
+          url,
+          lastVisited: last_visited,
+        }))
+        map.set(browser.name, historyList)
+        totalCount.value += historyList.length
+      }
+      for (const browser of browsers) {
+        const historyList = map.get(browser.name)!
+        await insert(browser.name, historyList, end)
+      }
     }
     finally {
       requesting.value = false
     }
+    const len = [...map].flatMap(([_, list]) => list).length
+    return len
+  }
+
+  async function pull() {
+    const browsers = state.value.browsers.filter(i => i.last_sync == 0)
+    return await pullBrowsers(browsers)
   }
 
   async function pullActiveBrowsers() {
-    completedCount.value = 0
-    totalCount.value = 0
-    requesting.value = true
-    try {
-      const map = new Map<string, Array<History>>()
-      for (const browser of state.value.browsers) {
-        if (browser.last_sync > 0) {
-          const historyList = await getHistory([browser.name], browser.last_sync, new Date().getTime())
-          map.set(browser.name, historyList)
-          totalCount.value += historyList.length
-        }
-      }
-      for (const browser of state.value.browsers) {
-        if (browser.last_sync > 0) {
-          const historyList = map.get(browser.name)!
-          await insert([browser.name], historyList, new Date().getTime())
-        }
-      }
-    }
-    finally {
-      requesting.value = false
-    }
+    const browsers = state.value.browsers.filter(i => i.last_sync > 0)
+    await pullBrowsers(browsers)
   }
 
   return {

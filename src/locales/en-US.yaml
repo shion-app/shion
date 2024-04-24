@@ -315,4 +315,5 @@ history:
     error: An error occurred during import
     running: Importing data
     calculating: Calculating...
+    empty: No imported data
   tip: The imported browser will automatically synchronize data

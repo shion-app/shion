@@ -315,4 +315,5 @@ history:
     error: 导入出错
     running: 导入数据中
     calculating: 计算中...
+    empty: 无导入数据
   tip: 导入过的浏览器将会自动同步数据

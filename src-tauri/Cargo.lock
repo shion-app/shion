@@ -5130,7 +5130,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-shion-history"
 version = "0.0.0"
-source = "git+https://github.com/shion-app/history#d7548ada805c93dceb179d2f7b2e19750adc0826"
+source = "git+https://github.com/shion-app/history#ee4c166ae40d22424f99322b8b4be0d80bb5b97a"
 dependencies = [
  "glob",
  "home",
