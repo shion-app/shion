@@ -49,7 +49,7 @@ whenever(visibleVModel, init)
               }) }}
             </v-chip>
           </div>
-          <tiptap :content="content" :editable="false" content-class="h-[500px]" />
+          <tiptap :content="content" :editable="false" :content-class="timelineVisible ? 'h-[400px]' : 'h-[500px]'" />
         </v-window-item>
       </v-window>
     </v-card-text>
@@ -57,7 +57,11 @@ whenever(visibleVModel, init)
       <div flex justify-around w-full relative mt-2>
         <div absolute left-0 right-0 top-1.5 bg-gray h-0.5 class="z-[-1]" />
         <div v-for="m in momentList" :key="m.id" overflow-hidden flex-1>
-          <div mx-auto w-4 h-4 rounded-full cursor-pointer :class="activeMoment?.id == m.id ? 'bg-[rgb(var(--v-theme-primary))]' : 'bg-black'" @click="handleSwitch(m)" />
+          <div
+            mx-auto w-4 h-4 rounded-full cursor-pointer
+            :class="activeMoment?.id == m.id ? 'bg-[rgb(var(--v-theme-primary))]' : 'bg-black'"
+            @click="handleSwitch(m)"
+          />
           <div mt-2 truncate w-full text-center>
             {{ m.title }}
           </div>
