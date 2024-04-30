@@ -1,5 +1,5 @@
 import type { ComponentProps } from 'vue-component-type-helpers'
-import type { VColorPicker, VSelect, VTextField } from 'vuetify/components'
+import type { VAutocomplete, VColorPicker, VSelect, VTextField } from 'vuetify/components'
 import type { z as Zod, ZodObject } from 'zod'
 
 import type NestedMenu from '../shared/NestedMenu.vue'
@@ -8,6 +8,7 @@ export interface FormItemProps {
   textField: ComponentProps<typeof VTextField>
   colorPicker: ComponentProps<typeof VColorPicker>
   select: ComponentProps<typeof VSelect>
+  autocomplete: ComponentProps<typeof VAutocomplete>
   cascader: ComponentProps<typeof NestedMenu>
 }
 

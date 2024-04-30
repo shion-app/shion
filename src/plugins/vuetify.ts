@@ -36,5 +36,8 @@ export const vuetify = createVuetify({
     VSelect: {
       variant: 'solo',
     },
+    VAutocomplete: {
+      variant: 'solo',
+    },
   },
 })

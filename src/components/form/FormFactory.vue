@@ -3,6 +3,7 @@ import { useField, useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
 import { VSelect } from 'vuetify/components/VSelect'
+import { VAutocomplete } from 'vuetify/components/VAutocomplete'
 import { VTextField } from 'vuetify/components/VTextField'
 
 import ColorPicker from './ColorPicker.vue'
@@ -91,6 +92,8 @@ function component(type: keyof FormItemProps) {
       return ColorPicker
     case 'select':
       return VSelect
+    case 'autocomplete':
+      return VAutocomplete
     case 'cascader':
       return Cascader
   }

@@ -103,7 +103,7 @@ const { open, close, setModelValue } = useFormModal<Filter, {
               },
             },
             {
-              type: 'select',
+              type: 'autocomplete',
               key: 'id',
               label: t(`timeline.${model.category}`),
               visible: typeof model.category == 'string' && !!model.category,
