@@ -184,7 +184,8 @@ function handleLink(moment: Moment) {
 
 function handleCancelLink(moment: Moment) {
   confirm.require({
-    title: t('moment.link.cancelTip'),
+    title: t('modal.prompt'),
+    content: t('moment.link.cancelTip'),
     onConfirm: async () => {
       await db.moment.update(moment.id, {
         linkId: null,
@@ -204,7 +205,8 @@ function handleLinkCancel() {
 
 function handleLinkConfirm() {
   confirm.require({
-    title: t('moment.link.submitTip', {
+    title: t('modal.prompt'),
+    content: t('moment.link.submitTip', {
       count: selectedList.value.length,
     }),
     onConfirm: async () => {
