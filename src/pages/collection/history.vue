@@ -6,6 +6,9 @@ import { db } from '@/modules/database'
 
 const router = useRouter()
 const { onRefresh } = usePageRefresh()
+const historyStore = useHistoryStore()
+
+const { pullActiveBrowsers } = historyStore
 
 const list = ref<GridList<SelectDomain>>([])
 
@@ -21,6 +24,7 @@ const cardList = computed(() => list.value.map(({ id, name, itemCount, color, se
 
 async function refresh() {
   list.value = wrap(await db.domain.select())
+  await pullActiveBrowsers()
 }
 
 async function handleGridChange(items: number[]) {
@@ -57,11 +61,13 @@ refresh()
   >
     <template #default="{ componentProps }">
       <box-card
-        v-bind="componentProps"
-        :actions="[]" @update:selected="v => select(componentProps.id, v)"
+        v-bind="componentProps" :actions="[]" @update:selected="v => select(componentProps.id, v)"
         @click="navigate(componentProps.id)"
       />
     </template>
   </grid>
   <empty v-else type="history" :desc="$t('hint.history')" :width="300" />
+  <status-bar-teleport :xs="false">
+    <history-pull />
+  </status-bar-teleport>
 </template>
