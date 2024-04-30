@@ -91,6 +91,19 @@ const list = computed(() => {
               }))
             : []
         ),
+        ...(filterCategory.value == 'history'
+          ? historyList.value
+            .filter(i => typeof filterTargetId.value == 'number' ? i.domainId == filterTargetId.value : true)
+            .map<computedTimeLineNode>(i => ({
+              start: i.lastVisited,
+              end: i.lastVisited,
+              name: `${i.title} (🌐${new URL(i.url).hostname})`,
+              color: i.domain.color,
+              compressGroupId: `domain-${i.domainId}`,
+              url: i.url,
+            }))
+          : []
+        ),
       ]
     : [
         ...noteList.value.map<computedTimeLineNode>(i => ({

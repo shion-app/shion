@@ -184,6 +184,7 @@ timeline:
   plan: 计划
   label: 标签
   monitor: 监听
+  history: 历史记录
   filter: 筛选类别
   reset: 重置筛选条件
 timelineGraph:

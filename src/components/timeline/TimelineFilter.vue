@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Filter } from './types'
-import { type SelectLabel, type SelectPlan, type SelectProgram, db } from '@/modules/database'
+import { db } from '@/modules/database'
+import type { SelectDomain, SelectLabel, SelectPlan, SelectProgram } from '@/modules/database'
 
 type CategoryItemOptions = Array<{
   title: string
@@ -28,23 +29,29 @@ const categoryOptions = computed(() => [
     title: t('timeline.monitor'),
     value: 'monitor',
   },
+  {
+    title: t('timeline.history'),
+    value: 'history',
+  },
 ])
 
 async function setModalValue() {
-  const [planList, labelList, programList] = await Promise.all([
+  const [planList, labelList, programList, domainList] = await Promise.all([
     db.plan.select(),
     db.label.select(),
     db.program.select(),
+    db.domain.select(),
   ])
-  return { planList, labelList, programList }
+  return { planList, labelList, programList, domainList }
 }
 
 function getCategoryItemOptions(data: {
   planList?: Array<SelectPlan>
   labelList?: Array<SelectLabel>
   programList?: Array<SelectProgram>
+  domainList?: Array<SelectDomain>
 }, category: Filter['category']) {
-  const { planList, labelList, programList } = data
+  const { planList, labelList, programList, domainList } = data
   let list: Array<{ id: number; name: string }> = []
   switch (category) {
     case 'plan':
@@ -55,6 +62,9 @@ function getCategoryItemOptions(data: {
       break
     case 'monitor':
       list = programList || []
+      break
+    case 'history':
+      list = domainList || []
       break
   }
   return list.map(i => ({
@@ -67,6 +77,7 @@ const { open, close, setModelValue } = useFormModal<Filter, {
   planList: Array<SelectPlan>
   labelList: Array<SelectLabel>
   programList: Array<SelectProgram>
+  domainList: Array<SelectDomain>
 }>(
   (model, modal) => {
     const categoryItemOptions = getCategoryItemOptions(modal, model.category)

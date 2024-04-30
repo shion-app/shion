@@ -184,6 +184,7 @@ timeline:
   plan: Plan
   label: Label
   monitor: Monitor
+  history: History
   filter: Filter Categories
   reset: Reset Filter condition
 timelineGraph:
