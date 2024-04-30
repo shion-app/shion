@@ -10,6 +10,7 @@ nav:
   about: 关于
   moment: 瞬间
   box: 匣子
+  history: 历史记录
   collection: 数据集合
   record: 记录
   list: 列表
@@ -163,6 +164,7 @@ hint:
   plan: 制定计划, 分门别类
   timeline: 此刻无事发生
   box: 日常发生的瞬间, 存放在此处
+  history: 五花八门的浏览器记录
   moment: 每一份思考与记忆
   monitor: 点击、浏览, 然后记录
   label: 在计划之下, 细分类型

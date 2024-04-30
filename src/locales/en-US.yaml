@@ -10,6 +10,7 @@ nav:
   about: About
   moment: Moment
   box: Box
+  history: History
   collection: Collection
   record: Record
   list: List
@@ -163,6 +164,7 @@ hint:
   plan: Make a plan, classify it into categories
   timeline: Nothing happened at this moment
   box: Store daily moments here
+  history: A variety of browser records
   moment: Every thought and memory
   monitor: Click, browse, and then record
   label: Under the plan, subdivide types
