@@ -46,7 +46,17 @@ export default defineConfig({
       dirs: ['src/components', mobile ? 'src/mobile/components' : 'src/desktop/components'],
       dts: 'src/components.d.ts',
     }),
-    Pages(),
+    Pages({
+      extendRoute: (route) => {
+        if (route.path == '/collection')
+          return { ...route, redirect: '/collection/plan' }
+
+        if (route.path == '/record')
+          return { ...route, redirect: '/record/timer' }
+
+        return route
+      },
+    }),
     tsconfigPaths({
       loose: true,
     }),

@@ -10,6 +10,8 @@ nav:
   about: 关于
   moment: 瞬间
   box: 匣子
+  collection: 数据集合
+  record: 记录
   list: 列表
   account: 我的
 config:

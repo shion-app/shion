@@ -1,14 +1,15 @@
 <script setup lang="ts">
+import type { NavButton } from '../nav/types'
+
 const { xs, sm } = useTailwindBreakpoints()
 const { t } = useI18n()
 
-const menu = computed(() => [
+const menu = computed<Array<NavButton>>(() => [
   {
     icon: 'i-mdi:view-dashboard-outline',
     activeIcon: 'i-mdi:view-dashboard',
     name: t('nav.overview'),
     to: '/',
-    visible: true,
     key: 'overview',
   },
   {
@@ -16,74 +17,87 @@ const menu = computed(() => [
     activeIcon: 'i-mdi:timeline-text',
     name: t('nav.timeline'),
     to: '/timeline',
-    visible: true,
     key: 'timeline',
   },
   {
-    icon: 'i-mdi:sitemap-outline',
-    activeIcon: 'i-mdi:sitemap',
-    name: t('nav.plan'),
-    to: '/plan',
-    visible: sm.value,
-    key: 'plan',
+    icon: 'i-mdi:database-outline',
+    activeIcon: 'i-mdi:database',
+    to: '/collection',
+    name: t('nav.collection'),
+    key: 'collection',
+    children: [
+      {
+        icon: 'i-mdi:sitemap-outline',
+        activeIcon: 'i-mdi:sitemap',
+        name: t('nav.plan'),
+        to: '/collection/plan',
+        key: 'plan',
+      },
+      {
+        icon: 'i-mdi:label-variant-outline',
+        activeIcon: 'i-mdi:label-variant',
+        name: t('nav.label'),
+        to: '/collection/label',
+        key: 'label',
+      },
+      {
+        icon: 'i-mdi:eye-outline',
+        activeIcon: 'i-mdi:eye',
+        name: t('nav.monitor'),
+        to: '/collection/monitor',
+        key: 'monitor',
+      },
+      {
+        icon: 'i-mdi:cube-outline',
+        activeIcon: 'i-mdi:cube',
+        name: t('nav.box'),
+        to: '/collection/box',
+        key: 'box',
+      },
+    ],
   },
   {
-    icon: 'i-mdi:label-variant-outline',
-    activeIcon: 'i-mdi:label-variant',
-    name: t('nav.label'),
-    to: '/label',
-    visible: sm.value,
-    key: 'label',
+    icon: 'i-mdi:pencil-outline',
+    activeIcon: 'i-mdi:pencil',
+    to: '/record',
+    name: t('nav.record'),
+    key: 'record',
+    children: [
+      {
+        icon: 'i-mdi:timer-outline',
+        activeIcon: 'i-mdi:timer',
+        name: t('nav.timer'),
+        to: '/record/timer',
+        key: 'timer',
+      },
+
+      {
+        icon: 'i-mdi:lightning-bolt-outline',
+        activeIcon: 'i-mdi:lightning-bolt',
+        name: t('nav.moment'),
+        to: '/record/moment',
+        key: 'moment',
+      },
+    ],
   },
-  {
-    icon: 'i-mdi:timer-outline',
-    activeIcon: 'i-mdi:timer',
-    name: t('nav.timer'),
-    to: '/timer',
-    visible: sm.value,
-    key: 'timer',
-  },
-  {
-    icon: 'i-mdi:eye-outline',
-    activeIcon: 'i-mdi:eye',
-    name: t('nav.monitor'),
-    to: '/monitor',
-    visible: sm.value,
-    key: 'monitor',
-  },
-  {
-    icon: 'i-mdi:cube-outline',
-    activeIcon: 'i-mdi:cube',
-    name: t('nav.box'),
-    to: '/box',
-    visible: sm.value,
-    key: 'box',
-  },
-  {
-    icon: 'i-mdi:lightning-bolt-outline',
-    activeIcon: 'i-mdi:lightning-bolt',
-    name: t('nav.moment'),
-    to: '/moment',
-    visible: sm.value,
-    key: 'moment',
-  },
-  {
-    icon: 'i-mdi:view-grid-plus-outline',
-    activeIcon: 'i-mdi:view-grid-plus',
-    name: t('nav.list'),
-    to: '/list',
-    visible: xs.value,
-    key: 'list',
-  },
-  {
-    icon: 'i-mdi:account-outline',
-    activeIcon: 'i-mdi:account',
-    name: t('nav.account'),
-    to: '/account',
-    visible: isMobile,
-    key: 'account',
-  },
-].filter(({ visible }) => visible))
+])
+// {
+//   icon: 'i-mdi:view-grid-plus-outline',
+//   activeIcon: 'i-mdi:view-grid-plus',
+//   name: t('nav.list'),
+//   to: '/list',
+//   visible: xs.value,
+//   key: 'list',
+// },
+// {
+//   icon: 'i-mdi:account-outline',
+//   activeIcon: 'i-mdi:account',
+//   name: t('nav.account'),
+//   to: '/account',
+//   visible: isMobile,
+//   key: 'account',
+// },
+// ].filter(({ visible }) => visible))
 </script>
 
 <template>
