@@ -45,6 +45,7 @@ declare module '@vue/runtime-core' {
     MoreMenuButton: typeof import('./components/menu/MoreMenuButton.vue')['default']
     MoreMenuFab: typeof import('./components/menu/MoreMenuFab.vue')['default']
     NavAction: typeof import('./components/nav/NavAction.vue')['default']
+    NavDrawer: typeof import('./components/nav/NavDrawer.vue')['default']
     NestedMenu: typeof import('./components/shared/NestedMenu.vue')['default']
     NotificationContainer: typeof import('./components/notification/NotificationContainer.vue')['default']
     PageLabel: typeof import('./components/page/PageLabel.vue')['default']
