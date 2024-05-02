@@ -28,7 +28,7 @@ export class Moment extends Model<TransformMoment> {
     return query
   }
 
-  @get
+  @get()
   select(value?: { id?: number; boxId?: number; linkId?: number; start?: number; end?: number }) {
     let query = this.kysely.with('b', () => this.#box.select()).selectFrom(['moment', 'b']).where('moment.deletedAt', '=', 0)
     if (value?.boxId)

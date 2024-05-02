@@ -70,8 +70,8 @@ export class History extends Model<TransformHistory> {
     })
   }
 
-  @get
-  select(value?: { id?: number; domainId?: number; start?: number; end?: number; keyword?: string }) {
+  @get()
+  select(value?: { id?: number; domainId?: number; start?: number; end?: number; keyword?: string; page?: number; size?: number }) {
     let query = this.kysely.with('d', () => this.#domain.select()).selectFrom(['history', 'd']).where('history.deletedAt', '=', 0).where(sql`length(title)`, '!=', 0)
     if (value?.domainId)
       query = query.where('domainId', '=', value.domainId)
@@ -81,6 +81,8 @@ export class History extends Model<TransformHistory> {
       query = query.where('history.lastVisited', '<', value.end)
     if (value?.keyword)
       query = query.where('history.title', 'like', `%${value.keyword}%`).orderBy('history.lastVisited desc')
+    if (value?.page && value?.size)
+      query = query.offset((value.page - 1) * value.size).limit(value.size)
     return query.select(eb =>
       jsonBuildObject({
         id: eb.ref('d.id'),
@@ -94,5 +96,25 @@ export class History extends Model<TransformHistory> {
         itemCount: eb.ref('d.itemCount'),
       }).as('domain'),
     ).selectAll(this.table).whereRef('history.domainId', '=', 'd.id')
+  }
+
+  @get(false)
+  count(value?: { keyword?: string }) {
+    let query = this.selectByLooseType()
+    if (value?.keyword)
+      query = query.where('history.title', 'like', `%${value.keyword}%`)
+    return query.select(sql<number>`ifnull(count(*), 0)`.as('count'))
+  }
+
+  paginationSelect(value: { keyword?: string; page: number; size: number }) {
+    const { page, size } = value
+    return this.transaction().execute(async (trx) => {
+      const [{ count }] = await trx.history.count(value)
+      const list = await trx.history.select(value)
+      return {
+        list,
+        next: count > page * size,
+      }
+    })
   }
 }

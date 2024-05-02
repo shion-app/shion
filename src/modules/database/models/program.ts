@@ -19,7 +19,7 @@ export class Program extends Model<TransformProgram> {
     return this.transaction().execute(trx => Promise.all(idList.map(id => trx.program.removeRelation(id))))
   }
 
-  @get
+  @get()
   select(value?: { id?: number }) {
     const query = this.selectByLooseType(value)
     return query

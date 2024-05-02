@@ -28,7 +28,7 @@ export class Activity extends Model<TransformActivity> {
     return query
   }
 
-  @get
+  @get()
   select(value?: { id?: number; start?: number; end?: number; programId?: number }) {
     let query = this.kysely.with('p', () => this.#program.select()).selectFrom(['activity', 'p']).where('activity.deletedAt', '=', 0)
     if (value?.id)

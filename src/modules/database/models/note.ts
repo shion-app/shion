@@ -34,7 +34,7 @@ export class Note extends Model<TransformNote> {
     return query
   }
 
-  @get
+  @get()
   select(value?: { id?: number; start?: number; end?: number; planId?: number; labelId?: number }) {
     let query = this.kysely.with('l', () => this.#label.select()).with('p', () => this.#plan.select()).selectFrom(['note', 'l', 'p']).where('note.deletedAt', '=', 0)
     if (value?.id)

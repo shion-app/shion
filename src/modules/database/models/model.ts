@@ -1,4 +1,4 @@
-import type { Insertable, Kysely, Updateable } from 'kysely'
+import { type Insertable, type Kysely, type Updateable } from 'kysely'
 import type { DB } from '../transform-types'
 import type { Executor } from '../db'
 import { TransactionBuilder } from '../db'
@@ -59,8 +59,11 @@ export class Model<T extends DB[TableName]> {
   }
 }
 
-export function get(target, propertyKey, descriptor) {
-  descriptor.value.__getFlag = true
+export function get(needTransform = true) {
+  return (target, propertyKey, descriptor) => {
+    descriptor.value.__getFlag = true
+    descriptor.value.__needTransform = needTransform
+  }
 }
 
 export function set(target, propertyKey, parameterIndex) {

@@ -18,7 +18,7 @@ export class Box extends Model<TransformBox> {
     return this.transaction().execute(trx => Promise.all(idList.map(id => trx.box.removeRelation(id))))
   }
 
-  @get
+  @get()
   select(value?: { id?: number }) {
     const query = this.selectByLooseType(value)
     return query

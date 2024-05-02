@@ -26,7 +26,7 @@ export class Label extends Model<TransformLabel> {
     return query
   }
 
-  @get
+  @get()
   select(value?: { id?: number }) {
     const query = this.selectByLooseType(value)
     return query

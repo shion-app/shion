@@ -16,7 +16,7 @@ export enum WidgetType {
 export class Overview extends Model<TransformOverview> {
   table = 'overview' as const
 
-  @get
+  @get()
   select(value?: { id?: number }) {
     const query = this.selectByLooseType(value)
     return query.selectAll(this.table)

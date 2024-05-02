@@ -5,7 +5,7 @@ import { Model, get } from './model'
 export class Domain extends Model<TransformDomain> {
   table = 'domain' as const
 
-  @get
+  @get()
   select(value?: { id?: number; pattern?: string }) {
     let query = this.selectByLooseType(value)
     if (value?.pattern)

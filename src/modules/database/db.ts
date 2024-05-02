@@ -101,7 +101,7 @@ function createKyselyDatabase<D, U extends Record<string, object>>(executor: Dat
                 return this.#provideConnection((...args) => {
                   const fn = target[p]
                   const { __transform } = target.constructor as any
-                  const { __setIndex, __getFlag } = fn as any
+                  const { __setIndex, __getFlag, __needTransform } = fn as any
                   if (__transform && __transform.set && typeof __setIndex == 'number') {
                     if (Array.isArray(args[__setIndex])) {
                       for (let i = 0; i < args[__setIndex].length; i++)
@@ -119,7 +119,11 @@ function createKyselyDatabase<D, U extends Record<string, object>>(executor: Dat
                     return this.#executeTransaction(CompiledQuery as any)
 
                   if (__getFlag) {
-                    return this.#select(CompiledQuery).then((result) => {
+                    const result = this.#select(CompiledQuery)
+                    if (!__needTransform)
+                      return result
+
+                    return result.then((result) => {
                       if (__transform)
                         return (result as object[]).map(i => transformResult(target.constructor as any, i))
 
