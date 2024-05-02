@@ -6,8 +6,10 @@ const props = withDefaults(defineProps<{
   title?: string
   page?: boolean
   persistent?: boolean
+  card?: boolean
 }>(), {
   page: false,
+  card: true,
 })
 
 const { visible: visibleVModel } = useVModels(props)
@@ -58,7 +60,7 @@ onUnmounted(() => {
     }" :transition="page ? 'dialog-slide-transition' : 'dialog-transition'" class="sm:w-[600px]"
     :class="[props.page ? 'w-screen' : 'w-[90vw]']"
   >
-    <v-card v-drag="dragHandler" v-motion="'dialog'">
+    <v-card v-if="props.card" v-drag="dragHandler" v-motion="'dialog'">
       <v-toolbar v-if="props.page" class="bg-transparent!">
         <v-btn icon="mdi-arrow-left" @click="visibleVModel = false" />
         <v-toolbar-title>{{ props.title }}</v-toolbar-title>
@@ -68,5 +70,6 @@ onUnmounted(() => {
       </v-card-title>
       <slot />
     </v-card>
+    <slot v-else />
   </v-dialog>
 </template>
