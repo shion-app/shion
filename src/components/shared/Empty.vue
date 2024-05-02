@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = withDefaults(defineProps<{
-  type?: 'data' | 'overview' | 'plan' | 'timeline' | 'box' | 'moment' | 'monitor' | 'label' | 'history'
+  type?: 'data' | 'overview' | 'plan' | 'timeline' | 'box' | 'moment' | 'monitor' | 'label' | 'history' | 'search'
   desc?: string
   width?: number
 }>(), {
@@ -23,7 +23,7 @@ setTimeout(() => {
     }"
   >
     <img :width="props.width" :src="imgUrl">
-    <div text-5 mt-18 text-gray-500 tracking-wider>
+    <div text-5 mt-14 text-gray-500 tracking-wider>
       {{ $props.desc || $t('hint.empty') }}
     </div>
   </div>
