@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import WordHighlighter from 'vue-word-highlighter'
+
 const props = defineProps<{
   visible: boolean
   search: (keyword: string) => Promise<Array<SearchItem>>
@@ -45,7 +47,13 @@ async function search() {
             <v-list-subheader sticky>
               {{ formatYYYYmmdd(new Date(date)) }}
             </v-list-subheader>
-            <v-list-item v-for="{ time, content } in list" :key="time" :title="content" />
+            <v-list-item v-for="{ time, content } in list" :key="time">
+              <v-list-item-title>
+                <WordHighlighter :query="keyword">
+                  {{ content }}
+                </WordHighlighter>
+              </v-list-item-title>
+            </v-list-item>
           </template>
         </v-list>
         <empty v-else type="search" :width="250" my-8 />
