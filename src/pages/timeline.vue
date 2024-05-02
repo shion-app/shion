@@ -25,10 +25,11 @@ const noteList = ref<Array<SelectNote>>([])
 const activityList = ref<Array<SelectActivity>>([])
 const historyList = ref<Array<SelectHistory>>([])
 const date = ref(new Date())
-const [compressed, toggleCompressed] = useToggle(true)
-
 const filterCategory = ref(route.query.category as Filter['category'])
 const filterTargetId = ref<Filter['id']>(route.query.id ? Number(route.query.id) : undefined)
+
+const [compressed, toggleCompressed] = useToggle(true)
+const [searchVisible, togglesearchVisible] = useToggle()
 
 async function handleSuccess() {
   success({})
@@ -211,6 +212,15 @@ function deduplicate(list: Array<SelectHistory>) {
   return result
 }
 
+async function handleSearch(keyword: string) {
+  return deduplicate(await db.history.select({
+    keyword,
+  })).map(i => ({
+    time: i.lastVisited,
+    content: i.title,
+  }))
+}
+
 watch(date, refresh, {
   immediate: true,
 })
@@ -246,7 +256,11 @@ onRefresh(refresh)
       :icon="compressed ? 'i-mdi:arrow-split-vertical' : 'i-mdi:arrow-collapse-horizontal'"
       @click="() => toggleCompressed()"
     />
-
+    <status-bar-button
+      :tooltip="$t('statusBar.timeline.search.tooltip')" :text="$t('statusBar.timeline.search.text')"
+      icon="i-mdi:magnify" @click="() => togglesearchVisible()"
+    />
     <history-pull />
   </status-bar-teleport>
+  <search v-model:visible="searchVisible" :search="handleSearch" />
 </template>

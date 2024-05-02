@@ -53,6 +53,7 @@ declare module '@vue/runtime-core' {
     PagePlan: typeof import('./components/page/PagePlan.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Search: typeof import('./components/search/Search.vue')['default']
     SettingDialog: typeof import('./components/dialog/SettingDialog.vue')['default']
     SingleCategoryBar: typeof import('./components/widget/SingleCategoryBar.vue')['default']
     StatusBar: typeof import('./components/statusBar/StatusBar.vue')['default']

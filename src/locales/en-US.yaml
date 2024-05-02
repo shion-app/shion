@@ -239,6 +239,9 @@ statusBar:
       tooltip:
         compress: Compress
         decompress: Decompress
+    search:
+      text: Search
+      tooltip: Search browser history
     filter:
       tooltip: Filter Categories
     history:

@@ -71,7 +71,7 @@ export class History extends Model<TransformHistory> {
   }
 
   @get
-  select(value?: { id?: number; domainId?: number; start?: number; end?: number }) {
+  select(value?: { id?: number; domainId?: number; start?: number; end?: number; keyword?: string }) {
     let query = this.kysely.with('d', () => this.#domain.select()).selectFrom(['history', 'd']).where('history.deletedAt', '=', 0).where(sql`length(title)`, '!=', 0)
     if (value?.domainId)
       query = query.where('domainId', '=', value.domainId)
@@ -79,6 +79,8 @@ export class History extends Model<TransformHistory> {
       query = query.where('history.lastVisited', '>', value.start)
     if (value?.end)
       query = query.where('history.lastVisited', '<', value.end)
+    if (value?.keyword)
+      query = query.where('history.title', 'like', `%${value.keyword}%`).orderBy('history.lastVisited desc')
     return query.select(eb =>
       jsonBuildObject({
         id: eb.ref('d.id'),

@@ -239,6 +239,9 @@ statusBar:
       tooltip:
         compress: 合并
         decompress: 展开
+    search:
+      text: 搜索
+      tooltip: 搜索浏览器历史
     filter:
       tooltip: 筛选类别
     history:
