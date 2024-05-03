@@ -212,13 +212,19 @@ function deduplicate(list: Array<SelectHistory>) {
   return result
 }
 
-async function handleSearch(keyword: string) {
-  return deduplicate(await db.history.select({
+async function handleSearch(keyword: string, page: number, size: number) {
+  const { list, count } = (await db.history.paginationSelect({
     keyword,
-  })).map(i => ({
-    time: i.lastVisited,
-    content: i.title,
+    page,
+    size,
   }))
+  return {
+    list: deduplicate(list).map(i => ({
+      time: i.lastVisited,
+      content: i.title,
+    })),
+    count,
+  }
 }
 
 watch(date, refresh, {

@@ -3,7 +3,10 @@ import WordHighlighter from 'vue-word-highlighter'
 
 const props = defineProps<{
   visible: boolean
-  search: (keyword: string) => Promise<Array<SearchItem>>
+  search: (keyword: string, page: number, size: number) => Promise<{
+    list: Array<SearchItem>
+    count: number
+  }>
 }>()
 
 interface SearchItem {
@@ -16,6 +19,22 @@ const { format, formatYYYYmmdd } = useDateFns()
 
 const keyword = ref('')
 const searchResult = ref<Array<SearchItem>>([])
+const scrollContainer = ref()
+const total = ref(0)
+
+const { arrivedState } = useScroll(scrollContainer, {
+  offset: { bottom: 30 },
+  throttle: 60,
+  onScroll,
+})
+
+const { currentPage, currentPageSize, next, isLastPage } = useOffsetPagination({
+  total,
+  page: 1,
+  pageSize: 100,
+  onPageChange,
+})
+
 const data = computed(() => {
   const map = new Map<string, Array<SearchItem>>()
   for (const item of searchResult.value) {
@@ -25,13 +44,41 @@ const data = computed(() => {
   return map
 })
 
-async function search() {
-  if (!keyword.value) {
-    searchResult.value = []
+async function onPageChange({ currentPage, currentPageSize }: { currentPage: number; currentPageSize: number }) {
+  if (!keyword.value)
     return
-  }
-  searchResult.value = await props.search(keyword.value)
+
+  const { list, count } = await props.search(keyword.value, currentPage, currentPageSize)
+  total.value = count
+
+  if (currentPage == 1)
+    searchResult.value = list
+
+  else
+    searchResult.value.push(...list)
 }
+
+async function search() {
+  if (currentPage.value == 1) {
+    onPageChange({
+      currentPage: 1,
+      currentPageSize: currentPageSize.value,
+    })
+  }
+  else {
+    currentPage.value = 1
+  }
+}
+
+function onScroll() {
+  const { bottom } = arrivedState
+  if (bottom)
+    next()
+}
+
+watch(keyword, () => {
+  searchResult.value = []
+})
 </script>
 
 <template>
@@ -42,19 +89,20 @@ async function search() {
     />
     <v-card>
       <v-card-text>
-        <v-list v-if="data.size" class="sm:max-h-[450px] pt-0!" overflow-y-auto>
+        <v-list v-if="data.size" ref="scrollContainer" class="sm:max-h-[450px] pt-0!" overflow-y-auto>
           <template v-for="[date, list] in data" :key="date">
             <v-list-subheader sticky>
               {{ formatYYYYmmdd(new Date(date)) }}
             </v-list-subheader>
             <v-list-item v-for="{ time, content } in list" :key="time">
-              <v-list-item-title>
-                <WordHighlighter :query="keyword">
-                  {{ content }}
-                </WordHighlighter>
-              </v-list-item-title>
+              <WordHighlighter :query="keyword">
+                {{ content }}
+              </WordHighlighter>
             </v-list-item>
           </template>
+          <div v-if="isLastPage" text-center my-2 text-gray-500>
+            {{ $t('search.done') }}
+          </div>
         </v-list>
         <empty v-else type="search" :width="250" my-8 />
       </v-card-text>

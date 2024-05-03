@@ -114,6 +114,7 @@ export class History extends Model<TransformHistory> {
       return {
         list,
         next: count > page * size,
+        count,
       }
     })
   }

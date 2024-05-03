@@ -325,3 +325,5 @@ history:
     calculating: Calculating...
     empty: No imported data
   tip: The imported browser will automatically synchronize data
+search:
+  done: No more content

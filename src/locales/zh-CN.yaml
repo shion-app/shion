@@ -325,3 +325,5 @@ history:
     calculating: 计算中...
     empty: 无导入数据
   tip: 导入过的浏览器将会自动同步数据
+search:
+  done: 无更多内容
