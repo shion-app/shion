@@ -49,6 +49,7 @@ const detailDialog = reactive<{
   moment: {} as SelectMoment,
 })
 const activeBox = ref(Number(route.query.id as string) || 0)
+const [searchVisible, togglesearchVisible] = useToggle()
 
 const filterMomentList = computed(() => activeBox.value == 0 ? momentList.value : momentList.value.filter(i => i.boxId == activeBox.value))
 const selectedList = computed(() => filterMomentList.value.filter(i => i.selected).map(i => i.id))
@@ -113,7 +114,7 @@ function viewMomentCreate() {
   createDialogVisible.value = true
 }
 
-function viewDetail(moment: Moment) {
+function viewDetail(moment: SelectMoment) {
   Object.assign(detailDialog, {
     visible: true,
     moment,
@@ -225,6 +226,38 @@ function handleLinkConfirm() {
   })
 }
 
+function extractContent(html: string) {
+  return new DOMParser()
+    .parseFromString(html, 'text/html')
+    .documentElement.textContent || ''
+}
+
+function findContiguousText(text: string, keyword: string, len: number) {
+  const index = text.indexOf(keyword)
+  let start = index - ~~(len / 2)
+  start = start < 0 ? 0 : start
+  return text.slice(start, start + len)
+}
+
+async function handleSearch(keyword: string, page: number, size: number) {
+  const { list, count } = (await db.moment.paginationSelect({
+    keyword,
+    page,
+    size,
+  }))
+  return {
+    list: (list).map((i) => {
+      const extracted = extractContent(i.content)
+      return {
+        time: i.createdAt,
+        content: i.title.includes(keyword) ? i.title : findContiguousText(extracted, keyword, 30),
+        navigate: () => viewDetail(i),
+      }
+    }),
+    count,
+  }
+}
+
 refresh()
 </script>
 
@@ -309,4 +342,11 @@ refresh()
   <moment-edit v-model:visible="createDialogVisible" @submit="handleCreate" />
   <moment-edit v-model:visible="updateDialog.visible" v-bind="{ title: updateDialog.title, content: updateDialog.content, boxId: updateDialog.boxId }" @submit="handleUpdate" />
   <moment-detail v-model:visible="detailDialog.visible" :moment="detailDialog.moment" :editable="false" />
+  <search v-model:visible="searchVisible" :search="handleSearch" />
+  <status-bar-teleport :xs="false">
+    <status-bar-button
+      :tooltip="$t('statusBar.moment.search.tooltip')" :text="$t('statusBar.moment.search.text')"
+      icon="i-mdi:magnify" @click="() => togglesearchVisible()"
+    />
+  </status-bar-teleport>
 </template>

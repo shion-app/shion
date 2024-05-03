@@ -247,6 +247,10 @@ statusBar:
     history:
       text: 拉取记录
       tooltip: 浏览器历史
+  moment:
+    search:
+      text: 搜索
+      tooltip: 搜索
 gridCard:
   move: 移动
 sync:

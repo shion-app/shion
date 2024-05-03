@@ -247,6 +247,10 @@ statusBar:
     history:
       text: Pulling record
       tooltip: Browser history
+  moment:
+    search:
+      text: Search
+      tooltip: Search
 gridCard:
   move: Move
 sync:
