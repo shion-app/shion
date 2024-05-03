@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { endOfDay, isBefore, startOfDay, subMinutes } from 'date-fns'
+import { open } from '@tauri-apps/plugin-shell'
 
 import type { SelectActivity, SelectHistory, SelectNote } from '@/modules/database'
 import { db } from '@/modules/database'
@@ -222,6 +223,7 @@ async function handleSearch(keyword: string, page: number, size: number) {
     list: deduplicate(list).map(i => ({
       time: i.lastVisited,
       content: i.title,
+      navigate: () => open(i.url),
     })),
     count,
   }

@@ -12,6 +12,7 @@ const props = defineProps<{
 interface SearchItem {
   time: number
   content: string
+  navigate: Function
 }
 
 const { visible: visibleVModel } = useVModels(props)
@@ -94,7 +95,7 @@ watch(keyword, () => {
             <v-list-subheader sticky>
               {{ formatYYYYmmdd(new Date(date)) }}
             </v-list-subheader>
-            <v-list-item v-for="{ time, content } in list" :key="time">
+            <v-list-item v-for="{ time, content, navigate } in list" :key="time" :value="time" @click="() => navigate()">
               <WordHighlighter :query="keyword">
                 {{ content }}
               </WordHighlighter>
