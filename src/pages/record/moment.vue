@@ -265,13 +265,8 @@ refresh()
   <div flex flex-col h-full>
     <div space-x-2 mx-4 my-2>
       <v-chip
-        v-for="{ id, name, color } in boxtList"
-        :key="id"
-        label
-        :color="color"
-        :variant="activeBox == id ? 'tonal' : 'outlined'"
-        link
-        @click="switchBox(id)"
+        v-for="{ id, name, color } in boxtList" :key="id" label :color="color"
+        :variant="activeBox == id ? 'tonal' : 'outlined'" link @click="switchBox(id)"
       >
         {{ name }}
       </v-chip>
@@ -279,9 +274,8 @@ refresh()
     <div flex-1 overflow-y-auto>
       <template v-if="filterMomentList.length">
         <grid-card
-          v-for="moment in filterMomentList" :key="moment.id" v-model:selected="moment.selected" :title="moment.title"
-          :subtitle="formatYYYYmmdd(moment.createdAt, true)" mx-4 mb-6
-          :disabled="moment.disabled"
+          v-for="moment in filterMomentList" :key="moment.id" v-model:selected="moment.selected"
+          :title="moment.title" :subtitle="formatYYYYmmdd(moment.createdAt, true)" mx-4 mb-6 :disabled="moment.disabled"
           @click="viewDetail(moment)"
         >
           <v-card-text flex space-x-4>
@@ -299,33 +293,28 @@ refresh()
               value="moment.edit" :title="$t('moment.edit')" append-icon="mdi-pencil-outline"
               @click="update(moment)"
             />
-            <v-list-item v-if="Number(moment.linkId)" value="moment.link.remove" :title="$t('moment.link.remove')" base-color="red" append-icon="mdi-link-variant-off" @click="handleCancelLink(moment)" />
-            <v-list-item value="moment.link.submit" :title="$t('moment.link.submit')" append-icon="mdi-link-variant" @click="handleLink(moment)" />
+            <v-list-item
+              v-if="Number(moment.linkId)" value="moment.link.remove" :title="$t('moment.link.remove')"
+              base-color="red" append-icon="mdi-link-variant-off" @click="handleCancelLink(moment)"
+            />
+            <v-list-item
+              value="moment.link.submit" :title="$t('moment.link.submit')" append-icon="mdi-link-variant"
+              @click="handleLink(moment)"
+            />
           </template>
         </grid-card>
       </template>
       <empty v-else type="moment" :desc="$t('hint.moment')" :width="250" />
     </div>
   </div>
-  <v-snackbar
-    :model-value="linkActive"
-    timeout="-1"
-  >
+  <v-snackbar :model-value="linkActive" timeout="-1">
     {{ $t('moment.link.snackbar') }}
 
     <template #actions>
-      <v-btn
-        color="red"
-        variant="text"
-        @click="handleLinkCancel"
-      >
+      <v-btn color="red" variant="text" @click="handleLinkCancel">
         {{ $t('modal.cancel') }}
       </v-btn>
-      <v-btn
-        color="primary"
-        variant="text"
-        @click="handleLinkConfirm"
-      >
+      <v-btn color="primary" variant="text" @click="handleLinkConfirm">
         {{ $t('modal.submit') }}
       </v-btn>
     </template>
@@ -336,11 +325,18 @@ refresh()
         v-if="selectedList.length" value="button.remove" :title="$t('button.remove')"
         append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal"
       />
-      <v-list-item value="moment.create" :title="$t('moment.create')" append-icon="mdi-plus" @click="viewMomentCreate" />
+      <v-list-item
+        value="moment.create" :title="$t('moment.create')" append-icon="mdi-plus"
+        @click="viewMomentCreate"
+      />
     </v-list>
   </more-menu>
   <moment-edit v-model:visible="createDialogVisible" @submit="handleCreate" />
-  <moment-edit v-model:visible="updateDialog.visible" v-bind="{ title: updateDialog.title, content: updateDialog.content, boxId: updateDialog.boxId }" @submit="handleUpdate" />
+  <moment-edit
+    v-model:visible="updateDialog.visible"
+    v-bind="{ title: updateDialog.title, content: updateDialog.content, boxId: updateDialog.boxId }"
+    @submit="handleUpdate"
+  />
   <moment-detail v-model:visible="detailDialog.visible" :moment="detailDialog.moment" :editable="false" />
   <search v-model:visible="searchVisible" :search="handleSearch" />
   <status-bar-teleport :xs="false">
