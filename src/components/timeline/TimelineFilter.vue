@@ -109,6 +109,7 @@ const { open, close, setModelValue } = useFormModal<Filter, {
               visible: typeof model.category == 'string' && !!model.category,
               props: {
                 items: categoryItemOptions,
+                autoSelectFirst: 'exact',
               },
             },
           ],

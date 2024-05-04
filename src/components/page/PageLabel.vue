@@ -47,7 +47,7 @@ const { open, close, setModelValue } = useFormModal<LabelForm>(
             label: t('label.name'),
           },
           {
-            type: 'select',
+            type: 'autocomplete',
             key: 'planId',
             label: t('label.plan'),
             props: {
@@ -55,6 +55,7 @@ const { open, close, setModelValue } = useFormModal<LabelForm>(
                 title: name,
                 value: id,
               })),
+              autoSelectFirst: 'exact',
             },
           },
           {

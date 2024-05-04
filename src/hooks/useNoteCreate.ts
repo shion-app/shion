@@ -20,7 +20,7 @@ export function useNoteCreate() {
           form: {
             fields: [
               {
-                type: 'select',
+                type: 'autocomplete',
                 key: 'planId',
                 label: t('note.fill.plan'),
                 props: {
@@ -33,10 +33,11 @@ export function useNoteCreate() {
                       labelId: undefined,
                     })
                   },
+                  'autoSelectFirst': 'exact',
                 },
               },
               {
-                type: 'select',
+                type: 'autocomplete',
                 key: 'labelId',
                 label: t('note.fill.label'),
                 props: {
@@ -44,6 +45,7 @@ export function useNoteCreate() {
                     title: name,
                     value: id,
                   })),
+                  autoSelectFirst: 'exact',
                 },
               },
             ],

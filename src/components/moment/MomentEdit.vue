@@ -94,8 +94,9 @@ watch(visibleVModel, (v) => {
             }]"
           />
           <div class="w-[180px]">
-            <v-select
+            <v-autocomplete
               v-model="state.boxId"
+              auto-select-first="exact"
               density="comfortable"
               :items="boxOptions"
               :label="$t('moment.boxLabel')"
