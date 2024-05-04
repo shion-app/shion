@@ -95,13 +95,16 @@ watch(keyword, () => {
             <v-list-subheader sticky>
               {{ formatYYYYmmdd(new Date(date)) }}
             </v-list-subheader>
-            <v-list-item v-for="{ time, content, navigate } in list" :key="time" :value="time" @click="() => navigate()">
-              <WordHighlighter :query="keyword">
-                {{ content }}
-              </WordHighlighter>
-            </v-list-item>
+            <template v-for="{ time, content, navigate } in list" :key="time">
+              <v-list-item :value="time" @click="() => navigate()">
+                <WordHighlighter :query="keyword">
+                  {{ content }}
+                </WordHighlighter>
+              </v-list-item>
+              <v-divider my-2 />
+            </template>
           </template>
-          <div v-if="isLastPage" text-center my-2 text-gray-500>
+          <div v-if="isLastPage" text-center py-2 text-gray-500>
             {{ $t('search.done') }}
           </div>
         </v-list>
