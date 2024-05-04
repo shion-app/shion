@@ -54,13 +54,13 @@ const menu = computed<Array<NavButton>>(() => [
         to: '/collection/box',
         key: 'box',
       },
-      {
-        icon: 'i-mdi:cloud-outline',
-        activeIcon: 'i-mdi:cloud',
-        name: t('nav.history'),
-        to: '/collection/history',
-        key: 'history',
-      },
+      // {
+      //   icon: 'i-mdi:cloud-outline',
+      //   activeIcon: 'i-mdi:cloud',
+      //   name: t('nav.history'),
+      //   to: '/collection/history',
+      //   key: 'history',
+      // },
     ],
   },
   {
