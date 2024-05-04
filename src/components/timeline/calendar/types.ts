@@ -3,7 +3,9 @@ export interface CalendarMonthType {
   month: number
 }
 
-export type ActiveStatusMap = Map<string, {
+export interface StatusAdapter {
   color: string
-  time: number
-}>
+  text: string
+}
+
+export type ActiveStatusMap = Map<string, StatusAdapter>

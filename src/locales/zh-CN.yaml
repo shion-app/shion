@@ -79,6 +79,8 @@ calendar:
   year: 年
   month: 月
   switch: 切换到{mode}
+  tooltip:
+    count: '{count}次'
 tray:
   quit: 退出
 updater:

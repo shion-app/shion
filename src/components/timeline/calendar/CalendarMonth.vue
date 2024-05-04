@@ -124,7 +124,10 @@ watchDeep(() => props.weekdays, generate, {
             @click="selectDate(item)"
           >
             {{ item.date.getDate() }}
-            <v-tooltip v-if="isVisible && get(item.date)?.time" location="bottom" :text="formatHHmmss(get(item.date)?.time || 0)" activator="parent" />
+            <v-tooltip
+              v-if="isVisible && get(item.date)?.text" location="bottom" :text="get(item.date)?.text"
+              activator="parent"
+            />
           </v-btn>
         </UseElementVisibility>
       </div>

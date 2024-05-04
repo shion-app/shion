@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { startOfMonth } from 'date-fns'
-import colors from 'vuetify/util/colors'
 
 import type { Filter } from '../types'
 import type { ActiveStatusMap, CalendarMonthType } from './types'
-import type { SelectActivity, SelectNote } from '@/modules/database'
-import { db } from '@/modules/database'
+import { useAdapter } from './useAdapter'
 
 const props = defineProps<{
   date: Date
@@ -14,8 +12,7 @@ const props = defineProps<{
 }>()
 
 const { date: dateVModel } = useVModels(props)
-
-const { format } = useDateFns()
+const { historyAdapter, labelAdapter, monitorAdapter, planAdapter } = useAdapter()
 
 let generatedYear = new Date().getFullYear()
 
@@ -35,78 +32,20 @@ const activeStatusMap = computedAsync<ActiveStatusMap>(async () => {
   const start = startDate.getTime()
   const end = endDate.getTime()
 
-  let noteSelect = {}
-  let activitySelect = {}
-  if (props.category == 'plan') {
-    noteSelect = {
-      start,
-      end,
-      planId: props.id,
-    }
-  }
-  if (props.category == 'label') {
-    noteSelect = {
-      start,
-      end,
-      labelId: props.id,
-    }
-  }
-  if (props.category == 'monitor') {
-    activitySelect = {
-      start,
-      end,
-      programId: props.id,
-    }
-  }
+  if (props.category == 'plan')
+    return await planAdapter(start, end, props.id)
 
-  let noteList: Array<SelectNote> = []
-  let activityList: Array<SelectActivity> = []
+  if (props.category == 'label')
+    return await labelAdapter(start, end, props.id)
 
-  if (Object.keys(noteSelect).length > 0)
-    noteList = await db.note.select(noteSelect)
+  if (props.category == 'monitor')
+    return await monitorAdapter(start, end, props.id)
 
-  if (Object.keys(activitySelect).length > 0)
-    activityList = await db.activity.select(activitySelect)
+  if (props.category == 'history')
+    return await historyAdapter(start, end, props.id)
 
-  const range = [startDate, endDate] as [Date, Date]
-  const data = [
-    ...splitByDay(noteList, range).map(i => ({
-      start: i.start,
-      end: i.end,
-    })),
-    ...splitByDay(activityList, range).map(i => ({
-      start: i.start,
-      end: i.end,
-    })),
-  ]
-  const timeMap = new Map<string, number>()
-  for (const { start, end } of data) {
-    const date = format(start, 'yyyy-MM-dd')
-    timeMap.set(date, (timeMap.get(date) || 0) + end - start)
-  }
-  const map: ActiveStatusMap = new Map()
-  for (const key of timeMap.keys()) {
-    const value = timeMap.get(key)!
-    map.set(key, {
-      time: value,
-      color: getColorByTime(value),
-    })
-  }
-  return map
+  return new Map()
 })
-
-function getColorByTime(time: number) {
-  const { hour } = extractTime(time).raw
-  if (hour < 1)
-    return colors.green.lighten5
-  if (hour < 2)
-    return colors.green.lighten3
-  if (hour < 3)
-    return colors.green.lighten1
-  if (hour < 5)
-    return colors.green.darken2
-  return colors.green.darken4
-}
 
 const { arrivedState } = useScroll(scrollContainer, {
   offset: { top: 30 },

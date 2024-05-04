@@ -79,6 +79,8 @@ calendar:
   year: year
   month: month
   switch: Switch to {mode}
+  tooltip:
+    count: '{count} visits'
 tray:
   quit: Quit
 updater:
