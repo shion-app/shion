@@ -290,35 +290,41 @@ tour:
     description: The operation buttons for each page are hidden here 👀
   step4:
     title: Home page
-    description: Creating a chart here can provide a visual understanding of the data, but it's not the time yet. Let's first learn about manual timing and automatic timing 📊
+    description: Creating a chart here can provide a visual understanding of the data, but it's not the time yet 📊
   step5:
     title: Timeline
-    description: Collaborate with the calendar, filter categories to view daily records 📅
+    description: Collaborate with the calendar, filter categories to view daily records and active status 📅
   step6:
-    title: Manual Timing
-    description: First, create a plan here, which is the maximum set for manual timing
+    title: Collection
+    description: Before collecting data, create the corresponding collection first
   step7:
     title: Manual Timing
-    description: Then, create a new label, this is a small collection in the plan 🔖
+    description: How about creating a plan, which can be a relatively broad content, such as "reading"?
   step8:
     title: Manual Timing
-    description: Timing here ⏱️
+    description: Create the label again, and your plan will become more specific. At this point, a specific book title is a good choice 🔖
   step9:
     title: Automatic Timing
-    description: Add the software that needs to be monitored, and shion will capture the software you have already opened 💻
+    description: Only the software added here will be recorded 💻
   step10:
     title: Diary
     description: Box for storing diary 📦
   step11:
+    title: Record
+    description: Enter data here
+  step12:
+    title: Manual Timing
+    description: Select a label and start timing ⏱️
+  step13:
     title: Diary
     description: Use text, pictures, and videos to record the moments of life 📷
-  step12:
+  step14:
     title: Status bar
     description: The shortcut operations and status of the current page are all here 👆
-  step13:
+  step15:
     title: Title bar
     description: Settings, updates, importing browser history, and information about the application are all here ⚙️
-  step14:
+  step16:
     title: End
     description: All the functions have been introduced. Let's start using them now 🥳
 history:

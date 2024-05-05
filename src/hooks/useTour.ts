@@ -72,10 +72,17 @@ export function useTour() {
           },
         },
         {
-          element: '#nav-plan',
+          element: '#nav-collection',
           popover: {
             title: t('tour.step6.title'),
             description: t('tour.step6.description'),
+          },
+        },
+        {
+          element: '#nav-plan',
+          popover: {
+            title: t('tour.step7.title'),
+            description: t('tour.step7.description'),
             onNextClick: async () => {
               await router.push('/collection/label')
               tour.moveNext()
@@ -90,8 +97,8 @@ export function useTour() {
         {
           element: '#nav-label',
           popover: {
-            title: t('tour.step7.title'),
-            description: t('tour.step7.description'),
+            title: t('tour.step8.title'),
+            description: t('tour.step8.description'),
             onNextClick: async () => {
               await router.push('/collection/monitor')
               tour.moveNext()
@@ -134,10 +141,17 @@ export function useTour() {
           },
         },
         {
+          element: '#nav-record',
+          popover: {
+            title: t('tour.step11.title'),
+            description: t('tour.step11.description'),
+          },
+        },
+        {
           element: '#nav-timer',
           popover: {
-            title: t('tour.step8.title'),
-            description: t('tour.step8.description'),
+            title: t('tour.step12.title'),
+            description: t('tour.step12.description'),
             onNextClick: async () => {
               await router.push('/record/moment')
               tour.moveNext()
@@ -153,8 +167,8 @@ export function useTour() {
         {
           element: '#nav-moment',
           popover: {
-            title: t('tour.step11.title'),
-            description: t('tour.step11.description'),
+            title: t('tour.step13.title'),
+            description: t('tour.step13.description'),
             onNextClick: async () => {
               toggleExpanded()
               await router.push('/')
@@ -169,8 +183,8 @@ export function useTour() {
         {
           element: '#footer',
           popover: {
-            title: t('tour.step12.title'),
-            description: t('tour.step12.description'),
+            title: t('tour.step14.title'),
+            description: t('tour.step14.description'),
             align: 'end',
             onPrevClick: async () => {
               toggleExpanded()
@@ -183,14 +197,14 @@ export function useTour() {
         {
           element: '#header',
           popover: {
-            title: t('tour.step13.title'),
-            description: t('tour.step13.description'),
+            title: t('tour.step15.title'),
+            description: t('tour.step15.description'),
           },
         },
         {
           popover: {
-            title: t('tour.step14.title'),
-            description: t('tour.step14.description'),
+            title: t('tour.step16.title'),
+            description: t('tour.step16.description'),
           },
         },
       ],

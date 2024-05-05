@@ -290,35 +290,41 @@ tour:
     description: 每个页面的操作按钮都藏在了这里👀
   step4:
     title: 首页
-    description: 在这里创建图表, 可以直观了解数据, 但现在还不是时候, 先了解一下手动计时与自动计时吧📊
+    description: 在这里创建图表, 可以直观了解数据, 但现在还不是时候📊
   step5:
     title: 时间线
-    description: 配合日历, 筛选类别查看每天的记录📅
+    description: 配合日历, 筛选类别, 查看每天的记录和活跃度📅
   step6:
-    title: 手动计时
-    description: 先在这里创建计划, 这是手动计时的一个最大集合
+    title: 数据集合
+    description: 在收集数据前, 先创建对应的集合
   step7:
     title: 手动计时
-    description: 再创建标签, 这是计划中的一个小集合🔖
+    description: 创建计划, 它可以是比较宽泛的内容, 比如说"读书"如何?
   step8:
     title: 手动计时
-    description: 在这里计时⏱️
+    description: 再创建标签, 这时你的计划变得更加具体。此时具体的书名是个好的选择🔖
   step9:
     title: 自动计时
-    description: 添加需要监听的软件, shion将会捕捉到你已经打开的软件💻
+    description: 只有在这添加过的软件, 才会被记录💻
   step10:
     title: 日记
     description: 存放日记的匣子📦
   step11:
+    title: 记录
+    description: 在这里录入数据
+  step12:
+    title: 手动计时
+    description: 选择某个标签, 然后计时开始⏱️
+  step13:
     title: 日记
     description: 用文字、图片、视频, 记录下生活的瞬间📷
-  step12:
+  step14:
     title: 状态栏
     description: 当前页面的快捷操作、状态都在这里👆
-  step13:
+  step15:
     title: 顶栏
     description: 设置、更新、导入浏览器历史记录, 有关应用的信息都在这里⚙️
-  step14:
+  step16:
     title: 结束
     description: 所有功能介绍完毕, 现在开始使用吧🥳
 history:
