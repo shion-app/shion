@@ -1,11 +1,13 @@
 import { driver } from 'driver.js'
 
 export function useTour() {
-  const store = useConfigStore()
+  const configStore = useConfigStore()
+  const navStore = useNavStore()
   const { t } = useI18n()
   const router = useRouter()
 
-  const { config, ready } = storeToRefs(store)
+  const { config, ready } = storeToRefs(configStore)
+  const { openSubmenu, toggleExpanded } = navStore
 
   function start() {
     const tour = driver({
@@ -42,7 +44,7 @@ export function useTour() {
           },
         },
         {
-          element: '#overview',
+          element: '#nav-overview',
           popover: {
             title: t('tour.step4.title'),
             description: t('tour.step4.description'),
@@ -53,12 +55,14 @@ export function useTour() {
           },
         },
         {
-          element: '#timeline',
+          element: '#nav-timeline',
           popover: {
             title: t('tour.step5.title'),
             description: t('tour.step5.description'),
             onNextClick: async () => {
-              await router.push('/plan')
+              toggleExpanded()
+              openSubmenu('collection')
+              await router.push('/collection/plan')
               tour.moveNext()
             },
             onPrevClick: async () => {
@@ -68,91 +72,96 @@ export function useTour() {
           },
         },
         {
-          element: '#plan',
+          element: '#nav-plan',
           popover: {
             title: t('tour.step6.title'),
             description: t('tour.step6.description'),
             onNextClick: async () => {
-              await router.push('/label')
+              await router.push('/collection/label')
               tour.moveNext()
             },
             onPrevClick: async () => {
+              toggleExpanded()
               await router.push('/timeline')
               tour.movePrevious()
             },
           },
         },
         {
-          element: '#label',
+          element: '#nav-label',
           popover: {
             title: t('tour.step7.title'),
             description: t('tour.step7.description'),
             onNextClick: async () => {
-              await router.push('/timer')
+              await router.push('/collection/monitor')
               tour.moveNext()
             },
             onPrevClick: async () => {
-              await router.push('/plan')
+              await router.push('/collection/plan')
               tour.movePrevious()
             },
           },
         },
         {
-          element: '#timer',
-          popover: {
-            title: t('tour.step8.title'),
-            description: t('tour.step8.description'),
-            onNextClick: async () => {
-              await router.push('/monitor')
-              tour.moveNext()
-            },
-            onPrevClick: async () => {
-              await router.push('/label')
-              tour.movePrevious()
-            },
-          },
-        },
-        {
-          element: '#monitor',
+          element: '#nav-monitor',
           popover: {
             title: t('tour.step9.title'),
             description: t('tour.step9.description'),
             onNextClick: async () => {
-              await router.push('/box')
+              await router.push('/collection/box')
               tour.moveNext()
             },
             onPrevClick: async () => {
-              await router.push('/timer')
+              await router.push('/collection/label')
               tour.movePrevious()
             },
           },
         },
         {
-          element: '#box',
+          element: '#nav-box',
           popover: {
             title: t('tour.step10.title'),
             description: t('tour.step10.description'),
             onNextClick: async () => {
-              await router.push('/moment')
+              openSubmenu('record')
+              await router.push('/record/timer')
               tour.moveNext()
             },
             onPrevClick: async () => {
-              await router.push('/monitor')
+              await router.push('/collection/monitor')
               tour.movePrevious()
             },
           },
         },
         {
-          element: '#moment',
+          element: '#nav-timer',
+          popover: {
+            title: t('tour.step8.title'),
+            description: t('tour.step8.description'),
+            onNextClick: async () => {
+              await router.push('/record/moment')
+              tour.moveNext()
+            },
+            onPrevClick: async () => {
+              openSubmenu('collection')
+              await router.push('/collection/box')
+              tour.movePrevious()
+            },
+          },
+        },
+
+        {
+          element: '#nav-moment',
           popover: {
             title: t('tour.step11.title'),
             description: t('tour.step11.description'),
             onNextClick: async () => {
+              toggleExpanded()
               await router.push('/')
               tour.moveNext()
             },
             onPrevClick: async () => {
-              await router.push('/box')
+              await router.push('/record/timer')
               tour.movePrevious()
             },
           },
@@ -164,7 +173,9 @@ export function useTour() {
             description: t('tour.step12.description'),
             align: 'end',
             onPrevClick: async () => {
-              await router.push('/moment')
+              toggleExpanded()
+              openSubmenu('record')
+              await router.push('/record/moment')
               tour.movePrevious()
             },
           },

@@ -1,30 +1,25 @@
 <script setup lang="ts">
-import type { NavButton } from './types'
-
 withDefaults(defineProps<{
   vertical?: boolean
   navText?: boolean
-  menu: NavButton[]
 }>(), {
   vertical: false,
   navText: false,
 })
 
 const router = useRouter()
+const navStore = useNavStore()
 
-const expanded = ref(false)
-const submenu = ref<Array<NavButton>>([])
+const { expanded, submenu, menu } = storeToRefs(navStore)
+
+const { openSubmenu } = navStore
 
 function goBack() {
   router.back()
 }
 
-function expandMenu(menu?: Array<NavButton>) {
-  if (!menu)
-    return
-
-  expanded.value = true
-  submenu.value = menu
+function id(key: string) {
+  return `nav-${key}`
 }
 </script>
 
@@ -40,8 +35,8 @@ function expandMenu(menu?: Array<NavButton>) {
       </v-btn>
       <div :class="$props.vertical ? ['space-y-6'] : ['flex', 'flex-1', 'justify-around', 'h-full', 'items-center']">
         <router-link
-          v-for="{ icon, activeIcon, name, to, key, children } in $props.menu" :id="key" :key="key"
-          v-slot="{ isActive }" :to="to" block w-20 text-center @mouseenter="expandMenu(children)"
+          v-for="{ icon, activeIcon, name, to, key } in menu" :id="id(key)" :key="key"
+          v-slot="{ isActive }" :to="to" block w-20 text-center @mouseenter="openSubmenu(key)"
         >
           <v-btn variant="text" rounded :color="isActive ? 'primary' : ''" size="small">
             <div :class="[isActive ? activeIcon : icon]" text-7 />
@@ -62,7 +57,7 @@ function expandMenu(menu?: Array<NavButton>) {
     <template #menu>
       <v-list>
         <router-link
-          v-for="{ icon, activeIcon, name, to, key } in submenu" :id="key" :key="key" v-slot="{ isActive }"
+          v-for="{ icon, activeIcon, name, to, key } in submenu" :id="id(key)" :key="key" v-slot="{ isActive }"
           :to="to"
         >
           <v-list-item :value="key" :title="name" color="primary" :active="isActive">
