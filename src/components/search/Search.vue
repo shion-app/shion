@@ -80,6 +80,11 @@ function onScroll() {
 watch(keyword, () => {
   searchResult.value = []
 })
+
+watch(visibleVModel, (v) => {
+  if (!v)
+    keyword.value = ''
+})
 </script>
 
 <template>
