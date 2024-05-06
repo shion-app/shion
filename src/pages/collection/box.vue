@@ -143,7 +143,7 @@ async function handleGridChange(items: number[]) {
 
 function navigate(id: number) {
   router.push({
-    path: '/moment',
+    path: '/record/moment',
     query: {
       id,
     },
