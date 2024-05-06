@@ -307,7 +307,7 @@ refresh()
       <empty v-else type="moment" :desc="$t('hint.moment')" :width="250" />
     </div>
   </div>
-  <v-snackbar :model-value="linkActive" timeout="-1">
+  <v-snackbar :model-value="linkActive" timeout="-1" color="white" content-class="mb-2">
     {{ $t('moment.link.snackbar') }}
 
     <template #actions>
