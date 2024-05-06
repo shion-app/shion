@@ -101,13 +101,9 @@ export const useNavStore = defineStore('nav', () => {
   const submenu = ref<Array<NavButton>>([])
 
   function openSubmenu(key: string) {
-    submenu.value = []
     const button = menu.value.find(i => i.key == key)
-    if (!button?.children)
-      return
-
-    expanded.value = true
-    submenu.value = button.children
+    expanded.value = !!button?.children?.length
+    submenu.value = button?.children || []
   }
 
   return {
