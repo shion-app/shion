@@ -70,7 +70,7 @@ const calendarList = computed(() => {
   })
 })
 
-const buildMarker = color => `<span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:${color};"></span>`
+const buildMarker = color => `<span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:${color};" class="shrink-0"></span>`
 
 const hour = (h: number) => 1000 * 60 * 60 * h
 
@@ -154,8 +154,8 @@ const option = computed<EChartsOption>(() => {
           .map(([key, value]) => [key, value] as [string, number])
           .sort((a, b) => b[1] - a[1])
           .map(([key, value]) => [key.split('|').pop(), value, colorMap.get(key)] as [string, number, string])
-        const timeDetailTemplate = displayList.map(([name, time, color]) => `<div style="display: flex; align-items: center;">${buildMarker(color)}<span style="margin-left: 6px;">${name}</span><div style="min-width: 50px; flex-grow: 1;"></div><span>${formatHHmmss(time)}</span></div>`).join('')
-        const momentDetailTemplate = momentDetail.map(({ title, box }) => `<div style="display: flex; align-items: center;">${buildMarker(box.color)}<span style="margin-left: 6px;">${title}</span><div style="min-width: 50px; flex-grow: 1;"></div></div>`).join('')
+        const timeDetailTemplate = displayList.map(([name, time, color]) => `<div style="display: flex; align-items: center;">${buildMarker(color)}<span style="margin-left: 6px;" class="text-ellipsis overflow-hidden">${name}</span><div style="min-width: 40px; flex-grow: 1;"></div><span>${formatHHmmss(time)}</span></div>`).join('')
+        const momentDetailTemplate = momentDetail.map(({ title, box }) => `<div style="display: flex; align-items: center;">${buildMarker(box.color)}<span style="margin-left: 6px;" class="text-ellipsis overflow-hidden">${title}</span><div style="min-width: 40px; flex-grow: 1;"></div></div>`).join('')
         return `<div style="margin-bottom: 6px;">
                   <span>${dateText}</span>
                   <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatHHmmss(value)}</span>
@@ -169,6 +169,7 @@ const option = computed<EChartsOption>(() => {
                 `
       },
       position,
+      extraCssText: 'max-width:60%;',
     },
     series: {
       type: 'heatmap',

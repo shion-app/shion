@@ -14,8 +14,11 @@ export function useEcharts() {
     let left = x + offset
     let top = mouseY.value - parentTop.value
 
-    if (x + contentWidth > viewWidth)
+    if (x + contentWidth > viewWidth) {
       left = x - contentWidth - offset
+      if (left < 0)
+        left = x - contentWidth / 2
+    }
 
     if (mouseY.value + contentHeight > bottom.value)
       top = mouseY.value - contentHeight - parentTop.value
