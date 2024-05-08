@@ -44,9 +44,3 @@ shion是一款时间追踪软件，用它来记录你日常生活的片段
 + 🌐同步浏览器历史（Google Chrome、Microsoft Edge、Firefox）
 + 🏷️手动记录
 + 📖日记（🚧）
-
-
-## 使用教程
-
-https://github.com/shion-app/shion/assets/101488209/22fb179e-f4a2-43ed-aacc-e49378cfc2b9
-

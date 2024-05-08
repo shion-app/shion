@@ -46,7 +46,3 @@ In the future, Shion will explore more 🌈
 + 🏷️Manual recording
 + 📖Diary (🚧)
 
-
-## Tutorial
-
-https://github.com/shion-app/shion/assets/101488209/eb099e62-0518-4003-97c3-fada2b8e222d
