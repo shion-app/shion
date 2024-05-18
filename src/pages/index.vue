@@ -106,6 +106,12 @@ const { open, close, setModelValue } = useFormModal<
                     category: undefined,
                   })
                 }
+                else if (v == WidgetType.RECENT_ACTIVIRY_PIE) {
+                  setModelValue({
+                    w: col(2),
+                    h: 2,
+                  })
+                }
               },
             },
           },
@@ -118,7 +124,7 @@ const { open, close, setModelValue } = useFormModal<
                 title: i,
                 value: col(i),
               })),
-              disabled: model.type == WidgetType.ACTIVE_STATUS_CALENDAR,
+              disabled: model.type == WidgetType.ACTIVE_STATUS_CALENDAR || model.type == WidgetType.RECENT_ACTIVIRY_PIE,
             },
           },
           {
@@ -127,6 +133,7 @@ const { open, close, setModelValue } = useFormModal<
             label: t('widget.row'),
             props: {
               items: [1, 2, 3],
+              disabled: model.type == WidgetType.RECENT_ACTIVIRY_PIE,
             },
           },
           {
@@ -353,6 +360,7 @@ refresh()
           <single-category-bar v-else-if="componentProps.type == WidgetType.SINGLE_CATEGORY_BAR" :data="componentProps.data" />
           <text-summary v-else-if="componentProps.type == WidgetType.TEXT_SUMMARY" :data="componentProps.data" />
           <daily-activity v-else-if="componentProps.type == WidgetType.DAILY_ACTIVIRY" :selected-date="selectedDate" />
+          <recent-activity-pie v-else-if="componentProps.type == WidgetType.RECENT_ACTIVIRY_PIE" />
         </v-card-text>
       </grid-card>
     </template>

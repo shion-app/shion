@@ -202,11 +202,13 @@ widget:
     SINGLE_CATEGORY_BAR: Single category bar
     TEXT_SUMMARY: Text Summary
     DAILY_ACTIVIRY: Daily activity
+    RECENT_ACTIVIRY_PIE: Recent activity pie
   subtitle:
     ACTIVE_STATUS_CALENDAR: Summary of Daily Records Over the Past Year
     SINGLE_CATEGORY_BAR: Daily single item record for the past 30 days
     TEXT_SUMMARY: Average duration of a single category
     DAILY_ACTIVIRY: Hourly records for 24 hours
+    RECENT_ACTIVIRY_PIE: The proportion of various activities in recent days
   column: Occupy column
   row: Occupy row
   singleCategoryBar:
@@ -219,6 +221,8 @@ widget:
     day: '{day} days'
     average: Average
     monthAverage: 30 days average
+  recentActivityPie:
+    title: Summary of the past 7 days
 statusBar:
   timer: Timing...
   drag:

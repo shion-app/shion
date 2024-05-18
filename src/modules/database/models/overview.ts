@@ -7,6 +7,7 @@ export enum WidgetType {
   SINGLE_CATEGORY_BAR,
   TEXT_SUMMARY,
   DAILY_ACTIVIRY,
+  RECENT_ACTIVIRY_PIE,
 }
 
 @injectModel<OriginOverview, TransformOverview>({
