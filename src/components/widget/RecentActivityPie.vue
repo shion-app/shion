@@ -78,6 +78,10 @@ const option = computed<EChartsOption>(() => {
       left: 'left',
       top: 30,
       selectedMode: false,
+      textStyle: {
+        overflow: 'truncate',
+        width: 160,
+      },
       data: list.value.slice(0, 12).map(({ name }) => name),
     },
     tooltip: {
@@ -99,6 +103,7 @@ const option = computed<EChartsOption>(() => {
         label: {
           show: false,
         },
+        center: ['60%', '50%'],
         data: list.value.map(({ value, name, color, ratio }) => ({
           value: [value, ratio],
           name,
