@@ -106,6 +106,7 @@ program:
   update: 更新程序
   name: 名称
   color: 颜色
+  path: 路径
 activity:
   idle: 空闲
   detail: 展开日志
@@ -344,3 +345,5 @@ history:
   tip: 导入过的浏览器将会自动同步数据
 search:
   done: 无更多内容
+filePicker:
+  name: 应用程序

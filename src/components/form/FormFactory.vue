@@ -9,6 +9,7 @@ import { VCheckbox } from 'vuetify/components/VCheckbox'
 
 import ColorPicker from './ColorPicker.vue'
 import Cascader from './Cascader.vue'
+import FilePicker from './FilePicker.vue'
 import type { BuildSchemaObject, Form, FormItemProps } from '@/interfaces'
 
 const props = defineProps<{
@@ -99,6 +100,8 @@ function component(type: keyof FormItemProps) {
       return Cascader
     case 'checkbox':
       return VCheckbox
+    case 'filePicker':
+      return FilePicker
   }
 }
 </script>

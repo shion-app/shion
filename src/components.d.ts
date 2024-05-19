@@ -22,6 +22,7 @@ declare module '@vue/runtime-core' {
     DailyActivity: typeof import('./components/widget/DailyActivity.vue')['default']
     DynamicLogo: typeof import('./components/shared/DynamicLogo.vue')['default']
     Empty: typeof import('./components/shared/Empty.vue')['default']
+    FilePicker: typeof import('./components/form/FilePicker.vue')['default']
     FormFactory: typeof import('./components/form/FormFactory.vue')['default']
     FormModal: typeof import('./components/modal/FormModal.vue')['default']
     Grid: typeof import('./components/grid/Grid.vue')['default']

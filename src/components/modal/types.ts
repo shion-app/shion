@@ -3,6 +3,7 @@ import type { VAutocomplete, VCheckbox, VColorPicker, VSelect, VTextField } from
 import type { z as Zod, ZodObject } from 'zod'
 
 import type NestedMenu from '../shared/NestedMenu.vue'
+import type FilePicker from '../form/FilePicker.vue'
 
 export interface FormItemProps {
   textField: ComponentProps<typeof VTextField>
@@ -11,6 +12,7 @@ export interface FormItemProps {
   autocomplete: ComponentProps<typeof VAutocomplete>
   checkbox: ComponentProps<typeof VCheckbox>
   cascader: ComponentProps<typeof NestedMenu>
+  filePicker: ComponentProps<typeof FilePicker>
 }
 
 export interface FormItem<T extends keyof FormItemProps, K> {

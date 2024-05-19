@@ -106,6 +106,7 @@ program:
   update: Update program
   name: Name
   color: Color
+  path: Path
 activity:
   idle: Idle
   detail: Open log
@@ -344,3 +345,5 @@ history:
   tip: The imported browser will automatically synchronize data
 search:
   done: No more content
+filePicker:
+  name: Executable program
