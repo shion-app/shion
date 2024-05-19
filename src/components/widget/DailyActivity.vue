@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { isSameDay, isSameHour } from 'date-fns'
 import { db } from '@/modules/database'
-import type { SelectActivity, SelectLabel, SelectNote, SelectProgram } from '@/modules/database'
+import type { SelectActivity, SelectLabel, SelectNote, SelectOverview, SelectProgram } from '@/modules/database'
 
 const props = defineProps<{
   selectedDate: Date
+  data: SelectOverview['data']
 }>()
 
 const { selectedDate: selectedDateVModel } = useVModels(props)
@@ -18,6 +19,8 @@ const activityList = ref<Array<SelectActivity>>([])
 const programList = ref<Array<SelectProgram>>([])
 
 const x = new Array(24).fill(0).map((_, i) => i)
+
+const vertical = computed(() => props.data.fields?.vertical || false)
 
 const option = computed(() => {
   const transformNoteList = splitByHour(noteList.value).filter(i => isSameDay(selectedDateVModel.value, i.start))
@@ -53,6 +56,25 @@ const option = computed(() => {
     }
   })
 
+  const xAxisData = x.map(complement)
+
+  const xAxis = [
+    {
+      type: 'category',
+      data: vertical.value ? xAxisData.reverse() : xAxisData,
+    },
+  ]
+
+  const yAxis = [
+    {
+      type: 'value',
+      axisLabel: {
+        formatter: formatHHmmss,
+      },
+      splitNumber: 3,
+    },
+  ]
+
   return {
     title: {
       text: formatYYYYmmdd(selectedDateVModel.value),
@@ -71,27 +93,14 @@ const option = computed(() => {
       extraCssText: 'max-width:60%;',
     },
     grid: {
-      left: '2%',
-      right: '2%',
-      bottom: '2%',
       top: 36,
+      right: vertical.value ? 30 : 10,
+      bottom: 0,
+      left: 10,
       containLabel: true,
     },
-    xAxis: [
-      {
-        type: 'category',
-        data: x.map(complement),
-      },
-    ],
-    yAxis: [
-      {
-        type: 'value',
-        axisLabel: {
-          formatter: formatHHmmss,
-        },
-        splitNumber: 3,
-      },
-    ],
+    xAxis: (vertical.value ? yAxis : xAxis) as any,
+    yAxis: (vertical.value ? xAxis : yAxis) as any,
     series: [...labelData, ...programData],
   }
 })

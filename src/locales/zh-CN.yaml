@@ -216,6 +216,7 @@ widget:
     plan: 计划
     label: 标签
     program: 程序
+    vertical: 垂直排列
   textSummary:
     clockIn: 打卡时长
     day: '{day} 天'

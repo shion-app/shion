@@ -216,6 +216,7 @@ widget:
     plan: Plan
     label: Label
     program: Program
+    vertical: Vertical arrangement
   textSummary:
     clockIn: Clock in
     day: '{day} days'

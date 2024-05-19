@@ -9,7 +9,7 @@ import type { GridList } from '@/hooks/useGrid'
 import { useConfirmModal } from '@/hooks/useConfirmModal'
 import type { NestedMenuItem } from '@/interfaces'
 
-type OverviewForm = Pick<InsertOverview, 'type' | 'w' | 'h'> & { category?: [string, number] }
+type OverviewForm = Pick<InsertOverview, 'type' | 'w' | 'h'> & { category?: [string, number]; vertical?: boolean }
 
 const { t } = useI18n()
 const { success } = useNotify()
@@ -49,7 +49,8 @@ const { open, close, setModelValue } = useFormModal<
   }
 >
 ((model, modal) => {
-  const singleCategoryBarvisible = model.type == WidgetType.SINGLE_CATEGORY_BAR || model.type == WidgetType.TEXT_SUMMARY
+  const categoryVisible = model.type == WidgetType.SINGLE_CATEGORY_BAR || model.type == WidgetType.TEXT_SUMMARY
+  const verticalVisible = model.type == WidgetType.SINGLE_CATEGORY_BAR || model.type == WidgetType.DAILY_ACTIVIRY
   const unrealColumnCount = count(column.value)
   const categoryItems: Array<NestedMenuItem> = []
   if (modal.planList?.length) {
@@ -140,10 +141,16 @@ const { open, close, setModelValue } = useFormModal<
             type: 'cascader',
             key: 'category',
             label: t('widget.singleCategoryBar.table'),
-            visible: singleCategoryBarvisible,
+            visible: categoryVisible,
             props: {
               items: categoryItems,
             },
+          },
+          {
+            type: 'checkbox',
+            key: 'vertical',
+            label: t('widget.singleCategoryBar.vertical'),
+            visible: verticalVisible,
           },
         ],
       },
@@ -153,7 +160,8 @@ const { open, close, setModelValue } = useFormModal<
           type: z.number(),
           w: z.number(),
           h: z.number(),
-          category: singleCategoryBarvisible ? category : category.optional(),
+          category: categoryVisible ? category : category.optional(),
+          vertical: z.boolean().optional(),
         })
       },
       async onConfirm(v, setErrors) {
@@ -219,7 +227,7 @@ function buildUpdateFn() {
       id = updateId
     },
     handleUpdate: (overview: OverviewForm, widget: Record<string, unknown>) => {
-      const { w, h, type, category } = overview
+      const { w, h, type, category, vertical } = overview
       const value: UpdateOverview = {
         w,
         h,
@@ -227,6 +235,7 @@ function buildUpdateFn() {
         data: {
           fields: {
             category,
+            vertical,
           },
         },
       }
@@ -267,8 +276,10 @@ function showUpdateForm(id: number, list: GridList<SelectOverview>) {
     w,
     h,
   }
-  if (data.fields)
+  if (data.fields) {
     value.category = data.fields.category as [string, number]
+    value.vertical = data.fields.vertical as boolean
+  }
 
   setModelValue(value)
   open()
@@ -286,7 +297,7 @@ function transformCategory(category: NonNullable<OverviewForm['category']>): Sel
 }
 
 function handleCreate(overview: OverviewForm, widget?: Record<string, unknown>) {
-  const { w, h, type, category } = overview
+  const { w, h, type, category, vertical } = overview
   const value: InsertOverview = {
     w,
     h,
@@ -296,6 +307,7 @@ function handleCreate(overview: OverviewForm, widget?: Record<string, unknown>) 
     data: {
       fields: {
         category,
+        vertical,
       },
     },
   }
@@ -359,7 +371,7 @@ refresh()
           <active-status-calendar v-if="componentProps.type == WidgetType.ACTIVE_STATUS_CALENDAR" v-model:selected-date="selectedDate" />
           <single-category-bar v-else-if="componentProps.type == WidgetType.SINGLE_CATEGORY_BAR" :data="componentProps.data" />
           <text-summary v-else-if="componentProps.type == WidgetType.TEXT_SUMMARY" :data="componentProps.data" />
-          <daily-activity v-else-if="componentProps.type == WidgetType.DAILY_ACTIVIRY" :selected-date="selectedDate" />
+          <daily-activity v-else-if="componentProps.type == WidgetType.DAILY_ACTIVIRY" :selected-date="selectedDate" :data="componentProps.data" />
           <recent-activity-pie v-else-if="componentProps.type == WidgetType.RECENT_ACTIVIRY_PIE" />
         </v-card-text>
       </grid-card>

@@ -36,6 +36,7 @@ const list = computed(() => {
 
 const title = computed(() => props.data.widget?.title as string)
 const color = computed(() => props.data.widget?.color as string)
+const vertical = computed(() => props.data.fields?.vertical || false)
 
 async function init() {
   noteList.value = activityList.value = []
@@ -58,7 +59,22 @@ async function init() {
 }
 
 const option = computed<EChartsOption>(() => {
-  const x = new Array(day).fill(0).map((_, i) => subDays(new Date(), i).getTime()).reverse()
+  const x = new Array(day).fill(0).map((_, i) => subDays(new Date(), i).getTime())
+  const xAxis = {
+    type: 'category',
+    data: vertical.value ? x : x.reverse(),
+    axisLabel: {
+      formatter: time => format(new Date(Number(time)), 'MM-dd'),
+    },
+  }
+  const yAxis = {
+    type: 'value',
+    axisLabel: {
+      formatter: formatHHmmss,
+    },
+    splitNumber: 3,
+  }
+
   return {
     title: {
       text: title.value,
@@ -80,25 +96,11 @@ const option = computed<EChartsOption>(() => {
       },
       position,
     },
-    xAxis: {
-      type: 'category',
-      data: x,
-      axisLabel: {
-        formatter: time => format(new Date(Number(time)), 'MM-dd'),
-      },
-    },
-    yAxis: [
-      {
-        type: 'value',
-        axisLabel: {
-          formatter: formatHHmmss,
-        },
-        splitNumber: 3,
-      },
-    ],
+    xAxis: (vertical.value ? yAxis : xAxis) as any,
+    yAxis: (vertical.value ? xAxis : yAxis) as any,
     grid: {
       top: 40,
-      right: 10,
+      right: vertical.value ? 30 : 10,
       bottom: 0,
       left: 10,
       containLabel: true,
