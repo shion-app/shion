@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { VSelect } from 'vuetify/components/VSelect'
 import { VAutocomplete } from 'vuetify/components/VAutocomplete'
 import { VTextField } from 'vuetify/components/VTextField'
+import { VCheckbox } from 'vuetify/components/VCheckbox'
 
 import ColorPicker from './ColorPicker.vue'
 import Cascader from './Cascader.vue'
@@ -96,6 +97,8 @@ function component(type: keyof FormItemProps) {
       return VAutocomplete
     case 'cascader':
       return Cascader
+    case 'checkbox':
+      return VCheckbox
   }
 }
 </script>
