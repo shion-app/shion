@@ -128,11 +128,7 @@ function showUpdateForm(id: number, list: GridList<SelectLabel>) {
 }
 
 async function handleCreate(label: LabelForm) {
-  // todo: db event listener
-  const { lastInsertId } = await db.label.insert(label)
-  await db.label.update(lastInsertId, {
-    sort: lastInsertId,
-  })
+  await db.label.transactionInsert(label)
 }
 
 function buildUpdateFn() {

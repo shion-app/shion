@@ -109,12 +109,8 @@ function showUpdateForm(id: number) {
   open()
 }
 
-async function handleCreate(plan: boxForm) {
-  // todo: db event listener
-  const { lastInsertId } = await db.box.insert(plan)
-  await db.box.update(lastInsertId, {
-    sort: lastInsertId,
-  })
+async function handleCreate(box: boxForm) {
+  await db.box.transactionInsert(box)
 }
 
 function buildUpdateFn() {

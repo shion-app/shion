@@ -1,9 +1,19 @@
+import type { Insertable } from 'kysely'
 import { sql } from 'kysely'
 import type { Box as TransformBox } from '../transform-types'
-import { Model, get } from './model'
+import { Model, get, set } from './model'
 
 export class Box extends Model<TransformBox> {
   table = 'box' as const
+
+  transactionInsert(@set value: Insertable<TransformBox>) {
+    return this.transaction().execute(async (trx) => {
+      const { lastInsertId } = await trx.box.insert(value)
+      await trx.box.update(lastInsertId, {
+        sort: lastInsertId,
+      })
+    })
+  }
 
   removeRelation(id: number) {
     return this.transaction().execute(async (trx) => {

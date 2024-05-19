@@ -1,10 +1,31 @@
 import { sql } from 'kysely'
+import type { Program as PluginProgram } from 'tauri-plugin-shion-watcher-api'
 
 import type { Program as TransformProgram } from '../transform-types'
-import { Model, get } from './model'
+import { Model, get, set } from './model'
+import { upload } from '@/modules/upload'
 
 export class Program extends Model<TransformProgram> {
   table = 'program' as const
+
+  transactionInsert(@set value: PluginProgram) {
+    return this.transaction().execute(async (trx) => {
+      const { name, path, icon } = value
+      const color = randomColor()
+      const { lastInsertId } = await trx.program.insert({
+        name,
+        path,
+        icon: '',
+        color,
+        platform: PLATFORM,
+      })
+      const asset = await upload(`${name}.png`, new Uint8Array(icon))
+      await trx.program.update(lastInsertId, {
+        sort: lastInsertId,
+        icon: asset,
+      })
+    })
+  }
 
   removeRelation(id: number) {
     return this.transaction().execute(async (trx) => {

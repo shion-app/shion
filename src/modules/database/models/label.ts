@@ -1,9 +1,19 @@
+import type { Insertable } from 'kysely'
 import { sql } from 'kysely'
 import type { Label as TransformLabel } from '../transform-types'
-import { Model, get } from './model'
+import { Model, get, set } from './model'
 
 export class Label extends Model<TransformLabel> {
   table = 'label' as const
+
+  transactionInsert(@set value: Insertable<TransformLabel>) {
+    return this.transaction().execute(async (trx) => {
+      const { lastInsertId } = await trx.label.insert(value)
+      await trx.label.update(lastInsertId, {
+        sort: lastInsertId,
+      })
+    })
+  }
 
   removeRelation(id: number) {
     return this.transaction().execute(async (trx) => {

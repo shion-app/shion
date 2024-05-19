@@ -4,7 +4,6 @@ import { UseObjectUrl } from '@vueuse/components'
 
 import { db } from '@/modules/database'
 import type { InsertProgram } from '@/modules/database'
-import { upload } from '@/modules/upload'
 import { useConfirmModal } from '@/hooks/useConfirmModal'
 
 type ProgramForm = Pick<InsertProgram, 'name' | 'color'>
@@ -115,21 +114,7 @@ function buildUpdateFn() {
 }
 
 async function handleCreateProgram(program: Program) {
-  const { name, path, icon } = program
-  const color = randomColor()
-  // todo: db event listener
-  const { lastInsertId } = await db.program.insert({
-    name,
-    path,
-    icon: '',
-    color,
-    platform: PLATFORM,
-  })
-  const asset = await upload(`${name}.png`, new Uint8Array(icon))
-  await db.program.update(lastInsertId, {
-    sort: lastInsertId,
-    icon: asset,
-  })
+  await db.program.transactionInsert(program)
 }
 
 async function handleSelect() {

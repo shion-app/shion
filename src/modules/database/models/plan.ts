@@ -1,9 +1,19 @@
+import type { Insertable } from 'kysely'
 import { sql } from 'kysely'
 import type { Plan as TransformPlan } from '../transform-types'
-import { Model, get } from './model'
+import { Model, get, set } from './model'
 
 export class Plan extends Model<TransformPlan> {
   table = 'plan' as const
+
+  transactionInsert(@set value: Insertable<TransformPlan>) {
+    return this.transaction().execute(async (trx) => {
+      const { lastInsertId } = await trx.plan.insert(value)
+      await trx.plan.update(lastInsertId, {
+        sort: lastInsertId,
+      })
+    })
+  }
 
   removeRelation(id: number) {
     return this.transaction().execute(async (trx) => {
