@@ -352,3 +352,4 @@ importExport:
   tip: The imported data will directly overwrite the existing data, remember to only use it during migration ⚠️
   import: Import
   export: Export
+  relaunch: Preparing to relaunch soon...

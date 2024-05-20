@@ -352,3 +352,4 @@ importExport:
   tip: 导入的数据会直接覆盖现有数据, 记住仅在迁移时使用⚠️
   import: 导入
   export: 导出
+  relaunch: 即将重新启动...

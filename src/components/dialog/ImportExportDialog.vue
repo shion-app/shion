@@ -3,6 +3,7 @@ import { invoke } from '@tauri-apps/api/core'
 import { appDataDir, join } from '@tauri-apps/api/path'
 import { open } from '@tauri-apps/plugin-dialog'
 import { error } from '@tauri-apps/plugin-log'
+import { relaunch } from '@tauri-apps/plugin-process'
 
 const props = defineProps<{
   visible: boolean
@@ -13,6 +14,7 @@ const notify = useNotify()
 
 const importing = ref(false)
 const exporting = ref(false)
+const relaunching = ref(false)
 
 async function handleImport() {
   const selected = await open()
@@ -29,7 +31,7 @@ async function handleImport() {
     })
   }
   catch (e) {
-    error(`export error:${e}`)
+    error(`import error:${e}`)
     notify.error({
       text: e as any,
     })
@@ -40,6 +42,10 @@ async function handleImport() {
     importing.value = false
   }
   notify.success({})
+  visibleVModel.value = false
+  relaunching.value = true
+  await sleep(3000)
+  await relaunch()
 }
 
 async function handleExport() {
@@ -87,6 +93,11 @@ async function handleExport() {
           {{ $t('importExport.export') }}
         </v-btn>
       </div>
+    </v-card-text>
+  </advanced-dialog>
+  <advanced-dialog :visible="relaunching" :title="$t('modal.prompt')" persistent>
+    <v-card-text mb-4>
+      {{ $t('importExport.relaunch') }}
     </v-card-text>
   </advanced-dialog>
 </template>
