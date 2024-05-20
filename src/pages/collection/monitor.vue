@@ -6,18 +6,21 @@ import { db } from '@/modules/database'
 import type { InsertProgram } from '@/modules/database'
 import { useConfirmModal } from '@/hooks/useConfirmModal'
 
-type ProgramForm = Pick<InsertProgram, 'name' | 'color'>
+type ProgramForm = Pick<InsertProgram, 'name' | 'color' | 'path'>
+
+const monitorStore = useMonitorStore()
+const activityStore = useActivityStore()
 
 const { t } = useI18n()
-const store = useMonitorStore()
 const { parseFieldsError, getI18nMessage } = useDatabase()
 const { success, error } = useNotify()
 const router = useRouter()
 const { onRefresh } = usePageRefresh()
 const confirm = useConfirmModal()
 
-const { refresh } = store
-const { whiteList } = storeToRefs(store)
+const { refresh } = monitorStore
+const { restart } = activityStore
+const { whiteList } = storeToRefs(monitorStore)
 
 const { items, select, selectedList } = useGrid(whiteList)
 
@@ -51,11 +54,17 @@ const { open, close, setModelValue } = useFormModal<ProgramForm>(
             key: 'color',
             label: t('program.color'),
           },
+          {
+            type: 'filePicker',
+            key: 'path',
+            label: t('program.path'),
+          },
         ],
       },
       schema: z => z.object({
         name: z.string().min(1),
         color: z.string().length(7),
+        path: z.string().min(1),
       }),
       async onConfirm(v, setErrors) {
         try {
@@ -66,7 +75,8 @@ const { open, close, setModelValue } = useFormModal<ProgramForm>(
         }
         close()
         success({})
-        refresh()
+        await restart()
+        await refresh()
       },
     },
   }))

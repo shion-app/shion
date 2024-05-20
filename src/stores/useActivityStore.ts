@@ -104,10 +104,12 @@ export const useActivityStore = defineStore('activity', () => {
     timer.restart()
   }
 
-  watch(() => monitor.whiteList.length, async () => {
+  async function restart() {
     await handleSuspend()
     await handleResume()
-  })
+  }
+
+  watch(() => monitor.whiteList.length, restart)
 
   onStatusChanged(({ payload }) => {
     const { active, path, time } = payload
@@ -132,4 +134,8 @@ export const useActivityStore = defineStore('activity', () => {
   })
 
   resume()
+
+  return {
+    restart,
+  }
 })
