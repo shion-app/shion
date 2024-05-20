@@ -28,6 +28,7 @@ tauri-plugin-shion-watcher = { git = "https://github.com/shion-app/watcher" }
 tauri-plugin-shion-history = { git = "https://github.com/shion-app/history" }
 sys-locale = "0.3.1"
 thiserror = "1.0"
+parse-changelog = { version = "0.6", default-features = false, features = ["serde"] }
 
 [target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
 tauri-plugin-autostart = "2.0.0-beta"

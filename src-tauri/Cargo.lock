@@ -3131,6 +3131,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "parse-changelog"
+version = "0.6.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0823752952778b65c46fb05f9dc0516d29ee9007b8733db0d59337e1acb32265"
+dependencies = [
+ "indexmap 2.2.6",
+ "memchr",
+ "regex",
+ "serde",
+ "serde_derive",
+]
+
+[[package]]
 name = "password-hash"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4298,6 +4311,7 @@ version = "0.10.0"
 dependencies = [
  "log",
  "open",
+ "parse-changelog",
  "serde",
  "serde_json",
  "sys-locale",

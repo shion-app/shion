@@ -9,6 +9,9 @@ pub enum Error {
 
     #[error(transparent)]
     Zip(#[from] zip::result::ZipError),
+
+    #[error(transparent)]
+    ParseChangelog(#[from] parse_changelog::Error),
 }
 
 impl Serialize for Error {

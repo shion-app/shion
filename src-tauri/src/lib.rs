@@ -4,6 +4,7 @@ mod mobile;
 mod error;
 pub use error::Result;
 
+use parse_changelog::Changelog;
 use tauri::menu::{Menu, MenuItem};
 use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
 use tauri_plugin_sql::{Migration, MigrationKind};
@@ -27,6 +28,11 @@ pub fn run() {
     #[tauri::command]
     fn get_sys_locale() -> String {
         sys_locale::get_locale().unwrap_or_else(|| String::from("en-US"))
+    }
+
+    #[tauri::command]
+    fn parse_changelog_from_text<'a>(text: &'a str) -> Result<Changelog<'a>> {
+        Ok(parse_changelog::parse(text)?)
     }
 
     let mut builder = tauri::Builder::default()
@@ -127,7 +133,8 @@ pub fn run() {
                 open_devtools,
                 get_sys_locale,
                 compress,
-                decompress
+                decompress,
+                parse_changelog_from_text
             ]);
     }
 
