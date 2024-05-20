@@ -177,6 +177,7 @@ titleBar:
     setting: Setting
     sync: Sync
     history: Browser history
+    importExport: Import and export
   help:
     desc: Help
     about: About
@@ -347,3 +348,7 @@ search:
   done: No more content
 filePicker:
   name: Executable program
+importExport:
+  tip: The imported data will directly overwrite the existing data, remember to only use it during migration ⚠️
+  import: Import
+  export: Export

@@ -177,6 +177,7 @@ titleBar:
     setting: 设置
     sync: 同步
     history: 浏览器历史记录
+    importExport: 导入与导出
   help:
     desc: 帮助
     about: 关于
@@ -347,3 +348,7 @@ search:
   done: 无更多内容
 filePicker:
   name: 应用程序
+importExport:
+  tip: 导入的数据会直接覆盖现有数据, 记住仅在迁移时使用⚠️
+  import: 导入
+  export: 导出

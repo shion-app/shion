@@ -1,6 +1,9 @@
 #[cfg(mobile)]
 mod mobile;
 
+mod error;
+pub use error::Result;
+
 use tauri::menu::{Menu, MenuItem};
 use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
 use tauri_plugin_sql::{Migration, MigrationKind};
@@ -56,8 +59,10 @@ pub fn run() {
     {
         use tauri::{Manager, WebviewWindow};
         use tauri_plugin_autostart::MacosLauncher;
+        use zip_extensions::{zip_create_from_directory, zip_extract};
 
         use std::collections::HashMap;
+        use std::path::PathBuf;
 
         #[derive(Clone, serde::Serialize)]
         struct Payload {
@@ -85,6 +90,18 @@ pub fn run() {
             window.open_devtools();
         }
 
+        #[tauri::command]
+        fn compress(target: PathBuf, dest: PathBuf) -> Result<()> {
+            zip_create_from_directory(&dest, &target)?;
+            Ok(())
+        }
+
+        #[tauri::command]
+        fn decompress(target: PathBuf, dest: PathBuf) -> Result<()> {
+            zip_extract(&target, &dest)?;
+            Ok(())
+        }
+
         builder = builder
             .plugin(tauri_plugin_updater::Builder::new().build())
             .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
@@ -108,7 +125,9 @@ pub fn run() {
                 update_tray_menu,
                 open_folder,
                 open_devtools,
-                get_sys_locale
+                get_sys_locale,
+                compress,
+                decompress
             ]);
     }
 

@@ -31,6 +31,7 @@ declare module '@vue/runtime-core' {
     HistoryPull: typeof import('./components/history/HistoryPull.vue')['default']
     ImageBlockMenu: typeof import('./components/shared/tiptap/imageBlock/ImageBlockMenu.vue')['default']
     ImageBlockView: typeof import('./components/shared/tiptap/imageBlock/ImageBlockView.vue')['default']
+    ImportExportDialog: typeof import('./components/dialog/ImportExportDialog.vue')['default']
     Layout: typeof import('./components/layout/Layout.vue')['default']
     LayoutFooter: typeof import('./components/layout/LayoutFooter.vue')['default']
     LayoutHeader: typeof import('./components/layout/LayoutHeader.vue')['default']

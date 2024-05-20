@@ -10,6 +10,7 @@ const setting = ref(false)
 // const sync = ref(false)
 const history = ref(false)
 const about = ref(false)
+const importExport = ref(false)
 
 const dialogStore = useDialogStore()
 const configStore = useConfigStore()
@@ -48,6 +49,10 @@ function openDevtools() {
           <v-list-item value="titleBar.view.setting" :title="$t('titleBar.view.setting')" @click="setting = true" />
           <!-- <v-list-item v-if="isDev" value="titleBar.view.sync" :title="$t('titleBar.view.sync')" @click="sync = true" /> -->
           <v-list-item value="titleBar.view.history" :title="$t('titleBar.view.history')" @click="history = true" />
+          <v-list-item
+            value="titleBar.view.importExport" :title="$t('titleBar.view.importExport')"
+            @click="importExport = true"
+          />
         </v-list>
       </v-menu>
       <v-menu>
@@ -79,5 +84,6 @@ function openDevtools() {
     <about-dialog v-model:visible="about" />
     <!-- <sync-dialog v-model:visible="sync" /> -->
     <history-dialog v-model:visible="history" />
+    <import-export-dialog v-model:visible="importExport" />
   </div>
 </template>
