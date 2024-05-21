@@ -184,6 +184,7 @@ titleBar:
     tour: Tutorial
     log: Open log dir
     devtools: Open developer tools
+    changelog: Changelog
 timeline:
   plan: Plan
   label: Label
@@ -353,3 +354,6 @@ importExport:
   import: Import
   export: Export
   relaunch: Preparing to relaunch soon...
+changelog:
+  title: Changelog
+  empty: Changelog not retrieved

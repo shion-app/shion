@@ -63,6 +63,7 @@
     "i18next": "^23.6.0",
     "kysely": "^0.27.2",
     "lowlight": "^2.9.0",
+    "md-editor-v3": "^4.15.0",
     "merge-options": "^3.0.4",
     "mitt": "^3.0.1",
     "nanoid": "^5.0.1",

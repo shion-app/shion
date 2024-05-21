@@ -4,6 +4,7 @@ import 'vue-final-modal/style.css'
 import '@mdi/font/css/materialdesignicons.css'
 import 'gridstack/dist/gridstack.min.css'
 import 'driver.js/dist/driver.css'
+import 'md-editor-v3/lib/preview.css'
 import './styles/index.scss'
 
 import { createApp } from 'vue'

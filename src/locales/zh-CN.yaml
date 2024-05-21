@@ -184,6 +184,7 @@ titleBar:
     tour: 使用教程
     log: 打开日志文件夹
     devtools: 打开开发者工具
+    changelog: 改动日志
 timeline:
   plan: 计划
   label: 标签
@@ -353,3 +354,6 @@ importExport:
   import: 导入
   export: 导出
   relaunch: 即将重新启动...
+changelog:
+  title: 改动日志
+  empty: 未拉取到改动日志

@@ -11,6 +11,7 @@ const setting = ref(false)
 const history = ref(false)
 const about = ref(false)
 const importExport = ref(false)
+const changelog = ref(false)
 
 const dialogStore = useDialogStore()
 const configStore = useConfigStore()
@@ -66,6 +67,10 @@ function openDevtools() {
           <v-list-item value="titleBar.help.tour" :title="$t('titleBar.help.tour')" @click="config.tour = true" />
           <v-list-item value="titleBar.help.log" :title="$t('titleBar.help.log')" @click="openLogDir" />
           <v-list-item value="titleBar.help.devtools" :title="$t('titleBar.help.devtools')" @click="openDevtools" />
+          <v-list-item
+            value="titleBar.help.changelog" :title="$t('titleBar.help.changelog')"
+            @click="changelog = true"
+          />
         </v-list>
       </v-menu>
     </div>
@@ -85,5 +90,6 @@ function openDevtools() {
     <!-- <sync-dialog v-model:visible="sync" /> -->
     <history-dialog v-model:visible="history" />
     <import-export-dialog v-model:visible="importExport" />
+    <changelog-dialog v-model:visible="changelog" />
   </div>
 </template>
