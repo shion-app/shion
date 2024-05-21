@@ -11,12 +11,13 @@ const setting = ref(false)
 const history = ref(false)
 const about = ref(false)
 const importExport = ref(false)
-const changelog = ref(false)
 
 const dialogStore = useDialogStore()
 const configStore = useConfigStore()
+const changelogStore = useChangelogStore()
 const { dialog } = storeToRefs(dialogStore)
 const { config } = storeToRefs(configStore)
+const { dialog: changelog } = storeToRefs(changelogStore)
 
 const currentWindow = getCurrent()
 

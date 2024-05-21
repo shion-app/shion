@@ -46,8 +46,11 @@ watch(() => config.value.locale, init)
   <advanced-dialog v-model:visible="visibleVModel" :title="$t('titleBar.help.changelog')">
     <v-card-text class="sm:max-h-[400px]" overflow-y-auto>
       <MdPreview v-if="changelog.notes" id="preview-only" :model-value="content" />
-      <empty v-else mb-6 :desc="$t('changelog.empty')" />
+      <empty v-else :desc="$t('changelog.empty')" />
     </v-card-text>
+    <v-card-actions>
+      <v-checkbox v-model="config.autoShowChangelogDisable" :label="$t('changelog.checkbox')" hide-details />
+    </v-card-actions>
   </advanced-dialog>
 </template>
 

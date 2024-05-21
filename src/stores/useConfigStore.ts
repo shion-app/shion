@@ -14,11 +14,14 @@ interface Config {
   timelineGroupGapMinute: number
   themeColor: string
   tour: boolean
+  autoShowChangelogDisable: boolean
 }
 
 const PATH = 'config.json'
 
 export const useConfigStore = defineStore('config', () => {
+  const changelog = useChangelogStore()
+
   const { locale, t } = useI18n()
 
   const store = new Store(PATH)
@@ -37,6 +40,7 @@ export const useConfigStore = defineStore('config', () => {
       timelineGroupGapMinute: 30,
       themeColor: '#512DA8',
       tour: true,
+      autoShowChangelogDisable: false,
     }
     const len = await store.length()
     if (len == 0)
@@ -61,6 +65,9 @@ export const useConfigStore = defineStore('config', () => {
   function update(data: Config) {
     const temp = {}
     for (const key in data) {
+      if (key == 'version' && config.value[key] != data[key] && !config.value.autoShowChangelogDisable)
+        changelog.toggleDialog()
+
       if (key == 'version' || !Object.hasOwn(config.value, key))
         temp[key] = data[key]
     }

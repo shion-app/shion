@@ -358,3 +358,4 @@ importExport:
 changelog:
   title: 改动日志
   empty: 未拉取到改动日志
+  checkbox: 升级后不再自动显示日志
