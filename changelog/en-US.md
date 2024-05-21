@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.11.0-beta.0] - 2024-05-21
+
 ### Added
 
 - Overview page recent activity pie chart
