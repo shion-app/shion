@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { open } from '@tauri-apps/plugin-shell'
 import { writeText } from '@tauri-apps/plugin-clipboard-manager'
+import { invoke } from '@tauri-apps/api/core'
 
 const props = defineProps<{
   visible: boolean
@@ -35,6 +36,15 @@ async function update() {
     open()
   }
 }
+
+async function copySystemInfo() {
+  const locale = await invoke<string>('get_sys_locale')
+  const data = `locale: ${locale}\nuserAgent: ${navigator.userAgent}`
+  await writeText(data)
+  info({
+    text: t('about.copy'),
+  })
+}
 </script>
 
 <template>
@@ -60,6 +70,11 @@ async function update() {
       <v-tooltip :text="$t('about.github')" location="bottom">
         <template #activator="{ props: tooltipProps }">
           <v-btn icon="mdi-github" variant="text" v-bind="tooltipProps" @click="open(repository)" />
+        </template>
+      </v-tooltip>
+      <v-tooltip :text="$t('about.system')" location="bottom">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn icon="mdi-laptop" variant="text" v-bind="tooltipProps" @click="copySystemInfo" />
         </template>
       </v-tooltip>
     </v-card-actions>

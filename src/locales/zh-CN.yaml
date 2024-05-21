@@ -117,6 +117,7 @@ about:
   github: Github
   checkUpdate: 检查更新
   copy: 已复制到剪贴板
+  system: 系统信息
 moment:
   create: 记录下瞬间
   inputTitle: 输入标题...

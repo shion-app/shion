@@ -117,6 +117,7 @@ about:
   github: Github
   checkUpdate: Check for updates
   copy: Copied to clipboard
+  system: System info
 moment:
   create: Record the moment
   inputTitle: Input title...
