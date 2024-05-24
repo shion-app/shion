@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.11.1] - 2024-05-24
+
+### 修复
+
+- powershell在中文注释存在时执行报错 (https://github.com/shion-app/shion/issues/12)
+
 ## [0.11.0] - 2024-05-21
 
 ### 新增

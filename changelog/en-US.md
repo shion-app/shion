@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.11.1] - 2024-05-24
+
+### Fixed
+
+- Powershell executes an error when there are Chinese comments present (https://github.com/shion-app/shion/issues/12)
+
 ## [0.11.0] - 2024-05-21
 
 ### Added
