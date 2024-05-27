@@ -355,6 +355,9 @@ importExport:
   import: 导入
   export: 导出
   relaunch: 即将重新启动...
+  verify:
+    noMigration: 导入数据存在问题, 请重新在迁移的机器上导出旧数据
+    version: 数据版本不符合, 源数据为{source}, 当前版本为{version}
 changelog:
   title: 改动日志
   empty: 未拉取到改动日志

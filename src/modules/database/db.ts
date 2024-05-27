@@ -181,6 +181,15 @@ function createKyselyDatabase<D, U extends Record<string, object>>(executor: Dat
       }
     }
 
+    async execute(sql: string) {
+      try {
+        return await this.#executor.execute(sql)
+      }
+      catch (error) {
+        throw this.#executor.handleError(error)
+      }
+    }
+
     #select<T extends CompiledQuery>(query: T) {
       return this.#executor.select<InferResult<T>>(query.sql, query.parameters as unknown[])
     }

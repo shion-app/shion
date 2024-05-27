@@ -355,6 +355,9 @@ importExport:
   import: Import
   export: Export
   relaunch: Preparing to relaunch soon...
+  verify:
+    noMigration: There is an issue with importing data. Please re export the old data on the migrated machine
+    version: The data version does not match. The source data is {source}, and the current version is {version}
 changelog:
   title: Changelog
   empty: Changelog not retrieved

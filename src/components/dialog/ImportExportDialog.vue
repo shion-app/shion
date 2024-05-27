@@ -2,8 +2,16 @@
 import { invoke } from '@tauri-apps/api/core'
 import { appDataDir, join } from '@tauri-apps/api/path'
 import { open } from '@tauri-apps/plugin-dialog'
+import { BaseDirectory, exists, readTextFile, remove, writeTextFile } from '@tauri-apps/plugin-fs'
 import { error } from '@tauri-apps/plugin-log'
 import { relaunch } from '@tauri-apps/plugin-process'
+import { compare } from 'compare-versions'
+import { db } from '@/modules/database'
+
+interface Migration {
+  version: string
+  base: string
+}
 
 const props = defineProps<{
   visible: boolean
@@ -11,10 +19,18 @@ const props = defineProps<{
 
 const { visible: visibleVModel } = useVModels(props)
 const notify = useNotify()
+const { t } = useI18n()
+
+const configStore = useConfigStore()
+
+const { config } = storeToRefs(configStore)
 
 const importing = ref(false)
 const exporting = ref(false)
 const relaunching = ref(false)
+
+const MIGRATION_FOLDER = 'migrate'
+const MIGRATION_FILENAME = 'migration.json'
 
 async function handleImport() {
   const selected = await open()
@@ -22,9 +38,20 @@ async function handleImport() {
     return
 
   const dest = await appDataDir()
+  const verifyDest = await join(dest, MIGRATION_FOLDER)
   importing.value = true
+
   await suspendApp()
+  let migration: Migration
   try {
+    await invoke('decompress', {
+      target: selected.path,
+      dest: verifyDest,
+    })
+    migration = await verifyMigrationFile()
+    await remove(verifyDest, {
+      recursive: true,
+    })
     await invoke('decompress', {
       target: selected.path,
       dest,
@@ -35,12 +62,14 @@ async function handleImport() {
     notify.error({
       text: e as any,
     })
+    importing.value = false
     return
   }
   finally {
     await resumeApp()
-    importing.value = false
   }
+  await updateAssetPath(migration.base)
+  importing.value = false
   notify.success({})
   visibleVModel.value = false
   relaunching.value = true
@@ -61,6 +90,7 @@ async function handleExport() {
   exporting.value = true
   await suspendApp()
   try {
+    await generateMigrationFile()
     await invoke('compress', {
       target: appDataDirPath,
       dest,
@@ -78,6 +108,44 @@ async function handleExport() {
     exporting.value = false
   }
   notify.success({})
+}
+
+async function generateMigrationFile() {
+  const base = await appDataDir()
+  const data: Migration = {
+    version: config.value.version,
+    base,
+  }
+  await writeTextFile(MIGRATION_FILENAME, JSON.stringify(data), { baseDir: BaseDirectory.AppData })
+}
+
+async function verifyMigrationFile() {
+  const file = `${MIGRATION_FOLDER}/${MIGRATION_FILENAME}`
+  const has = await exists(file, { baseDir: BaseDirectory.AppData })
+  if (!has)
+    throw t('importExport.verify.noMigration')
+
+  const migration: Migration = JSON.parse(await readTextFile(file, { baseDir: BaseDirectory.AppData }))
+
+  if (compare(migration.version, config.value.version, '>')) {
+    throw t('importExport.verify.version', {
+      source: migration.version,
+      version: config.value.version,
+    })
+  }
+
+  return migration
+}
+
+async function updateAssetPath(base: string) {
+  const dir = await appDataDir()
+  if (base == dir)
+    return
+
+  const source = encodeURIComponent(base)
+  const target = encodeURIComponent(dir)
+  db.execute(`UPDATE program set icon = REPLACE(icon, '${source}', '${target}')`)
+  db.execute(`UPDATE moment set content = REPLACE(content, '${source}', '${target}')`)
 }
 </script>
 
