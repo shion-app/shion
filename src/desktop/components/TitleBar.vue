@@ -3,6 +3,7 @@ import { getCurrent } from '@tauri-apps/api/window'
 import { appLogDir } from '@tauri-apps/api/path'
 import { core } from '@tauri-apps/api'
 import { attachConsole } from '@tauri-apps/plugin-log'
+import { invoke } from '@tauri-apps/api/core'
 
 import logo from '@/assets/logo.svg'
 
@@ -32,8 +33,10 @@ async function openLogDir() {
 }
 
 function openDevtools() {
-  core.invoke('open_devtools')
+  invoke('open_devtools')
 }
+
+useHotkey('ctrl+shift+i', openDevtools)
 </script>
 
 <template>

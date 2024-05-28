@@ -18,6 +18,10 @@ interface SearchItem {
 const { visible: visibleVModel } = useVModels(props)
 const { format, formatYYYYmmdd } = useDateFns()
 
+useHotkey('ctrl+f', () => {
+  visibleVModel.value = true
+})
+
 const keyword = ref('')
 const searchResult = ref<Array<SearchItem>>([])
 const scrollContainer = ref()

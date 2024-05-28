@@ -12,6 +12,10 @@ const configStore = useConfigStore()
 const { config } = storeToRefs(configStore)
 
 useTour()
+
+useHotkey('*', (keyboardEvent) => {
+  return !keyboardEvent.ctrlKey
+})
 </script>
 
 <template>
