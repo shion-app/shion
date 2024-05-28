@@ -1,4 +1,4 @@
-import { onStatusChanged, resume, suspend } from 'tauri-plugin-shion-watcher-api'
+import { getProgramByPath, onStatusChanged, resume, suspend } from 'tauri-plugin-shion-watcher-api'
 import { debug } from '@tauri-apps/plugin-log'
 
 import type { SelectProgram } from '@/modules/database'
@@ -86,6 +86,9 @@ class Watcher {
 
 export const useActivityStore = defineStore('activity', () => {
   const monitor = useMonitorStore()
+  const configStore = useConfigStore()
+
+  const { config } = storeToRefs(configStore)
 
   const watcher = new Watcher()
 
@@ -111,11 +114,20 @@ export const useActivityStore = defineStore('activity', () => {
 
   watch(() => monitor.whiteList.length, restart)
 
-  onStatusChanged(({ payload }) => {
+  onStatusChanged(async ({ payload }) => {
     const { active, path, time } = payload
     const exist = monitor.whiteList.find(i => i.path == path)
-    if (!exist)
+    if (!exist) {
+      const isStartsWith = config.value.watcherWhitelist.find(folder => path.startsWith(folder))
+      if (isStartsWith) {
+        const program = await getProgramByPath(path)
+        if (program) {
+          await db.program.transactionInsert(program)
+          await monitor.refresh()
+        }
+      }
       return
+    }
 
     if (active)
       watcher.activate(path, time)

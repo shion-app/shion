@@ -157,7 +157,7 @@ dependencies:
     version: github.com/shion-app/history/ee4c166ae40d22424f99322b8b4be0d80bb5b97a
   tauri-plugin-shion-watcher-api:
     specifier: github:shion-app/watcher
-    version: github.com/shion-app/watcher/9c924ae00cd5a81daa9b1336cd2d53fe383cecf6
+    version: github.com/shion-app/watcher/8bc81a3ccb705d240a47b92ba93e6c924e321629
   vee-validate:
     specifier: ^4.11.8
     version: 4.11.8(vue@3.3.7)
@@ -10140,8 +10140,8 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  github.com/shion-app/watcher/9c924ae00cd5a81daa9b1336cd2d53fe383cecf6:
-    resolution: {tarball: https://codeload.github.com/shion-app/watcher/tar.gz/9c924ae00cd5a81daa9b1336cd2d53fe383cecf6}
+  github.com/shion-app/watcher/8bc81a3ccb705d240a47b92ba93e6c924e321629:
+    resolution: {tarball: https://codeload.github.com/shion-app/watcher/tar.gz/8bc81a3ccb705d240a47b92ba93e6c924e321629}
     name: tauri-plugin-shion-watcher-api
     version: 0.0.0
     dependencies:

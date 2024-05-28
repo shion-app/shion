@@ -15,6 +15,7 @@ interface Config {
   themeColor: string
   tour: boolean
   autoShowChangelogDisable: boolean
+  watcherWhitelist: Array<string>
 }
 
 const PATH = 'config.json'
@@ -41,6 +42,7 @@ export const useConfigStore = defineStore('config', () => {
       themeColor: '#512DA8',
       tour: true,
       autoShowChangelogDisable: false,
+      watcherWhitelist: [],
     }
     const len = await store.length()
     if (len == 0)
