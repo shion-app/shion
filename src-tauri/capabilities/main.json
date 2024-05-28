@@ -47,6 +47,7 @@
     "shion-history:allow-read-history",
     "shion-watcher:allow-resume",
     "shion-watcher:allow-suspend",
-    "shion-watcher:allow-get-program-list"
+    "shion-watcher:allow-get-program-list",
+    "shion-watcher:allow-get-program-by-path"
   ]
 }

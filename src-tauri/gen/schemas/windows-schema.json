@@ -5377,6 +5377,13 @@
           ]
         },
         {
+          "description": "shion-watcher:allow-get-program-by-path -> Enables the get_program_by_path command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "shion-watcher:allow-get-program-by-path"
+          ]
+        },
+        {
           "description": "shion-watcher:allow-get-program-list -> Enables the get_program_list command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -5402,6 +5409,13 @@
           "type": "string",
           "enum": [
             "shion-watcher:allow-suspend"
+          ]
+        },
+        {
+          "description": "shion-watcher:deny-get-program-by-path -> Denies the get_program_by_path command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "shion-watcher:deny-get-program-by-path"
           ]
         },
         {
