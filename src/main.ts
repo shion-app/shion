@@ -43,5 +43,5 @@ createApp(App)
   .component('vueEcharts', vueEcharts)
   .mount('#app')
 
-if (!import.meta.env.TAURI_DEBUG)
+if (isProd)
   window.addEventListener('contextmenu', e => e.preventDefault())

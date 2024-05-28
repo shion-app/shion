@@ -8,7 +8,7 @@ export const isAndorid = PLATFORM == 'android'
 
 export const isMobile = isAndorid
 
-export const isDev = !!import.meta.env.TAURI_ENV_DEBUG
+export const isDev = import.meta.env.DEV
 
 export const isProd = !isDev
 
