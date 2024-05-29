@@ -92,7 +92,7 @@ watch(visibleVModel, (v) => {
 </script>
 
 <template>
-  <advanced-dialog v-model:visible="visibleVModel" :card="false">
+  <advanced-dialog v-model:visible="visibleVModel" :card="false" class="sm:w-[700px]">
     <v-text-field
       v-model="keyword" append-inner-icon="mdi-magnify" @click:append-inner="search"
       @keydown.enter="search"
@@ -106,9 +106,14 @@ watch(visibleVModel, (v) => {
             </v-list-subheader>
             <template v-for="{ time, content, navigate } in list" :key="time">
               <v-list-item :value="time" @click="() => navigate()">
-                <WordHighlighter :query="keyword">
-                  {{ content }}
-                </WordHighlighter>
+                <div flex>
+                  <div class="w-[100px]" shrink-0>
+                    {{ format(time, 'HH:mm') }}
+                  </div>
+                  <WordHighlighter :query="keyword">
+                    {{ content }}
+                  </WordHighlighter>
+                </div>
               </v-list-item>
               <v-divider my-2 />
             </template>
