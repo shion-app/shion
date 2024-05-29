@@ -260,6 +260,11 @@ statusBar:
     history:
       text: 拉取记录
       tooltip: 浏览器历史
+    historyVisible:
+      text: 浏览器历史
+      tooltip:
+        show: 显示
+        hide: 隐藏
   moment:
     search:
       text: 搜索

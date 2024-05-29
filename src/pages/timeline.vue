@@ -30,7 +30,8 @@ const filterCategory = ref(route.query.category as Filter['category'])
 const filterTargetId = ref<Filter['id']>(route.query.id ? Number(route.query.id) : undefined)
 
 const [compressed, toggleCompressed] = useToggle(true)
-const [searchVisible, togglesearchVisible] = useToggle()
+const [searchVisible, toggleSearchVisible] = useToggle()
+const [historyVisible, toggleHistoryVisible] = useToggle(true)
 
 async function handleSuccess() {
   success({})
@@ -129,14 +130,16 @@ const list = computed(() => {
           color: i.program.color,
           compressGroupId: `program-${i.programId}`,
         })),
-        ...historyList.value.map<computedTimeLineNode>(i => ({
-          start: i.lastVisited,
-          end: i.lastVisited,
-          name: `${i.title} (🌐${new URL(i.url).hostname})`,
-          color: i.domain.color,
-          compressGroupId: `domain-${i.domainId}`,
-          url: i.url,
-        })),
+        ...(historyVisible.value
+          ? historyList.value.map<computedTimeLineNode>(i => ({
+            start: i.lastVisited,
+            end: i.lastVisited,
+            name: `${i.title} (🌐${new URL(i.url).hostname})`,
+            color: i.domain.color,
+            compressGroupId: `domain-${i.domainId}`,
+            url: i.url,
+          }))
+          : []),
       ]
   // i.end == i.start history两者相同
   const data = list.filter(i => i.end == i.start || i.end - i.start > config.value.timelineMinMinute * 1000 * 60).sort((a, b) => a.start - b.start)
@@ -259,6 +262,12 @@ onRefresh(refresh)
   </status-bar-teleport>
   <status-bar-teleport :xs="false">
     <status-bar-button
+      v-if="!filterCategory"
+      :tooltip="historyVisible ? $t('statusBar.timeline.historyVisible.tooltip.hide') : $t('statusBar.timeline.historyVisible.tooltip.show')"
+      :text="$t('statusBar.timeline.historyVisible.text')" :icon="historyVisible ? 'i-mdi:eye' : 'i-mdi:eye-off'"
+      @click="() => toggleHistoryVisible()"
+    />
+    <status-bar-button
       :tooltip="compressed ? $t('statusBar.timeline.node.tooltip.decompress') : $t('statusBar.timeline.node.tooltip.compress')"
       :text="$t('statusBar.timeline.node.text')"
       :icon="compressed ? 'i-mdi:arrow-split-vertical' : 'i-mdi:arrow-collapse-horizontal'"
@@ -266,7 +275,7 @@ onRefresh(refresh)
     />
     <status-bar-button
       :tooltip="$t('statusBar.timeline.search.tooltip')" :text="$t('statusBar.timeline.search.text')"
-      icon="i-mdi:magnify" @click="() => togglesearchVisible()"
+      icon="i-mdi:magnify" @click="() => toggleSearchVisible()"
     />
     <history-pull />
   </status-bar-teleport>

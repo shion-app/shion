@@ -260,6 +260,11 @@ statusBar:
     history:
       text: Pulling record
       tooltip: Browser history
+    historyVisible:
+      text: Browser history
+      tooltip:
+        show: Show
+        hide: Hide
   moment:
     search:
       text: Search
