@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { endOfDay, isBefore, startOfDay, subMinutes } from 'date-fns'
 import { open } from '@tauri-apps/plugin-shell'
+import type { ComponentExposed } from 'vue-component-type-helpers'
 
 import type { SelectActivity, SelectHistory, SelectNote } from '@/modules/database'
 import { db } from '@/modules/database'
 import type { TimeLineNode } from '@/interfaces'
 import type { Filter } from '@/components/timeline/types'
+import TimelineGraph from '@/components/timeline/TimelineGraph.vue'
 
 type computedTimeLineNode = TimeLineNode & { compressGroupId: string }
+type TimelineGraphExposed = ComponentExposed<typeof TimelineGraph>
 
 const configStore = useConfigStore()
 
@@ -28,6 +31,7 @@ const historyList = ref<Array<SelectHistory>>([])
 const date = ref(new Date())
 const filterCategory = ref(route.query.category as Filter['category'])
 const filterTargetId = ref<Filter['id']>(route.query.id ? Number(route.query.id) : undefined)
+const timelineGraphRef = ref<TimelineGraphExposed>()
 
 const [compressed, toggleCompressed] = useToggle(true)
 const [searchVisible, toggleSearchVisible] = useToggle()
@@ -242,7 +246,7 @@ onRefresh(refresh)
 <template>
   <div h-full flex>
     <div flex-1>
-      <timeline-graph v-if="list.length" :list="list" flex-1 />
+      <TimelineGraph v-if="list.length" ref="timelineGraphRef" :list="list" flex-1 />
       <empty v-else type="timeline" :desc="$t('hint.timeline')" />
     </div>
     <calendar v-if="sm" :id="filterTargetId" v-model:date="date" :category="filterCategory" />
@@ -265,13 +269,18 @@ onRefresh(refresh)
       v-if="!filterCategory"
       :tooltip="historyVisible ? $t('statusBar.timeline.historyVisible.tooltip.hide') : $t('statusBar.timeline.historyVisible.tooltip.show')"
       :text="$t('statusBar.timeline.historyVisible.text')" :icon="historyVisible ? 'i-mdi:eye' : 'i-mdi:eye-off'"
-      @click="() => toggleHistoryVisible()"
+      @click="() => {
+        toggleHistoryVisible()
+        timelineGraphRef?.scrollToViewportTime()
+      }"
     />
     <status-bar-button
       :tooltip="compressed ? $t('statusBar.timeline.node.tooltip.decompress') : $t('statusBar.timeline.node.tooltip.compress')"
       :text="$t('statusBar.timeline.node.text')"
-      :icon="compressed ? 'i-mdi:arrow-split-vertical' : 'i-mdi:arrow-collapse-horizontal'"
-      @click="() => toggleCompressed()"
+      :icon="compressed ? 'i-mdi:arrow-split-vertical' : 'i-mdi:arrow-collapse-horizontal'" @click="() => {
+        toggleCompressed()
+        timelineGraphRef?.scrollToViewportTime()
+      }"
     />
     <status-bar-button
       :tooltip="$t('statusBar.timeline.search.tooltip')" :text="$t('statusBar.timeline.search.text')"

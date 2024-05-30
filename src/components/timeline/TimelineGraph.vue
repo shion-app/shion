@@ -32,6 +32,10 @@ const props = defineProps<{
   list: Array<TimeLineNode>
 }>()
 
+defineExpose({
+  scrollToViewportTime,
+})
+
 const { t } = useI18n()
 const { format, formatHHmmss } = useDateFns()
 
@@ -45,6 +49,7 @@ const lineWidth = 10
 const secondaryLineOffset = textOffsetLeft - lineWidth * 2
 
 const svg = ref()
+const graphItemRef = useTemplateRefsList<HTMLElement>()
 
 const timeline = computed(() => props.list.flatMap((i) => {
   if (i.start == i.end)
@@ -183,6 +188,33 @@ function drawPoint(svg: SVG.Doc, item: GraphItem) {
   }
 }
 
+async function scrollToViewportTime() {
+  let viewportTime = new Date().getTime()
+  let firstElementTop = Infinity
+  for (const item of graphItemRef.value) {
+    const { top } = item.getBoundingClientRect()
+    const time = Number(item.dataset.start)
+    if (top > 0 && top < firstElementTop) {
+      firstElementTop = top
+      viewportTime = time
+    }
+  }
+
+  await sleep(200)
+
+  let closest = Infinity
+  let closestItem: HTMLElement | undefined
+  for (const item of graphItemRef.value) {
+    const time = Number(item.dataset.start)
+    const current = Math.abs(viewportTime - time)
+    if (current < closest) {
+      closest = current
+      closestItem = item
+    }
+  }
+  closestItem?.scrollIntoView()
+}
+
 onMounted(() => {
   svg.value = SVG('timeline-svg')
   draw()
@@ -200,13 +232,15 @@ watchDeep(() => props.list, () => {
     <v-hover v-for="{ start, end, actions, name, children, totalTime, url, level } in nodeList" :key="start.y">
       <template #default="{ isHovering, props: hoverProps }">
         <div
-          v-bind="hoverProps" absolute w-full :style="{
+          v-bind="hoverProps" :ref="graphItemRef.set" absolute w-full :style="{
             top: `${start.y}px`,
             left: `${start.x}px`,
             height: `${end.y - start.y + pointOffset * 3}px`,
-          }" :class="{
+          }"
+          :class="{
             'z-1': level == 'primary',
           }"
+          :data-start="start.time"
         >
           <div
             absolute inset-0 transition-opacity rounded-md :class="[
