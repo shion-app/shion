@@ -14,6 +14,10 @@ const { config } = storeToRefs(configStore)
 useTour()
 
 useHotkey('*', (keyboardEvent) => {
+  const disableKeys = ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12']
+  if (disableKeys.includes(keyboardEvent.key))
+    return false
+
   return !keyboardEvent.ctrlKey
 })
 </script>
