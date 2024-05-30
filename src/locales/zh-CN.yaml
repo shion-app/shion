@@ -27,6 +27,7 @@ config:
     timelineMinMinute: 时间线显示时，筛选掉小于当前分钟的片段
     timelineGroupGapMinute: 时间线显示时，分离同类型相隔当前分钟的片段
     watcherWhitelist: 在下列文件夹中且未添加的程序，运行时自动加入监听
+    watcherWhitelistTip: 避免添加"C:\Windows\explorer.exe"等无意义程序影响计时精度
   header:
     general: 通用
     behavior: 行为
@@ -321,7 +322,7 @@ tour:
     description: 再创建标签, 这时你的计划变得更加具体。此时具体的书名是个好的选择🔖
   step9:
     title: 自动计时
-    description: 只有在这添加过的软件, 才会被记录💻
+    description: 只有在这添加过的软件, 才会被记录, 在设置中添加白名单即可自动添加💻
   step10:
     title: 日记
     description: 存放日记的匣子📦

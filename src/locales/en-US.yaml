@@ -26,7 +26,8 @@ config:
   desc:
     timelineMinMinute: When displaying the timeline, filter out segments smaller than the current minute
     timelineGroupGapMinute: When displaying the timeline, separate segments of the same type that are separated by the current minute
-    watcherWhitelist: Programs that are in the following folders and have not been added will be added when running.
+    watcherWhitelist: Programs that are in the following folders and have not been added will be added when running
+    watcherWhitelistTip: Avoid adding meaningless programs such as "C:\Windows\explorer.exe" that may affect timing accuracy
   header:
     general: General
     behavior: Behavior
@@ -321,7 +322,7 @@ tour:
     description: Create the label again, and your plan will become more specific. At this point, a specific book title is a good choice 🔖
   step9:
     title: Automatic Timing
-    description: Only the software added here will be recorded 💻
+    description: Only the software added here will be recorded, and adding a whitelist in the settings will automatically add it 💻
   step10:
     title: Diary
     description: Box for storing diary 📦

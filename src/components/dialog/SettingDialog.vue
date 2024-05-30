@@ -97,6 +97,9 @@ const localeOptions = [
           <v-list-item-subtitle>
             {{ $t('config.desc.watcherWhitelist') }}
           </v-list-item-subtitle>
+          <v-list-item-subtitle mt-1>
+            {{ $t('config.desc.watcherWhitelistTip') }}
+          </v-list-item-subtitle>
           <watcher-whitelist v-model="config.watcherWhitelist" />
         </v-list-item>
       </v-list>
