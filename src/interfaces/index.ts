@@ -11,6 +11,7 @@ export interface TimeLineNode {
   remove?: () => Promise<void>
   update?: (data: { start?: number; end?: number }) => Promise<void>
   url?: string
+  icon?: string
 }
 
 export interface NestedMenuItem {

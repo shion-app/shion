@@ -94,6 +94,7 @@ const list = computed(() => {
                 name: i.program.name,
                 color: i.program.color,
                 compressGroupId: `program-${i.programId}`,
+                icon: i.program.icon,
               }))
             : []
         ),
@@ -107,6 +108,7 @@ const list = computed(() => {
               color: i.domain.color,
               compressGroupId: `domain-${i.domainId}`,
               url: i.url,
+              icon: `https://api.statvoo.com/favicon/${i.domain.pattern}`,
             }))
           : []
         ),
@@ -133,6 +135,7 @@ const list = computed(() => {
           name: i.program.name,
           color: i.program.color,
           compressGroupId: `program-${i.programId}`,
+          icon: i.program.icon,
         })),
         ...(historyVisible.value
           ? historyList.value.map<computedTimeLineNode>(i => ({
@@ -142,6 +145,7 @@ const list = computed(() => {
             color: i.domain.color,
             compressGroupId: `domain-${i.domainId}`,
             url: i.url,
+            icon: `https://api.statvoo.com/favicon/${i.domain.pattern}`,
           }))
           : []),
       ]
@@ -201,6 +205,7 @@ function compress(list: Array<computedTimeLineNode>): Array<TimeLineNode> {
           color: i.color,
         })),
       url: first.url,
+      icon: first.icon,
     }
   })
 }
