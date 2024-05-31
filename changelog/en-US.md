@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [0.11.4] - 2024-05-31
+
+### Added
+
+- Add icons to `Automatic monitoring` and `Browser History` in the timeline
+- Add option to decide whether to show the window at startup in `Setting`
+
+### Fixed
+
+- Table does not exist when pulling browser history (https://github.com/shion-app/shion/issues/19)
+
 ## [0.11.3] - 2024-05-30
 
 ### Added
