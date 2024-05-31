@@ -144,14 +144,17 @@ pub fn run() {
             {
                 use tauri::{
                     tray::{ClickType, TrayIconBuilder},
-                    Manager,
+                    Manager, WebviewUrl, WebviewWindowBuilder, Wry,
                 };
+                use tauri_plugin_store::{with_store, StoreCollection};
+
+                let title = if tauri::dev() { "shion-dev" } else { "shion" };
 
                 let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
                 let menu = Menu::with_items(app, &[&quit])?;
 
                 let _ = TrayIconBuilder::with_id("tray")
-                    .tooltip("shion")
+                    .tooltip(title)
                     .icon(app.default_window_icon().unwrap().clone())
                     .menu(&menu)
                     .menu_on_left_click(false)
@@ -171,6 +174,29 @@ pub fn run() {
                         }
                     })
                     .build(app);
+
+                let stores = app.app_handle().state::<StoreCollection<Wry>>();
+
+                let launch_visible =
+                    with_store(app.app_handle().clone(), stores, "config.json", |store| {
+                        if let Some(value) = store.get("launchVisible") {
+                            if let Some(launch_visible) = value.as_bool() {
+                                return Ok(launch_visible);
+                            }
+                        }
+                        Ok(true)
+                    })?;
+
+                WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
+                    .visible(launch_visible)
+                    .center()
+                    .decorations(false)
+                    .fullscreen(false)
+                    .resizable(false)
+                    .inner_size(1152.0, 648.0)
+                    .title(title)
+                    .build()
+                    .unwrap();
             }
 
             Ok(())

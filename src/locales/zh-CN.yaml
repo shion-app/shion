@@ -19,6 +19,7 @@ config:
   locale: 语言
   checkUpdate: 检查更新
   autostart: 开机启动
+  launchVisible: 启动时显示界面
   timelineMinMinute: 最小时间
   timelineGroupGapMinute: 分组间隔
   themeColor: 主题色

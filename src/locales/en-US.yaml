@@ -19,6 +19,7 @@ config:
   locale: Language
   checkUpdate: Check update
   autostart: Auto start
+  launchVisible: Visible at startup
   timelineMinMinute: Minimum time
   timelineGroupGapMinute: Grouping Intervals
   themeColor: Theme color

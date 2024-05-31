@@ -55,16 +55,6 @@
       },
       "csp": null
     },
-    "windows": [
-      {
-        "center": true,
-        "decorations": false,
-        "fullscreen": false,
-        "height": 648,
-        "resizable": false,
-        "title": "shion",
-        "width": 1152
-      }
-    ]
+    "windows": []
   }
 }

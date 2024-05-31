@@ -10,6 +10,7 @@ interface Config {
   locale: 'zh-CN' | 'en-US'
   checkUpdate: boolean
   autostart: boolean
+  launchVisible: boolean
   timelineMinMinute: number
   timelineGroupGapMinute: number
   themeColor: string
@@ -37,6 +38,7 @@ export const useConfigStore = defineStore('config', () => {
       locale: await core.invoke('get_sys_locale'),
       checkUpdate: false,
       autostart: false,
+      launchVisible: true,
       timelineMinMinute: 0,
       timelineGroupGapMinute: 30,
       themeColor: '#512DA8',
@@ -109,6 +111,7 @@ export const useConfigStore = defineStore('config', () => {
         disable()
     })
   }
+
   watch(() => config.value.themeColor, (v) => {
     theme.themes.value.light.colors.primary = v
   })

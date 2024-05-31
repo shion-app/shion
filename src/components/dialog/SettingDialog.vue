@@ -56,6 +56,14 @@ const localeOptions = [
             </v-list-item-action>
           </template>
         </v-list-item>
+        <v-list-item>
+          <v-list-item-title>{{ $t('config.launchVisible') }}</v-list-item-title>
+          <template #append>
+            <v-list-item-action>
+              <v-checkbox-btn v-model="config.launchVisible" />
+            </v-list-item-action>
+          </template>
+        </v-list-item>
         <v-divider />
         <v-list-subheader>{{ $t('config.header.behavior') }}</v-list-subheader>
         <v-list-item>
