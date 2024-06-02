@@ -33,6 +33,7 @@ const localeOptions = [
             <color-picker-button v-model="config.themeColor" />
           </template>
         </v-list-item>
+        <v-divider />
         <v-list-subheader>{{ $t('config.header.general') }}</v-list-subheader>
         <v-list-item>
           <v-list-item-title>{{ $t('config.locale') }}</v-list-item-title>
@@ -70,35 +71,27 @@ const localeOptions = [
         <v-list-subheader>{{ $t('config.header.behavior') }}</v-list-subheader>
         <v-list-item>
           <v-list-item-title>
-            <div>
-              {{ $t('config.timelineMinMinute') }}
-            </div>
-            <div px-4 py-2>
-              <v-slider
-                v-model="config.timelineMinMinute" thumb-label hide-details :min="0" :max="10" :step="1"
-                @touchmove.stop
-              />
-            </div>
+            {{ $t('config.timelineMinMinute') }}
           </v-list-item-title>
           <v-list-item-subtitle>
             {{ $t('config.desc.timelineMinMinute') }}
           </v-list-item-subtitle>
+          <v-slider
+            v-model="config.timelineMinMinute" px-4 py-2 thumb-label hide-details :min="0" :max="10" :step="1"
+            @touchmove.stop
+          />
         </v-list-item>
         <v-list-item>
           <v-list-item-title>
-            <div>
-              {{ $t('config.timelineGroupGapMinute') }}
-            </div>
-            <div px-4 py-2>
-              <v-slider
-                v-model="config.timelineGroupGapMinute" thumb-label hide-details :min="5" :max="60" :step="5"
-                @touchmove.stop
-              />
-            </div>
+            {{ $t('config.timelineGroupGapMinute') }}
           </v-list-item-title>
           <v-list-item-subtitle>
             {{ $t('config.desc.timelineGroupGapMinute') }}
           </v-list-item-subtitle>
+          <v-slider
+            v-model="config.timelineGroupGapMinute" px-4 py-2 thumb-label hide-details :min="5" :max="60"
+            :step="5" @touchmove.stop
+          />
         </v-list-item>
         <v-list-item>
           <v-list-item-title>
@@ -107,10 +100,7 @@ const localeOptions = [
           <v-list-item-subtitle>
             {{ $t('config.desc.watcherWhitelist') }}
           </v-list-item-subtitle>
-          <v-list-item-subtitle mt-1>
-            {{ $t('config.desc.watcherWhitelistTip') }}
-          </v-list-item-subtitle>
-          <watcher-whitelist v-model="config.watcherWhitelist" />
+          <watcher-whitelist v-model="config.watcherWhitelist" px-1 />
         </v-list-item>
         <v-list-item>
           <v-list-item-title>
