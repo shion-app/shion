@@ -375,3 +375,5 @@ watcherWhitelist:
   add: 新增
   remove: 删除
   duplicate: 不能重复添加
+refresh:
+  error: 刷新时发生错误

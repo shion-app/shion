@@ -375,3 +375,5 @@ watcherWhitelist:
   add: Add
   remove: Remove
   duplicate: Cannot add repeatedly
+refresh:
+  error: Error occurred during refresh
