@@ -8,6 +8,7 @@ import { db } from '@/modules/database'
 import type { TimeLineNode } from '@/interfaces'
 import type { Filter } from '@/components/timeline/types'
 import TimelineGraph from '@/components/timeline/TimelineGraph.vue'
+import { getFaviconUrl } from '@/modules/favicon'
 
 type computedTimeLineNode = TimeLineNode & { compressGroupId: string }
 type TimelineGraphExposed = ComponentExposed<typeof TimelineGraph>
@@ -108,7 +109,7 @@ const list = computed(() => {
               color: i.domain.color,
               compressGroupId: `domain-${i.domainId}`,
               url: i.url,
-              icon: `https://api.statvoo.com/favicon/${i.domain.pattern}`,
+              icon: getFaviconUrl(config.value.faviconService, i.domain.pattern),
             }))
           : []
         ),
@@ -145,7 +146,7 @@ const list = computed(() => {
             color: i.domain.color,
             compressGroupId: `domain-${i.domainId}`,
             url: i.url,
-            icon: `https://api.statvoo.com/favicon/${i.domain.pattern}`,
+            icon: getFaviconUrl(config.value.faviconService, i.domain.pattern),
           }))
           : []),
       ]

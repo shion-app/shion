@@ -24,11 +24,13 @@ config:
   timelineGroupGapMinute: 分组间隔
   themeColor: 主题色
   watcherWhitelist: 自动监听白名单
+  faviconService: 图标获取
   desc:
     timelineMinMinute: 时间线显示时，筛选掉小于当前分钟的片段
     timelineGroupGapMinute: 时间线显示时，分离同类型相隔当前分钟的片段
     watcherWhitelist: 在下列文件夹中且未添加的程序，运行时自动加入监听
     watcherWhitelistTip: 避免添加"C:\Windows\explorer.exe"等无意义程序影响计时精度
+    faviconService: 选择时间线中进行网站图标请求的服务提供者
   header:
     general: 通用
     behavior: 行为

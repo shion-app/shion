@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { FaviconService } from '@/modules/favicon'
+
 const props = defineProps<{
   visible: boolean
 }>()
@@ -109,6 +111,18 @@ const localeOptions = [
             {{ $t('config.desc.watcherWhitelistTip') }}
           </v-list-item-subtitle>
           <watcher-whitelist v-model="config.watcherWhitelist" />
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-title>
+            {{ $t('config.faviconService') }}
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            {{ $t('config.desc.faviconService') }}
+          </v-list-item-subtitle>
+          <v-radio-group v-model="config.faviconService" hide-details>
+            <v-radio label="Google" :value="FaviconService.Google" />
+            <v-radio label="Icon Horse" :value="FaviconService.IconHorse" />
+          </v-radio-group>
         </v-list-item>
       </v-list>
     </v-card-text>

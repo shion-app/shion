@@ -5,6 +5,8 @@ import { core } from '@tauri-apps/api'
 import i18next from 'i18next'
 import { useTheme } from 'vuetify/lib/framework.mjs'
 
+import { FaviconService } from '@/modules/favicon'
+
 interface Config {
   version: string
   locale: 'zh-CN' | 'en-US'
@@ -17,6 +19,7 @@ interface Config {
   tour: boolean
   autoShowChangelogDisable: boolean
   watcherWhitelist: Array<string>
+  faviconService: FaviconService
 }
 
 const PATH = 'config.json'
@@ -45,6 +48,7 @@ export const useConfigStore = defineStore('config', () => {
       tour: true,
       autoShowChangelogDisable: false,
       watcherWhitelist: [],
+      faviconService: FaviconService.IconHorse,
     }
     const len = await store.length()
     if (len == 0)
