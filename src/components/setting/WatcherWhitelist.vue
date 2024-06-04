@@ -34,8 +34,8 @@ async function openDirectoryDialog() {
 <template>
   <div my-2 space-y-2>
     <v-text-field
-      v-for="text, index in modelValue" :key="text" v-model="modelValue[index]" hide-details readonly density="comfortable"
-      variant="outlined"
+      v-for="text, index in modelValue" :key="text" v-model="modelValue[index]" hide-details readonly
+      density="comfortable" variant="outlined"
     >
       <template #append>
         <tooltip-button
@@ -43,6 +43,7 @@ async function openDirectoryDialog() {
           @click="removeRow(text)"
         />
       </template>
+      <v-tooltip :text="text" location="bottom" activator="parent" />
     </v-text-field>
     <v-btn mt-2 color="primary" @click="openDirectoryDialog">
       {{ $t('watcherWhitelist.add') }}
