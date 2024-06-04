@@ -65,9 +65,6 @@ note:
     label: 标签名称
     countdown: 倒计时
     time: 时间
-  update:
-    title: 修改记录
-    timeRange: 时间范围
 modal:
   submit: 确定
   cancel: 取消
@@ -201,6 +198,10 @@ timeline:
 timelineGraph:
   include: '包含{count}项，耗时{totalTime}'
   includeCount: '包含{count}项'
+  update:
+    title: 修改记录
+    start: 开始
+    end: 结束
 upload:
   webImage: 已过滤不支持的图片类型
   webVideo: 已过滤不支持的视频类型

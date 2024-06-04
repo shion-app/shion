@@ -40,6 +40,44 @@ defineExpose({
 
 const { t } = useI18n()
 const { format, formatHHmmss } = useDateFns()
+const { open: openUpdateForm, close: closeUpdateForm, setModelValue, model } = useFormModal<{
+  start: number
+  end: number
+}>(
+  (model) => {
+    return {
+      attrs: {
+        title: t('timelineGraph.update.title'),
+        form: {
+          fields: [
+            {
+              type: 'datetimePicker',
+              key: 'start',
+              label: t('timelineGraph.update.start'),
+              props: {
+                max: model.end,
+              },
+            },
+            {
+              type: 'datetimePicker',
+              key: 'end',
+              label: t('timelineGraph.update.end'),
+              props: {
+                min: model.start,
+              },
+            },
+          ],
+        },
+        schema: z => z.object({
+          start: z.number(),
+          end: z.number(),
+        }),
+        async onConfirm() {
+          closeUpdateForm()
+        },
+      },
+    }
+  })
 
 const pointDistance = 60
 const pointSize = 40
@@ -218,6 +256,21 @@ async function scrollToViewportTime() {
   closestItem?.scrollIntoView()
 }
 
+async function updateGraphItem(start: number, end: number, update: GraphItem['actions']['update']) {
+  if (!update)
+    return
+
+  setModelValue({
+    start,
+    end,
+  })
+  await openUpdateForm()
+  update({
+    start: model.value.start,
+    end: model.value.end,
+  })
+}
+
 onMounted(() => {
   svg.value = SVG('timeline-svg')
   draw()
@@ -300,10 +353,10 @@ watchDeep(() => props.list, () => {
                 v-if="actions.remove" value="button.remove" :title="$t('button.remove')"
                 append-icon="mdi-trash-can-outline" base-color="red" @click="() => actions.remove?.()"
               />
-              <!-- <v-list-item
+              <v-list-item
                 v-if="actions.update" value="button.update" :title="$t('button.update')"
-                append-icon="mdi-pencil-outline" @click="() => { }"
-              /> -->
+                append-icon="mdi-pencil-outline" @click="() => updateGraphItem(start.time, end.time, actions.update)"
+              />
             </v-list>
           </v-menu>
         </div>

@@ -65,9 +65,6 @@ note:
     label: Label name
     countdown: Countdown
     time: Time
-  update:
-    title: Update Note
-    timeRange: Time range
 modal:
   submit: Submit
   cancel: Cancel
@@ -201,6 +198,10 @@ timeline:
 timelineGraph:
   include: '{count} items, spent {totalTime}'
   includeCount: '{count} items'
+  update:
+    title: Update Note
+    start: Start
+    end: End
 upload:
   webImage: Unsupported image types filtered
   webVideo: Unsupported video types filtered
