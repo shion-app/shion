@@ -4,6 +4,7 @@ import type { z as Zod, ZodObject } from 'zod'
 
 import type NestedMenu from '../shared/NestedMenu.vue'
 import type FilePicker from '../form/FilePicker.vue'
+import type DatetimePicker from '../form/DatetimePicker.vue'
 
 export interface FormItemProps {
   textField: ComponentProps<typeof VTextField>
@@ -13,6 +14,7 @@ export interface FormItemProps {
   checkbox: ComponentProps<typeof VCheckbox>
   cascader: ComponentProps<typeof NestedMenu>
   filePicker: ComponentProps<typeof FilePicker>
+  datetimePicker: ComponentProps<typeof DatetimePicker>
 }
 
 export interface FormItem<T extends keyof FormItemProps, K> {
