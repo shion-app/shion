@@ -65,6 +65,9 @@ note:
     label: Label name
     countdown: Countdown
     time: Time
+    start: Start
+    end: End
+    direct: Direct input
 modal:
   submit: Submit
   cancel: Cancel

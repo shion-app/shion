@@ -65,6 +65,9 @@ note:
     label: 标签名称
     countdown: 倒计时
     time: 时间
+    start: 开始
+    end: 结束
+    direct: 直接入录
 modal:
   submit: 确定
   cancel: 取消
