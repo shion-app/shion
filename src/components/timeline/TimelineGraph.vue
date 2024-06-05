@@ -285,15 +285,13 @@ watchDeep(() => props.list, () => {
 <template>
   <div relative h-full overflow-y-auto>
     <div id="timeline-svg" p-4 />
-    <v-hover v-for="{ start, end, actions, name, children, totalTime, url, level, icon } in nodeList" :key="start.y">
+    <v-hover v-for="{ start, end, actions, name, children, totalTime, url, icon } in nodeList" :key="start.y">
       <template #default="{ isHovering, props: hoverProps }">
         <div
           v-bind="hoverProps" :ref="graphItemRef.set" absolute w-full :style="{
             top: `${start.y}px`,
             left: `${start.x}px`,
             height: `${end.y - start.y + pointOffset * 3}px`,
-          }" :class="{
-            'z-1': level == 'primary',
           }" :data-start="start.time"
         >
           <div
@@ -341,10 +339,7 @@ watchDeep(() => props.list, () => {
           </div>
           <v-menu v-if="actions.remove || actions.update">
             <template #activator="{ props: menuProps }">
-              <v-btn
-                icon v-bind="menuProps" size="x-small" bottom-2 right-2
-                :class="classNames('absolute! transition-opacity!', isHovering ? 'opacity-100' : 'opacity-0')"
-              >
+              <v-btn icon v-bind="menuProps" size="x-small" bottom-2 right-2 :class="classNames('absolute! z-1')">
                 <div i-mdi:menu-down text-6 />
               </v-btn>
             </template>
