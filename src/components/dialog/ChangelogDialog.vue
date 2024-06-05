@@ -48,7 +48,7 @@ watch(() => config.value.locale, init)
       <MdPreview v-if="changelog.notes" id="preview-only" :model-value="content" />
       <empty v-else :desc="$t('changelog.empty')" />
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions class="justify-start!">
       <v-checkbox v-model="config.autoShowChangelogDisable" :label="$t('changelog.checkbox')" hide-details />
     </v-card-actions>
   </advanced-dialog>

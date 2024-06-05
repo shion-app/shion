@@ -61,7 +61,7 @@ async function copySystemInfo() {
       </div>
       <v-btn :text="$t('about.checkUpdate')" :loading="updating" @click="update" />
     </v-card-text>
-    <v-card-actions flex justify-center>
+    <v-card-actions class="justify-center!">
       <v-tooltip :text="$t('about.website')" location="bottom">
         <template #activator="{ props: tooltipProps }">
           <v-btn icon="mdi-web" variant="text" v-bind="tooltipProps" @click="open(website)" />

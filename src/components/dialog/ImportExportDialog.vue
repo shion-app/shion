@@ -153,7 +153,7 @@ async function updateAssetPath(base: string) {
   <advanced-dialog v-model:visible="visibleVModel" :title="$t('titleBar.view.importExport')">
     <v-card-text>
       <div>{{ $t('importExport.tip') }}</div>
-      <div space-x-4 my-4>
+      <div space-x-4 mt-4>
         <v-btn :loading="importing" @click="handleImport">
           {{ $t('importExport.import') }}
         </v-btn>
