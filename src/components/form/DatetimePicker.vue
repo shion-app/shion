@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isSameDay, set } from 'date-fns'
+import { endOfDay, isAfter, isBefore, isSameDay, set, startOfDay } from 'date-fns'
 
 const props = withDefaults(defineProps<{
   min?: number
@@ -22,6 +22,8 @@ const dateModel = computed({
   },
   get: () => new Date(modelValue.value),
 })
+const minDate = computed(() => props.min ? startOfDay(props.min) : undefined)
+const maxDate = computed(() => props.max ? endOfDay(props.max) : undefined)
 const timeModel = computed({
   set: (v) => {
     const [h, m] = v.split(':')
@@ -44,6 +46,14 @@ function onClick(date: boolean) {
 function onSave() {
   menu.value = false
 }
+
+watch(dateModel, (v) => {
+  if (props.min && isBefore(v, props.min))
+    modelValue.value = props.min
+
+  if (props.max && isAfter(v, props.max))
+    modelValue.value = props.max
+})
 </script>
 
 <template>
@@ -54,7 +64,7 @@ function onSave() {
     <v-menu v-model="menu" activator="parent" :min-width="0" :close-on-content-click="false" :open-on-click="false">
       <v-confirm-edit v-if="isDateMenu" v-model="dateModel" @save="onSave">
         <template #default="{ model: proxyModel, actions }">
-          <v-date-picker v-model="proxyModel.value" :min="props.min" :max="props.max">
+          <v-date-picker v-model="proxyModel.value" :min="minDate" :max="maxDate">
             <template #actions>
               <component :is="actions" />
             </template>
