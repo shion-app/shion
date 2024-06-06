@@ -27,6 +27,7 @@ const wrapperClassName = computed(() => {
 
 function handleClick() {
   props.editor.commands.setNodeSelection(props.getPos())
+  props.editor.commands.preview(props.node.attrs.src)
 }
 </script>
 
@@ -38,7 +39,7 @@ function handleClick() {
       }"
     >
       <div :contentEditable="false">
-        <img block :src="props.node.attrs.src" @click="handleClick">
+        <img block cursor-zoom-in :src="props.node.attrs.src" @click="handleClick">
       </div>
     </div>
   </NodeViewWrapper>

@@ -1,7 +1,10 @@
 import { VueNodeViewRenderer } from '@tiptap/vue-3'
 import type { Range } from '@tiptap/core'
 import { mergeAttributes } from '@tiptap/core'
+import type { Emitter } from 'mitt'
+import mitt from 'mitt'
 
+import type { ImageOptions } from './image'
 import { Image } from './image'
 import ImageBlockView from '@/components/shared/tiptap/imageBlock/ImageBlockView.vue'
 
@@ -12,11 +15,20 @@ declare module '@tiptap/core' {
       setImageBlockAt: (attributes: { src: string; pos: number | Range }) => ReturnType
       setImageBlockAlign: (align: 'left' | 'center' | 'right') => ReturnType
       setImageBlockWidth: (width: number) => ReturnType
+      preview: (src: string) => void
     }
   }
 }
 
-export const ImageBlock = Image.extend({
+type Options = ImageOptions & {
+  emitter: Emitter<{
+    preview: {
+      src: string
+    }
+  }>
+}
+
+export const ImageBlock = Image.extend<Options>({
   name: 'imageBlock',
 
   group: 'block',
@@ -62,6 +74,15 @@ export const ImageBlock = Image.extend({
     return ['img', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)]
   },
 
+  addOptions() {
+    return {
+      inline: false,
+      allowBase64: false,
+      HTMLAttributes: {},
+      emitter: mitt(),
+    }
+  },
+
   addCommands() {
     return {
       setImageBlock:
@@ -85,6 +106,11 @@ export const ImageBlock = Image.extend({
         width =>
           ({ commands }) =>
             commands.updateAttributes('imageBlock', { width: `${Math.max(0, Math.min(100, width))}%` }),
+      preview:
+        src =>
+          () => {
+            this.options.emitter.emit('preview', { src })
+          },
     }
   },
 

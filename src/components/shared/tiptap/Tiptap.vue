@@ -7,6 +7,7 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
 import * as lowlight from 'lowlight'
+import mitt from 'mitt'
 
 import { ImageBlock, Link, Video } from '@/extensions/tiptap/'
 
@@ -20,6 +21,13 @@ const { content: contentVModel } = useVModels(props)
 const { t } = useI18n()
 
 const tiptapWrapper = ref<HTMLElement>()
+const resources = computed(() => findResources(props.content))
+
+const previewEmitter = mitt<{
+  preview: {
+    src: string
+  }
+}>()
 
 const editor = useEditor({
   content: contentVModel.value,
@@ -44,7 +52,9 @@ const editor = useEditor({
     TaskItem.configure({
       nested: true,
     }),
-    ImageBlock,
+    ImageBlock.configure({
+      emitter: previewEmitter,
+    }),
   ],
   editorProps: {
     attributes: {
@@ -55,6 +65,30 @@ const editor = useEditor({
     contentVModel.value = editor.value!.getHTML()
   },
 })
+
+const previewUrl = ref('')
+const preview = computed({
+  set: (v) => {
+    if (!v)
+      previewUrl.value = ''
+  },
+  get: () => !!previewUrl.value,
+})
+const previewIndex = ref(0)
+
+previewEmitter.on('preview', ({ src }) => {
+  previewUrl.value = src
+  previewIndex.value = resources.value.indexOf(src)
+})
+
+function findResources(str: string) {
+  const match = str.match(/<img[^>]+>/g)
+  const images = match
+    ? match.map(image => image.match(/src="([^"]*)"/)?.[1] || '')
+    : []
+
+  return images
+}
 
 watchOnce(contentVModel, (v) => {
   editor.value?.commands.setContent(v, false)
@@ -69,6 +103,18 @@ watchOnce(contentVModel, (v) => {
     <link-menu v-if="props.editable" :editor="editor" :append-to="tiptapWrapper" />
     <image-block-menu v-if="props.editable" :editor="editor" :append-to="tiptapWrapper" />
   </div>
+  <advanced-dialog v-model:visible="preview" class="w-[1000px]!">
+    <v-card-text>
+      <v-window v-model="previewIndex" show-arrows class="h-[500px]">
+        <v-window-item v-for="src in resources" :key="src" class="h-full">
+          <!-- <v-responsive :aspect-ratio="16 / 9">
+            <img :src="src">
+          </v-responsive> -->
+          <v-img :src="src" :aspect-ratio="16 / 9" />
+        </v-window-item>
+      </v-window>
+    </v-card-text>
+  </advanced-dialog>
 </template>
 
 <style lang="scss">
