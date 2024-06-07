@@ -75,6 +75,7 @@ declare module '@vue/runtime-core' {
     TitleBar: typeof import('./desktop/components/TitleBar.vue')['default']
     Toolbar: typeof import('./components/shared/tiptap/Toolbar.vue')['default']
     TooltipButton: typeof import('./components/shared/TooltipButton.vue')['default']
+    VideoView: typeof import('./components/shared/tiptap/video/VideoView.vue')['default']
     WatcherWhitelist: typeof import('./components/setting/WatcherWhitelist.vue')['default']
     YearGrid: typeof import('./components/timeline/calendar/YearGrid.vue')['default']
   }

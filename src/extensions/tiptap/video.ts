@@ -1,9 +1,27 @@
 import { Node, mergeAttributes, nodeInputRule } from '@tiptap/core'
+import { VueNodeViewRenderer } from '@tiptap/vue-3'
+import type { Emitter } from 'mitt'
+import mitt from 'mitt'
+
+import VideoView from '@/components/shared/tiptap/video/VideoView.vue'
+
+declare module '@tiptap/core' {
+  interface Commands {
+    video: {
+      previewVideo: (src: string) => void
+    }
+  }
+}
 
 const inputRegex = /!\[(.+|:?)]\((\S+)(?:(?:\s+)["'](\S+)["'])?\)/
 
 export interface VideoOptions {
   HTMLAttributes: Record<string, any>
+  emitter: Emitter<{
+    preview: {
+      src: string
+    }
+  }>
 }
 
 export const Video = Node.create<VideoOptions>({
@@ -13,8 +31,9 @@ export const Video = Node.create<VideoOptions>({
   addOptions() {
     return {
       HTMLAttributes: {
-        controls: 'controls',
+        // controls: 'controls',
       },
+      emitter: mitt(),
     }
   },
   addAttributes() {
@@ -45,5 +64,17 @@ export const Video = Node.create<VideoOptions>({
         },
       }),
     ]
+  },
+  addCommands() {
+    return {
+      previewVideo:
+        src =>
+          () => {
+            this.options.emitter.emit('preview', { src })
+          },
+    }
+  },
+  addNodeView() {
+    return VueNodeViewRenderer(VideoView)
   },
 })

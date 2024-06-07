@@ -15,7 +15,7 @@ declare module '@tiptap/core' {
       setImageBlockAt: (attributes: { src: string; pos: number | Range }) => ReturnType
       setImageBlockAlign: (align: 'left' | 'center' | 'right') => ReturnType
       setImageBlockWidth: (width: number) => ReturnType
-      preview: (src: string) => void
+      previewImage: (src: string) => void
     }
   }
 }
@@ -106,7 +106,7 @@ export const ImageBlock = Image.extend<Options>({
         width =>
           ({ commands }) =>
             commands.updateAttributes('imageBlock', { width: `${Math.max(0, Math.min(100, width))}%` }),
-      preview:
+      previewImage:
         src =>
           () => {
             this.options.emitter.emit('preview', { src })

@@ -20,9 +20,6 @@ const props = defineProps<{
 const { content: contentVModel } = useVModels(props)
 const { t } = useI18n()
 
-const tiptapWrapper = ref<HTMLElement>()
-const resources = computed(() => findResources(props.content))
-
 const previewEmitter = mitt<{
   preview: {
     src: string
@@ -36,7 +33,9 @@ const editor = useEditor({
     StarterKit.configure({
       codeBlock: false,
     }),
-    Video,
+    Video.configure({
+      emitter: previewEmitter,
+    }),
     Placeholder.configure({
       placeholder: t('tiptap.placeholder'),
     }),
@@ -66,29 +65,28 @@ const editor = useEditor({
   },
 })
 
+const tiptapWrapper = ref<HTMLElement>()
 const previewUrl = ref('')
-const preview = computed({
+const previewIndex = ref(0)
+const isPreview = computed({
   set: (v) => {
     if (!v)
       previewUrl.value = ''
   },
   get: () => !!previewUrl.value,
 })
-const previewIndex = ref(0)
+const resources = computed(() => {
+  const data = editor.value?.getJSON()
+  return (data?.content || []).filter(i => i.type == 'imageBlock' || i.type == 'video').map(i => ({
+    type: i.type! as ('imageBlock' | 'video'),
+    src: i.attrs!.src as string,
+  }))
+})
 
 previewEmitter.on('preview', ({ src }) => {
   previewUrl.value = src
-  previewIndex.value = resources.value.indexOf(src)
+  previewIndex.value = resources.value.findIndex(i => i.src == src)
 })
-
-function findResources(str: string) {
-  const match = str.match(/<img[^>]+>/g)
-  const images = match
-    ? match.map(image => image.match(/src="([^"]*)"/)?.[1] || '')
-    : []
-
-  return images
-}
 
 watchOnce(contentVModel, (v) => {
   editor.value?.commands.setContent(v, false)
@@ -103,14 +101,15 @@ watchOnce(contentVModel, (v) => {
     <link-menu v-if="props.editable" :editor="editor" :append-to="tiptapWrapper" />
     <image-block-menu v-if="props.editable" :editor="editor" :append-to="tiptapWrapper" />
   </div>
-  <advanced-dialog v-model:visible="preview" class="w-[1000px]!">
+  <advanced-dialog v-model:visible="isPreview" class="w-[1100px]!">
     <v-card-text>
-      <v-window v-model="previewIndex" show-arrows class="h-[500px]">
-        <v-window-item v-for="src in resources" :key="src" class="h-full">
-          <!-- <v-responsive :aspect-ratio="16 / 9">
-            <img :src="src">
-          </v-responsive> -->
-          <v-img :src="src" :aspect-ratio="16 / 9" />
+      <v-window v-model="previewIndex" show-arrows class="h-[550px]">
+        <v-window-item v-for="{ type, src } in resources" :key="src" h-full>
+          <v-img v-if="type == 'imageBlock'" :src="src" :aspect-ratio="16 / 9" />
+          <video
+            v-else-if="type == 'video'" :src="src" h-full m-auto controls
+            controlsList="nofullscreen nodownload"
+          />
         </v-window-item>
       </v-window>
     </v-card-text>
