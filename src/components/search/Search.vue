@@ -94,7 +94,7 @@ watch(visibleVModel, (v) => {
 <template>
   <advanced-dialog v-model:visible="visibleVModel" :card="false" class="sm:w-[700px]">
     <v-text-field
-      v-model="keyword" append-inner-icon="mdi-magnify" @click:append-inner="search"
+      v-model="keyword" append-inner-icon="mdi-magnify" autofocus @click:append-inner="search"
       @keydown.enter="search"
     />
     <v-card>
