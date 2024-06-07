@@ -208,6 +208,7 @@ timelineGraph:
 upload:
   webImage: 已过滤不支持的图片类型
   webVideo: 已过滤不支持的视频类型
+  invalidType: 不支持{name}类型
 widget:
   type: 类型
   typeDesc:

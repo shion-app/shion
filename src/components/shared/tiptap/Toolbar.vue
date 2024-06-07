@@ -2,6 +2,7 @@
 import type { ChainedCommands, Editor } from '@tiptap/vue-3'
 import { open } from '@tauri-apps/plugin-dialog'
 
+import { insert } from './util'
 import { uploadByPath, uploadExtension } from '@/modules/upload'
 
 interface DialogFilter {
@@ -132,11 +133,9 @@ async function uploadImage() {
   if (!files.length)
     return
 
-  props.editor.commands.insertContent(files.map(src => ({
+  insert(props.editor, files.map(src => ({
+    src,
     type: 'imageBlock',
-    attrs: {
-      src,
-    },
   })))
 }
 
@@ -148,11 +147,9 @@ async function uploadVideo() {
   if (!files.length)
     return
 
-  props.editor.commands.insertContent(files.map(src => ({
+  insert(props.editor, files.map(src => ({
+    src,
     type: 'video',
-    attrs: {
-      src,
-    },
   })))
 }
 

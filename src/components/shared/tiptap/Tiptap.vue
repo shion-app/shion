@@ -8,8 +8,12 @@ import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
 import * as lowlight from 'lowlight'
 import mitt from 'mitt'
+import { TauriEvent } from '@tauri-apps/api/event'
+import { extname } from '@tauri-apps/api/path'
 
+import { getType, insert } from './util'
 import { ImageBlock, Link, Video } from '@/extensions/tiptap/'
+import { check, uploadByPath } from '@/modules/upload'
 
 const props = defineProps<{
   content: string
@@ -19,6 +23,7 @@ const props = defineProps<{
 
 const { content: contentVModel } = useVModels(props)
 const { t } = useI18n()
+const { warning } = useNotify()
 
 const previewEmitter = mitt<{
   preview: {
@@ -63,6 +68,37 @@ const editor = useEditor({
   onUpdate: () => {
     contentVModel.value = editor.value!.getHTML()
   },
+})
+
+useTauriListen<{
+  paths: string[]
+}>(TauriEvent.DROP, async (e) => {
+  if (!props.editable)
+    return
+
+  if (!editor.value)
+    return
+
+  const { paths } = e.payload
+  for (const path of paths) {
+    const ext = await extname(path)
+    if (!check(ext)) {
+      return warning({
+        text: t('upload.invalidType', {
+          name: ext,
+        }),
+      })
+    }
+  }
+  const list = await Promise.all(paths.map(async (path) => {
+    const src = await uploadByPath(path)
+    const ext = await extname(path)
+    return {
+      src,
+      type: getType(ext)!,
+    }
+  }))
+  insert(editor.value, list)
 })
 
 const tiptapWrapper = ref<HTMLElement>()

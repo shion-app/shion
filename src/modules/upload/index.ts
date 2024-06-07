@@ -39,3 +39,20 @@ export const uploadExtension = {
   image: ['gif', 'jpeg', 'jpg', 'png', 'svg', 'webp'],
   video: ['mp4', 'webm'],
 }
+
+export function check(ext: string) {
+  const list = [...uploadExtension.image, ...uploadExtension.video]
+  return list.includes(ext.toLowerCase())
+}
+
+export function getType(ext: string) {
+  const extname = ext.toLowerCase()
+  for (const name of uploadExtension.image) {
+    if (extname == name)
+      return 'image'
+  }
+  for (const name of uploadExtension.video) {
+    if (extname == name)
+      return 'video'
+  }
+}

@@ -208,6 +208,7 @@ timelineGraph:
 upload:
   webImage: Unsupported image types filtered
   webVideo: Unsupported video types filtered
+  invalidType: Type {name} not supported
 widget:
   type: Type
   typeDesc:
