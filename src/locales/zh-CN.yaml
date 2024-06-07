@@ -190,7 +190,7 @@ titleBar:
     tour: 使用教程
     log: 打开日志文件夹
     devtools: 打开开发者工具
-    changelog: 改动日志
+    changelog: 更新日志
 timeline:
   plan: 计划
   label: 标签
@@ -373,8 +373,8 @@ importExport:
     noMigration: 导入数据存在问题, 请重新在迁移的机器上导出旧数据
     version: 数据版本不符合, 源数据为{source}, 当前版本为{version}
 changelog:
-  title: 改动日志
-  empty: 未拉取到改动日志
+  title: 更新日志
+  empty: 未拉取到更新日志
   checkbox: 升级后不再自动显示日志
 watcherWhitelist:
   add: 新增
