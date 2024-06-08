@@ -11,11 +11,17 @@ const run = (bin, args, opts = {}) =>
   execa(bin, args, { stdio: 'inherit', ...opts })
 
 const packagePath = path.join(path.dirname(fileURLToPath(import.meta.url)), '../package.json')
+const docConfigPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '../.vitepress/latest.json')
 const config = fs.readJsonSync(packagePath)
 
 const repleaceVersion = (version) => {
   config.version = version
   fs.writeJsonSync(packagePath, config, {
+    spaces: 2,
+  })
+  fs.writeJsonSync(docConfigPath, {
+    version,
+  }, {
     spaces: 2,
   })
 }

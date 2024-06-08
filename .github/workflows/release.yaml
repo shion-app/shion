@@ -2,6 +2,8 @@ name: release
 
 on:
   push:
+    branches:
+      - master
     tags:
       - 'v*'
 
@@ -46,3 +48,15 @@ jobs:
           releaseName: v__VERSION__
           prerelease: ${{ contains(github.ref_name, '-') }}
           args: -c src-tauri/tauri.conf.build.json
+
+      - name: Push docs repository config file
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source_file: .vitepress/latest.json
+          destination_repo: shion-app/docs
+          destination_folder: .vitepress
+          user_email: '101488209+hanaTsuk1@users.noreply.github.com'
+          user_name: hanaTsuk1
+          commit_message: update ${{ github.ref_name }}
