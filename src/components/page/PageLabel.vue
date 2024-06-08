@@ -148,13 +148,17 @@ async function handleStart(label: Pick<SelectLabel, 'id' | 'planId'>) {
     labelId: label.id,
     planId: label.planId,
   })
+  let needJump = true
   try {
-    await noteCreate.open()
+    const form = await noteCreate.open()
+    if (form.direct)
+      needJump = false
   }
   catch (error) {
     return
   }
-  router.push('/record/timer')
+  if (needJump)
+    router.push('/record/timer')
 }
 
 async function handleGridChange(items: number[], list: GridList<SelectLabel>) {

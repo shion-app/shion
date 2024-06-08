@@ -88,6 +88,7 @@ export function useFormModal<
 
     await modal.open()
     await promise.open()
+    return model.value
   }
 
   const unwatchSource = watchDeep(() => source(model.value, modalValue.value), (v) => {
