@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+## [0.11.5] - 2024-06-08
+
+### Added
+
+- Add options that provide webisite icon for `Timeline` in `Setting`
+- Add directly input data in `Manual timing`
+- Add image and video preview window in `Moment`
+- Add drag and drop upload in `Moment`
+
+### Changed
+
+- Modify `Setting` style
+- Modify `Manual timing` menu after expanding `Timeline` data group
+
 ## [0.11.4] - 2024-05-31
 
 ### Added
