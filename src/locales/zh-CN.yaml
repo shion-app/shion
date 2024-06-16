@@ -67,7 +67,7 @@ note:
     time: 时间
     start: 开始
     end: 结束
-    direct: 直接入录
+    direct: 直接录入
 modal:
   submit: 确定
   cancel: 取消
