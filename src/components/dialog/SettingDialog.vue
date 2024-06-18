@@ -9,7 +9,7 @@ const { visible: visibleVModel } = useVModels(props)
 
 const store = useConfigStore()
 
-const { config } = storeToRefs(store)
+const { config, autostart } = storeToRefs(store)
 
 const localeOptions = [
   {
@@ -55,7 +55,7 @@ const localeOptions = [
           <v-list-item-title>{{ $t('config.autostart') }}</v-list-item-title>
           <template #append>
             <v-list-item-action>
-              <v-checkbox-btn v-model="config.autostart" />
+              <v-checkbox-btn v-model="autostart" />
             </v-list-item-action>
           </template>
         </v-list-item>

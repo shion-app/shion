@@ -12,6 +12,9 @@ pub enum Error {
 
     #[error(transparent)]
     ParseChangelog(#[from] parse_changelog::Error),
+
+    #[error(transparent)]
+    Anyhow(#[from] anyhow::Error),
 }
 
 impl Serialize for Error {

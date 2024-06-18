@@ -3,6 +3,7 @@ mod mobile;
 
 mod error;
 pub use error::Result;
+mod autostart;
 
 use parse_changelog::Changelog;
 use tauri::menu::{Menu, MenuItem};
@@ -108,6 +109,16 @@ pub fn run() {
             Ok(())
         }
 
+        #[tauri::command]
+        fn enable_autostart() -> Result<()> {
+            autostart::enable()
+        }
+
+        #[tauri::command]
+        fn disable_autostart() -> Result<()> {
+            autostart::disable()
+        }
+
         builder = builder
             .plugin(tauri_plugin_updater::Builder::new().build())
             .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
@@ -134,7 +145,9 @@ pub fn run() {
                 get_sys_locale,
                 compress,
                 decompress,
-                parse_changelog_from_text
+                parse_changelog_from_text,
+                enable_autostart,
+                disable_autostart,
             ]);
     }
 

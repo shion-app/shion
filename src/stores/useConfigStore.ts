@@ -1,9 +1,10 @@
 // import { getVersion } from '@tauri-apps/plugin-app'
 import { Store } from '@tauri-apps/plugin-store'
-import { disable, enable, isEnabled } from '@tauri-apps/plugin-autostart'
 import { core } from '@tauri-apps/api'
 import i18next from 'i18next'
 import { useTheme } from 'vuetify/lib/framework.mjs'
+import { error } from '@tauri-apps/plugin-log'
+import { invoke } from '@tauri-apps/api/core'
 
 import { FaviconService } from '@/modules/favicon'
 
@@ -28,6 +29,7 @@ export const useConfigStore = defineStore('config', () => {
   const changelog = useChangelogStore()
 
   const { locale, t } = useI18n()
+  const notify = useNotify()
 
   const store = new Store(PATH)
   const config = ref({} as Config)
@@ -105,23 +107,34 @@ export const useConfigStore = defineStore('config', () => {
     }
   })
 
-  if (isDesktop) {
-    watch(() => config.value.autostart, async (v) => {
-      const switched = await isEnabled()
-      if (v)
-        enable()
-
-      else if (switched)
-        disable()
-    })
-  }
-
   watch(() => config.value.themeColor, (v) => {
     theme.themes.value.light.colors.primary = v
+  })
+
+  const autostart = computed({
+    get: () => config.value.autostart,
+    set: async (v) => {
+      config.value.autostart = v
+      try {
+        if (v)
+          await invoke('enable_autostart')
+
+        else
+          await invoke('disable_autostart')
+      }
+      catch (e) {
+        config.value.autostart = !v
+        error(`autostart error: ${e}`)
+        notify.error({
+          text: e as string,
+        })
+      }
+    },
   })
 
   return {
     config,
     ready,
+    autostart,
   }
 })

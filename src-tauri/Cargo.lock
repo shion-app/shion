@@ -3590,6 +3590,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d231b230927b5e4ad203db57bbcbee2802f6bce620b1e4a9024a07d94e2907ec"
 
 [[package]]
+name = "planif"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7502ee5af341c06aa00593d655d09e4b7126f0e886b80745c218d6dc674e8b21"
+dependencies = [
+ "windows 0.48.0",
+]
+
+[[package]]
 name = "plist"
 version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4575,9 +4584,11 @@ dependencies = [
 name = "shion"
 version = "0.11.0"
 dependencies = [
+ "anyhow",
  "log",
  "open",
  "parse-changelog",
+ "planif",
  "serde",
  "serde_json",
  "sys-locale",
@@ -4597,6 +4608,7 @@ dependencies = [
  "tauri-plugin-store",
  "tauri-plugin-updater",
  "thiserror",
+ "whoami",
  "zip",
  "zip-extensions",
 ]
@@ -6456,6 +6468,7 @@ checksum = "a44ab49fad634e88f55bf8f9bb3abd2f27d7204172a112c7c9987e01c1c94ea9"
 dependencies = [
  "redox_syscall 0.4.1",
  "wasite",
+ "web-sys",
 ]
 
 [[package]]
