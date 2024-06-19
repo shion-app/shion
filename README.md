@@ -22,6 +22,9 @@
 >
 > Document from machine translation🤖
 
+> [!CAUTION]
+> Users who use versions before v0.11.7 need to download the latest version again
+
 <a href="https://shion.app/download" target="_blank">Download</a>
 
 

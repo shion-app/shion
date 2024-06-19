@@ -20,6 +20,9 @@
 > [!NOTE]
 > 现已进入测试阶段🥳
 
+> [!CAUTION]
+> 使用v0.11.7之前版本的用户，需重新下载最新版
+
 <a href="https://shion.app/zh/download" target="_blank">下载</a>
 
 
