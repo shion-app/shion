@@ -12,7 +12,7 @@ const props = defineProps<{
 const { visible: visibleVModel } = useVModels(props)
 const configStore = useConfigStore()
 
-const { config } = storeToRefs(configStore)
+const { config, ready } = storeToRefs(configStore)
 
 const data = computed(() => {
   switch (config.value.locale) {
@@ -31,11 +31,15 @@ const changelog = ref<Release>({
 
 const content = computed(() => `## ${changelog.value.title}\n${changelog.value.notes}`)
 
-watch(data, async (v) => {
-  const release = await parseChangelog(v, config.value.version)
+async function init() {
+  const release = await parseChangelog(data.value, config.value.version)
   if (release)
     changelog.value = release
-})
+}
+
+watch(data, init)
+
+watch(ready, init)
 </script>
 
 <template>
