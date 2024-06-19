@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+## [0.11.6] - 2024-06-19
+
+### Changed
+
+- The program is changed to run as an administrator by default
+- Startup method
+
+### Fixed
+
+- Duplicate paths exist when filtering with `automatic monitoring`
+- Cannot get the program window running as an administrator when filtering with `automatic monitoring`
+
 ## [0.11.5] - 2024-06-08
 
 ### Added
