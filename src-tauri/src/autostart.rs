@@ -6,7 +6,7 @@ use anyhow::anyhow;
 use planif::enums::TaskCreationFlags;
 use planif::schedule::TaskScheduler;
 use planif::schedule_builder::{Action, ScheduleBuilder};
-use planif::settings::{LogonType, PrincipalSettings, RunLevel};
+use planif::settings::{Duration, LogonType, PrincipalSettings, RunLevel};
 
 use crate::Result;
 
@@ -43,6 +43,10 @@ fn autostart(enabled: bool) -> std::result::Result<(), Box<dyn std::error::Error
         .action(Action::new("auto start", exe, "", ""))?
         .in_folder("shion")?
         .principal(settings)?
+        .delay(Duration {
+            seconds: Some(6),
+            ..Default::default()
+        })?
         .build()?
         .register("auto start", TaskCreationFlags::CreateOrUpdate as i32)?;
     Ok(())

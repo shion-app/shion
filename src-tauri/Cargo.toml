@@ -29,7 +29,7 @@ tauri-plugin-shion-history = { git = "https://github.com/shion-app/history" }
 sys-locale = "0.3.1"
 thiserror = "1.0"
 parse-changelog = { version = "0.6", default-features = false, features = ["serde"] }
-planif = "1.0.0"
+planif = { git = "https://github.com/mattrobineau/planif" }
 whoami = "1.5.1"
 anyhow = "1"
 

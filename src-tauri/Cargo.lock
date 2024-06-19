@@ -3592,8 +3592,7 @@ checksum = "d231b230927b5e4ad203db57bbcbee2802f6bce620b1e4a9024a07d94e2907ec"
 [[package]]
 name = "planif"
 version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7502ee5af341c06aa00593d655d09e4b7126f0e886b80745c218d6dc674e8b21"
+source = "git+https://github.com/mattrobineau/planif#90e228e2bc0f142b16a0ba415ec242e1c836cc35"
 dependencies = [
  "windows 0.48.0",
 ]
