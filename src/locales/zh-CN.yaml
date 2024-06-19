@@ -93,6 +93,7 @@ updater:
   content: 新版本{version}已发布，确定更新吗?
   checkUpdate: 拉取最新版本时出现错误
   updating: 更新过程中出现错误
+  reinstall: 需卸载后，在官网下载最新版本
   latest: 已经是最新版本
 timer:
   countdown: 倒计时已达到目标时间

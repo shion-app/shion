@@ -47,10 +47,17 @@ export const useUpdateStore = defineStore('update', () => {
             }
             catch (e) {
               updating.value = false
-              notify.error({
-                text: t('updater.updating'),
-              })
               error(`update downloadAndInstall error: ${e}`)
+              if ((e as string) == 'UnexpectedKeyId') {
+                notify.info({
+                  text: t('updater.reinstall'),
+                })
+              }
+              else {
+                notify.error({
+                  text: t('updater.updating'),
+                })
+              }
             }
           },
           onClosed() {
