@@ -27,7 +27,7 @@ export const useUpdateStore = defineStore('update', () => {
       notify.error({
         text: t('updater.checkUpdate'),
       })
-      return error(e as string)
+      return error(`update check error: ${e}`)
     }
 
     if (update) {
@@ -50,7 +50,7 @@ export const useUpdateStore = defineStore('update', () => {
               notify.error({
                 text: t('updater.updating'),
               })
-              error(e as string)
+              error(`update downloadAndInstall error: ${e}`)
             }
           },
           onClosed() {
