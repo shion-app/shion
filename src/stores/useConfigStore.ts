@@ -5,6 +5,7 @@ import i18next from 'i18next'
 import { useTheme } from 'vuetify/lib/framework.mjs'
 import { error } from '@tauri-apps/plugin-log'
 import { invoke } from '@tauri-apps/api/core'
+import { disable, isEnabled } from '@tauri-apps/plugin-autostart'
 
 import { FaviconService } from '@/modules/favicon'
 
@@ -57,7 +58,11 @@ export const useConfigStore = defineStore('config', () => {
       await create(data)
 
     await read()
+    const isVersionChanged = config.value.version != data.version
     update(data)
+    if (isVersionChanged)
+      handleVersionChange()
+
     ready.value = true
   }
 
@@ -75,13 +80,20 @@ export const useConfigStore = defineStore('config', () => {
   function update(data: Config) {
     const temp = {}
     for (const key in data) {
-      if (key == 'version' && config.value[key] != data[key] && !config.value.autoShowChangelogDisable)
-        changelog.toggleDialog()
-
       if (key == 'version' || !Object.hasOwn(config.value, key))
         temp[key] = data[key]
     }
     Object.assign(config.value, temp)
+  }
+
+  async function handleVersionChange() {
+    if (!config.value.autoShowChangelogDisable)
+      changelog.toggleDialog()
+    // 软件改为默认管理员身份启动后，改变开机启动方式
+    if (await isEnabled()) {
+      disable()
+      await invoke('enable_autostart')
+    }
   }
 
   init()
