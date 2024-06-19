@@ -32,6 +32,9 @@ const changelog = ref<Release>({
 const content = computed(() => `## ${changelog.value.title}\n${changelog.value.notes}`)
 
 async function init() {
+  if (!ready.value)
+    return
+
   const release = await parseChangelog(data.value, config.value.version)
   if (release)
     changelog.value = release
@@ -39,7 +42,7 @@ async function init() {
 
 watch(data, init)
 
-watch(ready, init)
+whenever(ready, init)
 </script>
 
 <template>
