@@ -23,7 +23,8 @@
         "languages": [
           "English",
           "SimpChinese"
-        ]
+        ],
+        "installMode": "both"
       }
     },
     "publisher": "hanaTsuk1",
