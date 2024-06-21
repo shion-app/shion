@@ -104,7 +104,7 @@ const { open, close, setModelValue } = useFormModal<
                 if (v == WidgetType.ACTIVE_STATUS_CALENDAR) {
                   setModelValue({
                     w: col(unrealColumnCount),
-                    category: undefined,
+                    h: 1,
                   })
                 }
                 else if (v == WidgetType.RECENT_ACTIVIRY_PIE) {
@@ -134,7 +134,7 @@ const { open, close, setModelValue } = useFormModal<
             label: t('widget.row'),
             props: {
               items: [1, 2, 3],
-              disabled: model.type == WidgetType.RECENT_ACTIVIRY_PIE,
+              disabled: model.type == WidgetType.ACTIVE_STATUS_CALENDAR || model.type == WidgetType.RECENT_ACTIVIRY_PIE,
             },
           },
           {
