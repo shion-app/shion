@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GridStackWidget } from 'gridstack'
+import type { Layout } from 'grid-layout-plus'
 
 import { db } from '@/modules/database'
 import type { InsertOverview, SelectLabel, SelectOverview, SelectPlan, SelectProgram, UpdateOverview } from '@/modules/database'
@@ -28,7 +28,7 @@ const { column, col, count } = useGridColumn()
 const isCreate = ref(true)
 
 const gridItems = computed(() => list.value.map(({ id, x, y, w, h }) => ({
-  id: String(id), x, y, w, h,
+  i: id, x, y, w, h,
 })))
 
 const cardList = computed(() => list.value.map(({ id, type, data, selected }) => ({
@@ -320,58 +320,60 @@ function handleCreate(overview: OverviewForm, widget?: Record<string, unknown>) 
   return db.overview.insert(value)
 }
 
-async function handleGridChange(items: number[], widgets: GridStackWidget[]) {
-  const overviewList = widgets.map((widget) => {
-    const { id, x, y, w, h = 1 } = widget
-    return {
-      id: Number(id),
-      x,
-      y,
-      w,
-      h,
-    }
-  }).filter((widget) => {
-    const { id, x, y, w, h } = widget
-    const item = list.value.find(i => i.id == id)!
-    const hasChanged = item.x != x || item.y != y || item.w != w || item.h != h
-    return hasChanged
-  })
+async function handleLayoutUpdated(list: number[], layout: Layout) {
+  const overviewList = layout.map(({ i, x, y, w, h }) => ({
+    id: Number(i),
+    x,
+    y,
+    w,
+    h,
+  }))
   await db.overview.batchUpdate(overviewList)
-  await refresh()
 }
 
-onRefresh(async () => {
-  list.value = []
-  await refresh()
-})
+onRefresh(refresh)
 
 refresh()
 </script>
 
 <template>
   <Grid
-    v-if="list.length"
-    ref="grid"
-    :items="gridItems"
-    :component-props="cardList"
-    :options="{ cellHeight: 200 }"
-    @change="handleGridChange"
+    v-if="list.length" ref="grid" :items="gridItems" :component-props="cardList" :options="{ cellHeight: 180 }"
+    @layout-updated="handleLayoutUpdated"
   >
     <template #default="{ componentProps }">
-      <grid-card :selected="componentProps.selected" class="overflow-visible! hover:z-1" @update:selected="v => select(componentProps.id, v)">
+      <grid-card
+        :selected="componentProps.selected" class="overflow-visible! hover:z-1"
+        @update:selected="v => select(componentProps.id, v)"
+      >
         <template #menu>
-          <v-list-item value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="handleRemove(componentProps.id)" />
-          <v-list-item value="button.update" :title="$t('button.update')" append-icon="mdi-pencil-outline" @click="showUpdateForm(componentProps.id, list)" />
+          <v-list-item
+            value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline"
+            base-color="red" @click="handleRemove(componentProps.id)"
+          />
+          <v-list-item
+            value="button.update" :title="$t('button.update')" append-icon="mdi-pencil-outline"
+            @click="showUpdateForm(componentProps.id, list)"
+          />
         </template>
         <v-card-text
           h-full :class="{
             'pr-11!': isDesktop,
           }"
         >
-          <active-status-calendar v-if="componentProps.type == WidgetType.ACTIVE_STATUS_CALENDAR" v-model:selected-date="selectedDate" />
-          <single-category-bar v-else-if="componentProps.type == WidgetType.SINGLE_CATEGORY_BAR" :data="componentProps.data" />
+          <active-status-calendar
+            v-if="componentProps.type == WidgetType.ACTIVE_STATUS_CALENDAR"
+            v-model:selected-date="selectedDate"
+          />
+          <single-category-bar
+            v-else-if="componentProps.type == WidgetType.SINGLE_CATEGORY_BAR"
+            :data="componentProps.data"
+          />
           <text-summary v-else-if="componentProps.type == WidgetType.TEXT_SUMMARY" :data="componentProps.data" />
-          <daily-activity v-else-if="componentProps.type == WidgetType.DAILY_ACTIVIRY" :selected-date="selectedDate" :data="componentProps.data" />
+          <daily-activity
+            v-else-if="componentProps.type == WidgetType.DAILY_ACTIVIRY" :selected-date="selectedDate"
+            :data="componentProps.data"
+          />
           <recent-activity-pie v-else-if="componentProps.type == WidgetType.RECENT_ACTIVIRY_PIE" />
         </v-card-text>
       </grid-card>
@@ -380,9 +382,18 @@ refresh()
   <empty v-else type="overview" :width="250" :desc="$t('hint.overview')" />
   <more-menu>
     <v-list>
-      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal" />
-      <v-list-item value="overview.create" :title="$t('overview.create')" append-icon="mdi-plus" @click="showCreateForm" />
-      <v-list-item v-if="xs" value="label.button.start" :title="$t('label.button.start')" append-icon="mdi-timer-outline" @click="openNoteCreate" />
+      <v-list-item
+        v-if="selectedList.length" value="button.remove" :title="$t('button.remove')"
+        append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal"
+      />
+      <v-list-item
+        value="overview.create" :title="$t('overview.create')" append-icon="mdi-plus"
+        @click="showCreateForm"
+      />
+      <v-list-item
+        v-if="xs" value="label.button.start" :title="$t('label.button.start')"
+        append-icon="mdi-timer-outline" @click="openNoteCreate"
+      />
     </v-list>
   </more-menu>
   <status-bar-teleport>

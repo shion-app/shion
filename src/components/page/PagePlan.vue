@@ -125,7 +125,7 @@ function buildUpdateFn() {
   }
 }
 
-async function handleGridChange(items: number[]) {
+async function handleLayoutUpdated(items: number[]) {
   const planList = items.map((id, index) => {
     const { sort } = list.value[index]
     return {
@@ -133,8 +133,10 @@ async function handleGridChange(items: number[]) {
       sort,
     }
   }).filter((i, index) => list.value[index].id != i.id)
-  await db.plan.batchUpdate(planList)
-  await refresh()
+  if (planList.length) {
+    await db.plan.batchUpdate(planList)
+    await refresh()
+  }
 }
 
 function navigate(id: number) {
@@ -154,26 +156,23 @@ refresh()
 
 <template>
   <grid
-    v-if="list.length"
-    :items="items"
-    :component-props="cardList"
-    :options="{ cellHeight: 120 }"
-    @change="handleGridChange"
+    v-if="list.length" :items="items" :component-props="cardList" :options="{ cellHeight: 100 }"
+    @layout-updated="handleLayoutUpdated"
   >
     <template #default="{ componentProps }">
       <time-card
-        v-bind="componentProps"
-        @update="showUpdateForm"
-        @remove="handleRemove"
-        @update:selected="v => select(componentProps.id, v)"
-        @click="navigate(componentProps.id)"
+        v-bind="componentProps" @update="showUpdateForm" @remove="handleRemove"
+        @update:selected="v => select(componentProps.id, v)" @click="navigate(componentProps.id)"
       />
     </template>
   </grid>
   <empty v-else type="plan" :desc="$t('hint.plan')" :width="250" />
   <more-menu>
     <v-list>
-      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal" />
+      <v-list-item
+        v-if="selectedList.length" value="button.remove" :title="$t('button.remove')"
+        append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal"
+      />
       <v-list-item value="plan.create" :title="$t('plan.create')" append-icon="mdi-plus" @click="showCreateForm" />
     </v-list>
   </more-menu>

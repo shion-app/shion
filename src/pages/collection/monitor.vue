@@ -152,7 +152,7 @@ async function showFilterDialog() {
   }))
 }
 
-async function handleGridChange(items: number[]) {
+async function handleLayoutUpdated(items: number[]) {
   const programList = items.map((id, index) => {
     const { sort } = whiteList.value[index]
     return {
@@ -160,8 +160,10 @@ async function handleGridChange(items: number[]) {
       sort,
     }
   }).filter((i, index) => whiteList.value[index].id != i.id)
-  await db.program.batchUpdate(programList)
-  await refresh()
+  if (programList.length) {
+    await db.program.batchUpdate(programList)
+    await refresh()
+  }
 }
 
 function navigate(id: number) {
@@ -181,27 +183,27 @@ refresh()
 
 <template>
   <grid
-    v-if="whiteList.length"
-    :items="items"
-    :component-props="cardList"
-    :options="{ cellHeight: 120 }"
-    @change="handleGridChange"
+    v-if="whiteList.length" :items="items" :component-props="cardList" :options="{ cellHeight: 100 }"
+    @layout-updated="handleLayoutUpdated"
   >
     <template #default="{ componentProps }">
       <time-card
-        v-bind="componentProps"
-        @update="showUpdateForm"
-        @remove="handleRemove"
-        @update:selected="v => select(componentProps.id, v)"
-        @click="navigate(componentProps.id)"
+        v-bind="componentProps" @update="showUpdateForm" @remove="handleRemove"
+        @update:selected="v => select(componentProps.id, v)" @click="navigate(componentProps.id)"
       />
     </template>
   </grid>
   <empty v-else type="monitor" :desc="$t('hint.monitor')" :width="300" />
   <more-menu>
     <v-list>
-      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal" />
-      <v-list-item value="monitor.filterProgram" :title="$t('monitor.filterProgram')" append-icon="mdi-filter-outline" @click="showFilterDialog" />
+      <v-list-item
+        v-if="selectedList.length" value="button.remove" :title="$t('button.remove')"
+        append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal"
+      />
+      <v-list-item
+        value="monitor.filterProgram" :title="$t('monitor.filterProgram')" append-icon="mdi-filter-outline"
+        @click="showFilterDialog"
+      />
     </v-list>
   </more-menu>
   <advanced-dialog v-model:visible="filtering" :title="$t('monitor.filterProgram')" max-height="450">
@@ -211,7 +213,10 @@ refresh()
           {{ $t('monitor.tip') }}
         </div>
         <div grid grid-cols-2>
-          <v-card v-for="program in filterList" :key="program.path" m-2 :color="program.checked ? 'primary' : ''" @click="program.checked = !program.checked">
+          <v-card
+            v-for="program in filterList" :key="program.path" m-2 :color="program.checked ? 'primary' : ''"
+            @click="program.checked = !program.checked"
+          >
             <template #prepend>
               <UseObjectUrl v-slot="url" :object="createIconBlob(program.icon)">
                 <img :src="url.value" width="32" height="32" object-contain>

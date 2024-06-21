@@ -1,80 +1,44 @@
 <script setup lang="ts" generic="T extends { id: number }">
-import type { GridStackOptions, GridStackWidget } from 'gridstack'
-import { GridStack } from 'gridstack'
-import { nanoid } from 'nanoid'
+import type { Layout } from 'grid-layout-plus'
+import { GridItem, GridLayout } from 'grid-layout-plus'
 
 const props = defineProps<{
-  items: GridStackWidget[]
+  items: Layout
   componentProps: Array<T>
-  options?: GridStackOptions
+  options?: {
+    cellHeight: number
+  }
 }>()
 
 const emit = defineEmits<{
-  (e: 'change', items: number[], widgets: GridStackWidget[]): void
+  (e: 'layoutUpdated', list: number[], layout: Layout): void
 }>()
 
 defineSlots<{
   default(props: { componentProps: T }): any
 }>()
 
+const { items: layout } = useVModels(props)
+
 const { column } = useGridColumn()
 const { toggleDrag, dragged, toggleIsGrid } = layoutInject()
 
-let grid: GridStack | null = null
-const gridId = `grid-stack-${nanoid()}`
-
 toggleIsGrid(true)
 
-function compact() {
-  if (!grid)
-    return
-
-  grid.compact()
-  const widgets = grid.save() as GridStackWidget[]
-  emit('change', widgets.map(i => Number(i.id)), widgets)
+function handleLayoutUpdated(newLayout: Layout) {
+  const list = newLayout.sort((a, b) => {
+    if (a.y !== b.y)
+      return a.y - b.y
+    else
+      return a.x - b.x
+  }).map(i => Number(i.i))
+  emit('layoutUpdated', list, newLayout)
 }
 
-const item = (id: string) => `${gridId}-item-${id}`
-
-onMounted(() => {
-  grid = GridStack.init({
-    margin: 0,
-    disableResize: true,
-    disableDrag: true,
-    column: column.value,
-    ...props.options,
-  }, gridId)
-
-  grid.setAnimation(false)
-
-  grid.on('dragstop', compact)
-})
-
-watchArray(() => props.items, (newList, oldList) => {
-  for (const gridItem of newList) {
-    if (!oldList.find(i => i.id == gridItem.id)) {
-      nextTick(() => {
-        grid?.makeWidget(`#${item(gridItem.id!)}`)
-        compact()
-      })
-    }
-    else {
-      grid?.update(`#${item(gridItem.id!)}`, gridItem)
-    }
-  }
-  for (const { id } of oldList) {
-    if (!newList.find(i => i.id == id)) {
-      grid?.removeWidget(`#${item(id!)}`)
-      compact()
-    }
-  }
-})
-
-watch(column, v => grid?.column(v))
-
-watch(dragged, (v) => {
-  grid?.enableMove(v)
-})
+function stopClickIfDraggable(e: Event) {
+  if (dragged.value)
+    e.stopPropagation()
+}
 
 onBeforeUnmount(() => {
   toggleDrag(false)
@@ -83,11 +47,28 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div :class="gridId">
-    <div v-for="w in props.items" :id="item(w.id!)" :key="w.id" class="grid-stack-item" :gs-x="w.x" :gs-y="w.y" :gs-w="w.w" :gs-h="w.h" :gs-id="w.id">
-      <div class="grid-stack-item-content overflow-visible!" p-3 flex flex-col>
-        <slot :component-props="props.componentProps.find(i => i.id == Number(w.id))!" />
-      </div>
-    </div>
-  </div>
+  <GridLayout
+    v-model:layout="layout" :col-num="column" :row-height="props.options?.cellHeight" :is-draggable="dragged"
+    :is-resizable="false" vertical-compact :use-css-transforms="false" :margin="[20, 20]"
+    @layout-updated="handleLayoutUpdated"
+  >
+    <GridItem
+      v-for="item in layout" :key="item.i" class="grid-stack-item" :x="item.x" :y="item.y" :w="item.w"
+      :h="item.h" :i="item.i" @click.capture="stopClickIfDraggable"
+    >
+      <slot :component-props="props.componentProps.find(i => i.id == Number(item.i))!" />
+    </GridItem>
+  </GridLayout>
 </template>
+
+<style scoped>
+:deep(.grid-stack-item > *) {
+  height: 100%;
+}
+</style>
+
+<style>
+.vgl-layout {
+  --vgl-placeholder-bg: gray !important;
+}
+</style>

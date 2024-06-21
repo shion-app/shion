@@ -1,4 +1,4 @@
-import type { GridStackWidget } from 'gridstack'
+import type { Layout } from 'grid-layout-plus'
 
 export type GridList<T> = Array<T & { selected: boolean }>
 
@@ -31,10 +31,10 @@ export function useGridColumn() {
 export function useGrid(list: Ref<GridList<{ id: number }>>) {
   const { column } = useGridColumn()
 
-  function getItemsByOrder(list: Array<{ id: number }>): GridStackWidget[] {
+  function getItemsByOrder(list: Array<{ id: number }>): Layout {
     const count = column.value / SPAN
     return list.map((i, index) => ({
-      id: String(i.id),
+      i: i.id,
       x: (index % count) * SPAN,
       y: Math.floor(index / count),
       w: SPAN,
@@ -60,7 +60,7 @@ export function useGrid(list: Ref<GridList<{ id: number }>>) {
 
   const selectedList = computed(() => list.value.filter(i => i.selected).map(i => i.id))
 
-  const items = computed<GridStackWidget[]>(() => getItemsByOrder(list.value))
+  const items = computed(() => getItemsByOrder(list.value))
 
   return {
     getItemsByOrder,

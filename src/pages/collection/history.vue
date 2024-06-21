@@ -27,7 +27,7 @@ async function refresh() {
   await pullActiveBrowsers()
 }
 
-async function handleGridChange(items: number[]) {
+async function handleLayoutUpdated(items: number[]) {
   const historyList = items.map((id, index) => {
     const { sort } = list.value[index]
     return {
@@ -35,8 +35,10 @@ async function handleGridChange(items: number[]) {
       sort,
     }
   }).filter((i, index) => list.value[index].id != i.id)
-  await db.domain.batchUpdate(historyList)
-  await refresh()
+  if (historyList.length) {
+    await db.domain.batchUpdate(historyList)
+    await refresh()
+  }
 }
 
 function navigate(id: number) {
@@ -56,8 +58,8 @@ refresh()
 
 <template>
   <grid
-    v-if="list.length" :items="items" :component-props="cardList" :options="{ cellHeight: 120 }"
-    @change="handleGridChange"
+    v-if="list.length" :items="items" :component-props="cardList" :options="{ cellHeight: 100 }"
+    @layout-updated="handleLayoutUpdated"
   >
     <template #default="{ componentProps }">
       <box-card

@@ -161,7 +161,7 @@ async function handleStart(label: Pick<SelectLabel, 'id' | 'planId'>) {
     router.push('/record/timer')
 }
 
-async function handleGridChange(items: number[], list: GridList<SelectLabel>) {
+async function handleLayoutUpdated(items: number[], list: GridList<SelectLabel>) {
   const labelList = items.map((id, index) => {
     const { sort } = list[index]
     return {
@@ -169,8 +169,10 @@ async function handleGridChange(items: number[], list: GridList<SelectLabel>) {
       sort,
     }
   }).filter((i, index) => list[index].id != i.id)
-  await db.label.batchUpdate(labelList)
-  await refresh()
+  if (labelList.length) {
+    await db.label.batchUpdate(labelList)
+    await refresh()
+  }
 }
 
 function getCardList(list: GridList<SelectLabel>) {
@@ -207,21 +209,19 @@ refresh()
           {{ planList.find(i => i.id == id)!.name }}
         </div>
         <grid
-          :items="getItemsByOrder(list)"
-          :component-props="getCardList(list)"
-          :options="{ cellHeight: 120 }"
-          @change="items => handleGridChange(items, list)"
+          :items="getItemsByOrder(list)" :component-props="getCardList(list)" :options="{ cellHeight: 100 }"
+          @layout-updated="items => handleLayoutUpdated(items, list)"
         >
           <template #default="{ componentProps }">
             <time-card
-              v-bind="componentProps"
-              @update="id => showUpdateForm(id, list)"
-              @remove="handleRemove"
-              @update:selected="v => select(componentProps.id, v)"
-              @click="navigate(componentProps.id)"
+              v-bind="componentProps" @update="id => showUpdateForm(id, list)" @remove="handleRemove"
+              @update:selected="v => select(componentProps.id, v)" @click="navigate(componentProps.id)"
             >
               <template v-if="!timerRunning" #menu>
-                <v-list-item value="timer" :title="$t('label.button.start')" append-icon="mdi-timer-outline" @click="handleStart(componentProps)" />
+                <v-list-item
+                  value="timer" :title="$t('label.button.start')" append-icon="mdi-timer-outline"
+                  @click="handleStart(componentProps)"
+                />
               </template>
             </time-card>
           </template>
@@ -232,7 +232,10 @@ refresh()
   <empty v-else type="label" :desc="$t('hint.label')" :width="250" />
   <more-menu>
     <v-list>
-      <v-list-item v-if="selectedList.length" value="button.remove" :title="$t('button.remove')" append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal" />
+      <v-list-item
+        v-if="selectedList.length" value="button.remove" :title="$t('button.remove')"
+        append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal"
+      />
       <v-list-item value="label.create" :title="$t('label.create')" append-icon="mdi-plus" @click="showCreateForm" />
     </v-list>
   </more-menu>

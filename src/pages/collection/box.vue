@@ -125,16 +125,18 @@ function buildUpdateFn() {
   }
 }
 
-async function handleGridChange(items: number[]) {
-  const planList = items.map((id, index) => {
+async function handleLayoutUpdated(items: number[]) {
+  const boxList = items.map((id, index) => {
     const { sort } = list.value[index]
     return {
       id,
       sort,
     }
   }).filter((i, index) => list.value[index].id != i.id)
-  await db.box.batchUpdate(planList)
-  await refresh()
+  if (boxList.length) {
+    await db.box.batchUpdate(boxList)
+    await refresh()
+  }
 }
 
 function navigate(id: number) {
@@ -153,8 +155,8 @@ refresh()
 
 <template>
   <grid
-    v-if="list.length" :items="items" :component-props="cardList" :options="{ cellHeight: 120 }"
-    @change="handleGridChange"
+    v-if="list.length" :items="items" :component-props="cardList" :options="{ cellHeight: 100 }"
+    @layout-updated="handleLayoutUpdated"
   >
     <template #default="{ componentProps }">
       <box-card
