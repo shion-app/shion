@@ -44,7 +44,7 @@ function handleLongpress() {
         </template>
         <slot />
         <div
-          v-if="isDesktop"
+          v-if="isDesktop && !dragged"
           :class="selectedVModel || isHovering ? 'opacity-100' : 'opacity-0'"
           transition-opacity-400
           absolute top-0 right-2 bg-white
@@ -57,7 +57,7 @@ function handleLongpress() {
           />
         </div>
         <div
-          v-if="isDesktop && $slots.menu"
+          v-if="isDesktop && !dragged && $slots.menu"
           :class="isHovering ? 'opacity-100' : 'opacity-0'"
           transition-opacity-400
           absolute bottom-2 right-2.5 bg-white
