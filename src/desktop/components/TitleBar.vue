@@ -85,7 +85,7 @@ useHotkey('ctrl+shift+i', openDevtools)
       <v-btn variant="text" :disabled="true">
         <div i-mdi:window-maximize />
       </v-btn>
-      <v-btn variant="text" @click="() => currentWindow.hide()">
+      <v-btn variant="text" class="hover:bg-red hover:text-white" @click="() => currentWindow.hide()">
         <div i-mdi:close />
       </v-btn>
     </div>
