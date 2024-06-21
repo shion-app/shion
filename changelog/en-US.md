@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [0.11.8] - 2024-06-21
+
+### Changed
+
+- Modify layout implementation
+- Style adjustment, layout operation optimization
+
+### Fixed
+
+- `Overview` chart does not update status when modifying configuration (https://github.com/shion-app/shion/issues/31)
+
 ## [0.11.7] - 2024-06-19
 
 ### Changed
