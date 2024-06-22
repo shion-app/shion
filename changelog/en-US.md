@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.11.9] - 2024-06-22
+
+### Fixed
+
+- `Overview` refresh chart not update
+
 ## [0.11.8] - 2024-06-21
 
 ### Changed
