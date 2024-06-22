@@ -251,6 +251,7 @@ function buildUpdateFn() {
 }
 
 async function refresh() {
+  list.value = []
   list.value = wrap(await db.overview.select())
 }
 
