@@ -6,7 +6,7 @@ use anyhow::anyhow;
 use planif::enums::TaskCreationFlags;
 use planif::schedule::TaskScheduler;
 use planif::schedule_builder::{Action, ScheduleBuilder};
-use planif::settings::{Duration, LogonType, PrincipalSettings, RunLevel};
+use planif::settings::{Duration, LogonType, PrincipalSettings, RunLevel, Settings};
 
 use crate::Result;
 
@@ -28,7 +28,12 @@ fn autostart(enabled: bool) -> std::result::Result<(), Box<dyn std::error::Error
     let exe = current_exe()?;
     let exe = exe.to_str().unwrap();
 
-    let settings = PrincipalSettings {
+    let mut settings = Settings::new();
+    settings.stop_if_going_on_batteries = Some(false);
+    settings.disallow_start_if_on_batteries = Some(false);
+    settings.enabled = Some(true);
+
+    let principal_settings = PrincipalSettings {
         display_name: "".to_string(),
         group_id: None,
         id: "".to_string(),
@@ -42,7 +47,8 @@ fn autostart(enabled: bool) -> std::result::Result<(), Box<dyn std::error::Error
         .trigger("trigger", enabled)?
         .action(Action::new("auto start", exe, "", ""))?
         .in_folder("shion")?
-        .principal(settings)?
+        .principal(principal_settings)?
+        .settings(settings)?
         .delay(Duration {
             seconds: Some(6),
             ..Default::default()
