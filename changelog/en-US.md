@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.11.10] - 2024-06-24
+
+### Changed
+
+- Autostart settings
+
+### Fixed
+
+- Tauri tray is not created
+
 ## [0.11.9] - 2024-06-22
 
 ### Fixed
