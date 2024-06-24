@@ -6,7 +6,10 @@ pub use error::Result;
 mod autostart;
 
 use parse_changelog::Changelog;
-use tauri::menu::{Menu, MenuItem};
+use tauri::{
+    menu::{Menu, MenuItem},
+    tray::{ClickType, TrayIconBuilder},
+};
 use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
 use tauri_plugin_sql::{Migration, MigrationKind};
 
@@ -119,6 +122,37 @@ pub fn run() {
             autostart::disable()
         }
 
+        #[tauri::command]
+        fn create_tray(app: tauri::AppHandle) -> tauri::Result<()> {
+            let title = if tauri::dev() { "shion-dev" } else { "shion" };
+
+            let quit = MenuItem::with_id(&app, "quit", "Quit", true, None::<&str>)?;
+            let menu = Menu::with_items(&app, &[&quit])?;
+
+            TrayIconBuilder::with_id("tray")
+                .tooltip(title)
+                .icon(app.default_window_icon().unwrap().clone())
+                .menu(&menu)
+                .menu_on_left_click(false)
+                .on_menu_event(move |app, event| match event.id().as_ref() {
+                    "quit" => {
+                        let window = app.get_webview_window("main").unwrap();
+                        window.hide().unwrap();
+                        app.emit_to("main", "quit", ()).unwrap();
+                    }
+                    _ => (),
+                })
+                .on_tray_icon_event(|tray, event| {
+                    if event.click_type == ClickType::Double {
+                        let app = tray.app_handle();
+                        let window = app.get_webview_window("main").unwrap();
+                        window.show().unwrap();
+                    }
+                })
+                .build(&app)?;
+            Ok(())
+        }
+
         builder = builder
             .plugin(tauri_plugin_updater::Builder::new().build())
             .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
@@ -148,6 +182,7 @@ pub fn run() {
                 parse_changelog_from_text,
                 enable_autostart,
                 disable_autostart,
+                create_tray
             ]);
     }
 
@@ -155,38 +190,8 @@ pub fn run() {
         .setup(|app| {
             #[cfg(desktop)]
             {
-                use tauri::{
-                    tray::{ClickType, TrayIconBuilder},
-                    Manager, WebviewUrl, WebviewWindowBuilder, Wry,
-                };
+                use tauri::{Manager, WebviewUrl, WebviewWindowBuilder, Wry};
                 use tauri_plugin_store::{with_store, StoreCollection};
-
-                let title = if tauri::dev() { "shion-dev" } else { "shion" };
-
-                let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
-                let menu = Menu::with_items(app, &[&quit])?;
-
-                let _ = TrayIconBuilder::with_id("tray")
-                    .tooltip(title)
-                    .icon(app.default_window_icon().unwrap().clone())
-                    .menu(&menu)
-                    .menu_on_left_click(false)
-                    .on_menu_event(move |app, event| match event.id().as_ref() {
-                        "quit" => {
-                            let window = app.get_webview_window("main").unwrap();
-                            window.hide().unwrap();
-                            app.emit_to("main", "quit", ()).unwrap();
-                        }
-                        _ => (),
-                    })
-                    .on_tray_icon_event(|tray, event| {
-                        if event.click_type == ClickType::Double {
-                            let app = tray.app_handle();
-                            let window = app.get_webview_window("main").unwrap();
-                            window.show().unwrap();
-                        }
-                    })
-                    .build(app);
 
                 let stores = app.app_handle().state::<StoreCollection<Wry>>();
 
@@ -199,6 +204,8 @@ pub fn run() {
                         }
                         Ok(true)
                     })?;
+
+                let title = if tauri::dev() { "shion-dev" } else { "shion" };
 
                 WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
                     .visible(launch_visible)

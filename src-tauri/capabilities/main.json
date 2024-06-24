@@ -16,6 +16,7 @@
     "resources:default",
     "menu:default",
     "tray:default",
+    "tray:allow-get-by-id",
     "autostart:allow-disable",
     "autostart:allow-enable",
     "autostart:allow-is-enabled",
