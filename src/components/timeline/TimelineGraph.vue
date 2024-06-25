@@ -292,7 +292,7 @@ watchDeep(() => props.list, () => {
             top: `${start.y}px`,
             left: `${start.x}px`,
             height: `${end.y - start.y + pointOffset * 3}px`,
-          }" :data-start="start.time"
+          }" :data-start="start.time" :class="url ? '' : 'pointer-events-none'"
         >
           <div
             absolute inset-0 transition-opacity rounded-md :class="[
@@ -339,7 +339,10 @@ watchDeep(() => props.list, () => {
           </div>
           <v-menu v-if="actions.remove || actions.update">
             <template #activator="{ props: menuProps }">
-              <v-btn icon v-bind="menuProps" size="x-small" bottom-2 right-2 :class="classNames('absolute! z-1')">
+              <v-btn
+                icon v-bind="menuProps" size="x-small" bottom-2 right-2 pointer-events-auto
+                :class="classNames('absolute! z-1')"
+              >
                 <div i-mdi:menu-down text-6 />
               </v-btn>
             </template>
