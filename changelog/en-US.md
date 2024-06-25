@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.11.11] - 2024-06-25
+
+### Added
+
+- Processing of `Settings` startup after migration
+
+### Fixed
+
+- `Timeline` link cannot be clicked
+
 ## [0.11.10] - 2024-06-24
 
 ### Changed
