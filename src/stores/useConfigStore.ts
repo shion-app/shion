@@ -123,6 +123,12 @@ export const useConfigStore = defineStore('config', () => {
     theme.themes.value.light.colors.primary = v
   })
 
+  // 迁移时，临时添加判断
+  watchOnce(() => config.value.autostart, async (v) => {
+    if (v)
+      await invoke('enable_autostart')
+  })
+
   const autostart = computed({
     get: () => config.value.autostart,
     set: async (v) => {
