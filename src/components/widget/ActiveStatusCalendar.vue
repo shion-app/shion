@@ -198,7 +198,7 @@ async function init() {
 }
 
 function handleClick(params) {
-  const [dateText] = params.data
+  const [dateText] = params.value
   selectedDateVModel.value = new Date(dateText)
 }
 
