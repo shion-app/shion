@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.11.12] - 2024-06-27
+
+### Changed
+
+- Add autostart delay
+
+### Fixed
+
+- `Overview` active status calendar with diary cannot switch date
+
 ## [0.11.11] - 2024-06-25
 
 ### Added
