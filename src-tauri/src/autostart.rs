@@ -50,7 +50,7 @@ fn autostart(enabled: bool) -> std::result::Result<(), Box<dyn std::error::Error
         .principal(principal_settings)?
         .settings(settings)?
         .delay(Duration {
-            seconds: Some(6),
+            seconds: Some(10),
             ..Default::default()
         })?
         .build()?
