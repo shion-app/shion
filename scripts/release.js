@@ -10,7 +10,9 @@ import inquirer from 'inquirer'
 const run = (bin, args, opts = {}) =>
   execa(bin, args, { stdio: 'inherit', ...opts })
 
-const packagePath = path.join(path.dirname(fileURLToPath(import.meta.url)), '../package.json')
+const base = p => path.join(path.dirname(fileURLToPath(import.meta.url)), p)
+
+const packagePath = base('../package.json')
 const config = fs.readJsonSync(packagePath)
 
 const repleaceVersion = (version) => {
@@ -18,6 +20,16 @@ const repleaceVersion = (version) => {
   fs.writeJsonSync(packagePath, config, {
     spaces: 2,
   })
+}
+
+export async function checkChangelog(version) {
+  const dir = base('../changelog')
+  const list = await fs.readdir(dir)
+  for (const name of list) {
+    await run('cargo', ['bin', 'parse-changelog', '-t', path.join(dir, name), version], {
+      cwd: base('../src-tauri'),
+    })
+  }
 }
 
 const program = new Command()
@@ -39,6 +51,7 @@ program
     })
     if (!versionConfirm)
       return
+    await checkChangelog(newVersion)
     repleaceVersion(newVersion)
     await run('git', ['add', '.'])
     await run('git', ['commit', '-m', `release: ${targetVersion}`])

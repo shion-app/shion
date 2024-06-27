@@ -41,6 +41,10 @@ open = "5.0.1"
 zip = "0.6"
 zip-extensions = "0.6"
 
+[package.metadata.bin]
+# cargo-run-bin
+parse-changelog = { version = "^0.6" }
+
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
 # DO NOT REMOVE!!
