@@ -37,7 +37,8 @@ program
   .addArgument(new Argument('<release>').choices(['major', 'premajor', 'minor', 'preminor', 'patch', 'prepatch', 'prerelease']))
   .addOption(new Option('-i, --identifier <version>', 'prerelease identifier').choices(['alpha', 'beta']))
   .action(async (release, { identifier }) => {
-    if (release.startsWith('pre') && !identifier) {
+    const isPre = release.startsWith('pre')
+    if (isPre && !identifier) {
       console.error('Missing option "identifier"')
       return
     }
@@ -51,7 +52,9 @@ program
     })
     if (!versionConfirm)
       return
-    await checkChangelog(newVersion)
+    if (!isPre)
+      await checkChangelog(newVersion)
+
     repleaceVersion(newVersion)
     await run('git', ['add', '.'])
     await run('git', ['commit', '-m', `release: ${targetVersion}`])
