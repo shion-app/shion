@@ -4,6 +4,7 @@ import { appLogDir } from '@tauri-apps/api/path'
 import { core } from '@tauri-apps/api'
 import { attachConsole } from '@tauri-apps/plugin-log'
 import { invoke } from '@tauri-apps/api/core'
+import { open } from '@tauri-apps/plugin-shell'
 
 import logo from '@/assets/logo.svg'
 
@@ -34,6 +35,11 @@ async function openLogDir() {
 
 function openDevtools() {
   invoke('open_devtools')
+}
+
+function jumpToDocument() {
+  const url = config.value.locale == 'zh-CN' ? 'https://shion.app/zh/guide/general' : 'https://shion.app/guide/general'
+  open(url)
 }
 
 useHotkey('ctrl+shift+i', openDevtools)
@@ -69,12 +75,19 @@ useHotkey('ctrl+shift+i', openDevtools)
         <v-list min-width="150">
           <v-list-item value="titleBar.help.about" :title="$t('titleBar.help.about')" @click="about = true" />
           <v-list-item value="titleBar.help.tour" :title="$t('titleBar.help.tour')" @click="config.tour = true" />
-          <v-list-item value="titleBar.help.log" :title="$t('titleBar.help.log')" @click="openLogDir" />
-          <v-list-item value="titleBar.help.devtools" :title="$t('titleBar.help.devtools')" @click="openDevtools" />
           <v-list-item
             value="titleBar.help.changelog" :title="$t('titleBar.help.changelog')"
             @click="changelog = true"
           />
+          <v-divider my-1 />
+          <v-list-item value="titleBar.help.log" :title="$t('titleBar.help.log')" @click="openLogDir" />
+          <v-list-item value="titleBar.help.devtools" :title="$t('titleBar.help.devtools')" @click="openDevtools" />
+          <v-divider my-1 />
+          <v-list-item value="titleBar.help.problem" :title="$t('titleBar.help.problem')" @click="jumpToDocument">
+            <template #append>
+              <div i-mdi:link-variant text-4 />
+            </template>
+          </v-list-item>
         </v-list>
       </v-menu>
     </div>

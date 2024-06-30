@@ -192,6 +192,7 @@ titleBar:
     log: 打开日志文件夹
     devtools: 打开开发者工具
     changelog: 更新日志
+    problem: 常见问题
 timeline:
   plan: 计划
   label: 标签

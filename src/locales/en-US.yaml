@@ -192,6 +192,7 @@ titleBar:
     log: Open log dir
     devtools: Open developer tools
     changelog: Changelog
+    problem: General problem
 timeline:
   plan: Plan
   label: Label
