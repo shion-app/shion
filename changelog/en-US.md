@@ -2,11 +2,17 @@
 
 ## [Unreleased]
 
-## [0.11.14] - 2024-06-30
+## [0.11.15] - 2024-06-30
 
 ### Added
 
 - Add steam release channel, and [free serial number](https://github.com/shion-app/shion/discussions/37)
+
+### Fixed
+
+- Changelog link jumps in the app
+
+## [0.11.14] - 2024-06-30
 
 ### Fixed
 
