@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.11.13] - 2024-06-30
+
+### Added
+
+- Add steam release channel, and [free serial number](https://github.com/shion-app/shion/discussions/37)
+
+### Fixed
+
+- Memory explosion caused by layout💣
+
 ## [0.11.12] - 2024-06-27
 
 ### Changed
