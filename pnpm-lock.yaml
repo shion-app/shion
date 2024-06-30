@@ -117,8 +117,8 @@ dependencies:
     specifier: ^3.1.3
     version: 3.1.3
   grid-layout-plus:
-    specifier: github:hanaTsuk1/grid-layout-plus
-    version: github.com/hanaTsuk1/grid-layout-plus/e47aea02c9d04383d2e91971428c962d8376e4df(vue@3.3.7)
+    specifier: github:hanaTsuk1/grid-layout-plus#build
+    version: github.com/hanaTsuk1/grid-layout-plus/8cbbb7c2edf8cdabef2fb84d6ea75bfcae1efc3c(vue@3.3.7)
   hotkeys-js:
     specifier: ^3.13.7
     version: 3.13.7
@@ -1660,21 +1660,21 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
 
-  /@floating-ui/core@1.6.2:
-    resolution: {integrity: sha512-+2XpQV9LLZeanU4ZevzRnGFg2neDeKHgFLjP6YLW+tly0IvrhqT4u8enLGjLH3qeh85g19xY5rsAusfwTdn5lg==}
+  /@floating-ui/core@1.6.3:
+    resolution: {integrity: sha512-1ZpCvYf788/ZXOhRQGFxnYQOVgeU+pi0i+d0Ow34La7qjIXETi6RNswGVKkA6KcDO8/+Ysu2E/CeUmmeEBDvTg==}
     dependencies:
-      '@floating-ui/utils': 0.2.2
+      '@floating-ui/utils': 0.2.3
     dev: false
 
-  /@floating-ui/dom@1.6.5:
-    resolution: {integrity: sha512-Nsdud2X65Dz+1RHjAIP0t8z5e2ff/IRbei6BqFrl1urT8sDVzM1HMQ+R0XcU5ceRfyO3I6ayeqIfh+6Wb8LGTw==}
+  /@floating-ui/dom@1.6.6:
+    resolution: {integrity: sha512-qiTYajAnh3P+38kECeffMSQgbvXty2VB6rS+42iWR4FPIlZjLK84E9qtLnMTLIpPz2znD/TaFqaiavMUrS+Hcw==}
     dependencies:
-      '@floating-ui/core': 1.6.2
-      '@floating-ui/utils': 0.2.2
+      '@floating-ui/core': 1.6.3
+      '@floating-ui/utils': 0.2.3
     dev: false
 
-  /@floating-ui/utils@0.2.2:
-    resolution: {integrity: sha512-J4yDIIthosAsRZ5CPYP/jQvUAQtlZTTD/4suA08/FEnlxqW3sKS9iAhgsa9VYLZ6vDHn/ixJgIqRQPotoBjxIw==}
+  /@floating-ui/utils@0.2.3:
+    resolution: {integrity: sha512-XGndio0l5/Gvd6CLIABvsav9HHezgDFFhDfHk1bvLfr9ni8dojqLSvBbotJEjmIwNHL7vK4QzBJTdBRoB+c1ww==}
     dev: false
 
   /@humanwhocodes/config-array@0.11.8:
@@ -3446,7 +3446,7 @@ packages:
     peerDependencies:
       vue: ^3.2.25
     dependencies:
-      '@floating-ui/dom': 1.6.5
+      '@floating-ui/dom': 1.6.6
       '@juggle/resize-observer': 3.4.0
       '@vexip-ui/utils': 2.15.0
       vue: 3.3.7(typescript@5.2.2)
@@ -10357,13 +10357,11 @@ packages:
       tslib: 2.3.0
     dev: false
 
-  github.com/hanaTsuk1/grid-layout-plus/e47aea02c9d04383d2e91971428c962d8376e4df(vue@3.3.7):
-    resolution: {tarball: https://codeload.github.com/hanaTsuk1/grid-layout-plus/tar.gz/e47aea02c9d04383d2e91971428c962d8376e4df}
-    id: github.com/hanaTsuk1/grid-layout-plus/e47aea02c9d04383d2e91971428c962d8376e4df
+  github.com/hanaTsuk1/grid-layout-plus/8cbbb7c2edf8cdabef2fb84d6ea75bfcae1efc3c(vue@3.3.7):
+    resolution: {tarball: https://codeload.github.com/hanaTsuk1/grid-layout-plus/tar.gz/8cbbb7c2edf8cdabef2fb84d6ea75bfcae1efc3c}
+    id: github.com/hanaTsuk1/grid-layout-plus/8cbbb7c2edf8cdabef2fb84d6ea75bfcae1efc3c
     name: grid-layout-plus
     version: 1.0.5
-    prepare: true
-    requiresBuild: true
     peerDependencies:
       vue: ^3.0.0
     dependencies:
