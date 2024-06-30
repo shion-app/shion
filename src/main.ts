@@ -13,6 +13,8 @@ import { createVfm } from 'vue-final-modal'
 import vueEcharts from 'vue-echarts'
 import { GesturePlugin } from '@vueuse/gesture'
 import { MotionPlugin } from '@vueuse/motion'
+import { config } from 'md-editor-v3'
+import LinkAttr from 'markdown-it-link-attributes'
 
 import App from './App.vue'
 import routes from '~pages'
@@ -30,6 +32,26 @@ const router = createRouter({
 const pinia = createPinia()
 
 const vfm = createVfm()
+
+config({
+  markdownItPlugins(plugins) {
+    return [
+      ...plugins,
+      {
+        type: 'linkAttr',
+        plugin: LinkAttr,
+        options: {
+          matcher(href: string) {
+            return !href.startsWith('#')
+          },
+          attrs: {
+            target: '_blank',
+          },
+        },
+      },
+    ]
+  },
+})
 
 createApp(App)
   .use(i18n)
