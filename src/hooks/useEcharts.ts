@@ -3,16 +3,20 @@ import type { TooltipComponentPositionCallback } from 'echarts'
 export function useEcharts() {
   const { bottom, mouseY } = layoutMainInject()
   const parentEl = useParentElement()
-  const { top: parentTop } = useElementBounding(parentEl)
 
   const position: TooltipComponentPositionCallback = (point, _, __, ___, size) => {
+    if (!parentEl.value)
+      return [0, 0]
+
+    const { top: parentTop } = parentEl.value.getBoundingClientRect()
+
     const [x] = point
     const [contentWidth, contentHeight] = size.contentSize
     const [viewWidth] = size.viewSize
 
     const offset = 20
     let left = x + offset
-    let top = mouseY.value - parentTop.value
+    let top = mouseY.value - parentTop
 
     if (x + contentWidth > viewWidth) {
       left = x - contentWidth - offset
@@ -21,7 +25,7 @@ export function useEcharts() {
     }
 
     if (mouseY.value + contentHeight > bottom.value)
-      top = mouseY.value - contentHeight - parentTop.value
+      top = mouseY.value - contentHeight - parentTop
 
     return [left, top]
   }
