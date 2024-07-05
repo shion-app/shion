@@ -160,7 +160,7 @@ dependencies:
     version: 2.7.1
   tauri-plugin-shion-history-api:
     specifier: github:shion-app/history
-    version: github.com/shion-app/history/c1c18ab1abbf3ce3bb0125aebb32d45481946fc9
+    version: github.com/shion-app/history/22128061506bc13639074cbef3c38ab81a434e0e
   tauri-plugin-shion-watcher-api:
     specifier: github:shion-app/watcher
     version: github.com/shion-app/watcher/20f02d84f0266c3e704ab3e06429d81cb8241309
@@ -10378,8 +10378,8 @@ packages:
       vue: 3.3.7(typescript@5.2.2)
     dev: false
 
-  github.com/shion-app/history/c1c18ab1abbf3ce3bb0125aebb32d45481946fc9:
-    resolution: {tarball: https://codeload.github.com/shion-app/history/tar.gz/c1c18ab1abbf3ce3bb0125aebb32d45481946fc9}
+  github.com/shion-app/history/22128061506bc13639074cbef3c38ab81a434e0e:
+    resolution: {tarball: https://codeload.github.com/shion-app/history/tar.gz/22128061506bc13639074cbef3c38ab81a434e0e}
     name: tauri-plugin-shion-history-api
     version: 0.0.0
     dependencies:

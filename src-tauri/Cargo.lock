@@ -5433,7 +5433,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-shion-history"
 version = "0.0.0"
-source = "git+https://github.com/shion-app/history#c1c18ab1abbf3ce3bb0125aebb32d45481946fc9"
+source = "git+https://github.com/shion-app/history#22128061506bc13639074cbef3c38ab81a434e0e"
 dependencies = [
  "glob",
  "home",
@@ -5444,6 +5444,7 @@ dependencies = [
  "serde_json",
  "tauri",
  "tauri-plugin",
+ "tempfile",
  "thiserror",
 ]
 
