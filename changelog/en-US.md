@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [0.11.16] - 2024-07-05
+
+### Fixed
+
+- The tooltip position after dragging the chart in `Overview`
+- Pulling browser history, some users will get an error when deleting temporary files
+
 ## [0.11.15] - 2024-06-30
 
 ### Added
