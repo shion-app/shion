@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.11.17] - 2024-07-06
+
+### Changed
+
+- `Overview` chart style
+
+### Fixed
+
+- `Daily Activity Chart` vertical time arrangement
+
 ## [0.11.16] - 2024-07-05
 
 ### Fixed
