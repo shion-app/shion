@@ -73,7 +73,7 @@ const option = computed(() => {
       axisLabel: {
         formatter: formatHHmmss,
       },
-      splitNumber: 3,
+      splitNumber: 2,
     },
   ]
 
@@ -92,7 +92,7 @@ const option = computed(() => {
         }).join('')
       },
       position,
-      extraCssText: 'max-width:60%;',
+      extraCssText: `max-width:${vertical.value ? 100 : 60}%;`,
     },
     grid: {
       top: 36,

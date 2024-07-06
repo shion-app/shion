@@ -74,7 +74,7 @@ const option = computed<EChartsOption>(() => {
     axisLabel: {
       formatter: formatHHmmss,
     },
-    splitNumber: 3,
+    splitNumber: 2,
   }
 
   return {
