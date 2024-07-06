@@ -60,9 +60,11 @@ async function init() {
 
 const option = computed<EChartsOption>(() => {
   const x = new Array(day).fill(0).map((_, i) => subDays(new Date(), i).getTime())
+  const xAxisData = vertical.value ? x : x.reverse()
+
   const xAxis = {
     type: 'category',
-    data: vertical.value ? x : x.reverse(),
+    data: xAxisData,
     axisLabel: {
       formatter: time => format(new Date(Number(time)), 'MM-dd'),
     },
@@ -107,7 +109,7 @@ const option = computed<EChartsOption>(() => {
     },
     series: {
       type: 'bar',
-      data: x.map(date => calcTotalTime(list.value.filter(({ start }) => isSameDay(date, start)))),
+      data: xAxisData.map(date => calcTotalTime(list.value.filter(({ start }) => isSameDay(date, start)))),
       itemStyle: {
         color: color.value,
       },

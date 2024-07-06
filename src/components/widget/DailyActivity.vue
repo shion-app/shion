@@ -18,11 +18,12 @@ const labelList = ref<Array<SelectLabel>>([])
 const activityList = ref<Array<SelectActivity>>([])
 const programList = ref<Array<SelectProgram>>([])
 
-const x = new Array(24).fill(0).map((_, i) => i)
-
 const vertical = computed(() => props.data.fields?.vertical || false)
 
 const option = computed(() => {
+  const x = new Array(24).fill(0).map((_, i) => i)
+  const xAxisData = vertical.value ? x.reverse() : x
+
   const transformNoteList = splitByHour(noteList.value).filter(i => isSameDay(selectedDateVModel.value, i.start))
   const transformactivityList = splitByHour(activityList.value).filter(i => isSameDay(selectedDateVModel.value, i.start))
 
@@ -31,7 +32,7 @@ const option = computed(() => {
       name,
       type: 'bar',
       stack: 'label',
-      data: x.map(time => calcTotalTime(transformNoteList.filter(i => i.label.id == id && (isSameHour(new Date(selectedDateVModel.value).setHours(time), i.start))))),
+      data: xAxisData.map(time => calcTotalTime(transformNoteList.filter(i => i.label.id == id && (isSameHour(new Date(selectedDateVModel.value).setHours(time), i.start))))),
       itemStyle: {
         color: transformNoteList.find(i => i.label.id == id)?.label.color,
       },
@@ -46,7 +47,7 @@ const option = computed(() => {
       name,
       type: 'bar',
       stack: 'label',
-      data: x.map(time => calcTotalTime(transformactivityList.filter(i => i.program.id == id && (isSameHour(new Date(selectedDateVModel.value).setHours(time), i.start))))),
+      data: xAxisData.map(time => calcTotalTime(transformactivityList.filter(i => i.program.id == id && (isSameHour(new Date(selectedDateVModel.value).setHours(time), i.start))))),
       itemStyle: {
         color: transformactivityList.find(i => i.program.id == id)?.program.color,
       },
@@ -56,12 +57,13 @@ const option = computed(() => {
     }
   })
 
-  const xAxisData = x.map(complement)
-
   const xAxis = [
     {
       type: 'category',
-      data: vertical.value ? xAxisData.reverse() : xAxisData,
+      data: xAxisData,
+      axisLabel: {
+        formatter: complement,
+      },
     },
   ]
 
