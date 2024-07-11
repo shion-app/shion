@@ -1,6 +1,7 @@
 import { createVuetify } from 'vuetify'
 import { en, zhHans } from 'vuetify/locale'
 import { VTimePicker } from 'vuetify/labs/VTimePicker'
+import mergeOptions from 'merge-options'
 
 import DateFnsAdapter from '@date-io/date-fns'
 import { enUS, zhCN } from 'date-fns/locale'
@@ -13,7 +14,18 @@ export const vuetify = createVuetify({
     locale: 'en-US',
     messages: {
       'en-US': en,
-      'zh-CN': zhHans,
+      'zh-CN': mergeOptions(zhHans, {
+        datePicker: {
+          title: '选择日期',
+        },
+        timePicker: {
+          title: '选择时间',
+        },
+        confirmEdit: {
+          ok: '确定',
+          cancel: '取消',
+        },
+      }),
     },
   },
   date: {
