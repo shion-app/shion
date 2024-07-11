@@ -40,6 +40,9 @@ export const useHistoryStore = defineStore('history', () => {
   }
 
   async function pullBrowsers(browsers: Array<Browser>) {
+    if (requesting.value)
+      return 0
+
     completedCount.value = 0
     totalCount.value = 0
     requesting.value = true
@@ -76,6 +79,12 @@ export const useHistoryStore = defineStore('history', () => {
     const browsers = state.value.browsers.filter(i => i.last_sync > 0)
     await pullBrowsers(browsers)
   }
+
+  function createScheduledTask() {
+    const _ = new Timer(pullActiveBrowsers, calcDuration(30, 'minute'))
+  }
+
+  createScheduledTask()
 
   return {
     config: state,

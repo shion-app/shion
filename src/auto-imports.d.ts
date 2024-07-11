@@ -11,6 +11,7 @@ declare global {
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
+  const calcDuration: typeof import('./utils/time')['calcDuration']
   const calcTotalTime: typeof import('./utils/time')['calcTotalTime']
   const complement: typeof import('./utils/time')['complement']
   const computed: typeof import('vue')['computed']
@@ -364,6 +365,7 @@ declare module 'vue' {
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
+    readonly calcDuration: UnwrapRef<typeof import('./utils/time')['calcDuration']>
     readonly calcTotalTime: UnwrapRef<typeof import('./utils/time')['calcTotalTime']>
     readonly complement: UnwrapRef<typeof import('./utils/time')['complement']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>

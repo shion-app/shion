@@ -92,3 +92,19 @@ export function extractTime(time: number) {
     },
   }
 }
+
+export function calcDuration(count: number, span: 'minute' | 'hour' | 'day' | 'week' | 'month') {
+  const second = 1000 * count
+  switch (span) {
+    case 'minute':
+      return second * 60
+    case 'hour':
+      return second * 60 * 60
+    case 'day':
+      return second * 60 * 60 * 24
+    case 'week':
+      return second * 60 * 60 * 24 * 7
+    case 'month':
+      return second * 60 * 60 * 24 * 30
+  }
+}
