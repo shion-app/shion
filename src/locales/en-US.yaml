@@ -30,10 +30,13 @@ config:
     timelineGroupGapMinute: When displaying the timeline, separate segments of the same type that are separated by the current minute
     watcherWhitelist: Programs that are in the following folders and have not been added will be added when running
     faviconService: Select service providers in the timeline for website icon requests
-  header:
+  tab:
     general: General
     behavior: Behavior
     appearance: Appearance
+  header:
+    timeline: Timeline
+    monitor: Monitor
 plan:
   create: Create plan
   update: Update plan
