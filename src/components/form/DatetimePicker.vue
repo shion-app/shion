@@ -60,26 +60,28 @@ watch(dateModel, (v) => {
   <v-text-field
     :model-value="text" readonly prepend-inner-icon="mdi-calendar" append-inner-icon="mdi-clock"
     @click:prepend-inner="onClick(true)" @click:append-inner="onClick(false)"
-  >
-    <v-menu v-model="menu" activator="parent" :min-width="0" :close-on-content-click="false" :open-on-click="false">
-      <v-confirm-edit v-if="isDateMenu" v-model="dateModel" @save="onSave">
-        <template #default="{ model: proxyModel, actions }">
-          <v-date-picker v-model="proxyModel.value" :min="minDate" :max="maxDate">
-            <template #actions>
-              <component :is="actions" />
-            </template>
-          </v-date-picker>
-        </template>
-      </v-confirm-edit>
-      <v-confirm-edit v-else v-model="timeModel" @save="onSave">
-        <template #default="{ model: proxyModel, actions }">
-          <v-time-picker v-model="proxyModel.value" format="24hr" :min="minTime" :max="maxTime">
-            <template #actions>
-              <component :is="actions" />
-            </template>
-          </v-time-picker>
-        </template>
-      </v-confirm-edit>
-    </v-menu>
-  </v-text-field>
+  />
+  <advanced-dialog v-model:visible="menu" class="w-[500px]!">
+    <v-confirm-edit v-if="isDateMenu" v-model="dateModel" @save="onSave" @cancel="onSave">
+      <template #default="{ model: proxyModel, actions }">
+        <v-date-picker v-model="proxyModel.value" color="primary" :min="minDate" :max="maxDate" class="w-full!">
+          <template #actions>
+            <component :is="actions" />
+          </template>
+        </v-date-picker>
+      </template>
+    </v-confirm-edit>
+    <v-confirm-edit v-else v-model="timeModel" @save="onSave" @cancel="onSave">
+      <template #default="{ model: proxyModel, actions }">
+        <v-time-picker
+          v-model="proxyModel.value" color="primary" format="24hr" :min="minTime" :max="maxTime"
+          class="w-full!"
+        >
+          <template #actions>
+            <component :is="actions" />
+          </template>
+        </v-time-picker>
+      </template>
+    </v-confirm-edit>
+  </advanced-dialog>
 </template>
