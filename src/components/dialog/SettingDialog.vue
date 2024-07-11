@@ -56,7 +56,7 @@ const tab = ref('general')
                   <v-list-item-title>{{ $t('config.locale') }}</v-list-item-title>
                   <template #append>
                     <v-list-item-action>
-                      <v-select v-model="config.locale" :items="localeOptions" hide-details class="w-[230px]" />
+                      <v-select v-model="config.locale" :items="localeOptions" hide-details class="w-[230px]" color="primary" />
                     </v-list-item-action>
                   </template>
                 </v-list-item>

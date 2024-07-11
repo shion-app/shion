@@ -55,5 +55,14 @@ export const vuetify = createVuetify({
     VAutocomplete: {
       variant: 'solo',
     },
+    VSlider: {
+      color: 'primary',
+    },
+    VCheckboxBtn: {
+      color: 'primary',
+    },
+    VRadioGroup: {
+      color: 'primary',
+    },
   },
 })
