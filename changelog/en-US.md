@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+## [0.11.18] - 2024-07-12
+
+### Added
+
+- Scheduled pulling of historical records
+- Scheduled export of data backup and its settings
+
+### Changed
+
+- `Settings` style
+- Time related component styles
+
 ## [0.11.17] - 2024-07-06
 
 ### Changed
