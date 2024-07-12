@@ -27,7 +27,14 @@
     "fs:allow-write-file",
     "fs:allow-write-text-file",
     "fs:allow-read-text-file",
-    "fs:allow-exists",
+    {
+      "identifier": "fs:allow-exists",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
     "fs:allow-remove",
     "fs:scope-appdata-recursive",
     "log:allow-log",
