@@ -9,7 +9,7 @@ export function checkTrayExists() {
     const exists = await createTray()
     if (exists)
       timer.destroy()
-  }, 3000)
+  }, 3000, true)
 }
 
 async function createTray() {
