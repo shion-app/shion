@@ -9,6 +9,10 @@ const props = withDefaults(defineProps<{
   modelValue: new Date().getTime(),
 })
 
+defineOptions({
+  inheritAttrs: false,
+})
+
 const { modelValue } = useVModels(props)
 const { format } = useDateFns()
 
@@ -59,7 +63,7 @@ watch(dateModel, (v) => {
 <template>
   <v-text-field
     :model-value="text" readonly prepend-inner-icon="mdi-calendar" append-inner-icon="mdi-clock"
-    @click:prepend-inner="onClick(true)" @click:append-inner="onClick(false)"
+    v-bind="$attrs" @click:prepend-inner="onClick(true)" @click:append-inner="onClick(false)"
   />
   <advanced-dialog v-model:visible="menu" class="w-[500px]!">
     <v-confirm-edit v-if="isDateMenu" v-model="dateModel" @save="onSave" @cancel="onSave">
