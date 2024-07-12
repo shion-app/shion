@@ -64,7 +64,7 @@ export const useExportStore = defineStore('export', () => {
   const timer = new Timer(async () => {
     const now = Date.now()
     if (now - config.value.lastExport > config.value.scheduledExportPeriod) {
-      const has = await exists(config.value.scheduledExportPath)
+      const has = config.value.scheduledExportPath && await exists(config.value.scheduledExportPath)
       if (has) {
         info('scheduled task(export): in progress...')
         const finished = await handleExport(config.value.scheduledExportPath)

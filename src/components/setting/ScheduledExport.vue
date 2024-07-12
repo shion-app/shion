@@ -2,14 +2,13 @@
 import { open } from '@tauri-apps/plugin-dialog'
 
 const store = useConfigStore()
-const exportStore = useExportStore()
 
 const { t } = useI18n()
 
 const { config } = storeToRefs(store)
 
 const count = ref(1)
-const span = ref<'day' | 'week' | 'month'>('day')
+const span = ref<'day' | 'week' | 'month'>('week')
 
 const periodOptions = computed(() => [
   {
