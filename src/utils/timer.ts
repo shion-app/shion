@@ -10,13 +10,12 @@ export class Timer {
     this.#callback = callback
     this.#interval = interval
     this.#immediate = immediate
+    if (this.#immediate)
+      this.#callback()
     this.#run()
   }
 
   #run() {
-    if (this.#immediate)
-      this.#callback()
-
     this.#frame = requestAnimationFrame(() => {
       const now = Date.now()
       if (now - this.#startTime >= this.#interval) {
