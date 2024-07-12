@@ -58,6 +58,7 @@ declare module '@vue/runtime-core' {
     RecentActivityPie: typeof import('./components/widget/RecentActivityPie.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ScheduledExport: typeof import('./components/setting/ScheduledExport.vue')['default']
     Search: typeof import('./components/search/Search.vue')['default']
     SettingDialog: typeof import('./components/dialog/SettingDialog.vue')['default']
     SingleCategoryBar: typeof import('./components/widget/SingleCategoryBar.vue')['default']

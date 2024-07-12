@@ -3,13 +3,15 @@ import { ModalsContainer } from 'vue-final-modal'
 
 import { checkTrayExists } from './modules/tray'
 
+const configStore = useConfigStore()
+
 if (isDesktop)
   useUpdateStore()
 
 useTimerStore()
 useMonitorStore()
 useActivityStore()
-const configStore = useConfigStore()
+useExportStore()
 
 const { config } = storeToRefs(configStore)
 

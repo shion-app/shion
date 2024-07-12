@@ -5,6 +5,8 @@
 export {}
 declare global {
   const EffectScope: typeof import('vue')['EffectScope']
+  const MIGRATION_FILENAME: typeof import('./stores/useExportStore')['MIGRATION_FILENAME']
+  const MIGRATION_FOLDER: typeof import('./stores/useExportStore')['MIGRATION_FOLDER']
   const PLATFORM: typeof import('./utils/shared')['PLATFORM']
   const Priority: typeof import('./hooks/useApplication')['Priority']
   const Timer: typeof import('./utils/timer')['Timer']
@@ -211,6 +213,7 @@ declare global {
   const useEventBus: typeof import('@vueuse/core')['useEventBus']
   const useEventListener: typeof import('@vueuse/core')['useEventListener']
   const useEventSource: typeof import('@vueuse/core')['useEventSource']
+  const useExportStore: typeof import('./stores/useExportStore')['useExportStore']
   const useEyeDropper: typeof import('@vueuse/core')['useEyeDropper']
   const useFavicon: typeof import('@vueuse/core')['useFavicon']
   const useFetch: typeof import('@vueuse/core')['useFetch']
@@ -359,6 +362,8 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly MIGRATION_FILENAME: UnwrapRef<typeof import('./stores/useExportStore')['MIGRATION_FILENAME']>
+    readonly MIGRATION_FOLDER: UnwrapRef<typeof import('./stores/useExportStore')['MIGRATION_FOLDER']>
     readonly PLATFORM: UnwrapRef<typeof import('./utils/shared')['PLATFORM']>
     readonly Priority: UnwrapRef<typeof import('./hooks/useApplication')['Priority']>
     readonly Timer: UnwrapRef<typeof import('./utils/timer')['Timer']>
@@ -565,6 +570,7 @@ declare module 'vue' {
     readonly useEventBus: UnwrapRef<typeof import('@vueuse/core')['useEventBus']>
     readonly useEventListener: UnwrapRef<typeof import('@vueuse/core')['useEventListener']>
     readonly useEventSource: UnwrapRef<typeof import('@vueuse/core')['useEventSource']>
+    readonly useExportStore: UnwrapRef<typeof import('./stores/useExportStore')['useExportStore']>
     readonly useEyeDropper: UnwrapRef<typeof import('@vueuse/core')['useEyeDropper']>
     readonly useFavicon: UnwrapRef<typeof import('@vueuse/core')['useFavicon']>
     readonly useFetch: UnwrapRef<typeof import('@vueuse/core')['useFetch']>

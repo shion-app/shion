@@ -1,14 +1,16 @@
 import { createVuetify } from 'vuetify'
 import { en, zhHans } from 'vuetify/locale'
 import { VTimePicker } from 'vuetify/labs/VTimePicker'
-import mergeOptions from 'merge-options'
+import { VNumberInput } from 'vuetify/labs/VNumberInput'
 
+import mergeOptions from 'merge-options'
 import DateFnsAdapter from '@date-io/date-fns'
 import { enUS, zhCN } from 'date-fns/locale'
 
 export const vuetify = createVuetify({
   components: {
     VTimePicker,
+    VNumberInput,
   },
   locale: {
     locale: 'en-US',

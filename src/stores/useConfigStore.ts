@@ -22,6 +22,10 @@ interface Config {
   autoShowChangelogDisable: boolean
   watcherWhitelist: Array<string>
   faviconService: FaviconService
+  scheduledExport: boolean
+  scheduledExportPath: string
+  scheduledExportPeriod: number
+  lastExport: number
 }
 
 const PATH = 'config.json'
@@ -52,6 +56,10 @@ export const useConfigStore = defineStore('config', () => {
       autoShowChangelogDisable: false,
       watcherWhitelist: [],
       faviconService: FaviconService.IconHorse,
+      scheduledExport: false,
+      scheduledExportPath: '',
+      scheduledExportPeriod: calcDuration(1, 'week'),
+      lastExport: 0,
     }
     const len = await store.length()
     if (len == 0)

@@ -25,18 +25,28 @@ config:
   themeColor: 主题色
   watcherWhitelist: 自动监听白名单
   faviconService: 图标获取
+  scheduledExport: 定时导出数据
+  scheduledExportPath: 路径
+  scheduledExportPeriod: 周期
   desc:
     timelineMinMinute: 时间线显示时，筛选掉小于当前分钟的片段
     timelineGroupGapMinute: 时间线显示时，分离同类型相隔当前分钟的片段
     watcherWhitelist: 在下列文件夹中且未添加的程序，运行时自动加入监听
     faviconService: 选择时间线中进行网站图标请求的服务提供者
+    scheduledExportPath: 点击选择保存路径
   tab:
     general: 通用
     behavior: 行为
     appearance: 外观
+    export: 导出
   header:
     timeline: 时间线
     monitor: 自动监听
+  export:
+    period:
+      day: 日
+      week: 周
+      month: 月
 plan:
   create: 创建计划
   update: 修改计划

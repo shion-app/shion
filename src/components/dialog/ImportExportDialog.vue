@@ -2,16 +2,12 @@
 import { invoke } from '@tauri-apps/api/core'
 import { appDataDir, join } from '@tauri-apps/api/path'
 import { open } from '@tauri-apps/plugin-dialog'
-import { BaseDirectory, exists, readTextFile, remove, writeTextFile } from '@tauri-apps/plugin-fs'
+import { BaseDirectory, exists, readTextFile, remove } from '@tauri-apps/plugin-fs'
 import { error } from '@tauri-apps/plugin-log'
 import { relaunch } from '@tauri-apps/plugin-process'
 import { compare } from 'compare-versions'
 import { db } from '@/modules/database'
-
-interface Migration {
-  version: string
-  base: string
-}
+import type { Migration } from '@/stores/useExportStore'
 
 const props = defineProps<{
   visible: boolean
@@ -22,15 +18,13 @@ const notify = useNotify()
 const { t } = useI18n()
 
 const configStore = useConfigStore()
+const exportStore = useExportStore()
 
 const { config } = storeToRefs(configStore)
+const { exporting } = storeToRefs(exportStore)
 
 const importing = ref(false)
-const exporting = ref(false)
 const relaunching = ref(false)
-
-const MIGRATION_FOLDER = 'migrate'
-const MIGRATION_FILENAME = 'migration.json'
 
 async function handleImport() {
   const selected = await open()
@@ -84,39 +78,7 @@ async function handleExport() {
   if (!selected)
     return
 
-  const dest = await join(selected, `shion-${new Date().getTime()}.zip`)
-
-  const appDataDirPath = await appDataDir()
-  exporting.value = true
-  await suspendApp()
-  try {
-    await generateMigrationFile()
-    await invoke('compress', {
-      target: appDataDirPath,
-      dest,
-    })
-  }
-  catch (e) {
-    error(`export error:${e}`)
-    notify.error({
-      text: e as any,
-    })
-    return
-  }
-  finally {
-    await resumeApp()
-    exporting.value = false
-  }
-  notify.success({})
-}
-
-async function generateMigrationFile() {
-  const base = await appDataDir()
-  const data: Migration = {
-    version: config.value.version,
-    base,
-  }
-  await writeTextFile(MIGRATION_FILENAME, JSON.stringify(data), { baseDir: BaseDirectory.AppData })
+  await exportStore.handleExport(selected)
 }
 
 async function verifyMigrationFile() {
