@@ -1,6 +1,7 @@
 import type { Browser } from 'tauri-plugin-shion-history-api'
 import { getConfig, readHistory, setConfig } from 'tauri-plugin-shion-history-api'
 
+import { info } from '@tauri-apps/plugin-log'
 import type { InsertHistory } from '@/modules/database'
 import { db } from '@/modules/database'
 
@@ -80,11 +81,19 @@ export const useHistoryStore = defineStore('history', () => {
     await pullBrowsers(browsers)
   }
 
-  function createScheduledTask() {
-    const _ = new Timer(pullActiveBrowsers, calcDuration(30, 'minute'))
-  }
+  const timer = new Timer(async () => {
+    info('scheduled task(history): in progress...')
+    await pullActiveBrowsers()
+    info('scheduled task(history): completed')
+  }, calcDuration(30, 'minute'))
 
-  createScheduledTask()
+  onAppSuspend(() => {
+    timer.destroy()
+  })
+
+  onAppResume(() => {
+    timer.restart()
+  })
 
   return {
     config: state,

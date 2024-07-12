@@ -1,7 +1,7 @@
 import { invoke } from '@tauri-apps/api/core'
 import { appDataDir, join } from '@tauri-apps/api/path'
 import { BaseDirectory, exists, writeTextFile } from '@tauri-apps/plugin-fs'
-import { error } from '@tauri-apps/plugin-log'
+import { error, info } from '@tauri-apps/plugin-log'
 
 export interface Migration {
   version: string
@@ -61,21 +61,31 @@ export const useExportStore = defineStore('export', () => {
     await writeTextFile(MIGRATION_FILENAME, JSON.stringify(data), { baseDir: BaseDirectory.AppData })
   }
 
-  function createScheduledTask() {
-    const _ = new Timer(async () => {
-      const now = Date.now()
-      if (now - config.value.lastExport > config.value.scheduledExportPeriod) {
-        const has = await exists(config.value.scheduledExportPath)
-        if (has) {
-          const finished = await handleExport(config.value.scheduledExportPath)
-          if (finished)
-            config.value.lastExport = now
+  const timer = new Timer(async () => {
+    const now = Date.now()
+    if (now - config.value.lastExport > config.value.scheduledExportPeriod) {
+      const has = await exists(config.value.scheduledExportPath)
+      if (has) {
+        info('scheduled task(export): in progress...')
+        const finished = await handleExport(config.value.scheduledExportPath)
+        if (finished) {
+          config.value.lastExport = now
+          info('scheduled task(export): completed')
+        }
+        else {
+          info('scheduled task(export): error or canceled')
         }
       }
-    }, calcDuration(1, 'hour'))
-  }
+    }
+  }, calcDuration(1, 'hour'))
 
-  createScheduledTask()
+  onAppSuspend(() => {
+    timer.destroy()
+  })
+
+  onAppResume(() => {
+    timer.restart()
+  })
 
   return {
     handleExport,
