@@ -1,48 +1,37 @@
+import { Timer } from '@/utils/timer'
+
 export const useTimerStore = defineStore('timer', () => {
   const running = ref(false)
   const spend = ref(0)
   const text = ref('')
 
-  let startTime = 0
-  let endTime = 0
-  let currentTime = 0
-  let frame: number
-  const INTERVAL = 1000 * 60
-  let _update: (() => Promise<unknown>) | null
-
   const time = computed(() => formatTime(spend.value))
 
+  let startTime = 0
+  const FPS = 60
+
+  let taskTimer: Timer
+  let countTimer: Timer
+
   function start(update: () => Promise<unknown>) {
-    _update = update
     running.value = true
-    currentTime = endTime = startTime = Date.now()
-    count()
-  }
-
-  function count() {
-    frame = requestAnimationFrame(() => {
-      endTime = Date.now()
-      if (endTime - currentTime > INTERVAL) {
-        currentTime = endTime
-        _update!()
-      }
-
-      spend.value = endTime - startTime
-      count()
-    })
+    startTime = Date.now()
+    taskTimer = new Timer(update, calcDuration(1, 'minute'))
+    countTimer = new Timer(() => {
+      spend.value = Date.now() - startTime
+    }, calcDuration(1, 'second') / FPS)
   }
 
   async function finish() {
     running.value = false
-    cancelAnimationFrame(frame)
-    await _update!()
+    await taskTimer.destroy(true)
+    countTimer.destroy()
     reset()
   }
 
   function reset() {
-    startTime = endTime = currentTime = 0
+    startTime = 0
     spend.value = 0
-    _update = null
   }
 
   function formatTime(time: number) {
@@ -56,13 +45,20 @@ export const useTimerStore = defineStore('timer', () => {
     text.value = v
   }
 
-  async function appHook() {
+  onAppClose(async () => {
     if (running.value)
       await finish()
-  }
+  })
 
-  onAppClose(appHook)
-  onAppSuspend(appHook)
+  onAppSuspend(() => {
+    taskTimer.destroy()
+    countTimer.destroy()
+  })
+
+  onAppResume(() => {
+    taskTimer.restart()
+    countTimer.restart()
+  })
 
   return {
     running,

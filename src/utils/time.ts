@@ -93,9 +93,11 @@ export function extractTime(time: number) {
   }
 }
 
-export function calcDuration(count: number, span: 'minute' | 'hour' | 'day' | 'week' | 'month') {
+export function calcDuration(count: number, span: 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month') {
   const second = 1000 * count
   switch (span) {
+    case 'second':
+      return second
     case 'minute':
       return second * 60
     case 'hour':

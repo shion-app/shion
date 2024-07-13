@@ -1,12 +1,14 @@
+type Callback = () => unknown | Promise<unknown>
+
 export class Timer {
   #startTime = Date.now()
   #frame = 0
   #interval = 0
   #immediate = false
   #destroyed = false
-  #callback: Function = () => {}
+  #callback: Callback = () => {}
 
-  constructor(callback: Function, interval: number, immediate = false) {
+  constructor(callback: Callback, interval: number, immediate = false) {
     this.#callback = callback
     this.#interval = interval
     this.#immediate = immediate
@@ -33,9 +35,9 @@ export class Timer {
     this.#run()
   }
 
-  destroy(lastCall = false) {
+  async destroy(lastCall = false) {
     if (lastCall)
-      this.#callback()
+      await this.#callback()
 
     this.#destroyed = true
     cancelAnimationFrame(this.#frame)
