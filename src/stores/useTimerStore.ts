@@ -52,12 +52,10 @@ export const useTimerStore = defineStore('timer', () => {
 
   onAppSuspend(() => {
     taskTimer.destroy()
-    countTimer.destroy()
   })
 
   onAppResume(() => {
     taskTimer.restart()
-    countTimer.restart()
   })
 
   return {
