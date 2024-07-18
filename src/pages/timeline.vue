@@ -9,6 +9,8 @@ import type { TimeLineNode } from '@/interfaces'
 import type { Filter } from '@/components/timeline/types'
 import TimelineGraph from '@/components/timeline/TimelineGraph.vue'
 import { getFaviconUrl } from '@/modules/favicon'
+import type { StepCounter } from '@/utils'
+import { randomStep } from '@/utils'
 
 type computedTimeLineNode = TimeLineNode & { compressGroupId: string }
 type TimelineGraphExposed = ComponentExposed<typeof TimelineGraph>
@@ -158,21 +160,27 @@ const list = computed(() => {
 async function refresh() {
   const start = startOfDay(date.value).getTime()
   const end = endOfDay(date.value).getTime()
-  ;[noteList.value, activityList.value] = await Promise.all([
-    db.note.select({
-      start,
-      end,
-    }),
-    db.activity.select({
-      start,
-      end,
-    }),
-  ])
-  await pullActiveBrowsers()
-  historyList.value = deduplicate(await db.history.select({
+  const _noteList = await db.note.select({
     start,
     end,
-  }))
+  })
+  const _activityList = await db.activity.select({
+    start,
+    end,
+  })
+  await pullActiveBrowsers()
+  const _historyList = await db.history.select({
+    start,
+    end,
+  })
+  const counter = randomStep([
+    ..._noteList.flatMap(i => [i.start, i.end]),
+    ..._activityList.flatMap(i => [i.start, i.end]),
+    ..._historyList.map(i => i.lastVisited),
+  ])
+  noteList.value = deduplicateTimeRange(_noteList, counter)
+  activityList.value = deduplicateTimeRange(_activityList, counter)
+  historyList.value = deduplicateHistory(_historyList, counter)
 }
 
 function compress(list: Array<computedTimeLineNode>): Array<TimeLineNode> {
@@ -214,16 +222,22 @@ function compress(list: Array<computedTimeLineNode>): Array<TimeLineNode> {
 /**
  * history 浏览器源数据存在访问时间相同的项
  */
-function deduplicate(list: Array<SelectHistory>) {
-  const set = new Set()
-  const result: Array<SelectHistory> = []
-  for (const item of list) {
-    if (!set.has(item.lastVisited)) {
-      result.push(item)
-      set.add(item.lastVisited)
-    }
-  }
-  return result
+function deduplicateHistory(list: Array<SelectHistory>, counter: StepCounter) {
+  return list.map(item => ({
+    ...item,
+    lastVisited: counter.get(item.lastVisited),
+  }))
+}
+
+function deduplicateTimeRange<T extends {
+  start: number
+  end: number
+}>(list: Array<T>, counter: StepCounter) {
+  return list.map(item => ({
+    ...item,
+    start: counter.get(item.start),
+    end: counter.get(item.end),
+  }))
 }
 
 async function handleSearch(keyword: string, page: number, size: number) {
@@ -232,8 +246,9 @@ async function handleSearch(keyword: string, page: number, size: number) {
     page,
     size,
   }))
+  const counter = randomStep(list.map(i => i.lastVisited))
   return {
-    list: deduplicate(list).map(i => ({
+    list: deduplicateHistory(list, counter).map(i => ({
       time: i.lastVisited,
       content: i.title,
       navigate: () => open(i.url),

@@ -46,3 +46,25 @@ export function deepFilter(input: unknown, keys: string[]) {
 
   return filteredObj
 }
+
+export interface StepCounter {
+  get: (count: number) => number
+}
+
+/**
+ * 计算list中同一数值的数量，在取值时错开，防止相同值
+ */
+export function randomStep(list: number[]): StepCounter {
+  const map = new Map<number, number>()
+  for (const count of list)
+    map.set(count, map.get(count) || 0 + 1)
+
+  return {
+    get: (count: number) => {
+      const len = (map.get(count) || 0)
+      map.set(count, len - 1)
+      // 先取最小值
+      return count - len + 1
+    },
+  }
+}
