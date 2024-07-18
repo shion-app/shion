@@ -7,9 +7,8 @@ import { WidgetType } from '@/modules/database/models/overview'
 import Grid from '@/components/grid/Grid.vue'
 import type { GridList } from '@/hooks/useGrid'
 import { useConfirmModal } from '@/hooks/useConfirmModal'
-import type { NestedMenuItem } from '@/interfaces'
 
-type OverviewForm = Pick<InsertOverview, 'type' | 'w' | 'h'> & { category?: [string, number]; vertical?: boolean }
+type OverviewForm = Pick<InsertOverview, 'type' | 'w' | 'h'> & { category?: string; vertical?: boolean }
 
 const { t } = useI18n()
 const { success } = useNotify()
@@ -52,36 +51,27 @@ const { open, close, setModelValue } = useFormModal<
   const categoryVisible = model.type == WidgetType.SINGLE_CATEGORY_BAR || model.type == WidgetType.TEXT_SUMMARY
   const verticalVisible = model.type == WidgetType.SINGLE_CATEGORY_BAR || model.type == WidgetType.DAILY_ACTIVIRY
   const unrealColumnCount = count(column.value)
-  const categoryItems: Array<NestedMenuItem> = []
+  const categoryItems: Array<{
+    title: string
+    value: string
+  }> = []
   if (modal.planList?.length) {
-    categoryItems.push({
-      title: t('widget.singleCategoryBar.plan'),
-      value: 'planId',
-      children: modal.planList?.map(i => ({
-        title: i.name,
-        value: i.id,
-      })),
-    })
+    categoryItems.push(...modal.planList?.map(i => ({
+      title: `${t('widget.singleCategoryBar.plan')}/${i.name}`,
+      value: `planId/${i.id}`,
+    })))
   }
   if (modal.labelList?.length) {
-    categoryItems.push({
-      title: t('widget.singleCategoryBar.label'),
-      value: 'labelId',
-      children: modal.labelList?.map(i => ({
-        title: i.name,
-        value: i.id,
-      })),
-    })
+    categoryItems.push(...modal.labelList?.map(i => ({
+      title: `${t('widget.singleCategoryBar.label')}/${i.name}`,
+      value: `labelId/${i.id}`,
+    })))
   }
   if (modal.programList?.length) {
-    categoryItems.push({
-      title: t('widget.singleCategoryBar.program'),
-      value: 'programId',
-      children: modal.programList?.map(i => ({
-        title: i.name,
-        value: i.id,
-      })),
-    })
+    categoryItems.push(...modal.programList?.map(i => ({
+      title: `${t('widget.singleCategoryBar.program')}/${i.name}`,
+      value: `programId/${i.id}`,
+    })))
   }
   return {
     attrs: {
@@ -138,7 +128,7 @@ const { open, close, setModelValue } = useFormModal<
             },
           },
           {
-            type: 'cascader',
+            type: 'autocomplete',
             key: 'category',
             label: t('widget.singleCategoryBar.table'),
             visible: categoryVisible,
@@ -155,7 +145,7 @@ const { open, close, setModelValue } = useFormModal<
         ],
       },
       schema: (z) => {
-        const category = z.tuple([z.string(), z.number()])
+        const category = z.string()
         return z.object({
           type: z.number(),
           w: z.number(),
@@ -167,16 +157,16 @@ const { open, close, setModelValue } = useFormModal<
       async onConfirm(v, setErrors) {
         let widget
         if (v.category) {
-          const [identifier, id] = v.category
+          const [identifier, id] = v.category.split('/')
           const list
-            = ((identifier == 'planId'
-              ? modal.planList
-              : identifier == 'labelId'
-                ? modal.labelList
-                : identifier == 'programId'
-                  ? modal.programList
-                  : []) || []).map(({ id, name, color }) => ({ id, title: name, color }))
-          const { title, color } = list.find(i => i.id == id)!
+              = ((identifier == 'planId'
+                ? modal.planList
+                : identifier == 'labelId'
+                  ? modal.labelList
+                  : identifier == 'programId'
+                    ? modal.programList
+                    : []) || []).map(({ id, name, color }) => ({ id, title: name, color }))
+          const { title, color } = list.find(i => i.id == Number(id))!
           widget = { title, color }
         }
         try {
@@ -278,7 +268,7 @@ function showUpdateForm(id: number, list: GridList<SelectOverview>) {
     h,
   }
   if (data.fields) {
-    value.category = data.fields.category as [string, number]
+    value.category = data.fields.category as string
     value.vertical = data.fields.vertical as boolean
   }
 
@@ -287,7 +277,7 @@ function showUpdateForm(id: number, list: GridList<SelectOverview>) {
 }
 
 function transformCategory(category: NonNullable<OverviewForm['category']>): SelectOverview['data']['query'] {
-  const [field, id] = category
+  const [field, id] = category.split('/')
   const table = field == 'programId' ? db.activity.table : db.note.table
   return {
     table,
