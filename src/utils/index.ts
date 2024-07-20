@@ -52,19 +52,27 @@ export interface StepCounter {
 }
 
 /**
- * 计算list中同一数值的数量，在取值时错开，防止相同值
+ * 在取值时将list中同一数值错开
  */
-export function randomStep(list: number[]): StepCounter {
-  const map = new Map<number, number>()
-  for (const count of list)
-    map.set(count, map.get(count) || 0 + 1)
+export function randomStep(list: number[], unreachable = 0): StepCounter {
+  const outside = [...list].sort()
+  const inside = [...outside]
+
+  for (let i = 1; i < inside.length; i++) {
+    if (inside[i] <= inside[i - 1])
+      inside[i] = inside[i - 1] + 1
+  }
 
   return {
     get: (count: number) => {
-      const len = (map.get(count) || 0)
-      map.set(count, len - 1)
-      // 先取最小值
-      return count - len + 1
+      const index = outside.indexOf(count)
+      if (index == -1) {
+        return count
+      }
+      else {
+        outside[index] = unreachable
+        return inside[index]
+      }
     },
   }
 }
