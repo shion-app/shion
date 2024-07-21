@@ -30,17 +30,18 @@ const minDate = computed(() => props.min ? startOfDay(props.min) : undefined)
 const maxDate = computed(() => props.max ? endOfDay(props.max) : undefined)
 const timeModel = computed({
   set: (v) => {
-    const [h, m] = v.split(':')
+    const [h, m, s] = v.split(':').map(Number)
     const date = set(new Date(modelValue.value), {
-      hours: Number(h),
-      minutes: Number(m),
+      hours: h,
+      minutes: m,
+      seconds: s,
     })
     modelValue.value = date.getTime()
   },
-  get: () => format(modelValue.value, 'HH:mm'),
+  get: () => format(modelValue.value, 'HH:mm:ss'),
 })
-const minTime = computed(() => (props.min && isSameDay(modelValue.value, props.min)) ? format(props.min, 'HH:mm') : undefined)
-const maxTime = computed(() => (props.max && isSameDay(modelValue.value, props.max)) ? format(props.max, 'HH:mm') : undefined)
+const minTime = computed(() => (props.min && isSameDay(modelValue.value, props.min)) ? format(props.min, 'HH:mm:ss') : undefined)
+const maxTime = computed(() => (props.max && isSameDay(modelValue.value, props.max)) ? format(props.max, 'HH:mm:ss') : undefined)
 
 function onClick(date: boolean) {
   menu.value = true
@@ -79,7 +80,7 @@ watch(dateModel, (v) => {
       <template #default="{ model: proxyModel, actions }">
         <v-time-picker
           v-model="proxyModel.value" color="primary" format="24hr" :min="minTime" :max="maxTime"
-          class="w-full!"
+          use-seconds class="w-full!"
         >
           <template #actions>
             <component :is="actions" />
