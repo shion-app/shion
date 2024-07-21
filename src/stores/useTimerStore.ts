@@ -30,6 +30,8 @@ export const useTimerStore = defineStore('timer', () => {
   }
 
   function reset() {
+    taskTimer = null
+    countTimer = null
     startTime = 0
     spend.value = 0
   }
