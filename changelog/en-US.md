@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [0.11.19] - 2024-07-21
+
+### Changed
+
+- Refactored manual timer
+- Modified `Data category` item of `Overview` to create display component (incompatible with previous one, modification requires reselection)
+- Adjusted `Timeline` to misalign the same time point
+- Added seconds option to the time selection component
+
 ## [0.11.18] - 2024-07-12
 
 ### Added
