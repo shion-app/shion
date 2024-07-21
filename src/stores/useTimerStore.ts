@@ -10,8 +10,8 @@ export const useTimerStore = defineStore('timer', () => {
   let startTime = 0
   const FPS = 60
 
-  let taskTimer: Timer
-  let countTimer: Timer
+  let taskTimer: Timer | null = null
+  let countTimer: Timer | null = null
 
   function start(update: () => Promise<unknown>) {
     running.value = true
@@ -24,8 +24,8 @@ export const useTimerStore = defineStore('timer', () => {
 
   async function finish() {
     running.value = false
-    await taskTimer.destroy(true)
-    countTimer.destroy()
+    await taskTimer?.destroy(true)
+    countTimer?.destroy()
     reset()
   }
 
@@ -51,11 +51,11 @@ export const useTimerStore = defineStore('timer', () => {
   })
 
   onAppSuspend(() => {
-    taskTimer.destroy()
+    taskTimer?.destroy()
   })
 
   onAppResume(() => {
-    taskTimer.restart()
+    taskTimer?.restart()
   })
 
   return {
