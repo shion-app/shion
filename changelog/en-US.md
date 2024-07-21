@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.11.21] - 2024-07-21
+
+### Fixed
+
+- Manual timer not cleared after expiration
+
 ## [0.11.20] - 2024-07-21
 
 ### Fixed
