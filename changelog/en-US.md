@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.11.20] - 2024-07-21
+
+### Fixed
+
+- Manual timer not initialized affects application hooks
+
 ## [0.11.19] - 2024-07-21
 
 ### Changed
