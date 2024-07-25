@@ -132,11 +132,12 @@ activity:
   line: Line chart
   bar: Bar chart
 about:
-  website: Website
+  website: Official website
   github: Github
+  steam: Steam
   checkUpdate: Check for updates
   copy: Copied to clipboard
-  system: System info
+  appInfo: copy app info
 moment:
   create: Record the moment
   inputTitle: Input title...

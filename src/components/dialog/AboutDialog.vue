@@ -18,16 +18,10 @@ const { start } = updateStore
 const { updating } = storeToRefs(updateStore)
 
 const repository = 'https://github.com/shion-app/shion'
+const steam = 'https://store.steampowered.com/app/3026040/shion/'
 
 const website = computed(() => config.value.locale == 'zh-CN' ? 'https://shion.app/zh/' : 'https://shion.app/')
 const version = computed(() => `v${config.value.version}`)
-
-async function copy() {
-  await writeText(version.value)
-  info({
-    text: t('about.copy'),
-  })
-}
 
 async function update() {
   const open = await start(true)
@@ -39,7 +33,7 @@ async function update() {
 
 async function copySystemInfo() {
   const locale = await invoke<string>('get_sys_locale')
-  const data = `locale: ${locale}\nuserAgent: ${navigator.userAgent}`
+  const data = `version: ${version.value}\nlocale: ${locale}\nuserAgent: ${navigator.userAgent}`
   await writeText(data)
   info({
     text: t('about.copy'),
@@ -55,26 +49,37 @@ async function copySystemInfo() {
         <div text-6 font-bold>
           shion
         </div>
-        <div cursor-pointer @click="copy">
+        <div>
           ({{ version }})
         </div>
       </div>
-      <v-btn :text="$t('about.checkUpdate')" :loading="updating" @click="update" />
+      <div flex space-x-4>
+        <v-btn color="primary" :text="$t('about.checkUpdate')" :loading="updating" @click="update" />
+        <v-btn :text="$t('about.appInfo')" @click="copySystemInfo" />
+      </div>
     </v-card-text>
     <v-card-actions class="justify-center!">
       <v-tooltip :text="$t('about.website')" location="bottom">
         <template #activator="{ props: tooltipProps }">
-          <v-btn icon="mdi-web" variant="text" v-bind="tooltipProps" @click="open(website)" />
+          <v-btn stacked v-bind="tooltipProps" @click="open(website)">
+            <v-icon>mdi-web</v-icon>
+          </v-btn>
         </template>
       </v-tooltip>
       <v-tooltip :text="$t('about.github')" location="bottom">
         <template #activator="{ props: tooltipProps }">
-          <v-btn icon="mdi-github" variant="text" v-bind="tooltipProps" @click="open(repository)" />
+          <v-btn stacked v-bind="tooltipProps" @click="open(repository)">
+            <v-icon>mdi-github</v-icon>
+          </v-btn>
         </template>
       </v-tooltip>
-      <v-tooltip :text="$t('about.system')" location="bottom">
+      <v-tooltip :text="$t('about.steam')" location="bottom">
         <template #activator="{ props: tooltipProps }">
-          <v-btn icon="mdi-laptop" variant="text" v-bind="tooltipProps" @click="copySystemInfo" />
+          <v-btn stacked v-bind="tooltipProps" @click="open(steam)">
+            <v-badge color="primary" content="pro">
+              <v-icon>mdi-steam</v-icon>
+            </v-badge>
+          </v-btn>
         </template>
       </v-tooltip>
     </v-card-actions>

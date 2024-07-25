@@ -132,11 +132,12 @@ activity:
   line: 折线图
   bar: 柱状图
 about:
-  website: 网站
+  website: 官网
   github: Github
+  steam: Steam
   checkUpdate: 检查更新
   copy: 已复制到剪贴板
-  system: 系统信息
+  appInfo: 复制应用信息
 moment:
   create: 记录下瞬间
   inputTitle: 输入标题...

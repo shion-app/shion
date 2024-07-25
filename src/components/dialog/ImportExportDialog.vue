@@ -115,15 +115,15 @@ async function updateAssetPath(base: string) {
   <advanced-dialog v-model:visible="visibleVModel" :title="$t('titleBar.view.importExport')">
     <v-card-text>
       <div>{{ $t('importExport.tip') }}</div>
-      <div space-x-4 mt-4>
-        <v-btn :loading="importing" @click="handleImport">
-          {{ $t('importExport.import') }}
-        </v-btn>
-        <v-btn :loading="exporting" @click="handleExport">
-          {{ $t('importExport.export') }}
-        </v-btn>
-      </div>
     </v-card-text>
+    <v-card-actions>
+      <v-btn :loading="importing" color="primary" @click="handleImport">
+        {{ $t('importExport.import') }}
+      </v-btn>
+      <v-btn :loading="exporting" color="primary" @click="handleExport">
+        {{ $t('importExport.export') }}
+      </v-btn>
+    </v-card-actions>
   </advanced-dialog>
   <advanced-dialog :visible="relaunching" :title="$t('modal.prompt')" persistent>
     <v-card-text mb-4>
