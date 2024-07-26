@@ -59,23 +59,11 @@ async function copySystemInfo() {
       </div>
     </v-card-text>
     <v-card-actions class="justify-center!">
-      <v-tooltip :text="$t('about.website')" location="bottom">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn stacked v-bind="tooltipProps" @click="open(website)">
-            <v-icon>mdi-web</v-icon>
-          </v-btn>
-        </template>
-      </v-tooltip>
-      <v-tooltip :text="$t('about.github')" location="bottom">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn stacked v-bind="tooltipProps" @click="open(repository)">
-            <v-icon>mdi-github</v-icon>
-          </v-btn>
-        </template>
-      </v-tooltip>
+      <tooltip-button location="bottom" :tooltip="$t('about.website')" icon="mdi-web" @click="open(website)" />
+      <tooltip-button location="bottom" :tooltip="$t('about.github')" icon="mdi-github" @click="open(repository)" />
       <v-tooltip :text="$t('about.steam')" location="bottom">
         <template #activator="{ props: tooltipProps }">
-          <v-btn stacked v-bind="tooltipProps" @click="open(steam)">
+          <v-btn icon v-bind="tooltipProps" @click="open(steam)">
             <v-badge color="primary" content="pro">
               <v-icon>mdi-steam</v-icon>
             </v-badge>
