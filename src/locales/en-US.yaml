@@ -210,6 +210,7 @@ titleBar:
   announcement:
     desc: Announcement
     earlyAccess: Early access
+    xiaohongshu: 小红书
 timeline:
   plan: Plan
   label: Label

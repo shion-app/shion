@@ -47,6 +47,10 @@ function openEarlyAccess() {
   open(url)
 }
 
+function openXiaohongshu() {
+  open('https://www.xiaohongshu.com/user/profile/66440a7e0000000007004206')
+}
+
 useHotkey('ctrl+shift+i', openDevtools)
 </script>
 
@@ -110,6 +114,17 @@ useHotkey('ctrl+shift+i', openDevtools)
               <div i-mdi:link-variant text-4 />
             </template>
           </v-list-item>
+          <template v-if="config.locale == 'zh-CN'">
+            <v-divider my-1 />
+            <v-list-item
+              value="titleBar.announcement.xiaohongshu" :title="$t('titleBar.announcement.xiaohongshu')"
+              @click="openXiaohongshu"
+            >
+              <template #append>
+                <div i-mdi:link-variant text-4 />
+              </template>
+            </v-list-item>
+          </template>
         </v-list>
       </v-menu>
     </div>
