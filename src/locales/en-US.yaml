@@ -207,6 +207,9 @@ titleBar:
     devtools: Open developer tools
     changelog: Changelog
     problem: General problem
+  announcement:
+    desc: Announcement
+    earlyAccess: Early access
 timeline:
   plan: Plan
   label: Label

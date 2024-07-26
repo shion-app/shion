@@ -42,6 +42,11 @@ function jumpToDocument() {
   open(url)
 }
 
+function openEarlyAccess() {
+  const url = config.value.locale == 'zh-CN' ? 'https://shion.app/zh/guide/early-access' : 'https://shion.app/guide/early-access'
+  open(url)
+}
+
 useHotkey('ctrl+shift+i', openDevtools)
 </script>
 
@@ -84,6 +89,23 @@ useHotkey('ctrl+shift+i', openDevtools)
           <v-list-item value="titleBar.help.devtools" :title="$t('titleBar.help.devtools')" @click="openDevtools" />
           <v-divider my-1 />
           <v-list-item value="titleBar.help.problem" :title="$t('titleBar.help.problem')" @click="jumpToDocument">
+            <template #append>
+              <div i-mdi:link-variant text-4 />
+            </template>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+      <v-menu>
+        <template #activator="{ props }">
+          <v-btn variant="text" v-bind="props">
+            {{ $t('titleBar.announcement.desc') }}
+          </v-btn>
+        </template>
+        <v-list min-width="150">
+          <v-list-item
+            value="titleBar.announcement.earlyAccess" :title="$t('titleBar.announcement.earlyAccess')"
+            @click="openEarlyAccess"
+          >
             <template #append>
               <div i-mdi:link-variant text-4 />
             </template>

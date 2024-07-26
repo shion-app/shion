@@ -207,6 +207,9 @@ titleBar:
     devtools: 打开开发者工具
     changelog: 更新日志
     problem: 常见问题
+  announcement:
+    desc: 公告
+    earlyAccess: 抢先体验
 timeline:
   plan: 计划
   label: 标签
