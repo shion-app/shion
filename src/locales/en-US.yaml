@@ -400,6 +400,9 @@ changelog:
   title: Changelog
   empty: Changelog not retrieved
   checkbox: After upgrading, no longer automatically display logs
+  tab:
+    current: Current
+    all: All
 watcherWhitelist:
   add: Add
   remove: Remove

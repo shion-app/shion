@@ -28,6 +28,7 @@ const changelog = ref<Release>({
   title: '',
   version: '',
 })
+const tab = ref('current')
 
 const content = computed(() => `## ${changelog.value.title}\n${changelog.value.notes}`)
 
@@ -47,9 +48,21 @@ whenever(ready, init)
 
 <template>
   <advanced-dialog v-model:visible="visibleVModel" :title="$t('titleBar.help.changelog')">
-    <v-card-text class="sm:max-h-[400px]" overflow-y-auto>
-      <MdPreview v-if="changelog.notes" id="preview-only" :model-value="content" />
-      <empty v-else :desc="$t('changelog.empty')" />
+    <v-card-text class="sm:max-h-[450px] flex flex-col">
+      <v-tabs v-model="tab" color="primary" class="mb-4 shrink-0">
+        <v-tab prepend-icon="mdi-numeric-1-box" :text="$t('changelog.tab.current')" value="current" />
+        <v-tab prepend-icon="mdi-text" :text="$t('changelog.tab.all')" value="all" />
+      </v-tabs>
+      <v-tabs-window v-model="tab" class="flex-1 overflow-y-auto!">
+        <v-tabs-window-item value="current">
+          <MdPreview v-if="changelog.notes" id="preview-only" :model-value="content" />
+          <empty v-else :desc="$t('changelog.empty')" />
+        </v-tabs-window-item>
+        <v-tabs-window-item value="all">
+          <MdPreview v-if="data.length" id="preview-only" :model-value="data" />
+          <empty v-else :desc="$t('changelog.empty')" />
+        </v-tabs-window-item>
+      </v-tabs-window>
     </v-card-text>
     <v-card-actions class="justify-start!">
       <v-checkbox v-model="config.autoShowChangelogDisable" :label="$t('changelog.checkbox')" hide-details />

@@ -400,6 +400,9 @@ changelog:
   title: 更新日志
   empty: 未拉取到更新日志
   checkbox: 升级后不再自动显示日志
+  tab:
+    current: 当前
+    all: 所有
 watcherWhitelist:
   add: 新增
   remove: 删除
