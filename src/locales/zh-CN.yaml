@@ -325,7 +325,10 @@ tour:
   prevBtnText: 上一步
   step1:
     title: 开始
-    description: 感谢使用shion, 接下来快速介绍一下使用方法🎉
+    description: 感谢使用shion, 接下来快速介绍一下使用方法。请耐心看完教程, 如果碰到疑问, 请查看帮助🎉
+  step1-1:
+    title: 提示
+    description: 另外需要说明软件当前仍处于开发阶段, 提供反馈信息才能让这款软件更加完善⚠️
   step2:
     title: 导航栏
     description: 这里是导航栏, 无需多言🧭

@@ -28,6 +28,12 @@ export function useTour() {
           popover: {
             title: t('tour.step1.title'),
             description: t('tour.step1.description'),
+          },
+        },
+        {
+          popover: {
+            title: t('tour.step1-1.title'),
+            description: t('tour.step1-1.description'),
             onNextClick: async () => {
               await router.push('/')
               tour.moveNext()

@@ -325,7 +325,10 @@ tour:
   prevBtnText: Previous
   step1:
     title: Start
-    description: Thank you for using shion. Next, let's quickly introduce the usage method 🎉
+    description: Thank you for using shion. Next, let's quickly introduce the usage method. Please read the tutorial patiently. If you encounter any questions, please check the help 🎉
+  step1-1:
+    title: Warning
+    description: It should be noted that the software is still under development. Feedback is required to make the software more perfect ⚠️
   step2:
     title: Navigation bar
     description: This is the navigation bar, no need to say more 🧭
