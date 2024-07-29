@@ -92,11 +92,6 @@ pub fn run() {
         }
 
         #[tauri::command]
-        fn open_folder(path: String) {
-            open::that(path).unwrap();
-        }
-
-        #[tauri::command]
         fn open_devtools(window: WebviewWindow) {
             window.open_devtools();
         }
@@ -185,7 +180,6 @@ pub fn run() {
             })
             .invoke_handler(tauri::generate_handler![
                 update_tray_menu,
-                open_folder,
                 open_devtools,
                 get_sys_locale,
                 compress,

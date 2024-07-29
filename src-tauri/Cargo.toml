@@ -37,7 +37,6 @@ anyhow = "1"
 tauri-plugin-autostart = "2.0.0-beta"
 tauri-plugin-single-instance = "2.0.0-beta"
 tauri-plugin-updater = "2.0.0-beta"
-open = "5.0.1"
 zip = "0.6"
 zip-extensions = "0.6"
 

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { appLogDir } from '@tauri-apps/api/path'
-import { core } from '@tauri-apps/api'
 import { attachConsole } from '@tauri-apps/plugin-log'
 import { invoke } from '@tauri-apps/api/core'
 import { open } from '@tauri-apps/plugin-shell'
@@ -28,9 +27,7 @@ if (isProd)
 
 async function openLogDir() {
   const appLogDirPath = await appLogDir()
-  core.invoke('open_folder', {
-    path: appLogDirPath,
-  })
+  await open(appLogDirPath)
 }
 
 function openDevtools() {
