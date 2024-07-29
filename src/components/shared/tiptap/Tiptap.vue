@@ -72,7 +72,7 @@ const editor = useEditor({
 
 useTauriListen<{
   paths: string[]
-}>(TauriEvent.DROP, async (e) => {
+}>(TauriEvent.DRAG_DROP, async (e) => {
   if (!props.editable)
     return
 

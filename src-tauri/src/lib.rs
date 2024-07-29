@@ -8,7 +8,8 @@ mod autostart;
 use parse_changelog::Changelog;
 use tauri::{
     menu::{Menu, MenuItem},
-    tray::{ClickType, TrayIconBuilder},
+    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+    Emitter,
 };
 use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
 use tauri_plugin_sql::{Migration, MigrationKind};
@@ -124,7 +125,11 @@ pub fn run() {
 
         #[tauri::command]
         fn create_tray(app: tauri::AppHandle) -> tauri::Result<()> {
-            let title = if tauri::dev() { "shion-dev" } else { "shion" };
+            let title = if tauri::is_dev() {
+                "shion-dev"
+            } else {
+                "shion"
+            };
 
             let quit = MenuItem::with_id(&app, "quit", "Quit", true, None::<&str>)?;
             let menu = Menu::with_items(&app, &[&quit])?;
@@ -143,10 +148,16 @@ pub fn run() {
                     _ => (),
                 })
                 .on_tray_icon_event(|tray, event| {
-                    if event.click_type == ClickType::Double {
+                    if let TrayIconEvent::Click {
+                        button: MouseButton::Left,
+                        button_state: MouseButtonState::Up,
+                        ..
+                    } = event
+                    {
                         let app = tray.app_handle();
                         let window = app.get_webview_window("main").unwrap();
                         window.show().unwrap();
+                        window.set_focus().unwrap();
                     }
                 })
                 .build(&app)?;
@@ -205,7 +216,11 @@ pub fn run() {
                         Ok(true)
                     })?;
 
-                let title = if tauri::dev() { "shion-dev" } else { "shion" };
+                let title = if tauri::is_dev() {
+                    "shion-dev"
+                } else {
+                    "shion"
+                };
 
                 WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
                     .visible(launch_visible)

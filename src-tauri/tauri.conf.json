@@ -10,6 +10,7 @@
   },
   "bundle": {
     "active": true,
+    "createUpdaterArtifacts": true,
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -31,7 +32,6 @@
     "copyright": "Copyright © 2024 shion-app",
     "targets": [
       "nsis",
-      "updater",
       "app"
     ],
     "licenseFile": "../LICENSE"

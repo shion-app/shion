@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getCurrent } from '@tauri-apps/api/window'
+import { getCurrentWindow } from '@tauri-apps/api/window'
 import { appLogDir } from '@tauri-apps/api/path'
 import { core } from '@tauri-apps/api'
 import { attachConsole } from '@tauri-apps/plugin-log'
@@ -21,7 +21,7 @@ const { dialog } = storeToRefs(dialogStore)
 const { config } = storeToRefs(configStore)
 const { dialog: changelog } = storeToRefs(changelogStore)
 
-const currentWindow = getCurrent()
+const currentWindow = getCurrentWindow()
 
 if (isProd)
   attachConsole()
