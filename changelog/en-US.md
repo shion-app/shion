@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+## [0.11.22] - 2024-07-30
+
+### Added
+
+- Added `Announcement` column, `Pre-view` and `Xiaohongshu`
+- Now you can view all logs in the app
+
+### Changed
+
+- Upgrade vue, tauri dependencies
+- Modify `import and export`, `about` dialog style
+
 ## [0.11.21] - 2024-07-21
 
 ### Fixed
