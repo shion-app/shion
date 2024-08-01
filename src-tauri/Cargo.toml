@@ -30,7 +30,6 @@ sys-locale = "0.3.1"
 thiserror = "1.0"
 parse-changelog = { version = "0.6", default-features = false, features = ["serde"] }
 planif = { git = "https://github.com/hanaTsuk1/planif" }
-whoami = "1.5.1"
 anyhow = "1"
 
 [target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
@@ -39,6 +38,7 @@ tauri-plugin-single-instance = "2.0.0-beta"
 tauri-plugin-updater = "2.0.0-beta"
 zip = "0.6"
 zip-extensions = "0.6"
+runas = "1.2.0"
 
 [package.metadata.bin]
 # cargo-run-bin

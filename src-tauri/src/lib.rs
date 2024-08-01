@@ -2,6 +2,9 @@
 mod mobile;
 
 mod error;
+use std::env::current_dir;
+
+use anyhow::anyhow;
 pub use error::Result;
 mod autostart;
 
@@ -9,6 +12,7 @@ use parse_changelog::Changelog;
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+    utils::platform::current_exe,
     Emitter,
 };
 use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
@@ -68,6 +72,7 @@ pub fn run() {
 
     #[cfg(desktop)]
     {
+        use runas::Command as SudoCommand;
         use tauri::{Manager, WebviewWindow};
         use tauri_plugin_autostart::MacosLauncher;
         use zip_extensions::{zip_create_from_directory, zip_extract};
@@ -108,14 +113,47 @@ pub fn run() {
             Ok(())
         }
 
+        fn get_autostart_bin() -> String {
+            let path = if tauri::is_dev() {
+                let dir = current_dir().unwrap();
+                dir.join("../src-autostart/target/debug/autostart.exe")
+            } else {
+                let exe = current_exe().unwrap();
+                exe.join("../bin/autostart.exe")
+            };
+            path.to_str().unwrap().to_string()
+        }
+
         #[tauri::command]
         fn enable_autostart() -> Result<()> {
-            autostart::enable()
+            let autostart_bin = get_autostart_bin();
+            let path = current_exe()?;
+            let status = SudoCommand::new(autostart_bin)
+                .arg("enable")
+                .arg(path)
+                .show(false)
+                .status()?;
+
+            if status.success() {
+                Ok(())
+            } else {
+                Err(anyhow!("autostart enable error").into())
+            }
         }
 
         #[tauri::command]
         fn disable_autostart() -> Result<()> {
-            autostart::disable()
+            let autostart_bin = get_autostart_bin();
+            let status = SudoCommand::new(autostart_bin)
+                .arg("disable")
+                .show(false)
+                .status()?;
+
+            if status.success() {
+                Ok(())
+            } else {
+                Err(anyhow!("autostart disable error").into())
+            }
         }
 
         #[tauri::command]

@@ -24,8 +24,7 @@
         "languages": [
           "English",
           "SimpChinese"
-        ],
-        "installMode": "both"
+        ]
       }
     },
     "publisher": "hanaTsuk1",
@@ -34,7 +33,10 @@
       "nsis",
       "app"
     ],
-    "licenseFile": "../LICENSE"
+    "licenseFile": "../LICENSE",
+    "resources": {
+      "../src-autostart/target/release/autostart.exe": "bin/autostart.exe"
+    }
   },
   "plugins": {
     "updater": {

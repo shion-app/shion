@@ -1,0 +1,11 @@
+[package]
+name = "autostart"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = "4.5.13"
+whoami = "1.5.1"
+planif = { git = "https://github.com/hanaTsuk1/planif" }
