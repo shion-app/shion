@@ -119,6 +119,11 @@ pub fn run() {
         }
 
         #[tauri::command]
+        fn is_enabled_autostart() -> Result<bool> {
+            autostart::is_enabled()
+        }
+
+        #[tauri::command]
         fn create_tray(app: tauri::AppHandle) -> tauri::Result<()> {
             let title = if tauri::is_dev() {
                 "shion-dev"
@@ -187,6 +192,7 @@ pub fn run() {
                 parse_changelog_from_text,
                 enable_autostart,
                 disable_autostart,
+                is_enabled_autostart,
                 create_tray
             ]);
     }

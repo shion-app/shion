@@ -3603,7 +3603,7 @@ checksum = "d231b230927b5e4ad203db57bbcbee2802f6bce620b1e4a9024a07d94e2907ec"
 [[package]]
 name = "planif"
 version = "1.0.0"
-source = "git+https://github.com/mattrobineau/planif#90e228e2bc0f142b16a0ba415ec242e1c836cc35"
+source = "git+https://github.com/hanaTsuk1/planif#b0024cd73313aa8e2174d4add6abadd8e616257c"
 dependencies = [
  "windows 0.48.0",
 ]

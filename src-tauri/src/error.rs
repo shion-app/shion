@@ -15,6 +15,9 @@ pub enum Error {
 
     #[error(transparent)]
     Anyhow(#[from] anyhow::Error),
+
+    #[error(transparent)]
+    Std(#[from] Box<dyn std::error::Error>),
 }
 
 impl Serialize for Error {
