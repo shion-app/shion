@@ -19,6 +19,7 @@ config:
   locale: 语言
   checkUpdate: 检查更新
   autostart: 开机启动
+  runAsAdmin: 管理员身份启动
   launchVisible: 启动时显示界面
   timelineMinMinute: 最小时间
   timelineGroupGapMinute: 分组间隔
@@ -34,6 +35,7 @@ config:
     watcherWhitelist: 在下列文件夹中且未添加的程序，运行时自动加入监听
     faviconService: 选择时间线中进行网站图标请求的服务提供者
     scheduledExportPath: 点击选择保存路径
+    runAsAdmin: 以管理员身份开机启动，提高自动监听获取窗口的权限
   tab:
     general: 通用
     behavior: 行为

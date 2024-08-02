@@ -1,11 +1,8 @@
 // import { getVersion } from '@tauri-apps/plugin-app'
 import { Store } from '@tauri-apps/plugin-store'
-import { core } from '@tauri-apps/api'
 import i18next from 'i18next'
 import { useTheme } from 'vuetify/lib/framework.mjs'
-import { error } from '@tauri-apps/plugin-log'
 import { invoke } from '@tauri-apps/api/core'
-import { disable, isEnabled } from '@tauri-apps/plugin-autostart'
 
 import { FaviconService } from '@/modules/favicon'
 
@@ -14,6 +11,7 @@ interface Config {
   locale: 'zh-CN' | 'en-US'
   checkUpdate: boolean
   autostart: boolean
+  runAsAdmin: boolean
   launchVisible: boolean
   timelineMinMinute: number
   timelineGroupGapMinute: number
@@ -34,7 +32,6 @@ export const useConfigStore = defineStore('config', () => {
   const changelog = useChangelogStore()
 
   const { locale, t } = useI18n()
-  const notify = useNotify()
 
   const store = new Store(PATH)
   const config = ref({} as Config)
@@ -44,10 +41,11 @@ export const useConfigStore = defineStore('config', () => {
   async function init() {
     const data: Config = {
       // TODO: upgrade
-      version: await core.invoke('plugin:app|version'),
-      locale: await core.invoke('get_sys_locale'),
+      version: await invoke('plugin:app|version'),
+      locale: await invoke('get_sys_locale'),
       checkUpdate: false,
       autostart: false,
+      runAsAdmin: false,
       launchVisible: true,
       timelineMinMinute: 0,
       timelineGroupGapMinute: 30,
@@ -97,11 +95,6 @@ export const useConfigStore = defineStore('config', () => {
   async function handleVersionChange() {
     if (!config.value.autoShowChangelogDisable)
       changelog.toggleDialog()
-    // 软件改为默认管理员身份启动后，改变开机启动方式
-    if (await isEnabled()) {
-      disable()
-      await invoke('enable_autostart')
-    }
   }
 
   init()
@@ -119,7 +112,7 @@ export const useConfigStore = defineStore('config', () => {
     i18next.changeLanguage(v)
     locale.value = v
     if (isDesktop) {
-      core.invoke('update_tray_menu', {
+      invoke('update_tray_menu', {
         data: {
           quit: t('tray.quit'),
         },
@@ -131,36 +124,8 @@ export const useConfigStore = defineStore('config', () => {
     theme.themes.value.light.colors.primary = v
   })
 
-  // 迁移时，临时添加判断
-  watchOnce(() => config.value.autostart, async (v) => {
-    if (v)
-      await invoke('enable_autostart')
-  })
-
-  const autostart = computed({
-    get: () => config.value.autostart,
-    set: async (v) => {
-      config.value.autostart = v
-      try {
-        if (v)
-          await invoke('enable_autostart')
-
-        else
-          await invoke('disable_autostart')
-      }
-      catch (e) {
-        config.value.autostart = !v
-        error(`autostart error: ${e}`)
-        notify.error({
-          text: e as string,
-        })
-      }
-    },
-  })
-
   return {
     config,
     ready,
-    autostart,
   }
 })

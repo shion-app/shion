@@ -125,7 +125,7 @@ pub fn run() {
         }
 
         #[tauri::command]
-        fn enable_autostart() -> Result<()> {
+        fn enable_admin_autostart() -> Result<()> {
             let autostart_bin = get_autostart_bin();
             let path = current_exe()?;
             let status = SudoCommand::new(autostart_bin)
@@ -142,7 +142,7 @@ pub fn run() {
         }
 
         #[tauri::command]
-        fn disable_autostart() -> Result<()> {
+        fn disable_admin_autostart() -> Result<()> {
             let autostart_bin = get_autostart_bin();
             let status = SudoCommand::new(autostart_bin)
                 .arg("disable")
@@ -157,8 +157,8 @@ pub fn run() {
         }
 
         #[tauri::command]
-        fn is_enabled_autostart() -> Result<bool> {
-            autostart::is_enabled()
+        fn is_enabled_admin_autostart() -> bool {
+            autostart::is_enabled().is_ok()
         }
 
         #[tauri::command]
@@ -228,9 +228,9 @@ pub fn run() {
                 compress,
                 decompress,
                 parse_changelog_from_text,
-                enable_autostart,
-                disable_autostart,
-                is_enabled_autostart,
+                enable_admin_autostart,
+                disable_admin_autostart,
+                is_enabled_admin_autostart,
                 create_tray
             ]);
     }

@@ -9,7 +9,9 @@ const { visible: visibleVModel } = useVModels(props)
 
 const store = useConfigStore()
 
-const { config, autostart } = storeToRefs(store)
+const { config } = storeToRefs(store)
+
+const { autostart, runAsAdmin } = useAutostart()
 
 const localeOptions = [
   {
@@ -69,6 +71,17 @@ const tab = ref('general')
                   <template #append>
                     <v-list-item-action>
                       <v-checkbox-btn v-model="autostart" />
+                    </v-list-item-action>
+                  </template>
+                </v-list-item>
+                <v-list-item :disabled="!autostart">
+                  <v-list-item-title>{{ $t('config.runAsAdmin') }}</v-list-item-title>
+                  <v-list-item-subtitle>
+                    {{ $t('config.desc.runAsAdmin') }}
+                  </v-list-item-subtitle>
+                  <template #append>
+                    <v-list-item-action>
+                      <v-checkbox-btn v-model="runAsAdmin" />
                     </v-list-item-action>
                   </template>
                 </v-list-item>

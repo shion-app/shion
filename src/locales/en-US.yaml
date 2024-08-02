@@ -19,6 +19,7 @@ config:
   locale: Language
   checkUpdate: Check update
   autostart: Auto start
+  runAsAdmin: Run as admin
   launchVisible: Visible at startup
   timelineMinMinute: Minimum time
   timelineGroupGapMinute: Grouping Intervals
@@ -34,6 +35,7 @@ config:
     watcherWhitelist: Programs that are in the following folders and have not been added will be added when running
     faviconService: Select service providers in the timeline for website icon requests
     scheduledExportPath: Click to select the save path
+    runAsAdmin: Start the computer as an admin to increase the permissions of the automatic monitoring
   tab:
     general: General
     behavior: Behavior
