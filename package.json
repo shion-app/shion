@@ -19,7 +19,7 @@
     "db:format": "prisma format",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build -c src-tauri/tauri.conf.build.json",
+    "tauri:build": "node scripts/build",
     "release": "vue-tsc --noEmit && node scripts/release"
   },
   "dependencies": {
