@@ -75,7 +75,14 @@ const tab = ref('general')
                   </template>
                 </v-list-item>
                 <v-list-item :disabled="!autostart">
-                  <v-list-item-title>{{ $t('config.runAsAdmin') }}</v-list-item-title>
+                  <v-list-item-title>
+                    <div flex items-center space-x-1>
+                      <div>{{ $t('config.runAsAdmin') }}</div>
+                      <div i-mdi:information text-4>
+                        <v-tooltip activator="parent" :text="$t('config.tooltip.runAsAdmin')" />
+                      </div>
+                    </div>
+                  </v-list-item-title>
                   <v-list-item-subtitle>
                     {{ $t('config.desc.runAsAdmin') }}
                   </v-list-item-subtitle>

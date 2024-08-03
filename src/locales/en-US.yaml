@@ -36,6 +36,8 @@ config:
     faviconService: Select service providers in the timeline for website icon requests
     scheduledExportPath: Click to select the save path
     runAsAdmin: Start the computer as an admin to increase the permissions of the automatic monitoring
+  tooltip:
+    runAsAdmin: Not recommended to enable (unstable operation)
   tab:
     general: General
     behavior: Behavior
