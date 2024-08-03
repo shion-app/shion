@@ -158,7 +158,7 @@ pub fn run() {
 
         #[tauri::command]
         fn is_enabled_admin_autostart() -> bool {
-            autostart::is_enabled().is_ok()
+            autostart::is_enabled().unwrap_or(false)
         }
 
         builder = builder

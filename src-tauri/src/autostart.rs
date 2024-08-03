@@ -22,7 +22,7 @@ fn spawn_state<T: FnOnce() -> Result<bool> + Send + 'static>(cb: T) -> Result<bo
 
 pub fn is_enabled() -> Result<bool> {
     spawn_state(|| {
-        let _ = TaskScheduler::new()?;
+        let _ts = TaskScheduler::new()?;
         let task = Task::new()?;
         Ok(task.is_enabled(FOLDER, TASK_NAME)?)
     })
