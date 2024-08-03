@@ -161,47 +161,6 @@ pub fn run() {
             autostart::is_enabled().is_ok()
         }
 
-        #[tauri::command]
-        fn create_tray(app: tauri::AppHandle) -> tauri::Result<()> {
-            let title = if tauri::is_dev() {
-                "shion-dev"
-            } else {
-                "shion"
-            };
-
-            let quit = MenuItem::with_id(&app, "quit", "Quit", true, None::<&str>)?;
-            let menu = Menu::with_items(&app, &[&quit])?;
-
-            TrayIconBuilder::with_id("tray")
-                .tooltip(title)
-                .icon(app.default_window_icon().unwrap().clone())
-                .menu(&menu)
-                .menu_on_left_click(false)
-                .on_menu_event(move |app, event| match event.id().as_ref() {
-                    "quit" => {
-                        let window = app.get_webview_window("main").unwrap();
-                        window.hide().unwrap();
-                        app.emit_to("main", "quit", ()).unwrap();
-                    }
-                    _ => (),
-                })
-                .on_tray_icon_event(|tray, event| {
-                    if let TrayIconEvent::Click {
-                        button: MouseButton::Left,
-                        button_state: MouseButtonState::Up,
-                        ..
-                    } = event
-                    {
-                        let app = tray.app_handle();
-                        let window = app.get_webview_window("main").unwrap();
-                        window.show().unwrap();
-                        window.set_focus().unwrap();
-                    }
-                })
-                .build(&app)?;
-            Ok(())
-        }
-
         builder = builder
             .plugin(tauri_plugin_updater::Builder::new().build())
             .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
@@ -231,7 +190,6 @@ pub fn run() {
                 enable_admin_autostart,
                 disable_admin_autostart,
                 is_enabled_admin_autostart,
-                create_tray
             ]);
     }
 
@@ -260,6 +218,37 @@ pub fn run() {
                     "shion"
                 };
 
+                let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
+                let menu = Menu::with_items(app, &[&quit])?;
+
+                TrayIconBuilder::with_id("tray")
+                    .tooltip(title)
+                    .icon(app.default_window_icon().unwrap().clone())
+                    .menu(&menu)
+                    .menu_on_left_click(false)
+                    .on_menu_event(move |app, event| match event.id().as_ref() {
+                        "quit" => {
+                            let window = app.get_webview_window("main").unwrap();
+                            window.hide().unwrap();
+                            app.emit_to("main", "quit", ()).unwrap();
+                        }
+                        _ => (),
+                    })
+                    .on_tray_icon_event(|tray, event| {
+                        if let TrayIconEvent::Click {
+                            button: MouseButton::Left,
+                            button_state: MouseButtonState::Up,
+                            ..
+                        } = event
+                        {
+                            let app = tray.app_handle();
+                            let window = app.get_webview_window("main").unwrap();
+                            window.show().unwrap();
+                            window.set_focus().unwrap();
+                        }
+                    })
+                    .build(app)?;
+
                 WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
                     .visible(launch_visible)
                     .center()
@@ -268,8 +257,7 @@ pub fn run() {
                     .resizable(false)
                     .inner_size(1152.0, 648.0)
                     .title(title)
-                    .build()
-                    .unwrap();
+                    .build()?;
             }
 
             Ok(())
