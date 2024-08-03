@@ -2,7 +2,7 @@
 mod mobile;
 
 mod error;
-use std::env::current_dir;
+use std::env::{current_dir, current_exe};
 
 use anyhow::anyhow;
 pub use error::Result;
@@ -12,7 +12,6 @@ use parse_changelog::Changelog;
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-    utils::platform::current_exe,
     Emitter,
 };
 use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
