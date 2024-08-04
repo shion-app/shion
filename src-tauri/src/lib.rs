@@ -12,7 +12,7 @@ use parse_changelog::Changelog;
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-    Emitter,
+    AppHandle, Emitter, Manager,
 };
 use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
 use tauri_plugin_sql::{Migration, MigrationKind};
@@ -69,10 +69,22 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_clipboard_manager::init());
 
+    fn show_window(app: &AppHandle, label: &str) -> tauri::Result<()> {
+        let window = app.get_webview_window(label).unwrap();
+        let is_visible = window.is_visible()?;
+        if is_visible {
+            window.unminimize()?;
+        } else {
+            window.show()?;
+        }
+        window.set_focus()?;
+        Ok(())
+    }
+
     #[cfg(desktop)]
     {
         use runas::Command as SudoCommand;
-        use tauri::{Manager, WebviewWindow};
+        use tauri::WebviewWindow;
         use tauri_plugin_autostart::MacosLauncher;
         use zip_extensions::{zip_create_from_directory, zip_extract};
 
@@ -165,20 +177,12 @@ pub fn run() {
             .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
                 app.emit("single-instance", Payload { args: argv, cwd })
                     .unwrap();
-                let window = app.get_webview_window("main").unwrap();
-                window.show().unwrap();
+                let _ = show_window(app, "main");
             }))
             .plugin(tauri_plugin_autostart::init(
                 MacosLauncher::LaunchAgent,
                 None,
             ))
-            .on_window_event(|window, event| match event {
-                tauri::WindowEvent::CloseRequested { api, .. } => {
-                    window.hide().unwrap();
-                    api.prevent_close();
-                }
-                _ => {}
-            })
             .invoke_handler(tauri::generate_handler![
                 update_tray_menu,
                 open_devtools,
@@ -196,7 +200,7 @@ pub fn run() {
         .setup(|app| {
             #[cfg(desktop)]
             {
-                use tauri::{Manager, WebviewUrl, WebviewWindowBuilder, Wry};
+                use tauri::{WebviewUrl, WebviewWindowBuilder, Wry};
                 use tauri_plugin_store::{with_store, StoreCollection};
 
                 let stores = app.app_handle().state::<StoreCollection<Wry>>();
@@ -227,8 +231,6 @@ pub fn run() {
                     .menu_on_left_click(false)
                     .on_menu_event(move |app, event| match event.id().as_ref() {
                         "quit" => {
-                            let window = app.get_webview_window("main").unwrap();
-                            window.hide().unwrap();
                             app.emit_to("main", "quit", ()).unwrap();
                         }
                         _ => (),
@@ -241,9 +243,7 @@ pub fn run() {
                         } = event
                         {
                             let app = tray.app_handle();
-                            let window = app.get_webview_window("main").unwrap();
-                            window.show().unwrap();
-                            window.set_focus().unwrap();
+                            let _ = show_window(app, "main");
                         }
                     })
                     .build(app)?;
