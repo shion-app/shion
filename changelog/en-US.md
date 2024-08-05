@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.11.23] - 2024-08-05
+
+### Changed
+
+- Removed default administrator autostart, added setting for selection (unless necessary, administrator autostart is not recommended)
+
+### Fixed
+
+- Minimize the window, click the tray and the window will not be displayed
+
 ## [0.11.22] - 2024-07-30
 
 ### Added
