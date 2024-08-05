@@ -33,6 +33,10 @@ jobs:
           node-version: 18
           cache: pnpm
 
+      - name: Build autostart exe
+        run: cargo build --release
+        working-directory: src-autostart
+
       - run: pnpm install
 
       - name: Build the app
