@@ -130,7 +130,8 @@ pub fn run() {
                 dir.join("../src-autostart/target/debug/autostart.exe")
             } else {
                 let exe = current_exe().unwrap();
-                exe.join("../bin/autostart.exe")
+                // bug: https://github.com/tauri-apps/tauri/pull/10293
+                exe.join("../bin/autostart.exe/autostart.exe")
             };
             path.to_str().unwrap().to_string()
         }
