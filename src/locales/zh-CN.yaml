@@ -124,7 +124,7 @@ overview:
   update: 更新展示组件
 monitor:
   filterProgram: 筛选要监听的程序
-  tip: 以下列表为正在运行的程序
+  tip: 以下列表为正在运行的程序，部分程序需要以管理员身份运行此应用才能获取到
 program:
   update: 更新程序
   name: 名称

@@ -124,7 +124,7 @@ overview:
   update: Update widget
 monitor:
   filterProgram: Filter Program to monitor
-  tip: The following list is of running programs
+  tip: The following list is the running programs. Some programs need to be run as an administrator to get them
 program:
   update: Update program
   name: Name
