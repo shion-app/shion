@@ -17,11 +17,6 @@ const { modelValue } = useVModels(props)
     <template #activator="{ props: overlayProps }">
       <v-btn icon="mdi-palette" :color="modelValue" v-bind="overlayProps" />
     </template>
-    <VColorPicker
-      v-model="modelValue"
-      hide-inputs
-      mode="hex"
-      v-bind="$attrs"
-    />
+    <v-color-picker v-model="modelValue" mode="hex" v-bind="$attrs" :modes="['hex']" />
   </v-overlay>
 </template>
