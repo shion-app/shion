@@ -103,8 +103,14 @@ init()
             <v-list-item>
               <v-list-item-title>{{ $t('config.scheduledExportPeriod') }}</v-list-item-title>
               <div flex py-2 space-x-4>
-                <v-number-input v-model="count" hide-details variant="outlined" reverse control-variant="stacked" :min="1" />
-                <v-select v-model="span" :items="periodOptions" hide-details color="primary" variant="outlined" />
+                <v-number-input
+                  v-model="count" hide-details variant="outlined" reverse control-variant="stacked"
+                  density="comfortable" :min="1"
+                />
+                <v-select
+                  v-model="span" :items="periodOptions" hide-details color="primary" variant="outlined"
+                  density="comfortable"
+                />
               </div>
             </v-list-item>
           </template>

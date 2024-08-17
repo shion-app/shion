@@ -24,6 +24,7 @@ interface Config {
   scheduledExportPath: string
   scheduledExportPeriod: number
   lastExport: number
+  serverPort: number
 }
 
 const PATH = 'config.json'
@@ -58,6 +59,7 @@ export const useConfigStore = defineStore('config', () => {
       scheduledExportPath: '',
       scheduledExportPeriod: calcDuration(1, 'week'),
       lastExport: 0,
+      serverPort: 15785,
     }
     const len = await store.length()
     if (len == 0)

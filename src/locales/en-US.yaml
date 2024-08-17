@@ -21,6 +21,8 @@ config:
   autostart: Auto start
   runAsAdmin: Run as admin
   launchVisible: Visible at startup
+  serverRunning: Running
+  serverPort: Port
   timelineMinMinute: Minimum time
   timelineGroupGapMinute: Grouping Intervals
   themeColor: Theme color
@@ -36,6 +38,7 @@ config:
     faviconService: Select service providers in the timeline for website icon requests
     scheduledExportPath: Click to select the save path
     runAsAdmin: Start the computer as an admin to increase the permissions of the automatic monitoring
+    restartService: After changing the port, click to restart the service
   tooltip:
     runAsAdmin: Not recommended to enable (unstable operation)
   tab:
@@ -43,6 +46,7 @@ config:
     behavior: Behavior
     appearance: Appearance
     export: Export
+    service: External service
   header:
     timeline: Timeline
     monitor: Monitor
@@ -51,6 +55,8 @@ config:
       day: Day
       week: Week
       month: Month
+  service:
+    restart: Restart service
 plan:
   create: Create plan
   update: Update plan

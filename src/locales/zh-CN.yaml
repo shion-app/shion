@@ -21,6 +21,8 @@ config:
   autostart: 开机启动
   runAsAdmin: 管理员身份启动
   launchVisible: 启动时显示界面
+  serverRunning: 运行中
+  serverPort: 端口号
   timelineMinMinute: 最小时间
   timelineGroupGapMinute: 分组间隔
   themeColor: 主题色
@@ -36,6 +38,7 @@ config:
     faviconService: 选择时间线中进行网站图标请求的服务提供者
     scheduledExportPath: 点击选择保存路径
     runAsAdmin: 以管理员身份开机启动，提高自动监听获取窗口的权限
+    restartService: 更改端口号后，点击重启服务
   tooltip:
     runAsAdmin: 不推荐开启（运行不稳定）
   tab:
@@ -43,6 +46,7 @@ config:
     behavior: 行为
     appearance: 外观
     export: 导出
+    service: 第三方服务
   header:
     timeline: 时间线
     monitor: 自动监听
@@ -51,6 +55,8 @@ config:
       day: 日
       week: 周
       month: 月
+  service:
+    restart: 重启服务
 plan:
   create: 创建计划
   update: 修改计划

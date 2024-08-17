@@ -33,6 +33,7 @@ const tab = ref('general')
         <v-tab prepend-icon="mdi-cog" :text="$t('config.tab.general')" value="general" />
         <v-tab prepend-icon="mdi-export" :text="$t('config.tab.export')" value="export" />
         <v-tab prepend-icon="mdi-hand-back-right" :text="$t('config.tab.behavior')" value="behavior" />
+        <v-tab prepend-icon="mdi-api" :text="$t('config.tab.service')" value="service" />
         <v-tab prepend-icon="mdi-palette" :text="$t('config.tab.appearance')" value="appearance" />
       </v-tabs>
 
@@ -161,7 +162,10 @@ const tab = ref('general')
             </v-card-text>
           </v-card>
         </v-tabs-window-item>
+
         <scheduled-export />
+
+        <api-service />
       </v-tabs-window>
     </v-card-text>
   </advanced-dialog>
