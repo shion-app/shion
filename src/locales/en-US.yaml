@@ -236,6 +236,15 @@ timelineGraph:
     title: Update Note
     start: Start
     end: End
+  note:
+    compress: Need to expand the group first
+    tooltip: Click to open the menu
+  history:
+    tooltip: Click to open the webpage
+  remark:
+    compress: Need to expand the group first
+    tooltip: Click to open the software
+    wait: Now opening the software
 upload:
   webImage: Unsupported image types filtered
   webVideo: Unsupported video types filtered

@@ -1,3 +1,5 @@
+import type { SelectActivity, SelectHistory, SelectNote, SelectRemark } from '@/modules/database'
+
 export type Replace<T, U extends { [K in keyof T]?: unknown }> = {
   [P in keyof T]: P extends keyof U ? U[P] : T[P];
 }
@@ -5,13 +7,29 @@ export type Replace<T, U extends { [K in keyof T]?: unknown }> = {
 export interface TimeLineNode {
   start: number
   end: number
-  name: string
+  title: string
   color: string
-  children?: TimeLineNode[]
-  remove?: () => Promise<void>
-  update?: (data: { start?: number; end?: number }) => Promise<void>
-  url?: string
-  icon?: string
+  children?: TimeLineNodeItem[]
+  type: 'note' | 'activity' | 'history' | 'remark'
+  raw: SelectNote | SelectActivity | SelectHistory | SelectRemark
+}
+
+export interface TimeLineNodeItem {
+  start: number
+  end: number
+  color: string
+}
+
+export interface TimeLineNodeCommonGraphData {
+  title: string
+  children: number
+  totalTime: number
+}
+
+export interface TimeLineNodeGraphData {
+  common: TimeLineNodeCommonGraphData
+  type: TimeLineNode['type']
+  raw: TimeLineNode['raw']
 }
 
 export interface NestedMenuItem {

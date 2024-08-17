@@ -8,7 +8,9 @@ mod server;
 
 use std::collections::HashMap;
 use std::env::{current_dir, current_exe};
+use std::os::windows::process::CommandExt;
 use std::path::PathBuf;
+use std::process::Command;
 use std::sync::Mutex;
 use std::{thread, time::Duration};
 
@@ -40,6 +42,8 @@ pub use error::Result;
 lazy_static! {
     static ref SERVER_PORT: Mutex<u16> = Mutex::new(15785);
 }
+
+const CREATE_NO_WINDOW: u32 = 0x8000000;
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {
@@ -210,6 +214,15 @@ pub fn run() {
         Ok(res == StatusCode::OK)
     }
 
+    #[tauri::command]
+    fn open_with(path: String, arg: String) -> Result<()> {
+        let mut command = Command::new(path);
+        command.arg(arg);
+        command.creation_flags(CREATE_NO_WINDOW);
+        command.output()?;
+        Ok(())
+    }
+
     tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_fs::init())
@@ -256,6 +269,7 @@ pub fn run() {
             is_enabled_admin_autostart,
             restart_api_service,
             is_api_service_active,
+            open_with,
             begin_transaction,
             execute_transaction,
             select_transaction,

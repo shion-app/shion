@@ -3,26 +3,28 @@ import { endOfDay, isBefore, startOfDay, subMinutes } from 'date-fns'
 import { open } from '@tauri-apps/plugin-shell'
 import type { ComponentExposed } from 'vue-component-type-helpers'
 
-import type { SelectActivity, SelectHistory, SelectNote } from '@/modules/database'
+import type { SelectActivity, SelectHistory, SelectNote, SelectRemark } from '@/modules/database'
 import { db } from '@/modules/database'
 import type { TimeLineNode } from '@/interfaces'
 import type { Filter } from '@/components/timeline/types'
-import TimelineGraph from '@/components/timeline/TimelineGraph.vue'
-import { getFaviconUrl } from '@/modules/favicon'
+
+import TimelineGraph from '@/components/timeline/graph/TimelineGraph.vue'
+import TimelineFilter from '@/components/timeline/TimelineFilter.vue'
+import { timelineProvide } from '@/components/timeline/inject'
 import type { StepCounter } from '@/utils'
-import { randomStep } from '@/utils'
 
 type computedTimeLineNode = TimeLineNode & { compressGroupId: string }
 type TimelineGraphExposed = ComponentExposed<typeof TimelineGraph>
+type TimelineFilterExposed = ComponentExposed<typeof TimelineFilter>
 
 const configStore = useConfigStore()
+const historyStore = useHistoryStore()
 
-const { xs, sm } = useTailwindBreakpoints()
+const { xs } = useTailwindBreakpoints()
 const { format } = useDateFns()
 const route = useRoute()
 const { onRefresh } = usePageRefresh()
 const { success } = useNotify()
-const historyStore = useHistoryStore()
 
 const { config } = storeToRefs(configStore)
 
@@ -31,14 +33,20 @@ const { pullActiveBrowsers } = historyStore
 const noteList = ref<Array<SelectNote>>([])
 const activityList = ref<Array<SelectActivity>>([])
 const historyList = ref<Array<SelectHistory>>([])
+const remarkList = ref<Array<SelectRemark>>([])
 const date = ref(new Date())
 const filterCategory = ref(route.query.category as Filter['category'])
 const filterTargetId = ref<Filter['id']>(route.query.id ? Number(route.query.id) : undefined)
 const timelineGraphRef = ref<TimelineGraphExposed>()
+const timelineFilterRef = ref<TimelineFilterExposed>()
 
 const [compressed, toggleCompressed] = useToggle(true)
 const [searchVisible, toggleSearchVisible] = useToggle()
 const [historyVisible, toggleHistoryVisible] = useToggle(true)
+
+timelineProvide({
+  handleSuccess,
+})
 
 async function handleSuccess() {
   success({})
@@ -55,17 +63,11 @@ const list = computed(() => {
               .map<computedTimeLineNode>(i => ({
                 start: i.start,
                 end: i.end,
-                name: i.plan.name,
+                title: i.plan.name,
                 color: i.plan.color,
                 compressGroupId: `plan-${i.planId}`,
-                remove: async () => {
-                  await db.note.remove(i.id)
-                  await handleSuccess()
-                },
-                update: async (data) => {
-                  await db.note.update(i.id, data)
-                  await handleSuccess()
-                },
+                type: 'note',
+                raw: i,
               }))
             : filterCategory.value == 'label'
               ? noteList.value
@@ -73,32 +75,40 @@ const list = computed(() => {
                 .map<computedTimeLineNode>(i => ({
                   start: i.start,
                   end: i.end,
-                  name: i.label.name,
+                  title: i.label.name,
                   color: i.label.color,
                   compressGroupId: `label-${i.labelId}`,
-                  remove: async () => {
-                    await db.note.remove(i.id)
-                    await handleSuccess()
-                  },
-                  update: async (data) => {
-                    await db.note.update(i.id, data)
-                    await handleSuccess()
-                  },
+                  type: 'note',
+                  raw: i,
                 }))
               : []
         ),
         ...(
           filterCategory.value == 'monitor'
-            ? activityList.value
-              .filter(i => typeof filterTargetId.value == 'number' ? i.programId == filterTargetId.value : true)
-              .map<computedTimeLineNode>(i => ({
-                start: i.start,
-                end: i.end,
-                name: i.program.name,
-                color: i.program.color,
-                compressGroupId: `program-${i.programId}`,
-                icon: i.program.icon,
-              }))
+            ? [
+                ...activityList.value
+                  .filter(i => typeof filterTargetId.value == 'number' ? i.programId == filterTargetId.value : true)
+                  .map<computedTimeLineNode>(i => ({
+                    start: i.start,
+                    end: i.end,
+                    title: i.program.name,
+                    color: i.program.color,
+                    compressGroupId: `program-${i.programId}`,
+                    type: 'activity',
+                    raw: i,
+                  })),
+                ...remarkList.value
+                  .filter(i => typeof filterTargetId.value == 'number' ? i.programId == filterTargetId.value : true)
+                  .map<computedTimeLineNode>(i => ({
+                    start: i.time,
+                    end: i.time,
+                    title: `${i.program.name}: ${i.title}`,
+                    color: i.program.color,
+                    compressGroupId: `remark-${i.programId}`,
+                    type: 'remark',
+                    raw: i,
+                  })),
+              ]
             : []
         ),
         ...(filterCategory.value == 'history'
@@ -107,11 +117,11 @@ const list = computed(() => {
             .map<computedTimeLineNode>(i => ({
               start: i.lastVisited,
               end: i.lastVisited,
-              name: `${i.title} (🌐${new URL(i.url).hostname})`,
+              title: `${i.title} (🌐${new URL(i.url).hostname})`,
               color: i.domain.color,
               compressGroupId: `domain-${i.domainId}`,
-              url: i.url,
-              icon: getFaviconUrl(config.value.faviconService, i.domain.pattern),
+              type: 'history',
+              raw: i,
             }))
           : []
         ),
@@ -120,67 +130,84 @@ const list = computed(() => {
         ...noteList.value.map<computedTimeLineNode>(i => ({
           start: i.start,
           end: i.end,
-          name: i.label.name,
+          title: i.label.name,
           color: i.label.color,
           compressGroupId: `label-${i.labelId}`,
-          remove: async () => {
-            await db.note.remove(i.id)
-            await handleSuccess()
-          },
-          update: async (data) => {
-            await db.note.update(i.id, data)
-            await handleSuccess()
-          },
+          type: 'note',
+          raw: i,
         })),
         ...activityList.value.map<computedTimeLineNode>(i => ({
           start: i.start,
           end: i.end,
-          name: i.program.name,
+          title: i.program.name,
           color: i.program.color,
           compressGroupId: `program-${i.programId}`,
-          icon: i.program.icon,
+          type: 'activity',
+          raw: i,
         })),
         ...(historyVisible.value
           ? historyList.value.map<computedTimeLineNode>(i => ({
             start: i.lastVisited,
             end: i.lastVisited,
-            name: `${i.title} (🌐${new URL(i.url).hostname})`,
+            title: `${i.title} (🌐${new URL(i.url).hostname})`,
             color: i.domain.color,
             compressGroupId: `domain-${i.domainId}`,
-            url: i.url,
-            icon: getFaviconUrl(config.value.faviconService, i.domain.pattern),
+            type: 'history',
+            raw: i,
           }))
           : []),
+        ...remarkList.value.map<computedTimeLineNode>(i => ({
+          start: i.time,
+          end: i.time,
+          title: `${i.program.name}: ${i.title}`,
+          color: i.program.color,
+          compressGroupId: `remark-${i.programId}`,
+          type: 'remark',
+          raw: i,
+        })),
       ]
   // i.end == i.start history两者相同
-  const data = list.filter(i => i.end == i.start || i.end - i.start > config.value.timelineMinMinute * 1000 * 60).sort((a, b) => a.start - b.start)
+  const data = list.filter(i => i.end == i.start || i.end - i.start > calcDuration(config.value.timelineMinMinute, 'minute')).sort((a, b) => a.start - b.start)
   return compressed.value ? compress(data) : data
 })
 
-async function refresh() {
+async function refresh(pullHistory = true) {
   const start = startOfDay(date.value).getTime()
   const end = endOfDay(date.value).getTime()
-  const _noteList = await db.note.select({
-    start,
-    end,
-  })
-  const _activityList = await db.activity.select({
-    start,
-    end,
-  })
-  await pullActiveBrowsers()
-  const _historyList = await db.history.select({
-    start,
-    end,
-  })
+  const [_noteList, _activityList, _remarkList, _historyList] = await Promise.all([
+    db.note.select({
+      start,
+      end,
+    }),
+    db.activity.select({
+      start,
+      end,
+    }),
+    db.remark.select({
+      start,
+      end,
+    }),
+    db.history.select({
+      start,
+      end,
+    }),
+  ])
   const counter = randomStep([
     ..._noteList.flatMap(i => [i.start, i.end]),
     ..._activityList.flatMap(i => [i.start, i.end]),
     ..._historyList.map(i => i.lastVisited),
+    ..._remarkList.map(i => i.time),
   ])
   noteList.value = deduplicateTimeRange(_noteList, counter)
   activityList.value = deduplicateTimeRange(_activityList, counter)
   historyList.value = deduplicateHistory(_historyList, counter)
+  remarkList.value = deduplicateRemark(_remarkList, counter)
+
+  if (pullHistory) {
+    const count = await pullActiveBrowsers()
+    if (count)
+      await refresh(false)
+  }
 }
 
 function compress(list: Array<computedTimeLineNode>): Array<TimeLineNode> {
@@ -201,7 +228,7 @@ function compress(list: Array<computedTimeLineNode>): Array<TimeLineNode> {
     const min = Math.min(...list.map(i => i.start))
     const max = Math.max(...list.map(i => i.end))
     return {
-      name: first.name,
+      title: first.title,
       color: first.color,
       start: min,
       end: max,
@@ -210,11 +237,10 @@ function compress(list: Array<computedTimeLineNode>): Array<TimeLineNode> {
         : list.map(i => ({
           start: i.start,
           end: i.end,
-          name: i.name,
           color: i.color,
         })),
-      url: first.url,
-      icon: first.icon,
+      type: first.type,
+      raw: first.raw,
     }
   })
 }
@@ -226,6 +252,13 @@ function deduplicateHistory(list: Array<SelectHistory>, counter: StepCounter) {
   return list.map(item => ({
     ...item,
     lastVisited: counter.get(item.lastVisited),
+  }))
+}
+
+function deduplicateRemark(list: Array<SelectRemark>, counter: StepCounter) {
+  return list.map(item => ({
+    ...item,
+    time: counter.get(item.time),
   }))
 }
 
@@ -257,7 +290,7 @@ async function handleSearch(keyword: string, page: number, size: number) {
   }
 }
 
-watch(date, refresh, {
+watch(date, () => refresh(), {
   immediate: true,
 })
 
@@ -270,9 +303,9 @@ onRefresh(refresh)
       <TimelineGraph v-if="list.length" ref="timelineGraphRef" :list="list" flex-1 />
       <empty v-else type="timeline" :desc="$t('hint.timeline')" />
     </div>
-    <calendar v-if="sm" :id="filterTargetId" v-model:date="date" :category="filterCategory" />
+    <calendar :id="filterTargetId" v-model:date="date" :category="filterCategory" />
   </div>
-  <timeline-filter v-model:category="filterCategory" v-model:id="filterTargetId" />
+  <TimelineFilter ref="timelineFilterRef" v-model:category="filterCategory" v-model:id="filterTargetId" />
   <status-bar-teleport>
     <status-bar-content :title="$t('nav.timeline')">
       <template #append>
@@ -307,7 +340,14 @@ onRefresh(refresh)
       :tooltip="$t('statusBar.timeline.search.tooltip')" :text="$t('statusBar.timeline.search.text')"
       icon="i-mdi:magnify" @click="() => toggleSearchVisible()"
     />
-    <history-pull />
   </status-bar-teleport>
   <search v-model:visible="searchVisible" :search="handleSearch" />
+  <more-menu>
+    <v-list>
+      <v-list-item
+        value="timeline.filter" :title="$t('timeline.filter')" append-icon="mdi-filter-outline"
+        @click="timelineFilterRef?.openFilterForm"
+      />
+    </v-list>
+  </more-menu>
 </template>

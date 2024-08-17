@@ -155,17 +155,13 @@ async function init() {
 }
 
 init()
+
+defineExpose({
+  openFilterForm,
+})
 </script>
 
 <template>
-  <more-menu>
-    <v-list>
-      <v-list-item
-        value="timeline.filter" :title="$t('timeline.filter')" append-icon="mdi-filter-outline"
-        @click="openFilterForm"
-      />
-    </v-list>
-  </more-menu>
   <status-bar-teleport :xs="false">
     <status-bar-button
       v-if="statusBarText" :tooltip="$t('statusBar.timeline.filter.tooltip')" :text="statusBarText"

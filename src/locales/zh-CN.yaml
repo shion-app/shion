@@ -236,6 +236,15 @@ timelineGraph:
     title: 修改记录
     start: 开始
     end: 结束
+  note:
+    compress: 需要先展开分组
+    tooltip: 点击打开菜单
+  history:
+    tooltip: 点击打开网页
+  remark:
+    compress: 需要先展开分组
+    tooltip: 点击打开软件
+    wait: 正在打开软件
 upload:
   webImage: 已过滤不支持的图片类型
   webVideo: 已过滤不支持的视频类型
