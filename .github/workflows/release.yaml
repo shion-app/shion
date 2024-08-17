@@ -39,13 +39,19 @@ jobs:
 
       - run: pnpm install
 
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          envkey_SECRET_KEY: ${{ secrets.JWT_SECRET }}
+          directory: src-tauri
+
       - name: Build the app
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         with:
           tagName: ${{ github.ref_name }}
           releaseName: v__VERSION__
