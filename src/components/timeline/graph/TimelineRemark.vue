@@ -19,7 +19,7 @@ async function openWith() {
   notify.info({
     text: t('timelineGraph.remark.wait'),
   })
-  await invoke('open_with', {
+  await invoke('open_with_detached', {
     path: props.raw.program.path,
     arg: props.raw.arg,
   })

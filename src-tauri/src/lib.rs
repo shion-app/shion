@@ -6,26 +6,25 @@ mod database;
 mod error;
 mod server;
 
-use std::collections::HashMap;
-use std::env::{current_dir, current_exe};
-use std::os::windows::process::CommandExt;
-use std::path::PathBuf;
-use std::process::Command;
-use std::sync::Mutex;
-use std::{thread, time::Duration};
+use std::{
+    collections::HashMap,
+    env::{current_dir, current_exe},
+    path::PathBuf,
+    sync::Mutex,
+    thread,
+    time::Duration,
+};
 
 use anyhow::anyhow;
 use lazy_static::lazy_static;
 use parse_changelog::Changelog;
 use reqwest::StatusCode;
 use runas::Command as SudoCommand;
-use tauri::WebviewWindow;
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-    AppHandle, Emitter, Manager,
+    AppHandle, Emitter, Manager, WebviewUrl, WebviewWindow, WebviewWindowBuilder, Wry,
 };
-use tauri::{WebviewUrl, WebviewWindowBuilder, Wry};
 use tauri_plugin_autostart::MacosLauncher;
 use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
 use tauri_plugin_sql::{DbInstances, Migration, MigrationKind};
@@ -42,8 +41,6 @@ pub use error::Result;
 lazy_static! {
     static ref SERVER_PORT: Mutex<u16> = Mutex::new(15785);
 }
-
-const CREATE_NO_WINDOW: u32 = 0x8000000;
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {
@@ -215,12 +212,8 @@ pub fn run() {
     }
 
     #[tauri::command]
-    fn open_with(path: String, arg: String) -> Result<()> {
-        let mut command = Command::new(path);
-        command.arg(arg);
-        command.creation_flags(CREATE_NO_WINDOW);
-        command.output()?;
-        Ok(())
+    fn open_with_detached(path: String, arg: String) -> Result<()> {
+        Ok(open::with_detached(arg, path)?)
     }
 
     tauri::Builder::default()
@@ -269,7 +262,7 @@ pub fn run() {
             is_enabled_admin_autostart,
             restart_api_service,
             is_api_service_active,
-            open_with,
+            open_with_detached,
             begin_transaction,
             execute_transaction,
             select_transaction,
