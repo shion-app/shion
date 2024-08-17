@@ -48,11 +48,13 @@ class Executor implements DatabaseExecutor<Database> {
       await promise
       return res
     }
-    catch (error) {
+    catch (e) {
+      error(`transaction error: ${e}`)
+
       if (await isPromisePending(promise))
         await invoke('rollback_transaction')
 
-      throw error
+      throw e
     }
   }
 
