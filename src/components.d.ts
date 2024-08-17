@@ -32,7 +32,6 @@ declare module '@vue/runtime-core' {
     Grid: typeof import('./components/grid/Grid.vue')['default']
     GridCard: typeof import('./components/grid/GridCard.vue')['default']
     HistoryDialog: typeof import('./components/dialog/HistoryDialog.vue')['default']
-    HistoryPull: typeof import('./components/history/HistoryPull.vue')['default']
     ImageBlockMenu: typeof import('./components/shared/tiptap/imageBlock/ImageBlockMenu.vue')['default']
     ImageBlockView: typeof import('./components/shared/tiptap/imageBlock/ImageBlockView.vue')['default']
     ImportExportDialog: typeof import('./components/dialog/ImportExportDialog.vue')['default']

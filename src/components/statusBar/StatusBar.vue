@@ -1,6 +1,9 @@
 <script setup lang="ts">
 const timeStore = useTimerStore()
+const historyStore = useHistoryStore()
+
 const { time, running, text } = storeToRefs(timeStore)
+const { requesting, progress } = storeToRefs(historyStore)
 
 const route = useRoute()
 const { xs, sm } = useTailwindBreakpoints()
@@ -19,6 +22,14 @@ function navigateTimer() {
   <div v-show="xs" id="status-bar-xs" px-4 flex h-full items-center relative />
   <div v-show="sm" px-4 flex items-center>
     <div flex-1 />
+    <status-bar-button v-if="requesting" :tooltip="$t('statusBar.timeline.history.tooltip')">
+      <div flex items-center space-x-1>
+        <div>{{ $t('statusBar.timeline.history.text') }}</div>
+        <div class="w-[60px]">
+          <v-progress-linear color="primary" :model-value="progress" rounded height="8" />
+        </div>
+      </div>
+    </status-bar-button>
     <div id="status-bar-sm" flex items-center />
     <status-bar-button
       v-if="running" :tooltip="$t('statusBar.timer')" :text="timerText" icon="i-mdi:timer-outline"

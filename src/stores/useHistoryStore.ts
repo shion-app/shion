@@ -1,7 +1,7 @@
 import type { Browser } from 'tauri-plugin-shion-history-api'
 import { getConfig, readHistory, setConfig } from 'tauri-plugin-shion-history-api'
-
 import { info } from '@tauri-apps/plugin-log'
+
 import type { InsertHistory } from '@/modules/database'
 import { db } from '@/modules/database'
 
@@ -44,8 +44,6 @@ export const useHistoryStore = defineStore('history', () => {
     if (requesting.value)
       return 0
 
-    completedCount.value = 0
-    totalCount.value = 0
     requesting.value = true
     const map = new Map<string, Array<History>>()
     const end = new Date().getTime()
@@ -66,6 +64,8 @@ export const useHistoryStore = defineStore('history', () => {
     }
     finally {
       requesting.value = false
+      completedCount.value = 0
+      totalCount.value = 0
     }
     const len = [...map].flatMap(([_, list]) => list).length
     return len
@@ -78,7 +78,7 @@ export const useHistoryStore = defineStore('history', () => {
 
   async function pullActiveBrowsers() {
     const browsers = state.value.browsers.filter(i => i.last_sync > 0)
-    await pullBrowsers(browsers)
+    return await pullBrowsers(browsers)
   }
 
   const timer = new Timer(async () => {
@@ -102,5 +102,6 @@ export const useHistoryStore = defineStore('history', () => {
     progress,
     progressText,
     requesting,
+    completedCount,
   }
 })

@@ -14,7 +14,7 @@ const { t } = useI18n()
 const { success, error, info } = useNotify()
 
 const store = useHistoryStore()
-const { config, progress, progressText } = storeToRefs(store)
+const { config, progress, progressText, completedCount } = storeToRefs(store)
 const { pull } = store
 
 const pullDialogVisible = ref(false)
@@ -107,7 +107,7 @@ async function importBrowserData() {
       <div flex>
         <div
           :class="{
-            hidden: progress != 0,
+            hidden: completedCount > 0,
           }"
         >
           {{ $t('history.import.calculating') }}

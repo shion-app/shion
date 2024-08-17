@@ -69,7 +69,4 @@ refresh()
     </template>
   </grid>
   <empty v-else type="history" :desc="$t('hint.history')" :width="300" />
-  <status-bar-teleport :xs="false">
-    <history-pull />
-  </status-bar-teleport>
 </template>
