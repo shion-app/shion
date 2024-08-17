@@ -164,6 +164,9 @@ dependencies:
   tauri-plugin-shion-watcher-api:
     specifier: github:shion-app/watcher
     version: github.com/shion-app/watcher/146fd10c30a53dd98fe9621c8a6a4fa6ed85db11
+  turndown:
+    specifier: ^7.2.0
+    version: 7.2.0
   vee-validate:
     specifier: ^4.11.8
     version: 4.11.8(vue@3.4.34)
@@ -2043,6 +2046,10 @@ packages:
 
   /@mdi/font@7.3.67:
     resolution: {integrity: sha512-SWxvzRbUQRfewlIV+OF4/YF4DkeTjMWoT8Hh9yeU/5UBVdJZj9Uf4a9+cXjknSIhIaMxZ/4N1O/s7ojApOOGjg==}
+    dev: false
+
+  /@mixmark-io/domino@2.2.0:
+    resolution: {integrity: sha512-Y28PR25bHXUg88kCV7nivXrP2Nj2RueZ3/l/jdx6J9f8J4nsEGcgX0Qe6lt7Pa+J79+kPiJU3LguR6O/6zrLOw==}
     dev: false
 
   /@mrleebo/prisma-ast@0.7.0:
@@ -9157,6 +9164,12 @@ packages:
     dependencies:
       safe-buffer: 5.2.1
     dev: true
+
+  /turndown@7.2.0:
+    resolution: {integrity: sha512-eCZGBN4nNNqM9Owkv9HAtWRYfLA4h909E/WGAWWBpmB275ehNhZyk87/Tpvjbp0jjNl9XwCsbe6bm6CqFsgD+A==}
+    dependencies:
+      '@mixmark-io/domino': 2.2.0
+    dev: false
 
   /type-check@0.3.2:
     resolution: {integrity: sha512-ZCmOJdvOWDBYJlzAoFkC+Q0+bUyEOS1ltgp1MGU03fqHG+dbi9tBFU2Rd9QKiDZFAYrhPh2JUf7rZRIuHRKtOg==}

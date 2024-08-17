@@ -150,6 +150,7 @@ about:
   appInfo: copy app info
 moment:
   create: Record the moment
+  export: Export all data
   inputTitle: Input title...
   submit: Submit
   edit: Edit
@@ -162,6 +163,7 @@ moment:
     snackbar: Currently in candidate state, select the object that needs to be linked
     submitTip: The selected {count} item will be linked to the target. Are you sure?
     cancelTip: The link is about to be cancelled. Are you sure?
+  deprecated: The moment will be redone, please export all data in the more menu at the bottom left
   box:
     all: All
   tip:

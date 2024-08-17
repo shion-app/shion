@@ -56,13 +56,13 @@ export const useNavStore = defineStore('nav', () => {
           to: '/collection/monitor',
           key: 'monitor',
         },
-        {
-          icon: 'i-mdi:cube-outline',
-          activeIcon: 'i-mdi:cube',
-          name: t('nav.box'),
-          to: '/collection/box',
-          key: 'box',
-        },
+        // {
+        //   icon: 'i-mdi:cube-outline',
+        //   activeIcon: 'i-mdi:cube',
+        //   name: t('nav.box'),
+        //   to: '/collection/box',
+        //   key: 'box',
+        // },
         // {
         //   icon: 'i-mdi:cloud-outline',
         //   activeIcon: 'i-mdi:cloud',

@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { open } from '@tauri-apps/plugin-dialog'
+import TurndownService from 'turndown'
+
+import { mkdir, rename, writeTextFile } from '@tauri-apps/plugin-fs'
+import { basename, join } from '@tauri-apps/api/path'
 import { db } from '@/modules/database'
 import type { SelectBox, SelectMoment } from '@/modules/database'
 import { useConfirmModal } from '@/hooks/useConfirmModal'
@@ -21,7 +26,7 @@ type Moment = SelectMoment & {
 const { success, error } = useNotify()
 const { getI18nMessage, isUniqueError } = useDatabase()
 const { t } = useI18n()
-const { formatYYYYmmdd } = useDateFns()
+const { formatYYYYmmdd, format } = useDateFns()
 const route = useRoute()
 const confirm = useConfirmModal()
 
@@ -258,7 +263,67 @@ async function handleSearch(keyword: string, page: number, size: number) {
   }
 }
 
+function getAssets(input: string) {
+  const matches: string[] = []
+  const regex = /src="http:\/\/asset\.localhost\/([^"]+)"/g
+  let match = regex.exec(input)
+  while ((match) !== null) {
+    matches.push(match[1])
+    match = regex.exec(input)
+  }
+
+  return matches
+}
+
+async function exportData() {
+  const selected = await open({
+    directory: true,
+  })
+  if (selected) {
+    const turndownService = new TurndownService()
+    for (const post of momentList.value) {
+      const markdownDir = await join(selected, post.box.name)
+      await mkdir(markdownDir, {
+        recursive: true,
+      })
+      const path = await join(markdownDir, `${post.title}.md`)
+      const assets = getAssets(post.content).map(decodeURIComponent)
+      const content = post.content.replace(/src="http:\/\/asset\.localhost\/([^"]+)"/g, (_, path) => {
+        const p = decodeURIComponent(path)
+        const name = p.split('\\').pop()
+        return `src="../assets/${name}"`
+      })
+
+      const markdown = turndownService.turndown(content)
+      const date
+        = '---\n'
+        + `created: ${format(post.createdAt, 'yyyy/MM/dd HH:mm:ss')}\n`
+        + `updated: ${format(post.updatedAt, 'yyyy/MM/dd HH:mm:ss')}\n`
+        + '---\n'
+
+      await writeTextFile(path, date + markdown)
+      const assetsDir = await join(selected, 'assets')
+      await mkdir(assetsDir, {
+        recursive: true,
+      })
+      for (const asset of assets) {
+        const name = await basename(asset)
+        const path = await join(assetsDir, name)
+        await rename(asset, path)
+      }
+    }
+    success({})
+  }
+}
+
 refresh()
+
+onMounted(() => {
+  confirm.require({
+    title: t('modal.prompt'),
+    content: t('moment.deprecated'),
+  })
+})
 </script>
 
 <template>
@@ -321,14 +386,15 @@ refresh()
   </v-snackbar>
   <more-menu :visible="!linkActive">
     <v-list>
-      <v-list-item
+      <!-- <v-list-item
         v-if="selectedList.length" value="button.remove" :title="$t('button.remove')"
         append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal"
       />
       <v-list-item
         value="moment.create" :title="$t('moment.create')" append-icon="mdi-plus"
         @click="viewMomentCreate"
-      />
+      /> -->
+      <v-list-item value="moment.export" :title="$t('moment.export')" append-icon="mdi-export" @click="exportData" />
     </v-list>
   </more-menu>
   <moment-edit v-model:visible="createDialogVisible" @submit="handleCreate" />

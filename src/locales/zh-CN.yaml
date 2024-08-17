@@ -150,6 +150,7 @@ about:
   appInfo: 复制应用信息
 moment:
   create: 记录下瞬间
+  export: 导出所有数据
   inputTitle: 输入标题...
   submit: 提交
   edit: 编辑
@@ -162,6 +163,7 @@ moment:
     snackbar: 正处于链接候选状态, 选中需要链接的对象
     submitTip: 所选中{count}项将与目标链接在一起, 是否确认?
     cancelTip: 即将取消链接, 是否确认?
+  deprecated: 瞬间功能将重做，所有数据请在左下方更多菜单中导出
   box:
     all: 全部
   tip:
