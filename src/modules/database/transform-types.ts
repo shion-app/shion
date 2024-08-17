@@ -26,6 +26,8 @@ export type Domain = origin.Domain & { itemCount: ColumnType<number, never, neve
 
 export type History = origin.History & { domain: ColumnType<Domain, never, never> }
 
+export type Remark = origin.Remark & { program: ColumnType<Program, never, never> }
+
 export type Overview = Replace<origin.Overview, {
   type: WidgetType
   data: {
@@ -50,4 +52,5 @@ export interface DB {
   link: Link
   domain: Domain
   history: History
+  remark: Remark
 }

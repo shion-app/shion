@@ -57,6 +57,16 @@ const executor: DatabaseExecutor<Database.Database> = {
     return true
   },
   async load() { },
+  async begin() { },
+  async executeTransaction() {
+    return {
+      lastInsertId: 0,
+      rowsAffected: 0,
+    }
+  },
+  async selectTransaction<T>(): Promise<T> {
+    return [] as T
+  },
 }
 
 beforeEach(reset)

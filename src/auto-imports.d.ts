@@ -61,6 +61,7 @@ declare global {
   const isDev: typeof import('./utils/shared')['isDev']
   const isMobile: typeof import('./utils/shared')['isMobile']
   const isProd: typeof import('./utils/shared')['isProd']
+  const isPromisePending: typeof import('./utils/index')['isPromisePending']
   const isProxy: typeof import('vue')['isProxy']
   const isReactive: typeof import('vue')['isReactive']
   const isReadonly: typeof import('vue')['isReadonly']
@@ -420,6 +421,7 @@ declare module 'vue' {
     readonly isDev: UnwrapRef<typeof import('./utils/shared')['isDev']>
     readonly isMobile: UnwrapRef<typeof import('./utils/shared')['isMobile']>
     readonly isProd: UnwrapRef<typeof import('./utils/shared')['isProd']>
+    readonly isPromisePending: UnwrapRef<typeof import('./utils/index')['isPromisePending']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>

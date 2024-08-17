@@ -4618,12 +4618,14 @@ name = "shion"
 version = "0.11.0"
 dependencies = [
  "anyhow",
+ "indexmap 2.2.6",
  "log",
  "parse-changelog",
  "planif",
  "runas",
  "serde",
  "serde_json",
+ "sqlx",
  "sys-locale",
  "tauri",
  "tauri-build",
@@ -4641,6 +4643,8 @@ dependencies = [
  "tauri-plugin-store",
  "tauri-plugin-updater",
  "thiserror",
+ "time",
+ "tokio",
  "zip 0.6.6",
  "zip-extensions",
 ]
@@ -5814,11 +5818,24 @@ dependencies = [
  "libc",
  "mio",
  "num_cpus",
+ "parking_lot",
  "pin-project-lite",
  "signal-hook-registry",
  "socket2",
+ "tokio-macros",
  "tracing",
  "windows-sys 0.48.0",
+]
+
+[[package]]
+name = "tokio-macros"
+version = "2.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5b8a1e28f2deaa14e508979454cb3a223b10b938b45af148bc0986de36f1923b"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.60",
 ]
 
 [[package]]

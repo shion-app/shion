@@ -1,15 +1,15 @@
 #[cfg(mobile)]
 mod mobile;
 
+mod autostart;
+mod database;
 mod error;
+
 use std::collections::HashMap;
 use std::env::{current_dir, current_exe};
 use std::path::PathBuf;
 
 use anyhow::anyhow;
-pub use error::Result;
-mod autostart;
-
 use parse_changelog::Changelog;
 use runas::Command as SudoCommand;
 use tauri::WebviewWindow;
@@ -24,6 +24,13 @@ use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
 use tauri_plugin_sql::{Migration, MigrationKind};
 use tauri_plugin_store::{with_store, StoreCollection};
 use zip_extensions::{zip_create_from_directory, zip_extract};
+
+use crate::database::command::{
+    begin_transaction, commit_transaction, execute_transaction, rollback_transaction,
+    select_transaction,
+};
+use database::command::Transaction;
+pub use error::Result;
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {
@@ -67,6 +74,12 @@ pub fn run() {
             version: 2,
             description: "add domain and history",
             sql: include_str!("../../prisma/migrations/20240419081000_/migration.sql"),
+            kind: MigrationKind::Up,
+        },
+        Migration {
+            version: 3,
+            description: "add remark",
+            sql: include_str!("../../prisma/migrations/20240811105024_/migration.sql"),
             kind: MigrationKind::Up,
         },
     ];
@@ -189,6 +202,11 @@ pub fn run() {
             enable_admin_autostart,
             disable_admin_autostart,
             is_enabled_admin_autostart,
+            begin_transaction,
+            execute_transaction,
+            select_transaction,
+            commit_transaction,
+            rollback_transaction
         ])
         .setup(|app| {
             let stores = app.app_handle().state::<StoreCollection<Wry>>();
@@ -248,6 +266,7 @@ pub fn run() {
 
             Ok(())
         })
+        .manage(Transaction::new())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

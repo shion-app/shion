@@ -70,6 +70,7 @@ model Program {
   created_at Int        @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
   updated_at Int        @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
   activities Activity[]
+  remarks    Remark[]
 
   @@unique([path, deleted_at])
   @@map("program")
@@ -158,15 +159,30 @@ model Domain {
 }
 
 model History {
-  id           Int     @id @default(autoincrement())
+  id           Int    @id @default(autoincrement())
   title        String
   url          String
   last_visited Int
   domain_id    Int
-  deleted_at   Int     @default(0)
-  created_at   Int     @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
-  updated_at   Int     @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
-  domian       Domain? @relation(fields: [domain_id], references: [id])
+  deleted_at   Int    @default(0)
+  created_at   Int    @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at   Int    @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  domian       Domain @relation(fields: [domain_id], references: [id])
 
   @@map("history")
+}
+
+model Remark {
+  id         Int     @id @default(autoincrement())
+  title      String
+  desc       String
+  arg        String
+  time       Int
+  program_id Int
+  deleted_at Int     @default(0)
+  created_at Int     @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at Int     @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  program    Program @relation(fields: [program_id], references: [id])
+
+  @@map("remark")
 }

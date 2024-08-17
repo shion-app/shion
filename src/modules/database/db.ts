@@ -30,6 +30,7 @@ import { Box } from './models/box'
 import { Link } from './models/link'
 import { History } from './models/history'
 import { Domain } from './models/domain'
+import { Remark } from './models/remark'
 export type { QueryResult } from '@tauri-apps/plugin-sql'
 
 type IsSelectQueryBuilder<T> = T extends SelectQueryBuilder<any, any, any> ? true : false
@@ -47,12 +48,12 @@ type Transform<T> =
         IsQueryBuilder<ReturnType<T[K]>> extends true
           ?
           Promise<
-            IsSelectQueryBuilder<ReturnType<T[K]>> extends true
-              ? InferResult<ReturnType<ReturnType<T[K]>['compile']>>
-              : IsTransactionQueryBuilder<ReturnType<T[K]>> extends true
-                ? Awaited<ReturnType<ReturnType<ReturnType<T[K]>['compile']>>>
-                : QueryResult
-            >
+        IsSelectQueryBuilder<ReturnType<T[K]>> extends true
+          ? InferResult<ReturnType<ReturnType<T[K]>['compile']>>
+          : IsTransactionQueryBuilder<ReturnType<T[K]>> extends true
+            ? Awaited<ReturnType<ReturnType<ReturnType<T[K]>['compile']>>>
+            : QueryResult
+      >
           : never
       : T[K]
   }
@@ -86,12 +87,11 @@ function transformResult(constructor, obj) {
 
 function createKyselyDatabase<D, U extends Record<string, object>>(executor: DatabaseExecutor<D>, models: U) {
   class KyselyDatabase<M extends Record<string, object>> {
-    #executor: DatabaseExecutor<D>
-    #connectionMutex = new ConnectionMutex()
+    protected _executor: DatabaseExecutor<D>
     #emitter: Emitter<Record<EventType, unknown>>
 
     constructor(executor: DatabaseExecutor<D>, models: M, emitter: Emitter<Record<EventType, unknown>>) {
-      this.#executor = executor
+      this._executor = executor
       this.#emitter = emitter
       for (const modelKey in models) {
         const obj = {
@@ -116,10 +116,10 @@ function createKyselyDatabase<D, U extends Record<string, object>>(executor: Dat
                   const CompiledQuery = query.compile()
 
                   if (query instanceof TransactionQueryBuilder)
-                    return this.#executeTransaction(CompiledQuery as any)
+                    return this.#beginTransaction(CompiledQuery as any)
 
                   if (__getFlag) {
-                    const result = this.#select(CompiledQuery)
+                    const result = this._select(CompiledQuery)
                     if (!__needTransform)
                       return result
 
@@ -134,7 +134,7 @@ function createKyselyDatabase<D, U extends Record<string, object>>(executor: Dat
                     }))
                   }
 
-                  return this.#execute(CompiledQuery)
+                  return this._execute(CompiledQuery)
                 }, () => {
                   if (typeof p == 'string')
                     this.#emitter.emit(`${modelKey}.${p}`)
@@ -152,68 +152,50 @@ function createKyselyDatabase<D, U extends Record<string, object>>(executor: Dat
 
     #provideConnection(consumer: (...args) => Promise<unknown>, cb: Function) {
       return async (...args) => {
-        await this.#acquireConnection()
-        try {
-          const result = await consumer(...args)
-          cb()
-          return result
-        }
-        finally {
-          this.#releaseConnection()
-        }
+        const result = await consumer(...args)
+        cb()
+        return result
       }
     }
 
-    async #acquireConnection() {
-      await this.#connectionMutex.lock()
-    }
-
-    #releaseConnection() {
-      this.#connectionMutex.unlock()
-    }
-
-    async #execute<T extends CompiledQuery>(query: T) {
+    protected async _execute<T extends CompiledQuery>(query: T) {
       try {
-        return await this.#executor.execute(query.sql, query.parameters as unknown[])
+        return await this._executor.execute(query.sql, query.parameters as unknown[])
       }
       catch (error) {
-        throw this.#executor.handleError(error)
+        throw this._executor.handleError(error)
       }
     }
 
     async execute(sql: string) {
       try {
-        return await this.#executor.execute(sql)
+        return await this._executor.execute(sql)
       }
       catch (error) {
-        throw this.#executor.handleError(error)
+        throw this._executor.handleError(error)
       }
     }
 
-    #select<T extends CompiledQuery>(query: T) {
-      return this.#executor.select<InferResult<T>>(query.sql, query.parameters as unknown[])
-    }
-
-    async #executeTransaction(callback: (trx) => Promise<unknown>) {
-      const transaction = new Transaction(executor, models, this.#emitter)
+    protected async _select<T extends CompiledQuery>(query: T) {
       try {
-        await this.#executor.execute('begin')
-        const result = await callback(transaction)
-        await this.#executor.execute('commit')
-        return result
+        return await this._executor.select<InferResult<T>>(query.sql, query.parameters as unknown[])
       }
       catch (error) {
-        await this.#executor.execute('rollback')
-        throw error
+        throw this._executor.handleError(error)
       }
+    }
+
+    async #beginTransaction(callback: (trx) => Promise<unknown>) {
+      const transaction = new Transaction(this._executor, models, this.#emitter)
+      return await this._executor.begin(() => callback(transaction))
     }
 
     close() {
-      return this.#executor.close()
+      return this._executor.close()
     }
 
     load() {
-      return this.#executor.load()
+      return this._executor.load()
     }
 
     on(key: string, cb: Function) {
@@ -225,31 +207,27 @@ function createKyselyDatabase<D, U extends Record<string, object>>(executor: Dat
     }
   }
 
-  class Transaction extends KyselyDatabase<Record<string, object>> {}
+  class Transaction extends KyselyDatabase<Record<string, object>> {
+    async _execute<T extends CompiledQuery>(query: T) {
+      try {
+        return await this._executor.executeTransaction(query.sql, query.parameters as unknown[])
+      }
+      catch (error) {
+        throw this._executor.handleError(error)
+      }
+    }
+
+    async _select<T extends CompiledQuery>(query: T) {
+      try {
+        return await this._executor.selectTransaction<InferResult<T>>(query.sql, query.parameters as unknown[])
+      }
+      catch (error) {
+        throw this._executor.handleError(error)
+      }
+    }
+  }
+
   return new KyselyDatabase(executor, models, mitt()) as KyselyDatabase<U> & Executor<U>
-}
-
-class ConnectionMutex {
-  #promise?: Promise<void>
-  #resolve?: () => void
-
-  async lock(): Promise<void> {
-    while (this.#promise)
-      await this.#promise
-
-    this.#promise = new Promise((resolve) => {
-      this.#resolve = resolve
-    })
-  }
-
-  unlock(): void {
-    const resolve = this.#resolve
-
-    this.#promise = undefined
-    this.#resolve = undefined
-
-    resolve?.()
-  }
 }
 
 export class TransactionBuilder<T> {
@@ -259,7 +237,7 @@ export class TransactionBuilder<T> {
 }
 
 export class TransactionQueryBuilder<T, U> {
-  constructor(private callback: (trx: T) => Promise<U>) {}
+  constructor(private callback: (trx: T) => Promise<U>) { }
 
   compile() {
     return this.callback
@@ -277,6 +255,7 @@ const overview = new Overview(kysely)
 const link = new Link(kysely)
 const domain = new Domain(kysely)
 const history = new History(kysely, domain)
+const remark = new Remark(kysely, program)
 const models = {
   program,
   activity,
@@ -289,6 +268,7 @@ const models = {
   link,
   domain,
   history,
+  remark,
 }
 
 export type Models = typeof models
@@ -320,6 +300,9 @@ export type DatabaseExecutor<T> = Pick<Database, 'execute' | 'select' | 'close'>
   database: T
   handleError(err: unknown): DatabaseError
   load(): Promise<void>
+  begin(cb: () => Promise<unknown>): Promise<unknown>
+  executeTransaction(query: string, bindValues?: unknown[]): Promise<QueryResult>
+  selectTransaction<S>(query: string, bindValues?: unknown[]): Promise<S>
 }
 
 export function findSqliteMessageFields(message: string) {

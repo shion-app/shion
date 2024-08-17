@@ -2,9 +2,10 @@ import Database from '@tauri-apps/plugin-sql'
 import { error } from '@tauri-apps/plugin-log'
 import type { Insertable, SelectType, Updateable } from 'kysely'
 
+import { invoke } from '@tauri-apps/api/core'
 import type { DatabaseExecutor } from './db'
 import { DatabaseError, SqliteErrorEnum, createKyselyDatabaseWithModels, findSqliteMessageFields } from './db'
-import type { Activity, Box, Domain, History, Label, Moment, Note, Overview, Plan, Program } from './transform-types'
+import type { Activity, Box, Domain, History, Label, Moment, Note, Overview, Plan, Program, Remark } from './transform-types'
 export { DatabaseError } from './db'
 
 class Executor implements DatabaseExecutor<Database> {
@@ -35,6 +36,49 @@ class Executor implements DatabaseExecutor<Database> {
 
   async load() {
     this.database = await Database.load('sqlite:data.db')
+  }
+
+  async begin(cb: () => Promise<unknown>) {
+    const promise = invoke('begin_transaction', {
+      db: this.database.path,
+    })
+    try {
+      const res = await cb()
+      await invoke('commit_transaction')
+      await promise
+      return res
+    }
+    catch (error) {
+      if (await isPromisePending(promise))
+        await invoke('rollback_transaction')
+
+      throw error
+    }
+  }
+
+  async rollback() {
+    await invoke('rollback_transaction')
+  }
+
+  async executeTransaction(query: string, bindValues?: unknown[] | undefined) {
+    const [rowsAffected, lastInsertId] = await invoke<[number, number]>('execute_transaction', {
+      db: this.database.path,
+      query,
+      values: bindValues ?? [],
+    })
+    return {
+      lastInsertId,
+      rowsAffected,
+    }
+  }
+
+  async selectTransaction<T>(query: string, bindValues?: unknown[]): Promise<T> {
+    const result = await invoke<T>('select_transaction', {
+      db: this.database.path,
+      query,
+      values: bindValues ?? [],
+    })
+    return result
   }
 }
 
@@ -73,6 +117,7 @@ export type SelectOverview = DeepSelectable<Overview>
 export type SelectBox = DeepSelectable<Box>
 export type SelectHistory = DeepSelectable<History>
 export type SelectDomain = DeepSelectable<Domain>
+export type SelectRemark = DeepSelectable<Remark>
 
 export type InsertPlan = Insertable<Plan>
 export type InsertNote = Insertable<Note>
@@ -81,6 +126,7 @@ export type InsertProgram = Insertable<Program>
 export type InsertOverview = Insertable<Overview>
 export type InsertBox = Insertable<Box>
 export type InsertHistory = Insertable<History>
+export type InsertRemark = Insertable<Remark>
 
 export type UpdateOverview = Updateable<Overview>
 

@@ -37,6 +37,10 @@ tauri-plugin-updater = "2.0.0-rc.0"
 zip = "0.6"
 zip-extensions = "0.6"
 runas = "1.2.0"
+indexmap = "2.2.6"
+sqlx = "0.8"
+tokio = { version = "1.37", features = ["full"] }
+time = "0.3.36"
 
 [package.metadata.bin]
 # cargo-run-bin

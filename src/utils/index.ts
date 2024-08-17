@@ -76,3 +76,12 @@ export function randomStep(list: number[], unreachable = 0): StepCounter {
     },
   }
 }
+
+function promiseStatus(p: Promise<unknown>) {
+  const t = {}
+  return Promise.race([p, t]).then(v => v === t ? 'pending' : 'fulfilled', () => 'rejected')
+}
+
+export async function isPromisePending(p: Promise<unknown>) {
+  return (await promiseStatus(p)) == 'pending'
+}

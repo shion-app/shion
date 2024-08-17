@@ -111,6 +111,17 @@ export interface Program {
   createdAt: Generated<number>
   updatedAt: Generated<number>
 }
+export interface Remark {
+  id: Generated<number>
+  title: string
+  desc: string
+  arg: string
+  time: number
+  programId: number
+  deletedAt: Generated<number>
+  createdAt: Generated<number>
+  updatedAt: Generated<number>
+}
 export interface DB {
   activity: Activity
   box: Box
@@ -123,4 +134,5 @@ export interface DB {
   overview: Overview
   plan: Plan
   program: Program
+  remark: Remark
 }
