@@ -101,7 +101,7 @@ export const useConfigStore = defineStore('config', () => {
 
   init()
 
-  watch(config, (v) => {
+  watchDebounced(config, (v) => {
     for (const key in v)
       store.set(key, v[key as keyof Config])
 

@@ -2,10 +2,8 @@
 import { ModalsContainer } from 'vue-final-modal'
 
 const configStore = useConfigStore()
-
-if (isDesktop)
-  useUpdateStore()
-
+useExtensionStore()
+useUpdateStore()
 useTimerStore()
 useMonitorStore()
 useActivityStore()

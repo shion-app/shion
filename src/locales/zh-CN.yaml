@@ -209,6 +209,7 @@ titleBar:
     sync: 同步
     history: 浏览器历史记录
     importExport: 导入与导出
+    extension: 扩展
   help:
     desc: 帮助
     about: 关于
@@ -419,3 +420,11 @@ watcherWhitelist:
   duplicate: 不能重复添加
 refresh:
   error: 刷新时发生错误
+extension:
+  tab:
+    dandanplay: 弹弹play
+  dandanplay:
+    port: 端口号
+    path: 路径
+  desc:
+    dandanplay: 点击选择exe文件

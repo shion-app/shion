@@ -25,6 +25,7 @@ declare module '@vue/runtime-core' {
     DatetimePicker: typeof import('./components/form/DatetimePicker.vue')['default']
     DynamicLogo: typeof import('./components/shared/DynamicLogo.vue')['default']
     Empty: typeof import('./components/shared/Empty.vue')['default']
+    ExtensionDialog: typeof import('./components/dialog/ExtensionDialog.vue')['default']
     FilePicker: typeof import('./components/form/FilePicker.vue')['default']
     FormFactory: typeof import('./components/form/FormFactory.vue')['default']
     FormModal: typeof import('./components/modal/FormModal.vue')['default']

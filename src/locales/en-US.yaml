@@ -46,7 +46,7 @@ config:
     behavior: Behavior
     appearance: Appearance
     export: Export
-    service: External service
+    service: Service
   header:
     timeline: Timeline
     monitor: Monitor
@@ -209,6 +209,7 @@ titleBar:
     sync: Sync
     history: Browser history
     importExport: Import and export
+    extension: Extension
   help:
     desc: Help
     about: About
@@ -419,3 +420,11 @@ watcherWhitelist:
   duplicate: Cannot add repeatedly
 refresh:
   error: Error occurred during refresh
+extension:
+  tab:
+    dandanplay: Dandanplay
+  dandanplay:
+    port: Port
+    path: Path
+  desc:
+    dandanplay: Click to select the exe file

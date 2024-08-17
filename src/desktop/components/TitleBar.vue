@@ -12,6 +12,7 @@ const setting = ref(false)
 const history = ref(false)
 const about = ref(false)
 const importExport = ref(false)
+const extension = ref(false)
 
 const dialogStore = useDialogStore()
 const configStore = useConfigStore()
@@ -69,6 +70,10 @@ useHotkey('ctrl+shift+i', openDevtools)
           <v-list-item
             value="titleBar.view.importExport" :title="$t('titleBar.view.importExport')"
             @click="importExport = true"
+          />
+          <v-list-item
+            value="titleBar.view.extension" :title="$t('titleBar.view.extension')"
+            @click="extension = true"
           />
         </v-list>
       </v-menu>
@@ -142,5 +147,6 @@ useHotkey('ctrl+shift+i', openDevtools)
     <history-dialog v-model:visible="history" />
     <import-export-dialog v-model:visible="importExport" />
     <changelog-dialog v-model:visible="changelog" />
+    <extension-dialog v-model:visible="extension" />
   </div>
 </template>
