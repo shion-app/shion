@@ -26,14 +26,14 @@ tauri-plugin-dialog = "2.0.0-rc.0"
 tauri-plugin-clipboard-manager = "2.1.0-beta"
 tauri-plugin-shion-watcher = { git = "https://github.com/shion-app/watcher" }
 tauri-plugin-shion-history = { git = "https://github.com/shion-app/history" }
+tauri-plugin-autostart = "2.0.0-rc.0"
+tauri-plugin-single-instance = "2.0.0-rc.0"
+tauri-plugin-updater = "2.0.0-rc.0"
 sys-locale = "0.3.1"
 thiserror = "1.0"
 parse-changelog = { version = "0.6", default-features = false, features = ["serde"] }
 planif = { git = "https://github.com/hanaTsuk1/planif" }
 anyhow = "1"
-tauri-plugin-autostart = "2.0.0-rc.0"
-tauri-plugin-single-instance = "2.0.0-rc.0"
-tauri-plugin-updater = "2.0.0-rc.0"
 zip = "0.6"
 zip-extensions = "0.6"
 runas = "1.2.0"
@@ -41,6 +41,17 @@ indexmap = "2.2.6"
 sqlx = "0.8"
 tokio = { version = "1.37", features = ["full"] }
 time = "0.3.36"
+jsonwebtoken = "9"
+actix-web = "4.9.0"
+actix-cors = "0.7.0"
+dotenv = "0.15.0"
+dotenv_codegen = "0.15.0"
+lazy_static = "1.4"
+chrono = "0.4.38"
+futures-util = "0.3"
+path-slash = "0.2.1"
+derive_more = { version = "1", features = ["full"] }
+reqwest = "0.12.4"
 
 [package.metadata.bin]
 # cargo-run-bin

@@ -18,6 +18,12 @@ pub enum Error {
 
     #[error(transparent)]
     Std(#[from] Box<dyn std::error::Error>),
+
+    #[error(transparent)]
+    Tauri(#[from] tauri::Error),
+
+    #[error(transparent)]
+    Reqwest(#[from] reqwest::Error),
 }
 
 impl Serialize for Error {

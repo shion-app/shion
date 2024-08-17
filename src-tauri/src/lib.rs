@@ -4,13 +4,18 @@ mod mobile;
 mod autostart;
 mod database;
 mod error;
+mod server;
 
 use std::collections::HashMap;
 use std::env::{current_dir, current_exe};
 use std::path::PathBuf;
+use std::sync::Mutex;
+use std::{thread, time::Duration};
 
 use anyhow::anyhow;
+use lazy_static::lazy_static;
 use parse_changelog::Changelog;
+use reqwest::StatusCode;
 use runas::Command as SudoCommand;
 use tauri::WebviewWindow;
 use tauri::{
@@ -21,7 +26,7 @@ use tauri::{
 use tauri::{WebviewUrl, WebviewWindowBuilder, Wry};
 use tauri_plugin_autostart::MacosLauncher;
 use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
-use tauri_plugin_sql::{Migration, MigrationKind};
+use tauri_plugin_sql::{DbInstances, Migration, MigrationKind};
 use tauri_plugin_store::{with_store, StoreCollection};
 use zip_extensions::{zip_create_from_directory, zip_extract};
 
@@ -31,6 +36,10 @@ use crate::database::command::{
 };
 use database::command::Transaction;
 pub use error::Result;
+
+lazy_static! {
+    static ref SERVER_PORT: Mutex<u16> = Mutex::new(15785);
+}
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {
@@ -60,6 +69,19 @@ fn get_autostart_bin() -> String {
         exe.join("../bin/autostart.exe/autostart.exe")
     };
     path.to_str().unwrap().to_string()
+}
+
+pub async fn get_db(app: &AppHandle) -> sqlx::Pool<sqlx::Sqlite> {
+    let instances = app.state::<DbInstances>();
+    let instances = instances.inner().0.lock().await;
+    let db = instances.get("sqlite:data.db").unwrap();
+    db.clone()
+}
+
+fn start_server(app_handle: &AppHandle, server_port: u16) {
+    *SERVER_PORT.lock().unwrap() = server_port;
+    let boxed_app_handle = Box::new(app_handle.clone());
+    thread::spawn(move || server::init(*boxed_app_handle, server_port).unwrap());
 }
 
 pub fn run() {
@@ -158,6 +180,36 @@ pub fn run() {
         autostart::is_enabled().unwrap_or(false)
     }
 
+    #[tauri::command]
+    async fn restart_api_service(app_handle: AppHandle, server_port: u16) -> Result<()> {
+        let old_server_port = *SERVER_PORT.lock().unwrap();
+        if old_server_port != server_port {
+            let client = reqwest::Client::builder().build()?;
+            let _ = client
+                .post(format!("http://localhost:{}/api/stop", old_server_port))
+                .send()
+                .await;
+            start_server(&app_handle, server_port);
+        }
+        let client = reqwest::Client::builder().build()?;
+        let res = client
+            .get(format!("http://localhost:{}/api/ping", server_port))
+            .timeout(Duration::from_secs(5))
+            .send()
+            .await?;
+        res.error_for_status()?;
+        Ok(())
+    }
+
+    #[tauri::command]
+    async fn is_api_service_active() -> Result<bool> {
+        let old_server_port = *SERVER_PORT.lock().unwrap();
+        let res = reqwest::get(format!("http://localhost:{}/api/ping", old_server_port))
+            .await?
+            .status();
+        Ok(res == StatusCode::OK)
+    }
+
     tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_fs::init())
@@ -202,6 +254,8 @@ pub fn run() {
             enable_admin_autostart,
             disable_admin_autostart,
             is_enabled_admin_autostart,
+            restart_api_service,
+            is_api_service_active,
             begin_transaction,
             execute_transaction,
             select_transaction,
@@ -209,17 +263,33 @@ pub fn run() {
             rollback_transaction
         ])
         .setup(|app| {
-            let stores = app.app_handle().state::<StoreCollection<Wry>>();
+            let app_handle = app.app_handle();
 
-            let launch_visible =
-                with_store(app.app_handle().clone(), stores, "config.json", |store| {
+            let stores = app_handle.state::<StoreCollection<Wry>>();
+
+            let launch_visible = with_store(
+                app.app_handle().clone(),
+                stores.clone(),
+                "config.json",
+                |store| {
                     if let Some(value) = store.get("launchVisible") {
                         if let Some(launch_visible) = value.as_bool() {
                             return Ok(launch_visible);
                         }
                     }
                     Ok(true)
-                })?;
+                },
+            )?;
+
+            let server_port =
+                with_store(app_handle.clone(), stores.clone(), "config.json", |store| {
+                    if let Some(value) = store.get("serverPort") {
+                        if let Some(server_port) = value.as_u64() {
+                            return Ok(server_port as u16);
+                        }
+                    }
+                    Ok(15785)
+                })? as u16;
 
             let title = if tauri::is_dev() {
                 "shion-dev"
@@ -263,6 +333,8 @@ pub fn run() {
                 .inner_size(1152.0, 648.0)
                 .title(title)
                 .build()?;
+
+            start_server(&app_handle, server_port);
 
             Ok(())
         })
