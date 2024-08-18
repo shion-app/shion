@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+## [0.12.0] - 2024-08-18
+
+### Added
+
+- Add hex input to the color picker component
+- Add [third-party application integration](https://shion.app/guide/api)
+- Add `Extension` built-in [Dandanplay Service](https://shion.app/guide/extension)
+
+### Changed
+
+- `Moment` **Rewrite**, provide export to markdown function ⚠️
+- Change database transaction implementation
+- Adjust `Timeline` display and behavior
+- Adjust pull history display
+
 ## [0.11.23] - 2024-08-05
 
 ### Changed
