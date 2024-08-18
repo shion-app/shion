@@ -69,7 +69,7 @@ pub async fn init(app: AppHandle, port: u16) -> std::io::Result<()> {
         }
     })
     .disable_signals()
-    .bind(("127.0.0.1", port))?
+    .bind(("0.0.0.0", port))?
     .run();
 
     stop_handle.register(server.handle());

@@ -184,14 +184,13 @@ pub fn run() {
     #[tauri::command]
     async fn restart_api_service(app_handle: AppHandle, server_port: u16) -> Result<()> {
         let old_server_port = *SERVER_PORT.lock().unwrap();
-        if old_server_port != server_port {
-            let client = reqwest::Client::builder().build()?;
-            let _ = client
-                .post(format!("http://localhost:{}/api/stop", old_server_port))
-                .send()
-                .await;
-            start_server(&app_handle, server_port);
-        }
+        let client = reqwest::Client::builder().build()?;
+        let _ = client
+            .post(format!("http://localhost:{}/api/stop", old_server_port))
+            .send()
+            .await;
+        start_server(&app_handle, server_port);
+
         let client = reqwest::Client::builder().build()?;
         let res = client
             .get(format!("http://localhost:{}/api/ping", server_port))
