@@ -47,5 +47,6 @@ In the future, Shion will explore more 🌈
 + 👀Automatically monitor program usage time (keyboard, mouse, audio)
 + 🌐Sync browser history (Google Chrome, Microsoft Edge, Firefox)
 + 🏷️Manual recording
-+ 📖Diary (🚧)
++ 📖Diary (rewrite🚧)
++ 🖥️Third-party application integration
 
