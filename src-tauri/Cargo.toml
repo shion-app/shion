@@ -53,10 +53,12 @@ path-slash = "0.2.1"
 derive_more = { version = "1", features = ["full"] }
 reqwest = "0.12.4"
 open = "5.3.0"
+sea-orm = { version = "1.1.0-rc.1", features = [ "sqlx-sqlite", "runtime-tokio-native-tls", "macros" ] }
 
 [package.metadata.bin]
 # cargo-run-bin
 parse-changelog = { version = "^0.6" }
+sea-orm-cli = { version = "1.1.0-rc.1" }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
