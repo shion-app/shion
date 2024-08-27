@@ -77,6 +77,7 @@
     "psl": "^1.9.0",
     "svg.js": "^2.7.1",
     "tauri-plugin-shion-history-api": "github:shion-app/history",
+    "tauri-plugin-shion-sql-api": "github:shion-app/sql",
     "tauri-plugin-shion-watcher-api": "github:shion-app/watcher",
     "turndown": "^7.2.0",
     "vee-validate": "^4.11.8",

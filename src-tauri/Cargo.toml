@@ -19,13 +19,13 @@ tauri = { version = "2.0.0-rc.0", features = [ "protocol-asset", "tray-icon", "d
 tauri-plugin-process = "2.0.0-rc.0"
 tauri-plugin-fs = "2.0.0-rc.0"
 tauri-plugin-shell = "2.0.0-rc.0"
-tauri-plugin-sql = { version = "2.0.0-rc.0", features = ["sqlite"] }
 tauri-plugin-store = "2.0.0-rc.0"
 tauri-plugin-log = "2.0.0-rc.0"
 tauri-plugin-dialog = "2.0.0-rc.0"
 tauri-plugin-clipboard-manager = "2.1.0-beta"
 tauri-plugin-shion-watcher = { git = "https://github.com/shion-app/watcher" }
 tauri-plugin-shion-history = { git = "https://github.com/shion-app/history" }
+tauri-plugin-shion-sql = { git = "https://github.com/shion-app/sql" }
 tauri-plugin-autostart = "2.0.0-rc.0"
 tauri-plugin-single-instance = "2.0.0-rc.0"
 tauri-plugin-updater = "2.0.0-rc.0"
@@ -37,10 +37,6 @@ anyhow = "1"
 zip = "0.6"
 zip-extensions = "0.6"
 runas = "1.2.0"
-indexmap = "2.2.6"
-sqlx = "0.8"
-tokio = { version = "1.37", features = ["full"] }
-time = "0.3.36"
 jsonwebtoken = "9"
 actix-web = "4.9.0"
 actix-cors = "0.7.0"

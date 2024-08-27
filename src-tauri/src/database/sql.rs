@@ -1,4 +1,9 @@
-use sqlx::{query, Pool, Sqlite};
+use sea_orm::{
+    ActiveModelTrait, ActiveValue::Set, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter,
+};
+use tauri_plugin_shion_sql::Result;
+
+use super::models::{prelude::*, program, remark};
 
 pub struct InsertRemark {
     pub title: String,
@@ -8,34 +13,22 @@ pub struct InsertRemark {
     pub time: i64,
 }
 
-#[derive(sqlx::FromRow)]
-pub struct Program {
-    pub id: i64,
-    pub name: String,
-    pub color: String,
-    pub path: String,
-    pub icon: String,
-    pub platform: String,
-    pub sort: i64,
-    pub deleted_at: i64,
-    pub created_at: i64,
-    pub updated_at: i64,
-}
-
-pub async fn create_remark(db: &Pool<Sqlite>, remark: InsertRemark) -> sqlx::Result<()> {
-    query("INSERT INTO remark (title, desc, arg, program_id, time) VALUES (?, ?, ?, ?, ?)")
-        .bind(remark.title)
-        .bind(remark.desc)
-        .bind(remark.arg)
-        .bind(remark.program_id)
-        .bind(remark.time)
-        .execute(db)
-        .await?;
+pub async fn create_remark(db: &DatabaseConnection, data: InsertRemark) -> Result<()> {
+    let model = remark::ActiveModel {
+        title: Set(data.title),
+        desc: Set(data.desc),
+        arg: Set(data.arg),
+        program_id: Set(data.program_id),
+        time: Set(data.time),
+        ..Default::default()
+    };
+    model.insert(db).await?;
     Ok(())
 }
 
-pub async fn select_program_list(db: &Pool<Sqlite>) -> sqlx::Result<Vec<Program>> {
-    sqlx::query_as::<_, Program>("SELECT * FROM program WHERE deleted_at = 0")
-        .fetch_all(db)
-        .await
+pub async fn select_program_list(db: &DatabaseConnection) -> Result<Vec<program::Model>> {
+    Ok(Program::find()
+        .filter(program::Column::DeletedAt.eq(0))
+        .all(db)
+        .await?)
 }

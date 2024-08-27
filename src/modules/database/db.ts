@@ -11,12 +11,12 @@ import {
   SqliteIntrospector,
   SqliteQueryCompiler,
 } from 'kysely'
-import type { QueryResult } from '@tauri-apps/plugin-sql'
-import type Database from '@tauri-apps/plugin-sql'
 import camelcaseKeys from 'camelcase-keys'
 import { camelCase } from 'camel-case'
 import type { Emitter, EventType } from 'mitt'
 import mitt from 'mitt'
+import type { QueryResult } from 'tauri-plugin-shion-sql-api'
+import type Database from 'tauri-plugin-shion-sql-api'
 
 import type { DB } from './transform-types'
 import { Program } from './models/program'
@@ -31,7 +31,8 @@ import { Link } from './models/link'
 import { History } from './models/history'
 import { Domain } from './models/domain'
 import { Remark } from './models/remark'
-export type { QueryResult } from '@tauri-apps/plugin-sql'
+
+export type { QueryResult } from 'tauri-plugin-shion-sql-api'
 
 type IsSelectQueryBuilder<T> = T extends SelectQueryBuilder<any, any, any> ? true : false
 type IsTransactionQueryBuilder<T> = T extends TransactionQueryBuilder<any, any> ? true : false
@@ -116,7 +117,7 @@ function createKyselyDatabase<D, U extends Record<string, object>>(executor: Dat
                   const CompiledQuery = query.compile()
 
                   if (query instanceof TransactionQueryBuilder)
-                    return this.#beginTransaction(CompiledQuery as any)
+                    return this.#transaction(CompiledQuery as any)
 
                   if (__getFlag) {
                     const result = this._select(CompiledQuery)
@@ -185,9 +186,9 @@ function createKyselyDatabase<D, U extends Record<string, object>>(executor: Dat
       }
     }
 
-    async #beginTransaction(callback: (trx) => Promise<unknown>) {
+    async #transaction(callback: (trx) => Promise<unknown>) {
       const transaction = new Transaction(this._executor, models, this.#emitter)
-      return await this._executor.begin(() => callback(transaction))
+      return await this._executor.transaction(() => callback(transaction))
     }
 
     close() {
@@ -296,13 +297,11 @@ export class DatabaseError extends Error {
   }
 }
 
-export type DatabaseExecutor<T> = Pick<Database, 'execute' | 'select' | 'close'> & {
+export type DatabaseExecutor<T> = Pick<Database, 'execute' | 'select' | 'close' | 'executeTransaction' | 'selectTransaction'> & {
   database: T
   handleError(err: unknown): DatabaseError
   load(): Promise<void>
-  begin(cb: () => Promise<unknown>): Promise<unknown>
-  executeTransaction(query: string, bindValues?: unknown[]): Promise<QueryResult>
-  selectTransaction<S>(query: string, bindValues?: unknown[]): Promise<S>
+  transaction(cb: () => Promise<unknown>): Promise<unknown>
 }
 
 export function findSqliteMessageFields(message: string) {

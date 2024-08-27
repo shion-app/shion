@@ -20,6 +20,7 @@ use lazy_static::lazy_static;
 use parse_changelog::Changelog;
 use reqwest::StatusCode;
 use runas::Command as SudoCommand;
+use sea_orm::DatabaseConnection;
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
@@ -27,15 +28,10 @@ use tauri::{
 };
 use tauri_plugin_autostart::MacosLauncher;
 use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
-use tauri_plugin_sql::{DbInstances, Migration, MigrationKind};
+use tauri_plugin_shion_sql::{DbInstances, Migration, MigrationKind};
 use tauri_plugin_store::{with_store, StoreCollection};
 use zip_extensions::{zip_create_from_directory, zip_extract};
 
-use crate::database::command::{
-    begin_transaction, commit_transaction, execute_transaction, rollback_transaction,
-    select_transaction,
-};
-use database::command::Transaction;
 pub use error::Result;
 
 lazy_static! {
@@ -72,7 +68,7 @@ fn get_autostart_bin() -> String {
     path.to_str().unwrap().to_string()
 }
 
-pub async fn get_db(app: &AppHandle) -> sqlx::Pool<sqlx::Sqlite> {
+pub async fn get_db(app: &AppHandle) -> DatabaseConnection {
     let instances = app.state::<DbInstances>();
     let instances = instances.inner().0.lock().await;
     let db = instances.get("sqlite:data.db").unwrap();
@@ -221,7 +217,7 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(
-            tauri_plugin_sql::Builder::default()
+            tauri_plugin_shion_sql::init()
                 .add_migrations("sqlite:data.db", migrations)
                 .build(),
         )
@@ -262,11 +258,6 @@ pub fn run() {
             restart_api_service,
             is_api_service_active,
             open_with_detached,
-            begin_transaction,
-            execute_transaction,
-            select_transaction,
-            commit_transaction,
-            rollback_transaction
         ])
         .setup(|app| {
             let app_handle = app.app_handle();
@@ -344,7 +335,6 @@ pub fn run() {
 
             Ok(())
         })
-        .manage(Transaction::new())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -1949,12 +1949,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "finl_unicode"
-version = "1.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8fcfdc7a0362c9f4444381a9e697c79d435fe65b52a37466fc2c1184cee9edc6"
-
-[[package]]
 name = "fixedbitset"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3637,9 +3631,9 @@ dependencies = [
 
 [[package]]
 name = "num-iter"
-version = "0.1.44"
+version = "0.1.45"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d869c01cc0c455284163fd0092f1f93835385ccab5a98a0dcc497b2f8bf055a9"
+checksum = "1429034a0490724d0075ebb2bc9e875d6503c3cf69e235a8941aa757d83ef5bf"
 dependencies = [
  "autocfg",
  "num-integer",
@@ -5388,7 +5382,6 @@ dependencies = [
  "dotenv",
  "dotenv_codegen",
  "futures-util",
- "indexmap 2.2.6",
  "jsonwebtoken",
  "lazy_static",
  "log",
@@ -5401,7 +5394,6 @@ dependencies = [
  "sea-orm",
  "serde",
  "serde_json",
- "sqlx",
  "sys-locale",
  "tauri",
  "tauri-build",
@@ -5413,14 +5405,12 @@ dependencies = [
  "tauri-plugin-process",
  "tauri-plugin-shell",
  "tauri-plugin-shion-history",
+ "tauri-plugin-shion-sql",
  "tauri-plugin-shion-watcher",
  "tauri-plugin-single-instance",
- "tauri-plugin-sql",
  "tauri-plugin-store",
  "tauri-plugin-updater",
  "thiserror",
- "time",
- "tokio",
  "zip 0.6.6",
  "zip-extensions",
 ]
@@ -5586,11 +5576,10 @@ dependencies = [
 
 [[package]]
 name = "sqlformat"
-version = "0.2.3"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce81b7bd7c4493975347ef60d8c7e8b742d4694f4c49f93e0a12ea263938176c"
+checksum = "f895e3734318cc55f1fe66258926c9b910c124d47520339efecbb6c59cec7c1f"
 dependencies = [
- "itertools",
  "nom",
  "unicode_categories",
 ]
@@ -5858,13 +5847,13 @@ dependencies = [
 
 [[package]]
 name = "stringprep"
-version = "0.1.4"
+version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb41d74e231a107a1b4ee36bd1214b11285b77768d2e3824aedafa988fd36ee6"
+checksum = "7b4df3d392d81bd458a8a621b8bffbd2302a12ffe288a9d931670948749463b1"
 dependencies = [
- "finl_unicode",
  "unicode-bidi",
  "unicode-normalization",
+ "unicode-properties",
 ]
 
 [[package]]
@@ -6322,6 +6311,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "tauri-plugin-shion-sql"
+version = "0.0.0"
+source = "git+https://github.com/shion-app/sql#1329be13245f50d3729f125ff4d7a837e282a673"
+dependencies = [
+ "anyhow",
+ "futures-core",
+ "indexmap 2.2.6",
+ "sea-orm",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tauri",
+ "tauri-plugin",
+ "thiserror",
+ "time",
+ "tokio",
+]
+
+[[package]]
 name = "tauri-plugin-shion-watcher"
 version = "0.0.0"
 source = "git+https://github.com/shion-app/watcher#146fd10c30a53dd98fe9621c8a6a4fa6ed85db11"
@@ -6357,25 +6365,6 @@ dependencies = [
  "thiserror",
  "windows-sys 0.52.0",
  "zbus",
-]
-
-[[package]]
-name = "tauri-plugin-sql"
-version = "2.0.0-rc.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7650c34e46756c3b5ad5986ebfa846b81ebea1ed88648a5438b2f56e33d918bf"
-dependencies = [
- "futures-core",
- "indexmap 2.2.6",
- "log",
- "serde",
- "serde_json",
- "sqlx",
- "tauri",
- "tauri-plugin",
- "thiserror",
- "time",
- "tokio",
 ]
 
 [[package]]
@@ -6653,20 +6642,8 @@ dependencies = [
  "pin-project-lite",
  "signal-hook-registry",
  "socket2",
- "tokio-macros",
  "tracing",
  "windows-sys 0.48.0",
-]
-
-[[package]]
-name = "tokio-macros"
-version = "2.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b8a1e28f2deaa14e508979454cb3a223b10b938b45af148bc0986de36f1923b"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.60",
 ]
 
 [[package]]
@@ -7005,6 +6982,12 @@ checksum = "a56d1686db2308d901306f92a263857ef59ea39678a5458e7cb17f01415101f5"
 dependencies = [
  "tinyvec",
 ]
+
+[[package]]
+name = "unicode-properties"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "52ea75f83c0137a9b98608359a5f1af8144876eb67bcb1ce837368e906a9f524"
 
 [[package]]
 name = "unicode-segmentation"

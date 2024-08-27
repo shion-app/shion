@@ -1,4 +1,2 @@
-pub mod command;
-pub mod decode;
-pub mod error;
+pub mod models;
 pub mod sql;

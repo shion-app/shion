@@ -57,7 +57,7 @@ const executor: DatabaseExecutor<Database.Database> = {
     return true
   },
   async load() { },
-  async begin() { },
+  async transaction() { },
   async executeTransaction() {
     return {
       lastInsertId: 0,

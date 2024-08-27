@@ -1,8 +1,7 @@
-import Database from '@tauri-apps/plugin-sql'
 import { error } from '@tauri-apps/plugin-log'
 import type { Insertable, SelectType, Updateable } from 'kysely'
+import Database from 'tauri-plugin-shion-sql-api'
 
-import { invoke } from '@tauri-apps/api/core'
 import type { DatabaseExecutor } from './db'
 import { DatabaseError, SqliteErrorEnum, createKyselyDatabaseWithModels, findSqliteMessageFields } from './db'
 import type { Activity, Box, Domain, History, Label, Moment, Note, Overview, Plan, Program, Remark } from './transform-types'
@@ -38,13 +37,11 @@ class Executor implements DatabaseExecutor<Database> {
     this.database = await Database.load('sqlite:data.db')
   }
 
-  async begin(cb: () => Promise<unknown>) {
-    const promise = invoke('begin_transaction', {
-      db: this.database.path,
-    })
+  async transaction(cb: () => Promise<unknown>) {
+    const promise = this.database.beginTransaction()
     try {
       const res = await cb()
-      await invoke('commit_transaction')
+      await this.database.commitTransaction()
       await promise
       return res
     }
@@ -52,35 +49,18 @@ class Executor implements DatabaseExecutor<Database> {
       error(`transaction error: ${e}`)
 
       if (await isPromisePending(promise))
-        await invoke('rollback_transaction')
+        await this.database.rollbackTransaction()
 
       throw e
     }
   }
 
-  async rollback() {
-    await invoke('rollback_transaction')
+  executeTransaction(query: string, bindValues?: unknown[] | undefined) {
+    return this.database.executeTransaction(query, bindValues)
   }
 
-  async executeTransaction(query: string, bindValues?: unknown[] | undefined) {
-    const [rowsAffected, lastInsertId] = await invoke<[number, number]>('execute_transaction', {
-      db: this.database.path,
-      query,
-      values: bindValues ?? [],
-    })
-    return {
-      lastInsertId,
-      rowsAffected,
-    }
-  }
-
-  async selectTransaction<T>(query: string, bindValues?: unknown[]): Promise<T> {
-    const result = await invoke<T>('select_transaction', {
-      db: this.database.path,
-      query,
-      values: bindValues ?? [],
-    })
-    return result
+  selectTransaction<T>(query: string, bindValues?: unknown[]): Promise<T> {
+    return this.database.selectTransaction(query, bindValues)
   }
 }
 
