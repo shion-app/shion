@@ -5,7 +5,7 @@ use std::{
 };
 
 use anyhow::anyhow;
-use chrono::DateTime;
+use chrono::{DateTime, Utc};
 use gray_matter::{engine::YAML, Matter, Pod};
 use serde::Serialize;
 
@@ -15,8 +15,8 @@ use crate::Result;
 pub struct ObsidianNote {
     name: String,
     path: String,
-    created: String,
-    updated: String,
+    created: i64,
+    updated: i64,
 }
 
 pub fn read_obsidian<P>(
@@ -50,31 +50,26 @@ where
                         .to_string();
                     let path = path.to_str().ok_or(anyhow!("invalid path"))?.to_string();
                     let metadata = entry.metadata()?;
-                    let file_created =
+
+                    let mut created =
                         metadata.created()?.duration_since(UNIX_EPOCH)?.as_millis() as i64;
-                    let file_updated =
+                    let mut updated =
                         metadata.modified()?.duration_since(UNIX_EPOCH)?.as_millis() as i64;
-
-                    let mut created = DateTime::from_timestamp_millis(file_created)
-                        .ok_or(anyhow!("timestamp error"))?
-                        .format("%Y-%m-%d %H:%M:%S")
-                        .to_string();
-
-                    let mut updated = DateTime::from_timestamp_millis(file_updated)
-                        .ok_or(anyhow!("timestamp error"))?
-                        .format("%Y-%m-%d %H:%M:%S")
-                        .to_string();
 
                     if let Some(frontmatter) = matter.parse(&content).data {
                         if let Pod::Hash(frontmatter) = frontmatter {
                             if let Some(value) = frontmatter.get(&created_key.clone()) {
                                 if let Ok(value) = value.as_string() {
-                                    created = value;
+                                    if let Ok(time) = value.parse::<DateTime<Utc>>() {
+                                        created = time.timestamp_millis();
+                                    }
                                 }
                             }
                             if let Some(value) = frontmatter.get(&updated_key.clone()) {
                                 if let Ok(value) = value.as_string() {
-                                    updated = value;
+                                    if let Ok(time) = value.parse::<DateTime<Utc>>() {
+                                        updated = time.timestamp_millis();
+                                    }
                                 }
                             }
                         }
