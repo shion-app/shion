@@ -1,10 +1,14 @@
 import { Store } from '@tauri-apps/plugin-store'
 import { onStatusChanged } from 'tauri-plugin-shion-watcher-api'
+import mergeOptions from 'merge-options'
+
 import { dandanplay as dandanplayExtension } from '@/modules/extension/dandanplay'
 
 interface Config {
-  dandanplayPort: number
-  dandanplaypath: string
+  dandanplay: {
+    port: number
+    path: string
+  }
 }
 
 const PATH = 'extension.json'
@@ -20,8 +24,10 @@ export const useExtensionStore = defineStore('extension', () => {
 
   async function init() {
     const data: Config = {
-      dandanplayPort: 0,
-      dandanplaypath: '',
+      dandanplay: {
+        port: 0,
+        path: '',
+      },
     }
     const len = await store.length()
     if (len == 0)
@@ -45,18 +51,13 @@ export const useExtensionStore = defineStore('extension', () => {
   }
 
   function update(data: Config) {
-    const temp = {}
-    for (const key in data) {
-      if (!Object.hasOwn(config.value, key))
-        temp[key] = data[key]
-    }
-    Object.assign(config.value, temp)
+    config.value = mergeOptions(data, config.value)
   }
 
   function getDandanplayInfo() {
     return {
-      port: config.value.dandanplayPort,
-      id: monitorStore.whiteList.find(i => i.path == config.value.dandanplaypath)?.id,
+      port: config.value.dandanplay.port,
+      id: monitorStore.whiteList.find(i => i.path == config.value.dandanplay.path)?.id,
     }
   }
 
@@ -88,7 +89,7 @@ export const useExtensionStore = defineStore('extension', () => {
 
   onStatusChanged((e) => {
     const { path, active } = e.payload
-    if (path != config.value.dandanplaypath)
+    if (path != config.value.dandanplay.path)
       return
 
     if (active)

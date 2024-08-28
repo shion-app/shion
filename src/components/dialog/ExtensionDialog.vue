@@ -25,7 +25,7 @@ async function openFileDialog() {
     ],
   })
   if (selected)
-    config.value.dandanplaypath = selected.path
+    config.value.dandanplay.path = selected.path
 }
 </script>
 
@@ -44,19 +44,19 @@ async function openFileDialog() {
                 <v-list-item :title="$t('extension.dandanplay.port')">
                   <template #append>
                     <v-number-input
-                      v-model="config.dandanplayPort" hide-details variant="outlined" reverse
+                      v-model="config.dandanplay.port" hide-details variant="outlined" reverse
                       density="comfortable" class="w-[200px]" control-variant="stacked" :min="0"
                     />
                   </template>
                 </v-list-item>
                 <v-list-item :title="$t('extension.dandanplay.path')">
                   <v-text-field
-                    class="w-full py-2" :model-value="config.dandanplaypath" hide-details readonly
+                    class="w-full py-2" :model-value="config.dandanplay.path" hide-details readonly
                     density="comfortable" variant="outlined" :placeholder="$t('extension.desc.dandanplay')"
                     @click="openFileDialog"
                   >
                     <v-tooltip
-                      v-if="config.dandanplaypath" :text="config.dandanplaypath" location="bottom"
+                      v-if="config.dandanplay.path" :text="config.dandanplay.path" location="bottom"
                       activator="parent"
                     />
                   </v-text-field>
