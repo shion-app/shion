@@ -54,6 +54,7 @@ declare module '@vue/runtime-core' {
     NavDrawer: typeof import('./components/nav/NavDrawer.vue')['default']
     NestedMenu: typeof import('./components/shared/NestedMenu.vue')['default']
     NotificationContainer: typeof import('./components/notification/NotificationContainer.vue')['default']
+    Obsidian: typeof import('./components/extension/Obsidian.vue')['default']
     PageLabel: typeof import('./components/page/PageLabel.vue')['default']
     PagePlan: typeof import('./components/page/PagePlan.vue')['default']
     RecentActivityPie: typeof import('./components/widget/RecentActivityPie.vue')['default']

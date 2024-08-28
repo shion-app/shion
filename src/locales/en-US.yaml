@@ -100,6 +100,7 @@ modal:
 button:
   update: Update
   remove: Remove
+  add: Add
 time:
   hour: hour
   minute: min
@@ -434,8 +435,21 @@ refresh:
 extension:
   tab:
     dandanplay: Dandanplay
+    obsidian: Obsidian
   dandanplay:
     port: Port
     path: Path
+  obsidian:
+    workspace: Vault
+    created: created
+    updated: updated
   desc:
     dandanplay: Click to select the exe file
+    obsidian:
+      workspace: Add the folder to which the vault belongs
+      created: Extract creation time from frontmatter
+      updated: Extract update time from frontmatter
+  tip:
+    obsidian:
+      duplicate: Cannot add repeatedly
+      invalid: This folder is not a obsidian vault

@@ -9,6 +9,11 @@ interface Config {
     port: number
     path: string
   }
+  obsidian: {
+    workspace: string[]
+    created: string
+    updated: string
+  }
 }
 
 const PATH = 'extension.json'
@@ -27,6 +32,11 @@ export const useExtensionStore = defineStore('extension', () => {
       dandanplay: {
         port: 0,
         path: '',
+      },
+      obsidian: {
+        workspace: [],
+        created: 'created',
+        updated: 'updated',
       },
     }
     const len = await store.length()

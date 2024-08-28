@@ -100,6 +100,7 @@ modal:
 button:
   update: 更改
   remove: 删除
+  add: 新增
 time:
   hour: 小时
   minute: 分钟
@@ -434,8 +435,21 @@ refresh:
 extension:
   tab:
     dandanplay: 弹弹play
+    obsidian: obsidian
   dandanplay:
     port: 端口号
     path: 路径
+  obsidian:
+    workspace: 仓库
+    created: 创建时间
+    updated: 更新时间
   desc:
     dandanplay: 点击选择exe文件
+    obsidian:
+      workspace: 添加仓库所属的文件夹
+      created: 从文档属性中的属性提取创建时间
+      updated: 从文档属性中的属性提取更新时间
+  tip:
+    obsidian:
+      duplicate: 不能重复添加
+      invalid: 该文件夹不是obsidian仓库

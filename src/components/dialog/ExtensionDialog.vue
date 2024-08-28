@@ -34,6 +34,7 @@ async function openFileDialog() {
     <v-card-text class="h-[400px] flex">
       <v-tabs v-model="tab" color="primary" direction="vertical" class="w-[130px] py-2">
         <v-tab :text="$t('extension.tab.dandanplay')" value="dandanplay" />
+        <v-tab :text="$t('extension.tab.obsidian')" value="obsidian" />
       </v-tabs>
 
       <v-tabs-window v-model="tab" class="overflow-y-auto!" w-full>
@@ -65,6 +66,7 @@ async function openFileDialog() {
             </v-card-text>
           </v-card>
         </v-tabs-window-item>
+        <obsidian />
       </v-tabs-window>
     </v-card-text>
   </advanced-dialog>

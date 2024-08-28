@@ -52,6 +52,14 @@
         }
       ]
     },
+    {
+      "identifier": "fs:allow-read-dir",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
     "log:allow-log",
     "process:allow-restart",
     "process:allow-exit",
