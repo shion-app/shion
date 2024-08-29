@@ -3,6 +3,7 @@ import SVG from 'svg.js'
 
 import type { TimeLineNode, TimeLineNodeGraphData } from '@/interfaces'
 import type { SelectActivity, SelectHistory, SelectNote, SelectRemark } from '@/modules/database'
+import type { ObsidianNote } from '@/hooks/useObsidian'
 
 interface GraphItem extends TimeLineNodeGraphData {
   color: string
@@ -250,6 +251,10 @@ function isHistory(type: string, raw: unknown): raw is SelectHistory {
 function isRemark(type: string, raw: unknown): raw is SelectRemark {
   return type == 'remark'
 }
+
+function isMoment(type: string, raw: unknown): raw is ObsidianNote {
+  return type == 'moment'
+}
 </script>
 
 <template>
@@ -273,6 +278,7 @@ function isRemark(type: string, raw: unknown): raw is SelectRemark {
           <timeline-note v-else-if="isNote(type, raw)" v-bind="graphItemAttrs" :data="common" :raw="raw" />
           <timeline-history v-else-if="isHistory(type, raw)" v-bind="graphItemAttrs" :data="common" :raw="raw" />
           <timeline-remark v-else-if="isRemark(type, raw)" v-bind="graphItemAttrs" :data="common" :raw="raw" />
+          <timeline-moment v-else-if="isMoment(type, raw)" v-bind="graphItemAttrs" :data="common" :raw="raw" />
         </div>
       </div>
     </div>

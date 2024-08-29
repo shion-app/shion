@@ -230,6 +230,7 @@ timeline:
   label: Label
   monitor: Monitor
   history: History
+  moment: Moment
   filter: Filter Categories
   reset: Reset Filter condition
 timelineGraph:
@@ -248,6 +249,8 @@ timelineGraph:
     compress: Need to expand the group first
     tooltip: Click to open the software
     wait: Now opening the software
+  moment:
+    tooltip: Click to open the software
 upload:
   webImage: Unsupported image types filtered
   webVideo: Unsupported video types filtered

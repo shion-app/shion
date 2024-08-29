@@ -1,3 +1,4 @@
+import type { ObsidianNote } from '@/hooks/useObsidian'
 import type { SelectActivity, SelectHistory, SelectNote, SelectRemark } from '@/modules/database'
 
 export type Replace<T, U extends { [K in keyof T]?: unknown }> = {
@@ -10,8 +11,8 @@ export interface TimeLineNode {
   title: string
   color: string
   children?: TimeLineNodeItem[]
-  type: 'note' | 'activity' | 'history' | 'remark'
-  raw: SelectNote | SelectActivity | SelectHistory | SelectRemark
+  type: 'note' | 'activity' | 'history' | 'remark' | 'moment'
+  raw: SelectNote | SelectActivity | SelectHistory | SelectRemark | ObsidianNote
 }
 
 export interface TimeLineNodeItem {

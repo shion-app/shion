@@ -75,6 +75,7 @@ declare module '@vue/runtime-core' {
     TimelineFilter: typeof import('./components/timeline/TimelineFilter.vue')['default']
     TimelineGraph: typeof import('./components/timeline/graph/TimelineGraph.vue')['default']
     TimelineHistory: typeof import('./components/timeline/graph/TimelineHistory.vue')['default']
+    TimelineMoment: typeof import('./components/timeline/graph/TimelineMoment.vue')['default']
     TimelineNote: typeof import('./components/timeline/graph/TimelineNote.vue')['default']
     TimelineRemark: typeof import('./components/timeline/graph/TimelineRemark.vue')['default']
     TimerFloat: typeof import('./components/timer/TimerFloat.vue')['default']

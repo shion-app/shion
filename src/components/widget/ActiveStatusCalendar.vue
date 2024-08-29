@@ -4,13 +4,7 @@ import { addDays, getDay, isBefore, isSameDay, isSameYear } from 'date-fns'
 import colors from 'vuetify/util/colors'
 
 import { invoke } from '@tauri-apps/api/core'
-
-interface ObsidianNote {
-  name: string
-  path: string
-  created: number
-  updated: number
-}
+import type { ObsidianNote } from '@/hooks/useObsidian'
 
 interface DailyStatus {
   total: number
@@ -28,13 +22,12 @@ const props = defineProps<{
 const { selectedDate: selectedDateVModel } = useVModels(props)
 
 const configStore = useConfigStore()
-const extensionStore = useExtensionStore()
 
 const { format, formatHHmmss } = useDateFns()
 const { position } = useEcharts()
+const { getList: getObsidianNoteList } = useObsidian()
 
 const { config } = storeToRefs(configStore)
-const { config: extensionConfig } = storeToRefs(extensionStore)
 
 const momentList = ref<Array<ObsidianNote>>([])
 
@@ -147,7 +140,7 @@ const option = computed<EChartsOption>(() => {
           name, total, color,
         }) => `<div style="display: flex; align-items: center;">${buildMarker(color)}<span style="margin-left: 6px;" class="text-ellipsis overflow-hidden">${name}</span><div style="min-width: 40px; flex-grow: 1;"></div><span>${formatHHmmss(total)}</span></div>`).join('')
 
-        const momentDetailTemplate = momentDetail.map(({ name }) => `<div style="display: flex; align-items: center;">${buildMarker(config.value.themeColor)}<span style="margin-left: 6px;" class="text-ellipsis overflow-hidden">${name}</span><div style="min-width: 40px; flex-grow: 1;"></div></div>`).join('')
+        const momentDetailTemplate = momentDetail.map(({ name, color }) => `<div style="display: flex; align-items: center;">${buildMarker(color)}<span style="margin-left: 6px;" class="text-ellipsis overflow-hidden">${name}</span><div style="min-width: 40px; flex-grow: 1;"></div></div>`).join('')
 
         return `<div style="margin-bottom: 6px;">
                   <span>${dateText}</span>
@@ -173,24 +166,18 @@ const option = computed<EChartsOption>(() => {
 })
 
 async function init() {
-  [dailyStatusMap.value, momentList.value] = await Promise.all([getDailyStatusMap(), getObsidianNoteList()])
+  const [start, end] = range.map(date => date.getTime());
+  [dailyStatusMap.value, momentList.value] = await Promise.all([
+    getDailyStatusMap(start, end),
+    getObsidianNoteList(start, end),
+  ])
 }
 
-async function getDailyStatusMap() {
-  const [start, end] = range.map(date => date.getTime())
+async function getDailyStatusMap(start: number, end: number) {
   return new Map(Object.entries(await invoke<Record<string, DailyStatus>>('get_active_status_calendar_map', {
     start,
     end,
   })))
-}
-
-async function getObsidianNoteList() {
-  return (await Promise.all(extensionConfig.value.obsidian.workspace.map(path =>
-    invoke<Array<ObsidianNote>>('read_obsidian', {
-      path,
-      createdKey: extensionConfig.value.obsidian.created,
-      updatedKey: extensionConfig.value.obsidian.updated,
-    })))).flat()
 }
 
 function handleClick(params) {

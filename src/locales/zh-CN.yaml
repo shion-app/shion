@@ -230,6 +230,7 @@ timeline:
   label: 标签
   monitor: 监听
   history: 历史记录
+  moment: 瞬间
   filter: 筛选类别
   reset: 重置筛选条件
 timelineGraph:
@@ -248,6 +249,8 @@ timelineGraph:
     compress: 需要先展开分组
     tooltip: 点击打开软件
     wait: 正在打开软件
+  moment:
+    tooltip: 点击打开笔记
 upload:
   webImage: 已过滤不支持的图片类型
   webVideo: 已过滤不支持的视频类型

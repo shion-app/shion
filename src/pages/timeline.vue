@@ -12,6 +12,7 @@ import TimelineGraph from '@/components/timeline/graph/TimelineGraph.vue'
 import TimelineFilter from '@/components/timeline/TimelineFilter.vue'
 import { timelineProvide } from '@/components/timeline/inject'
 import type { StepCounter } from '@/utils'
+import type { ObsidianNote } from '@/hooks/useObsidian'
 
 type computedTimeLineNode = TimeLineNode & { compressGroupId: string }
 type TimelineGraphExposed = ComponentExposed<typeof TimelineGraph>
@@ -25,6 +26,7 @@ const { format } = useDateFns()
 const route = useRoute()
 const { onRefresh } = usePageRefresh()
 const { success } = useNotify()
+const { getList: getObsidianNoteList } = useObsidian()
 
 const { config } = storeToRefs(configStore)
 
@@ -34,6 +36,7 @@ const noteList = ref<Array<SelectNote>>([])
 const activityList = ref<Array<SelectActivity>>([])
 const historyList = ref<Array<SelectHistory>>([])
 const remarkList = ref<Array<SelectRemark>>([])
+const momentList = ref<Array<ObsidianNote>>([])
 const date = ref(new Date())
 const filterCategory = ref(route.query.category as Filter['category'])
 const filterTargetId = ref<Filter['id']>(route.query.id ? Number(route.query.id) : undefined)
@@ -165,6 +168,15 @@ const list = computed(() => {
           type: 'remark',
           raw: i,
         })),
+        ...momentList.value.map<computedTimeLineNode>(i => ({
+          start: i.created,
+          end: i.created,
+          title: i.name,
+          color: i.color,
+          compressGroupId: i.path,
+          type: 'moment',
+          raw: i,
+        })),
       ]
   // i.end == i.start history两者相同
   const data = list.filter(i => i.end == i.start || i.end - i.start > calcDuration(config.value.timelineMinMinute, 'minute')).sort((a, b) => a.start - b.start)
@@ -174,7 +186,7 @@ const list = computed(() => {
 async function refresh(pullHistory = true) {
   const start = startOfDay(date.value).getTime()
   const end = endOfDay(date.value).getTime()
-  const [_noteList, _activityList, _remarkList, _historyList] = await Promise.all([
+  const [_noteList, _activityList, _remarkList, _historyList, _momentList] = await Promise.all([
     db.note.select({
       start,
       end,
@@ -191,17 +203,20 @@ async function refresh(pullHistory = true) {
       start,
       end,
     }),
+    getObsidianNoteList(start, end),
   ])
   const counter = randomStep([
     ..._noteList.flatMap(i => [i.start, i.end]),
     ..._activityList.flatMap(i => [i.start, i.end]),
     ..._historyList.map(i => i.lastVisited),
     ..._remarkList.map(i => i.time),
+    ..._momentList.map(i => i.created),
   ])
   noteList.value = deduplicateTimeRange(_noteList, counter)
   activityList.value = deduplicateTimeRange(_activityList, counter)
   historyList.value = deduplicateHistory(_historyList, counter)
   remarkList.value = deduplicateRemark(_remarkList, counter)
+  momentList.value = deduplicateMoment(_momentList, counter)
 
   if (pullHistory) {
     const count = await pullActiveBrowsers()
@@ -259,6 +274,13 @@ function deduplicateRemark(list: Array<SelectRemark>, counter: StepCounter) {
   return list.map(item => ({
     ...item,
     time: counter.get(item.time),
+  }))
+}
+
+function deduplicateMoment(list: Array<ObsidianNote>, counter: StepCounter) {
+  return list.map(item => ({
+    ...item,
+    created: counter.get(item.created),
   }))
 }
 
