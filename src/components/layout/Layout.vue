@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const { xs, sm } = useTailwindBreakpoints()
+const configStore = useConfigStore()
+
+const { ready } = storeToRefs(configStore)
 </script>
 
 <template>
@@ -7,24 +9,18 @@ const { xs, sm } = useTailwindBreakpoints()
     <layout-header>
       <title-bar />
     </layout-header>
-    <layout-nav v-if="sm">
+    <layout-nav>
       <nav-action nav-text vertical>
-        <more-menu-button v-if="isDesktop" />
+        <more-menu-button />
       </nav-action>
     </layout-nav>
     <layout-main>
       <router-view v-slot="{ Component }">
-        <component :is="Component" />
+        <component :is="Component" v-if="ready" />
       </router-view>
-      <div v-if="isMobile" fixed bottom-24 left-0 right-0 mx-4 flex items-center>
-        <timer-float />
-        <div flex-1 />
-        <more-menu-fab />
-      </div>
     </layout-main>
     <layout-footer>
-      <nav-action v-if="xs" />
-      <status-bar v-else />
+      <status-bar />
     </layout-footer>
   </layout-provider>
 </template>
