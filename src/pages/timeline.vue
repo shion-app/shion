@@ -130,13 +130,13 @@ const list = computed(() => {
         ),
         ...(filterCategory.value == 'moment'
           ? momentList.value
-            .filter(i => typeof filterTargetId.value == 'number' ? i.group_id == filterTargetId.value : true)
+            .filter(i => typeof filterTargetId.value == 'number' ? i.groupId == filterTargetId.value : true)
             .map<computedTimeLineNode>(i => ({
               start: i.created,
               end: i.created,
               title: i.name,
               color: i.color,
-              compressGroupId: `moment-${i.group_id}`,
+              compressGroupId: `moment-${i.groupId}`,
               type: 'moment',
               raw: i,
             }))
@@ -187,7 +187,7 @@ const list = computed(() => {
           end: i.created,
           title: i.name,
           color: i.color,
-          compressGroupId: `moment-${i.group_id}`,
+          compressGroupId: `moment-${i.groupId}`,
           type: 'moment',
           raw: i,
         })),

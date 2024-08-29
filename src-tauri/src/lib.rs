@@ -231,8 +231,9 @@ pub fn run() {
         updated_key: String,
         start: i64,
         end: i64,
+        group_id: Option<u32>,
     ) -> Result<Vec<ObsidianNote>> {
-        util::read_obsidian(path, created_key, updated_key, start, end)
+        util::read_obsidian(path, created_key, updated_key, start, end, group_id)
     }
 
     #[tauri::command]

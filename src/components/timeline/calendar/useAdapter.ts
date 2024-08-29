@@ -136,7 +136,7 @@ export function useAdapter() {
   }
 
   const momentAdapter: CalendarStatusAdapter = async (start, end, id) => {
-    return calcCount((await getObsidianNoteList(start, end)).filter(i => i.group_id == id).map(i => ({
+    return calcCount((await getObsidianNoteList(start, end, id)).map(i => ({
       time: i.created,
     })))
   }

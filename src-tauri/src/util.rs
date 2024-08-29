@@ -13,19 +13,20 @@ use serde::Serialize;
 use crate::Result;
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct ObsidianNote {
     name: String,
     path: String,
     created: i64,
     updated: i64,
     group: String,
-    group_id: u64,
+    group_id: u32,
 }
 
 #[derive(Serialize, Debug)]
 pub struct ObsidianGroup {
     name: String,
-    id: u64,
+    id: u32,
 }
 
 pub fn read_obsidian<P>(
@@ -34,6 +35,7 @@ pub fn read_obsidian<P>(
     updated_key: String,
     start: i64,
     end: i64,
+    group_id: Option<u32>,
 ) -> Result<Vec<ObsidianNote>>
 where
     P: AsRef<Path>,
@@ -90,14 +92,22 @@ where
                                 let path =
                                     path.to_str().ok_or(anyhow!("invalid path"))?.to_string();
                                 let group = format!("{}/{}", workspace, group_name.clone());
-                                list.push(ObsidianNote {
-                                    name,
-                                    path,
-                                    created,
-                                    updated,
-                                    group: group.clone(),
-                                    group_id: text_to_hash(group.clone()),
-                                })
+                                let current_group_id = text_to_hash(group.clone());
+                                let insert = if let Some(group_id) = group_id {
+                                    group_id == current_group_id
+                                } else {
+                                    true
+                                };
+                                if insert {
+                                    list.push(ObsidianNote {
+                                        name,
+                                        path,
+                                        created,
+                                        updated,
+                                        group: group.clone(),
+                                        group_id: current_group_id,
+                                    })
+                                }
                             }
                         }
                     }
@@ -108,10 +118,10 @@ where
     Ok(list)
 }
 
-fn text_to_hash(text: String) -> u64 {
+fn text_to_hash(text: String) -> u32 {
     let mut hasher = DefaultHasher::new();
     text.hash(&mut hasher);
-    hasher.finish()
+    hasher.finish() as u32
 }
 
 fn file_stem<P>(path: P) -> Result<String>

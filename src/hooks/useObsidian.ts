@@ -10,7 +10,7 @@ interface ObsidianNoteResult {
   created: number
   updated: number
   group: string
-  group_id: number
+  groupId: number
 }
 
 export interface ObsidianGroup {
@@ -24,7 +24,7 @@ export function useObsidian() {
   const { config } = storeToRefs(configStore)
   const { config: extensionConfig } = storeToRefs(extensionStore)
 
-  async function getList(start: number, end: number): Promise<Array<ObsidianNote>> {
+  async function getList(start: number, end: number, groupId?: number): Promise<Array<ObsidianNote>> {
     return (await Promise.all(extensionConfig.value.obsidian.workspace.map(path =>
       invoke<Array<ObsidianNoteResult>>('read_obsidian', {
         path,
@@ -32,6 +32,7 @@ export function useObsidian() {
         updatedKey: extensionConfig.value.obsidian.updated,
         start,
         end,
+        groupId,
       })))).flat().map(i => ({
       ...i,
       color: config.value.themeColor,
