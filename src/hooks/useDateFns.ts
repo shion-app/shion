@@ -3,12 +3,12 @@ import { format as _format, formatDuration as _formatDuration, isSameYear } from
 
 export function useDateFns() {
   const { locale: l } = useI18n()
-  const locale = l.value == 'zh-CN' ? zhCN : enUS
+  const locale = computed(() => l.value == 'zh-CN' ? zhCN : enUS)
 
   const format: typeof _format = (...args) => {
     const [date, format, options] = args
     return _format(date, format, {
-      locale,
+      locale: locale.value,
       ...options,
     },
     )
@@ -17,7 +17,7 @@ export function useDateFns() {
   const formatDuration: typeof _formatDuration = (...args) => {
     const [duration, options] = args
     return _formatDuration(duration, {
-      locale,
+      locale: locale.value,
       zero: true,
       ...options,
     },
