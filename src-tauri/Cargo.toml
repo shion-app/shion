@@ -51,6 +51,7 @@ reqwest = "0.12.4"
 open = "5.3.0"
 sea-orm = { version = "1.1.0-rc.1", features = [ "sqlx-sqlite", "runtime-tokio-native-tls", "macros" ] }
 gray_matter = "0.2.8"
+now = "0.1"
 
 [package.metadata.bin]
 # cargo-run-bin

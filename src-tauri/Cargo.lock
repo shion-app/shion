@@ -3594,6 +3594,15 @@ version = "0.1.0"
 source = "git+https://github.com/urholaukkarinen/notify-thread.git#babe494889f65542500261d2fe394e95a072954a"
 
 [[package]]
+name = "now"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6d89e9874397a1f0a52fc1f197a8effd9735223cb2390e9dcc83ac6cd02923d0"
+dependencies = [
+ "chrono",
+]
+
+[[package]]
 name = "nu-ansi-term"
 version = "0.46.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5413,6 +5422,7 @@ dependencies = [
  "jsonwebtoken",
  "lazy_static",
  "log",
+ "now",
  "open",
  "parse-changelog",
  "path-slash",

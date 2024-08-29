@@ -24,6 +24,12 @@ pub enum Error {
 
     #[error(transparent)]
     Reqwest(#[from] reqwest::Error),
+
+    #[error(transparent)]
+    Sql(#[from] tauri_plugin_shion_sql::Error),
+
+    #[error(transparent)]
+    SystemTime(#[from] std::time::SystemTimeError),
 }
 
 impl Serialize for Error {

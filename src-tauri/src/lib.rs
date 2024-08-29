@@ -5,6 +5,7 @@ mod autostart;
 mod database;
 mod error;
 mod server;
+mod util;
 
 use std::{
     collections::HashMap,
@@ -16,6 +17,7 @@ use std::{
 };
 
 use anyhow::anyhow;
+use database::{service, service::DailyStatus};
 use lazy_static::lazy_static;
 use parse_changelog::Changelog;
 use reqwest::StatusCode;
@@ -30,6 +32,7 @@ use tauri_plugin_autostart::MacosLauncher;
 use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
 use tauri_plugin_shion_sql::{DbInstances, Migration, MigrationKind};
 use tauri_plugin_store::{with_store, StoreCollection};
+use util::ObsidianNote;
 use zip_extensions::{zip_create_from_directory, zip_extract};
 
 pub use error::Result;
@@ -211,6 +214,25 @@ pub fn run() {
         Ok(open::with_detached(arg, path)?)
     }
 
+    #[tauri::command]
+    async fn get_active_status_calendar_map(
+        app: tauri::AppHandle,
+        start: i64,
+        end: i64,
+    ) -> Result<HashMap<String, DailyStatus>> {
+        let db = get_db(&app).await;
+        Ok(service::get_active_status_calendar_map(&db, start, end).await?)
+    }
+
+    #[tauri::command]
+    fn read_obsidian(
+        path: String,
+        created_key: String,
+        updated_key: String,
+    ) -> Result<Vec<ObsidianNote>> {
+        util::read_obsidian(path, created_key, updated_key)
+    }
+
     tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_fs::init())
@@ -258,6 +280,8 @@ pub fn run() {
             restart_api_service,
             is_api_service_active,
             open_with_detached,
+            get_active_status_calendar_map,
+            read_obsidian,
         ])
         .setup(|app| {
             let app_handle = app.app_handle();
