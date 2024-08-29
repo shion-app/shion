@@ -22,12 +22,14 @@ const props = defineProps<{
 const { selectedDate: selectedDateVModel } = useVModels(props)
 
 const configStore = useConfigStore()
+const extensionStore = useExtensionStore()
 
 const { format, formatHHmmss } = useDateFns()
 const { position } = useEcharts()
 const { getList: getObsidianNoteList } = useObsidian()
 
 const { config } = storeToRefs(configStore)
+const { ready: isExtensionReady } = storeToRefs(extensionStore)
 
 const momentList = ref<Array<ObsidianNote>>([])
 
@@ -166,11 +168,8 @@ const option = computed<EChartsOption>(() => {
 })
 
 async function init() {
-  const [start, end] = range.map(date => date.getTime());
-  [dailyStatusMap.value, momentList.value] = await Promise.all([
-    getDailyStatusMap(start, end),
-    getObsidianNoteList(start, end),
-  ])
+  const [start, end] = range.map(date => date.getTime())
+  dailyStatusMap.value = await getDailyStatusMap(start, end)
 }
 
 async function getDailyStatusMap(start: number, end: number) {
@@ -186,6 +185,13 @@ function handleClick(params) {
 }
 
 init()
+
+whenever(isExtensionReady, async () => {
+  const [start, end] = range.map(date => date.getTime())
+  momentList.value = await getObsidianNoteList(start, end)
+}, {
+  immediate: true,
+})
 </script>
 
 <template>

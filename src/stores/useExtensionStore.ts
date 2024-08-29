@@ -22,29 +22,29 @@ export const useExtensionStore = defineStore('extension', () => {
   const monitorStore = useMonitorStore()
 
   const store = new Store(PATH)
-  const config = ref({} as Config)
+  const defaultConfig = {
+    dandanplay: {
+      port: 0,
+      path: '',
+    },
+    obsidian: {
+      workspace: [],
+      created: 'created',
+      updated: 'updated',
+    },
+  }
+  const config = ref<Config>(mergeOptions({}, defaultConfig))
   const ready = ref(false)
 
   const dandanplay = dandanplayExtension()
 
   async function init() {
-    const data: Config = {
-      dandanplay: {
-        port: 0,
-        path: '',
-      },
-      obsidian: {
-        workspace: [],
-        created: 'created',
-        updated: 'updated',
-      },
-    }
     const len = await store.length()
     if (len == 0)
-      await create(data)
+      await create(defaultConfig)
 
     await read()
-    update(data)
+    update(defaultConfig)
 
     ready.value = true
   }

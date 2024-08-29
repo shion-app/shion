@@ -1,7 +1,7 @@
 use std::{
     fs::{read_dir, read_to_string},
     hash::{DefaultHasher, Hash, Hasher},
-    path::{Path, PathBuf},
+    path::Path,
     time::UNIX_EPOCH,
 };
 
