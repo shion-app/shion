@@ -109,7 +109,8 @@ calendar:
   month: 月
   switch: 切换到{mode}
   tooltip:
-    count: '{count}次'
+    visit: '{visit}次'
+    count: '{count}篇'
 tray:
   quit: 退出
 updater:
@@ -438,7 +439,7 @@ refresh:
 extension:
   tab:
     dandanplay: 弹弹play
-    obsidian: obsidian
+    obsidian: Obsidian
   dandanplay:
     port: 端口号
     path: 路径
@@ -450,8 +451,8 @@ extension:
     dandanplay: 点击选择exe文件
     obsidian:
       workspace: 添加仓库所属的文件夹
-      created: 从文档属性中的属性提取创建时间
-      updated: 从文档属性中的属性提取更新时间
+      created: 从文档属性中提取创建时间
+      updated: 从文档属性中提取更新时间
   tip:
     obsidian:
       duplicate: 不能重复添加

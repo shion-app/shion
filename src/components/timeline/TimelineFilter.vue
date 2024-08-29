@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Filter } from './types'
+import type { ObsidianGroup } from '@/hooks/useObsidian'
 import { db } from '@/modules/database'
 import type { SelectDomain, SelectLabel, SelectPlan, SelectProgram } from '@/modules/database'
 
@@ -13,6 +14,7 @@ const props = defineProps<Filter>()
 const { category: categoryVModel, id: idVModel } = useVModels(props)
 
 const { t } = useI18n()
+const { getGroupList: getObsidianGroupList } = useObsidian()
 
 const statusBarText = ref('')
 
@@ -33,16 +35,21 @@ const categoryOptions = computed(() => [
     title: t('timeline.history'),
     value: 'history',
   },
+  {
+    title: t('timeline.moment'),
+    value: 'moment',
+  },
 ])
 
 async function setModalValue() {
-  const [planList, labelList, programList, domainList] = await Promise.all([
+  const [planList, labelList, programList, domainList, momentList] = await Promise.all([
     db.plan.select(),
     db.label.select(),
     db.program.select(),
     db.domain.select(),
+    getObsidianGroupList(),
   ])
-  return { planList, labelList, programList, domainList }
+  return { planList, labelList, programList, domainList, momentList }
 }
 
 function getCategoryItemOptions(data: {
@@ -50,8 +57,9 @@ function getCategoryItemOptions(data: {
   labelList?: Array<SelectLabel>
   programList?: Array<SelectProgram>
   domainList?: Array<SelectDomain>
+  momentList?: Array<ObsidianGroup>
 }, category: Filter['category']) {
-  const { planList, labelList, programList, domainList } = data
+  const { planList, labelList, programList, domainList, momentList } = data
   let list: Array<{ id: number; name: string }> = []
   switch (category) {
     case 'plan':
@@ -66,6 +74,9 @@ function getCategoryItemOptions(data: {
     case 'history':
       list = domainList || []
       break
+    case 'moment':
+      list = momentList || []
+      break
   }
   return list.map(i => ({
     title: i.name,
@@ -78,6 +89,7 @@ const { open, close, setModelValue } = useFormModal<Filter, {
   labelList: Array<SelectLabel>
   programList: Array<SelectProgram>
   domainList: Array<SelectDomain>
+  momentList: Array<ObsidianGroup>
 }>(
   (model, modal) => {
     const categoryItemOptions = getCategoryItemOptions(modal, model.category)

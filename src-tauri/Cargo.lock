@@ -1438,6 +1438,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "dateparser"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c2ef451feee09ae5ecd8a02e738bd9adee9266b8fa9b44e22d3ce968d8694238"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "lazy_static",
+ "regex",
+]
+
+[[package]]
 name = "der"
 version = "0.7.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5414,6 +5426,7 @@ dependencies = [
  "actix-web",
  "anyhow",
  "chrono",
+ "dateparser",
  "derive_more 1.0.0",
  "dotenv",
  "dotenv_codegen",

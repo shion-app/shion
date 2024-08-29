@@ -1,4 +1,4 @@
 export interface Filter {
-  category: 'plan' | 'label' | 'monitor' | 'history' | undefined
+  category: 'plan' | 'label' | 'monitor' | 'history' | 'moment' | undefined
   id: number | undefined
 }

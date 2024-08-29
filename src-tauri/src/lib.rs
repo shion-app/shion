@@ -32,7 +32,7 @@ use tauri_plugin_autostart::MacosLauncher;
 use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
 use tauri_plugin_shion_sql::{DbInstances, Migration, MigrationKind};
 use tauri_plugin_store::{with_store, StoreCollection};
-use util::ObsidianNote;
+use util::{ObsidianGroup, ObsidianNote};
 use zip_extensions::{zip_create_from_directory, zip_extract};
 
 pub use error::Result;
@@ -229,8 +229,15 @@ pub fn run() {
         path: String,
         created_key: String,
         updated_key: String,
+        start: i64,
+        end: i64,
     ) -> Result<Vec<ObsidianNote>> {
-        util::read_obsidian(path, created_key, updated_key)
+        util::read_obsidian(path, created_key, updated_key, start, end)
+    }
+
+    #[tauri::command]
+    fn get_obsidian_group(path: String) -> Result<Vec<ObsidianGroup>> {
+        util::get_obsidian_group(path)
     }
 
     tauri::Builder::default()
@@ -282,6 +289,7 @@ pub fn run() {
             open_with_detached,
             get_active_status_calendar_map,
             read_obsidian,
+            get_obsidian_group,
         ])
         .setup(|app| {
             let app_handle = app.app_handle();

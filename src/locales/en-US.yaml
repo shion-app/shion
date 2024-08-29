@@ -109,7 +109,8 @@ calendar:
   month: month
   switch: Switch to {mode}
   tooltip:
-    count: '{count} visits'
+    visit: '{visit} visits'
+    count: '{count} notes'
 tray:
   quit: Quit
 updater:

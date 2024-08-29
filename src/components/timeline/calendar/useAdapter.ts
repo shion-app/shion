@@ -8,6 +8,7 @@ type CalendarStatusAdapter = (start: number, end: number, id: number) => Promise
 export function useAdapter() {
   const { format, formatHHmmss } = useDateFns()
   const { t } = useI18n()
+  const { getList: getObsidianNoteList } = useObsidian()
 
   function calcTime(list: Array<{
     start: number
@@ -32,6 +33,24 @@ export function useAdapter() {
     }
     return map
   }
+
+  function calcVisit(list: Array<{
+    time: number
+  }>) {
+    const timeMap = new Map<string, number>()
+    for (const { time } of list) {
+      const date = format(time, 'yyyy-MM-dd')
+      timeMap.set(date, (timeMap.get(date) || 0) + 1)
+    }
+    const map: ActiveStatusMap = new Map([...timeMap].map(([key, value]) => [key, {
+      color: getColorByVisit(value),
+      text: t('calendar.tooltip.visit', {
+        visit: value,
+      }),
+    }]))
+    return map
+  }
+
   function calcCount(list: Array<{
     time: number
   }>) {
@@ -62,14 +81,22 @@ export function useAdapter() {
     return colors.green.darken4
   }
 
-  function getColorByCount(count: number) {
-    if (count < 10)
+  function getColorByVisit(visit: number) {
+    if (visit < 10)
       return colors.green.lighten5
-    if (count < 30)
+    if (visit < 30)
       return colors.green.lighten3
-    if (count < 50)
+    if (visit < 50)
       return colors.green.lighten1
-    if (count < 70)
+    if (visit < 70)
+      return colors.green.darken2
+    return colors.green.darken4
+  }
+
+  function getColorByCount(count: number) {
+    if (count < 3)
+      return colors.green.lighten1
+    if (count < 6)
       return colors.green.darken2
     return colors.green.darken4
   }
@@ -99,7 +126,7 @@ export function useAdapter() {
   }
 
   const historyAdapter: CalendarStatusAdapter = async (start, end, id) => {
-    return calcCount((await db.history.select({
+    return calcVisit((await db.history.select({
       start,
       end,
       domainId: id,
@@ -108,10 +135,17 @@ export function useAdapter() {
     })))
   }
 
+  const momentAdapter: CalendarStatusAdapter = async (start, end, id) => {
+    return calcCount((await getObsidianNoteList(start, end)).filter(i => i.group_id == id).map(i => ({
+      time: i.created,
+    })))
+  }
+
   return {
     planAdapter,
     labelAdapter,
     monitorAdapter,
     historyAdapter,
+    momentAdapter,
   }
 }

@@ -9,8 +9,14 @@ interface ObsidianNoteResult {
   path: string
   created: number
   updated: number
+  group: string
+  group_id: number
 }
 
+export interface ObsidianGroup {
+  name: string
+  id: number
+}
 export function useObsidian() {
   const configStore = useConfigStore()
   const extensionStore = useExtensionStore()
@@ -24,13 +30,23 @@ export function useObsidian() {
         path,
         createdKey: extensionConfig.value.obsidian.created,
         updatedKey: extensionConfig.value.obsidian.updated,
-      })))).flat().filter(i => i.created > start && i.created < end).map(i => ({
+        start,
+        end,
+      })))).flat().map(i => ({
       ...i,
       color: config.value.themeColor,
     }))
   }
 
+  async function getGroupList() {
+    return (await Promise.all(extensionConfig.value.obsidian.workspace.map(path =>
+      invoke<Array<ObsidianGroup>>('get_obsidian_group', {
+        path,
+      })))).flat()
+  }
+
   return {
     getList,
+    getGroupList,
   }
 }
