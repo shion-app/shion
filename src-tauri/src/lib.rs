@@ -1,11 +1,10 @@
 #[cfg(mobile)]
 mod mobile;
 
-mod autostart;
 mod database;
 mod error;
+mod module;
 mod server;
-mod util;
 
 use std::{
     collections::HashMap,
@@ -32,10 +31,13 @@ use tauri_plugin_autostart::MacosLauncher;
 use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
 use tauri_plugin_shion_sql::{DbInstances, Migration, MigrationKind};
 use tauri_plugin_store::{with_store, StoreCollection};
-use util::{ObsidianGroup, ObsidianNote};
 use zip_extensions::{zip_create_from_directory, zip_extract};
 
 pub use error::Result;
+use module::{
+    autostart,
+    obsidian::{self, ObsidianGroup, ObsidianNote},
+};
 
 lazy_static! {
     static ref SERVER_PORT: Mutex<u16> = Mutex::new(15785);
@@ -233,12 +235,12 @@ pub fn run() {
         end: i64,
         group_id: Option<u32>,
     ) -> Result<Vec<ObsidianNote>> {
-        util::read_obsidian(path, created_key, updated_key, start, end, group_id)
+        obsidian::read_obsidian(path, created_key, updated_key, start, end, group_id)
     }
 
     #[tauri::command]
     fn get_obsidian_group(path: String) -> Result<Vec<ObsidianGroup>> {
-        util::get_obsidian_group(path)
+        obsidian::get_obsidian_group(path)
     }
 
     tauri::Builder::default()
