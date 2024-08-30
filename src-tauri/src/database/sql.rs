@@ -27,10 +27,14 @@ pub async fn create_remark(db: &DatabaseConnection, data: InsertRemark) -> Resul
     Ok(())
 }
 
-pub async fn select_program_list(db: &DatabaseConnection) -> Result<Vec<program::Model>> {
+pub async fn select_program_by_path(
+    db: &DatabaseConnection,
+    path: String,
+) -> Result<Option<program::Model>> {
     Ok(Program::find()
         .filter(program::Column::DeletedAt.eq(0))
-        .all(db)
+        .filter(program::Column::Path.eq(path))
+        .one(db)
         .await?)
 }
 

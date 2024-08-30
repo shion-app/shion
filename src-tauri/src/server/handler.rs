@@ -1,9 +1,6 @@
-use std::path::PathBuf;
-
 use actix_web::{get, post, web, Responder};
 use chrono::Utc;
 use futures_util::TryFutureExt;
-use path_slash::PathBufExt;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -31,14 +28,11 @@ pub async fn auth(
     let secret = app_state.secret.lock().unwrap();
     let db = get_db(&app_handle).await;
     let path = request.path.clone();
-    let program_list = sql::select_program_list(&db)
+    let program = sql::select_program_by_path(&db, path)
         .await
         .map_err(|e| CustomError::Database {
             message: e.to_string(),
-        })?;
-    let program = program_list
-        .iter()
-        .find(|p| PathBuf::from_slash(&p.path) == PathBuf::from_slash(&path))
+        })?
         .ok_or(CustomError::BadRequest {
             message: "this path cannot be authorized".to_string(),
         })?;
