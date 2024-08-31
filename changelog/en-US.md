@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-## [0.12.1] - 2024-08-31
+## [0.12.2] - 2024-08-31
 
 ### Added
 
@@ -14,6 +14,8 @@
 - Changes in `Extensions` structure require resetting ⚠️
 - Optimize the data acquisition speed of `Overview` chart 🚀
 - Optimize the language display of the startup interface
+
+## [0.12.1] - 2024-08-31 [YANKED]
 
 ## [0.12.0] - 2024-08-18
 
