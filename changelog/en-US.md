@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [0.12.1] - 2024-08-31
+
+### Added
+
+- Add [obsidian](https://shion.app/guide/obsidian) to `Extensions`
+- Add `obsidian notes` to `Timeline`
+
+### Changed
+
+- Changes in `Extensions` structure require resetting ⚠️
+- Optimize the data acquisition speed of `Overview` chart 🚀
+- Optimize the language display of the startup interface
+
 ## [0.12.0] - 2024-08-18
 
 ### Added
