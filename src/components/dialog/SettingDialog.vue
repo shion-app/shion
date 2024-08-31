@@ -68,6 +68,14 @@ const tab = ref('general')
                   </template>
                 </v-list-item>
                 <v-list-item>
+                  <v-list-item-title>{{ $t('config.checkUpdate') }}</v-list-item-title>
+                  <template #append>
+                    <v-list-item-action>
+                      <v-checkbox-btn v-model="config.checkUpdate" />
+                    </v-list-item-action>
+                  </template>
+                </v-list-item>
+                <v-list-item>
                   <v-list-item-title>{{ $t('config.autostart') }}</v-list-item-title>
                   <template #append>
                     <v-list-item-action>
