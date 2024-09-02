@@ -163,7 +163,7 @@ importers:
         version: 2.7.1
       tauri-plugin-shion-history-api:
         specifier: github:shion-app/history
-        version: https://codeload.github.com/shion-app/history/tar.gz/740eac87fe5680f021fd67ad19b73ac9ed00a7cc
+        version: https://codeload.github.com/shion-app/history/tar.gz/8318e9ef272d01d8c1d6c4eb10e598a915c99ce2
       tauri-plugin-shion-sql-api:
         specifier: github:shion-app/sql
         version: https://codeload.github.com/shion-app/sql/tar.gz/1329be13245f50d3729f125ff4d7a837e282a673
@@ -4823,8 +4823,8 @@ packages:
     resolution: {integrity: sha512-/Wo7DcT0u5HUV486xg675HtjNd3BXZ6xDbzsCUZPt5iw8bTQ63bP0Raut3mvro9u+CUyq7YQd8Cx55fsZXxqLQ==}
     engines: {node: '>=10'}
 
-  tauri-plugin-shion-history-api@https://codeload.github.com/shion-app/history/tar.gz/740eac87fe5680f021fd67ad19b73ac9ed00a7cc:
-    resolution: {tarball: https://codeload.github.com/shion-app/history/tar.gz/740eac87fe5680f021fd67ad19b73ac9ed00a7cc}
+  tauri-plugin-shion-history-api@https://codeload.github.com/shion-app/history/tar.gz/8318e9ef272d01d8c1d6c4eb10e598a915c99ce2:
+    resolution: {tarball: https://codeload.github.com/shion-app/history/tar.gz/8318e9ef272d01d8c1d6c4eb10e598a915c99ce2}
     version: 0.0.0
 
   tauri-plugin-shion-sql-api@https://codeload.github.com/shion-app/sql/tar.gz/1329be13245f50d3729f125ff4d7a837e282a673:
@@ -5252,6 +5252,17 @@ packages:
 
   vue-demi@0.14.0:
     resolution: {integrity: sha512-gt58r2ogsNQeVoQ3EhoUAvUsH9xviydl0dWJj7dabBC/2L4uBId7ujtCwDRD0JhkGsV1i0CtfLAeyYKBht9oWg==}
+    engines: {node: '>=12'}
+    hasBin: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
+  vue-demi@0.14.10:
+    resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
     engines: {node: '>=12'}
     hasBin: true
     peerDependencies:
@@ -7752,7 +7763,7 @@ snapshots:
       '@types/web-bluetooth': 0.0.20
       '@vueuse/metadata': 10.7.0
       '@vueuse/shared': 10.7.0(vue@3.4.34(typescript@5.2.2))
-      vue-demi: 0.14.7(vue@3.4.34(typescript@5.2.2))
+      vue-demi: 0.14.10(vue@3.4.34(typescript@5.2.2))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -7779,7 +7790,7 @@ snapshots:
     dependencies:
       '@vueuse/core': 10.7.0(vue@3.4.34(typescript@5.2.2))
       '@vueuse/shared': 10.7.0(vue@3.4.34(typescript@5.2.2))
-      vue-demi: 0.14.7(vue@3.4.34(typescript@5.2.2))
+      vue-demi: 0.14.10(vue@3.4.34(typescript@5.2.2))
     optionalDependencies:
       focus-trap: 7.5.4
     transitivePeerDependencies:
@@ -10898,7 +10909,7 @@ snapshots:
       yallist: 4.0.0
     optional: true
 
-  tauri-plugin-shion-history-api@https://codeload.github.com/shion-app/history/tar.gz/740eac87fe5680f021fd67ad19b73ac9ed00a7cc:
+  tauri-plugin-shion-history-api@https://codeload.github.com/shion-app/history/tar.gz/8318e9ef272d01d8c1d6c4eb10e598a915c99ce2:
     dependencies:
       '@tauri-apps/api': 2.0.0-rc.0
       tslib: 2.5.0
@@ -11403,6 +11414,10 @@ snapshots:
       vue: 3.4.34(typescript@5.2.2)
 
   vue-demi@0.14.0(vue@3.4.34(typescript@5.2.2)):
+    dependencies:
+      vue: 3.4.34(typescript@5.2.2)
+
+  vue-demi@0.14.10(vue@3.4.34(typescript@5.2.2)):
     dependencies:
       vue: 3.4.34(typescript@5.2.2)
 

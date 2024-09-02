@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { error as logError } from '@tauri-apps/plugin-log'
 
-import GoogleChrome from '@/assets/browser/Google Chrome.png'
-import MicrosoftEdge from '@/assets/browser/Microsoft Edge.png'
-import Firefox from '@/assets/browser/Firefox.png'
+import GoogleChrome from '@/assets/browser/Google Chrome.svg'
+import MicrosoftEdge from '@/assets/browser/Microsoft Edge.svg'
+import Firefox from '@/assets/browser/Firefox.svg'
+import Arc from '@/assets/browser/Arc.svg'
 
 const props = defineProps<{
   visible: boolean
@@ -36,6 +37,8 @@ function getBrowserUrl(name: string) {
       return MicrosoftEdge
     case 'Firefox':
       return Firefox
+    case 'Arc':
+      return Arc
     default:
       return ''
   }
