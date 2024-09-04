@@ -22,9 +22,10 @@ export function usePageRefresh() {
       }
       catch (e) {
         notify.error({
-          text: t('refresh.error'),
+          text: `${t('refresh.error')}: ${e}`,
         })
         error('refresh error: ', e as any)
+        throw e
       }
       finally {
         loading.value = false
