@@ -52,6 +52,8 @@ sea-orm = { version = "1.1.0-rc.1", features = [ "sqlx-sqlite", "runtime-tokio-n
 gray_matter = "0.2.8"
 now = "0.1"
 dateparser = "0.2.1"
+grep = "0.3.1"
+walkdir = "2"
 
 [package.metadata.bin]
 # cargo-run-bin

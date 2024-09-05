@@ -30,6 +30,12 @@ pub enum Error {
 
     #[error(transparent)]
     SystemTime(#[from] std::time::SystemTimeError),
+
+    #[error(transparent)]
+    GrepRegex(#[from] grep::regex::Error),
+
+    #[error(transparent)]
+    GrepMatcher(#[from] grep::matcher::NoError),
 }
 
 impl Serialize for Error {

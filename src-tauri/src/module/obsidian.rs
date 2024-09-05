@@ -8,7 +8,10 @@ use std::{
 use anyhow::anyhow;
 use dateparser::DateTimeUtc;
 use gray_matter::{engine::YAML, Matter, Pod};
+use grep::searcher::{BinaryDetection, Searcher, SearcherBuilder, Sink};
+use grep::{matcher::Matcher, regex::RegexMatcher};
 use serde::Serialize;
+use walkdir::WalkDir;
 
 use crate::Result;
 
@@ -173,4 +176,101 @@ where
         }
     }
     Ok(list)
+}
+
+#[derive(Debug)]
+pub struct SearchItem {
+    pub path: String,
+    pub matched: String,
+    pub target: String,
+}
+
+struct ObsidianSink {
+    path: String,
+    results: Vec<SearchItem>,
+}
+
+impl Sink for ObsidianSink {
+    type Error = std::io::Error;
+
+    fn matched(
+        &mut self,
+        _searcher: &Searcher,
+        mat: &grep::searcher::SinkMatch<'_>,
+    ) -> std::result::Result<bool, std::io::Error> {
+        let matched = String::from_utf8_lossy(mat.bytes()).to_string();
+
+        self.results.push(SearchItem {
+            path: self.path.clone(),
+            matched,
+            target: "content".to_string(),
+        });
+
+        Ok(true)
+    }
+}
+
+pub fn search(pattern: String, workspace: String) -> Result<Vec<SearchItem>> {
+    let matcher = RegexMatcher::new(&format!(r"{}", pattern))?;
+    let mut searcher = SearcherBuilder::new()
+        .binary_detection(BinaryDetection::quit(b'\x00'))
+        .line_number(false)
+        .build();
+
+    let mut list = vec![];
+
+    for entry in WalkDir::new(workspace.clone())
+        .into_iter()
+        .filter_entry(|e| {
+            let plguin_path = Path::new(&workspace).join(".obsidian");
+            !e.path().starts_with(plguin_path)
+        })
+        .filter_map(|e| e.ok())
+    {
+        if !entry.file_type().is_file() {
+            continue;
+        }
+
+        let file_path = entry
+            .path()
+            .to_str()
+            .ok_or(anyhow!("invalid path"))?
+            .to_string();
+
+        let mut sink = ObsidianSink {
+            path: file_path.clone(),
+            results: Vec::new(),
+        };
+
+        let is_file_name_match = matcher.is_match(entry.file_name().as_encoded_bytes())?;
+
+        if is_file_name_match {
+            let matched = file_stem(entry.path())?;
+            list.push(SearchItem {
+                path: file_path,
+                matched,
+                target: "filename".to_string(),
+            })
+        }
+
+        searcher.search_path(&matcher, entry.path(), &mut sink)?;
+
+        list.append(&mut sink.results);
+    }
+
+    Ok(list)
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_search() -> Result<()> {
+        let path = "E:\\obsidian workspace\\hana".to_string();
+        let list = search("shion".to_string(), path)?;
+        println!("{:#?}", list);
+        Ok(())
+    }
 }
