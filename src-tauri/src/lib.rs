@@ -36,7 +36,7 @@ use zip_extensions::{zip_create_from_directory, zip_extract};
 pub use error::Result;
 use module::{
     autostart,
-    obsidian::{self, ObsidianGroup, ObsidianNote},
+    obsidian::{self, ObsidianGroup, ObsidianNote, SearchItem},
 };
 
 lazy_static! {
@@ -243,6 +243,18 @@ pub fn run() {
         obsidian::get_group(path)
     }
 
+    #[tauri::command]
+    fn search_obsidian(
+        pattern: String,
+        workspace: String,
+        created_key: String,
+        updated_key: String,
+        start: Option<i64>,
+        end: Option<i64>,
+    ) -> Result<Vec<SearchItem>> {
+        obsidian::search(pattern, workspace, created_key, updated_key, start, end)
+    }
+
     tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_fs::init())
@@ -293,6 +305,7 @@ pub fn run() {
             get_active_status_calendar_map,
             read_obsidian,
             get_obsidian_group,
+            search_obsidian
         ])
         .setup(|app| {
             let app_handle = app.app_handle();

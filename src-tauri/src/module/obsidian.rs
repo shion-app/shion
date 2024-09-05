@@ -184,7 +184,7 @@ where
     Ok(FileMetadata { created, updated })
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Debug)]
 pub struct SearchItem {
     pub path: String,
     pub matched: String,
@@ -216,7 +216,14 @@ impl Sink for ObsidianSink {
     }
 }
 
-pub fn search(pattern: String, workspace: String) -> Result<Vec<SearchItem>> {
+pub fn search(
+    pattern: String,
+    workspace: String,
+    created_key: String,
+    updated_key: String,
+    start: Option<i64>,
+    end: Option<i64>,
+) -> Result<Vec<SearchItem>> {
     let matcher = RegexMatcher::new(&format!(r"{}", pattern))?;
     let mut searcher = SearcherBuilder::new()
         .binary_detection(BinaryDetection::quit(b'\x00'))
@@ -234,6 +241,18 @@ pub fn search(pattern: String, workspace: String) -> Result<Vec<SearchItem>> {
         .filter_map(|e| e.ok())
     {
         if !entry.file_type().is_file() {
+            continue;
+        }
+
+        let FileMetadata { created, .. } =
+            get_metadata(entry.path(), created_key.clone(), updated_key.clone())?;
+
+        let start = start.unwrap_or(0);
+        let end = end.unwrap_or(i64::MAX);
+
+        let is_outside_range = created < start || created > end;
+
+        if is_outside_range {
             continue;
         }
 
@@ -271,7 +290,14 @@ mod tests {
     #[test]
     fn test_search() -> Result<()> {
         let path = "E:\\obsidian workspace\\hana".to_string();
-        let list = search("shion".to_string(), path)?;
+        let list = search(
+            "shion".to_string(),
+            path,
+            "created".to_string(),
+            "updated".to_string(),
+            None,
+            None,
+        )?;
         println!("{:#?}", list);
         Ok(())
     }
