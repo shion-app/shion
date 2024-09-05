@@ -235,12 +235,12 @@ pub fn run() {
         end: i64,
         group_id: Option<u32>,
     ) -> Result<Vec<ObsidianNote>> {
-        obsidian::read_obsidian(path, created_key, updated_key, start, end, group_id)
+        obsidian::read(path, created_key, updated_key, start, end, group_id)
     }
 
     #[tauri::command]
     fn get_obsidian_group(path: String) -> Result<Vec<ObsidianGroup>> {
-        obsidian::get_obsidian_group(path)
+        obsidian::get_group(path)
     }
 
     tauri::Builder::default()

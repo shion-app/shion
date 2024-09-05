@@ -32,8 +32,8 @@ pub struct ObsidianGroup {
     id: u32,
 }
 
-pub fn read_obsidian<P>(
-    path: P,
+pub fn read<P>(
+    workspace: P,
     created_key: String,
     updated_key: String,
     start: i64,
@@ -43,74 +43,42 @@ pub fn read_obsidian<P>(
 where
     P: AsRef<Path>,
 {
-    let workspace = file_stem(&path)?;
+    let workspace_name = file_stem(&workspace)?;
     let mut list = vec![];
-    for entry in read_dir(path)? {
-        let path = entry?.path();
-        let group_name = file_stem(&path)?;
-        let mut queue = vec![];
-        if path.is_dir() {
-            queue.push(path);
+    for entry in read_dir(workspace)? {
+        let group_path = entry?.path();
+        if group_path.is_file() {
+            continue;
         }
-        while queue.len() > 0 {
-            if let Some(path) = queue.pop() {
-                if path.is_dir() {
-                    for entry in read_dir(path)? {
-                        let path = entry?.path();
-                        queue.push(path);
-                    }
-                } else {
-                    if let Some(ext) = path.extension() {
-                        if ext == "md" {
-                            let content = read_to_string(path.clone())?;
-                            let matter = Matter::<YAML>::new();
 
-                            let metadata = path.metadata()?;
+        let group_name = file_stem(&group_path)?;
+        for entry in WalkDir::new(group_path).into_iter().filter_map(|e| e.ok()) {
+            let path = entry.path();
 
-                            let mut created =
-                                metadata.created()?.duration_since(UNIX_EPOCH)?.as_millis() as i64;
-                            let mut updated =
-                                metadata.modified()?.duration_since(UNIX_EPOCH)?.as_millis() as i64;
-
-                            if let Some(frontmatter) = matter.parse(&content).data {
-                                if let Pod::Hash(frontmatter) = frontmatter {
-                                    if let Some(value) = frontmatter.get(&created_key.clone()) {
-                                        if let Ok(value) = value.as_string() {
-                                            if let Ok(time) = value.parse::<DateTimeUtc>() {
-                                                created = time.0.timestamp_millis();
-                                            }
-                                        }
-                                    }
-                                    if let Some(value) = frontmatter.get(&updated_key.clone()) {
-                                        if let Ok(value) = value.as_string() {
-                                            if let Ok(time) = value.parse::<DateTimeUtc>() {
-                                                updated = time.0.timestamp_millis();
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            if created > start && created < end {
-                                let name = file_stem(&path)?;
-                                let path =
-                                    path.to_str().ok_or(anyhow!("invalid path"))?.to_string();
-                                let group = format!("{}/{}", workspace, group_name.clone());
-                                let current_group_id = text_to_hash(group.clone());
-                                let insert = if let Some(group_id) = group_id {
-                                    group_id == current_group_id
-                                } else {
-                                    true
-                                };
-                                if insert {
-                                    list.push(ObsidianNote {
-                                        name,
-                                        path,
-                                        created,
-                                        updated,
-                                        group: group.clone(),
-                                        group_id: current_group_id,
-                                    })
-                                }
+            if path.is_file() {
+                if let Some(ext) = path.extension() {
+                    if ext == "md" {
+                        let FileMetadata { created, updated } =
+                            get_metadata(&path, created_key.clone(), updated_key.clone())?;
+                        if created > start && created < end {
+                            let name = file_stem(&path)?;
+                            let path = path_to_string(path)?;
+                            let group = format!("{}/{}", workspace_name, group_name.clone());
+                            let current_group_id = text_to_hash(group.clone());
+                            let insert = if let Some(group_id) = group_id {
+                                group_id == current_group_id
+                            } else {
+                                true
+                            };
+                            if insert {
+                                list.push(ObsidianNote {
+                                    name,
+                                    path,
+                                    created,
+                                    updated,
+                                    group: group.clone(),
+                                    group_id: current_group_id,
+                                })
                             }
                         }
                     }
@@ -140,42 +108,80 @@ where
         .to_string())
 }
 
-pub fn get_obsidian_group<P>(path: P) -> Result<Vec<ObsidianGroup>>
+fn path_to_string(path: &Path) -> Result<String> {
+    Ok(path.to_str().ok_or(anyhow!("invalid path"))?.to_string())
+}
+
+pub fn get_group<P>(workspace: P) -> Result<Vec<ObsidianGroup>>
 where
     P: AsRef<Path>,
 {
-    let workspace = file_stem(&path)?;
+    let workspace_name = file_stem(&workspace)?;
     let mut list = vec![];
-    for entry in read_dir(path)? {
-        let path = entry?.path();
-        let group_name = file_stem(&path)?;
-        let mut queue = vec![];
-        if path.is_dir() {
-            queue.push(path);
+    for entry in read_dir(workspace)? {
+        let group_path = entry?.path();
+        if group_path.is_file() {
+            continue;
         }
-        while queue.len() > 0 {
-            if let Some(path) = queue.pop() {
-                if path.is_dir() {
-                    for entry in read_dir(path)? {
-                        let path = entry?.path();
-                        queue.push(path);
-                    }
-                } else {
-                    if let Some(ext) = path.extension() {
-                        let name = format!("{}/{}", workspace, group_name.clone());
-                        if ext == "md" {
-                            list.push(ObsidianGroup {
-                                name: name.clone(),
-                                id: text_to_hash(name),
-                            });
-                            break;
-                        }
+
+        let group_name = file_stem(&group_path)?;
+        for entry in WalkDir::new(group_path).into_iter().filter_map(|e| e.ok()) {
+            let path = entry.path();
+
+            if path.is_file() {
+                if let Some(ext) = path.extension() {
+                    if ext == "md" {
+                        let name = format!("{}/{}", workspace_name, group_name.clone());
+                        list.push(ObsidianGroup {
+                            name: name.clone(),
+                            id: text_to_hash(name),
+                        });
+                        break;
                     }
                 }
             }
         }
     }
     Ok(list)
+}
+
+struct FileMetadata {
+    created: i64,
+    updated: i64,
+}
+
+fn get_metadata<P>(path: P, created_key: String, updated_key: String) -> Result<FileMetadata>
+where
+    P: AsRef<Path>,
+{
+    let content = read_to_string(&path)?;
+    let matter = Matter::<YAML>::new();
+
+    let metadata = path.as_ref().metadata()?;
+
+    let mut created = metadata.created()?.duration_since(UNIX_EPOCH)?.as_millis() as i64;
+    let mut updated = metadata.modified()?.duration_since(UNIX_EPOCH)?.as_millis() as i64;
+
+    if let Some(frontmatter) = matter.parse(&content).data {
+        if let Pod::Hash(frontmatter) = frontmatter {
+            if let Some(value) = frontmatter.get(&created_key.clone()) {
+                if let Ok(value) = value.as_string() {
+                    if let Ok(time) = value.parse::<DateTimeUtc>() {
+                        created = time.0.timestamp_millis();
+                    }
+                }
+            }
+            if let Some(value) = frontmatter.get(&updated_key.clone()) {
+                if let Ok(value) = value.as_string() {
+                    if let Ok(time) = value.parse::<DateTimeUtc>() {
+                        updated = time.0.timestamp_millis();
+                    }
+                }
+            }
+        }
+    }
+
+    Ok(FileMetadata { created, updated })
 }
 
 #[derive(Debug)]
@@ -231,11 +237,7 @@ pub fn search(pattern: String, workspace: String) -> Result<Vec<SearchItem>> {
             continue;
         }
 
-        let file_path = entry
-            .path()
-            .to_str()
-            .ok_or(anyhow!("invalid path"))?
-            .to_string();
+        let file_path = path_to_string(entry.path())?;
 
         let mut sink = ObsidianSink {
             path: file_path.clone(),
