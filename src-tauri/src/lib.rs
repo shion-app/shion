@@ -246,13 +246,13 @@ pub fn run() {
     #[tauri::command]
     fn search_obsidian(
         pattern: String,
-        workspace: String,
+        path: String,
         created_key: String,
         updated_key: String,
         start: Option<i64>,
         end: Option<i64>,
     ) -> Result<Vec<SearchItem>> {
-        obsidian::search(pattern, workspace, created_key, updated_key, start, end)
+        obsidian::search(pattern, path, created_key, updated_key, start, end)
     }
 
     tauri::Builder::default()

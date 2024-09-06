@@ -45,43 +45,44 @@ where
 {
     let workspace_name = file_stem(&workspace)?;
     let mut list = vec![];
-    for entry in read_dir(workspace)? {
+    for entry in read_dir(&workspace)? {
         let group_path = entry?.path();
+        if is_plugin_path(&group_path, &workspace) {
+            continue;
+        }
         if group_path.is_file() {
             continue;
         }
 
         let group_name = file_stem(&group_path)?;
-        for entry in WalkDir::new(group_path).into_iter().filter_map(|e| e.ok()) {
-            let path = entry.path();
+        let group = format!("{}/{}", workspace_name, group_name.clone());
 
-            if path.is_file() {
-                if let Some(ext) = path.extension() {
-                    if ext == "md" {
-                        let FileMetadata { created, updated } =
-                            get_metadata(&path, created_key.clone(), updated_key.clone())?;
-                        if created > start && created < end {
-                            let name = file_stem(&path)?;
-                            let path = path_to_string(path)?;
-                            let group = format!("{}/{}", workspace_name, group_name.clone());
-                            let current_group_id = text_to_hash(group.clone());
-                            let insert = if let Some(group_id) = group_id {
-                                group_id == current_group_id
-                            } else {
-                                true
-                            };
-                            if insert {
-                                list.push(ObsidianNote {
-                                    name,
-                                    path,
-                                    created,
-                                    updated,
-                                    group: group.clone(),
-                                    group_id: current_group_id,
-                                })
-                            }
-                        }
-                    }
+        for entry in WalkDir::new(&group_path).into_iter().filter_map(|e| e.ok()) {
+            let path = entry.path();
+            if !is_markdown_path(path, &workspace) {
+                continue;
+            }
+
+            let FileMetadata { created, updated } =
+                get_metadata(&path, created_key.clone(), updated_key.clone())?;
+            if created > start && created < end {
+                let name = file_stem(&path)?;
+                let path = path_to_string(path)?;
+                let current_group_id = text_to_hash(group.clone());
+                let insert = if let Some(group_id) = group_id {
+                    group_id == current_group_id
+                } else {
+                    true
+                };
+                if insert {
+                    list.push(ObsidianNote {
+                        name,
+                        path,
+                        created,
+                        updated,
+                        group: group.clone(),
+                        group_id: current_group_id,
+                    })
                 }
             }
         }
@@ -118,28 +119,28 @@ where
 {
     let workspace_name = file_stem(&workspace)?;
     let mut list = vec![];
-    for entry in read_dir(workspace)? {
+    for entry in read_dir(&workspace)? {
         let group_path = entry?.path();
+        if is_plugin_path(&group_path, &workspace) {
+            continue;
+        }
         if group_path.is_file() {
             continue;
         }
 
         let group_name = file_stem(&group_path)?;
-        for entry in WalkDir::new(group_path).into_iter().filter_map(|e| e.ok()) {
+        let group = format!("{}/{}", workspace_name, group_name.clone());
+        for entry in WalkDir::new(&group_path).into_iter().filter_map(|e| e.ok()) {
             let path = entry.path();
-
-            if path.is_file() {
-                if let Some(ext) = path.extension() {
-                    if ext == "md" {
-                        let name = format!("{}/{}", workspace_name, group_name.clone());
-                        list.push(ObsidianGroup {
-                            name: name.clone(),
-                            id: text_to_hash(name),
-                        });
-                        break;
-                    }
-                }
+            if !is_markdown_path(path, &workspace) {
+                continue;
             }
+
+            list.push(ObsidianGroup {
+                name: group.clone(),
+                id: text_to_hash(group),
+            });
+            break;
         }
     }
     Ok(list)
@@ -220,14 +221,45 @@ impl Sink for ObsidianSink {
     }
 }
 
-pub fn search(
+fn is_plugin_path<P, W>(path: P, workspace: W) -> bool
+where
+    P: AsRef<Path>,
+    W: AsRef<Path>,
+{
+    let plguin_path = Path::new(workspace.as_ref().as_os_str()).join(".obsidian");
+    path.as_ref().starts_with(plguin_path)
+}
+
+fn is_markdown_path<P, W>(path: P, workspace: W) -> bool
+where
+    P: AsRef<Path>,
+    W: AsRef<Path>,
+{
+    let path = path.as_ref();
+    if path.is_file() {
+        if let Some(parent) = path.parent() {
+            // 非一级路径
+            if parent != workspace.as_ref() {
+                if let Some(ext) = path.extension() {
+                    return ext == "md";
+                }
+            }
+        }
+    }
+    return false;
+}
+
+pub fn search<P>(
     pattern: String,
-    workspace: String,
+    workspace: P,
     created_key: String,
     updated_key: String,
     start: Option<i64>,
     end: Option<i64>,
-) -> Result<Vec<SearchItem>> {
+) -> Result<Vec<SearchItem>>
+where
+    P: AsRef<Path>,
+{
     let matcher = RegexMatcher::new(&format!(r"{}", pattern))?;
     let mut searcher = SearcherBuilder::new()
         .binary_detection(BinaryDetection::quit(b'\x00'))
@@ -236,15 +268,16 @@ pub fn search(
 
     let mut list = vec![];
 
-    for entry in WalkDir::new(workspace.clone())
+    for entry in WalkDir::new(&workspace)
         .into_iter()
         .filter_entry(|e| {
-            let plguin_path = Path::new(&workspace).join(".obsidian");
-            !e.path().starts_with(plguin_path)
+            let path = e.path();
+            !is_plugin_path(path, &workspace)
         })
         .filter_map(|e| e.ok())
     {
-        if !entry.file_type().is_file() {
+        let path = entry.path();
+        if !is_markdown_path(path, &workspace) {
             continue;
         }
 
@@ -261,7 +294,7 @@ pub fn search(
             continue;
         }
 
-        let file_path = path_to_string(entry.path())?;
+        let file_path = path_to_string(path)?;
 
         let mut sink = ObsidianSink {
             path: file_path.clone(),
@@ -292,17 +325,41 @@ pub fn search(
 #[cfg(test)]
 mod tests {
 
+    use std::i64;
+
     use super::*;
+
+    const WORKSPACE: &'static str = "E:\\obsidian workspace\\dev";
 
     #[test]
     fn test_search() -> Result<()> {
-        let path = "E:\\obsidian workspace\\hana".to_string();
         let list = search(
-            "shion".to_string(),
-            path,
+            "1".to_string(),
+            WORKSPACE,
             "created".to_string(),
             "updated".to_string(),
             None,
+            None,
+        )?;
+        println!("{:#?}", list);
+        Ok(())
+    }
+
+    #[test]
+    fn test_get_group() -> Result<()> {
+        let list = get_group(WORKSPACE)?;
+        println!("{:#?}", list);
+        Ok(())
+    }
+
+    #[test]
+    fn test_read() -> Result<()> {
+        let list = read(
+            WORKSPACE,
+            "created".to_string(),
+            "updated".to_string(),
+            0,
+            i64::MAX,
             None,
         )?;
         println!("{:#?}", list);
