@@ -145,7 +145,8 @@ where
     Ok(list)
 }
 
-struct FileMetadata {
+#[derive(Serialize, Debug, Clone)]
+pub struct FileMetadata {
     created: i64,
     updated: i64,
 }
@@ -189,11 +190,13 @@ pub struct SearchItem {
     pub path: String,
     pub matched: String,
     pub target: String,
+    pub metadata: FileMetadata,
 }
 
 struct ObsidianSink {
     path: String,
     results: Vec<SearchItem>,
+    metadata: FileMetadata,
 }
 
 impl Sink for ObsidianSink {
@@ -210,6 +213,7 @@ impl Sink for ObsidianSink {
             path: self.path.clone(),
             matched,
             target: "content".to_string(),
+            metadata: self.metadata.clone(),
         });
 
         Ok(true)
@@ -244,8 +248,9 @@ pub fn search(
             continue;
         }
 
-        let FileMetadata { created, .. } =
-            get_metadata(entry.path(), created_key.clone(), updated_key.clone())?;
+        let metadata = get_metadata(entry.path(), created_key.clone(), updated_key.clone())?;
+
+        let FileMetadata { created, .. } = metadata;
 
         let start = start.unwrap_or(0);
         let end = end.unwrap_or(i64::MAX);
@@ -261,6 +266,7 @@ pub fn search(
         let mut sink = ObsidianSink {
             path: file_path.clone(),
             results: Vec::new(),
+            metadata: metadata.clone(),
         };
 
         let is_file_name_match = matcher.is_match(entry.file_name().as_encoded_bytes())?;
@@ -271,6 +277,7 @@ pub fn search(
                 path: file_path,
                 matched,
                 target: "filename".to_string(),
+                metadata,
             })
         }
 
