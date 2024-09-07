@@ -9,6 +9,11 @@ const props = defineProps<{
   visible: boolean
 }>()
 
+const emit = defineEmits<{
+  (e: 'scrollTo', time: number): void
+  (e: 'update:visible'): void
+}>()
+
 const { visible: visibleVModel } = useVModels(props)
 
 useHotkey('ctrl+f', () => {
@@ -38,6 +43,11 @@ function search() {
   searched.value = true
   for (const component of searchRef.value)
     component.search()
+}
+
+function scrollTo(time: number) {
+  visibleVModel.value = false
+  emit('scrollTo', time)
 }
 
 watch(keyword, (v) => {
@@ -72,6 +82,7 @@ watch(visibleVModel, (v) => {
           <component
             :is="getComponent(name)" v-for="name in searchList" :key="name" :ref="searchRef.set"
             :keyword="keyword" :searched="searched"
+            @scroll-to="scrollTo"
           />
         </v-tabs-window>
       </v-card-text>

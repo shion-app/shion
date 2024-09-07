@@ -309,7 +309,7 @@ statusBar:
         decompress: 展开
     search:
       text: 搜索
-      tooltip: 搜索浏览器历史
+      tooltip: 搜索并跳转
     filter:
       tooltip: 筛选类别
     history:

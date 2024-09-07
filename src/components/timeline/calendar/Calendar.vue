@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { startOfMonth } from 'date-fns'
 
+import type { ComponentExposed } from 'vue-component-type-helpers'
 import type { Filter } from '../types'
 import type { ActiveStatusMap, CalendarMonthType } from './types'
 import { useAdapter } from './useAdapter'
+
+import YearGrid from './YearGrid.vue'
+import MonthGrid from './MonthGrid.vue'
 
 const props = defineProps<{
   date: Date
@@ -15,6 +19,9 @@ const { date: dateVModel } = useVModels(props)
 const { historyAdapter, labelAdapter, monitorAdapter, planAdapter, momentAdapter } = useAdapter()
 
 let generatedYear = new Date().getFullYear()
+
+const monthGridRef = ref<ComponentExposed<typeof MonthGrid>>()
+const yearGridRef = ref<ComponentExposed<typeof YearGrid>>()
 
 const list = ref<Array<CalendarMonthType>>([])
 const currentYear = ref(new Date().getFullYear())
@@ -79,19 +86,31 @@ function onScroll() {
     list.value.unshift(...generate(--generatedYear))
 }
 
+function scrollTo(time: number) {
+  if (monthGridRef.value)
+    monthGridRef.value.scrollTo(time)
+
+  if (yearGridRef.value)
+    yearGridRef.value.scrollTo(time)
+}
+
+defineExpose({
+  scrollTo,
+})
+
 init()
 </script>
 
 <template>
   <div ref="scrollContainer" h-full overflow-y-auto overflow-x-hidden relative ml-2>
     <template v-if="isMonthMode">
-      <month-grid
-        v-model:date="dateVModel" v-model:current-year="currentYear" :active-status-map="activeStatusMap"
-        :list="list"
+      <MonthGrid
+        ref="monthGridRef" v-model:date="dateVModel" v-model:current-year="currentYear"
+        :active-status-map="activeStatusMap" :list="list"
       />
     </template>
     <template v-else>
-      <year-grid v-model:date="dateVModel" :active-status-map="activeStatusMap" :list="list" />
+      <YearGrid ref="yearGridRef" v-model:date="dateVModel" :active-status-map="activeStatusMap" :list="list" />
     </template>
   </div>
   <status-bar-teleport :xs="false">

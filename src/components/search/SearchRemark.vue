@@ -9,6 +9,10 @@ const props = defineProps<{
   searched: boolean
 }>()
 
+const emit = defineEmits<{
+  (e: 'scrollTo', time: number): void
+}>()
+
 interface SearchItem {
   time: number
   title: string
@@ -64,9 +68,7 @@ async function handleSearch(keyword: string, page: number, size: number) {
       time: i.time,
       title: i.title,
       desc: i.desc,
-      navigate: () => {
-
-      },
+      navigate: () => emit('scrollTo', i.time),
     })),
     count,
   }

@@ -8,6 +8,10 @@ const props = defineProps<{
   searched: boolean
 }>()
 
+const emit = defineEmits<{
+  (e: 'scrollTo', time: number): void
+}>()
+
 interface SearchItem {
   time: number
   content: string
@@ -61,9 +65,7 @@ async function handleSearch(keyword: string, page: number, size: number) {
     list: deduplicateHistory(list, counter).map(i => ({
       time: i.lastVisited,
       content: i.title,
-      navigate: () => {
-
-      },
+      navigate: () => emit('scrollTo', i.lastVisited),
     })),
     count,
   }

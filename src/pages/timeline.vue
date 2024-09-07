@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { endOfDay, isBefore, startOfDay, subMinutes } from 'date-fns'
+import { endOfDay, isBefore, isSameDay, startOfDay, subMinutes } from 'date-fns'
 import type { ComponentExposed } from 'vue-component-type-helpers'
 
 import type { SelectActivity, SelectHistory, SelectNote, SelectRemark } from '@/modules/database'
@@ -9,6 +9,7 @@ import type { Filter } from '@/components/timeline/types'
 
 import TimelineGraph from '@/components/timeline/graph/TimelineGraph.vue'
 import TimelineFilter from '@/components/timeline/TimelineFilter.vue'
+import Calendar from '@/components/timeline/calendar/Calendar.vue'
 import { timelineProvide } from '@/components/timeline/inject'
 import type { StepCounter } from '@/utils'
 import type { ObsidianNote } from '@/hooks/useObsidian'
@@ -16,6 +17,7 @@ import type { ObsidianNote } from '@/hooks/useObsidian'
 type computedTimeLineNode = TimeLineNode & { compressGroupId: string }
 type TimelineGraphExposed = ComponentExposed<typeof TimelineGraph>
 type TimelineFilterExposed = ComponentExposed<typeof TimelineFilter>
+type CalendarExposed = ComponentExposed<typeof Calendar>
 
 const configStore = useConfigStore()
 const historyStore = useHistoryStore()
@@ -23,7 +25,7 @@ const historyStore = useHistoryStore()
 const { xs } = useTailwindBreakpoints()
 const { format } = useDateFns()
 const route = useRoute()
-const { onRefresh } = usePageRefresh()
+const { onRefresh, loading, refresh } = usePageRefresh()
 const { success } = useNotify()
 const { getList: getObsidianNoteList } = useObsidian()
 
@@ -41,6 +43,7 @@ const filterCategory = ref(route.query.category as Filter['category'])
 const filterTargetId = ref<Filter['id']>(route.query.id ? Number(route.query.id) : undefined)
 const timelineGraphRef = ref<TimelineGraphExposed>()
 const timelineFilterRef = ref<TimelineFilterExposed>()
+const calendarRef = ref<CalendarExposed>()
 
 const [compressed, toggleCompressed] = useToggle(true)
 const [searchVisible, toggleSearchVisible] = useToggle()
@@ -52,7 +55,7 @@ timelineProvide({
 
 async function handleSuccess() {
   success({})
-  await refresh()
+  refresh()
 }
 
 const list = computed(() => {
@@ -196,7 +199,7 @@ const list = computed(() => {
   return compressed.value ? compress(data) : data
 })
 
-async function refresh(pullHistory = true) {
+async function handleRefresh(pullHistory = true) {
   const start = startOfDay(date.value).getTime()
   const end = endOfDay(date.value).getTime()
   const [_noteList, _activityList, _remarkList, _historyList, _momentList] = await Promise.all([
@@ -234,7 +237,7 @@ async function refresh(pullHistory = true) {
   if (pullHistory) {
     const count = await pullActiveBrowsers()
     if (count)
-      await refresh(false)
+      await handleRefresh(false)
   }
 }
 
@@ -308,11 +311,25 @@ function deduplicateTimeRange<T extends {
   }))
 }
 
+async function scrollTo(time: number) {
+  if (!isSameDay(date.value, time))
+    date.value = new Date(time)
+
+  // wait refresh
+  await nextTick()
+  await until(loading).toBe(false)
+  // wait dom
+  await nextTick()
+
+  calendarRef.value?.scrollTo(time)
+  timelineGraphRef.value?.scrollTo(time, 'center')
+}
+
+onRefresh(handleRefresh)
+
 watch(date, () => refresh(), {
   immediate: true,
 })
-
-onRefresh(refresh)
 </script>
 
 <template>
@@ -321,7 +338,7 @@ onRefresh(refresh)
       <TimelineGraph v-if="list.length" ref="timelineGraphRef" :list="list" flex-1 />
       <empty v-else type="timeline" :desc="$t('hint.timeline')" />
     </div>
-    <calendar :id="filterTargetId" v-model:date="date" :category="filterCategory" />
+    <Calendar :id="filterTargetId" ref="calendarRef" v-model:date="date" :category="filterCategory" />
   </div>
   <TimelineFilter ref="timelineFilterRef" v-model:category="filterCategory" v-model:id="filterTargetId" />
   <status-bar-teleport>
@@ -359,7 +376,7 @@ onRefresh(refresh)
       icon="i-mdi:magnify" @click="() => toggleSearchVisible()"
     />
   </status-bar-teleport>
-  <search v-model:visible="searchVisible" />
+  <search v-model:visible="searchVisible" @scroll-to="scrollTo" />
   <more-menu>
     <v-list>
       <v-list-item

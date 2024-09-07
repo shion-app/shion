@@ -6,6 +6,10 @@ const props = defineProps<{
   searched: boolean
 }>()
 
+const emit = defineEmits<{
+  (e: 'scrollTo', time: number): void
+}>()
+
 interface SearchItem {
   time: number
   content: string
@@ -31,9 +35,8 @@ async function search() {
   searchResult.value = (await searchObsidian(keywordVModel.value)).map(({ metadata, matched }) => ({
     time: metadata.created,
     content: matched,
-    navigate: () => {
+    navigate: () => emit('scrollTo', metadata.created),
 
-    },
   })).sort((a, b) => b.time - a.time)
 }
 

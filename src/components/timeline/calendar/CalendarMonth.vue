@@ -27,7 +27,7 @@ defineExpose({
 
 const { locale } = useI18n()
 const { selected: selectedVModel } = useVModels(props)
-const { format, formatHHmmss } = useDateFns()
+const { format } = useDateFns()
 
 interface CalendarDate {
   date: Date

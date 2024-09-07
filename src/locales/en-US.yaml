@@ -309,7 +309,7 @@ statusBar:
         decompress: Decompress
     search:
       text: Search
-      tooltip: Search browser history
+      tooltip: Search and navigate
     filter:
       tooltip: Filter Categories
     history:

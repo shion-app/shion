@@ -32,6 +32,15 @@ function scrollToView() {
     item.scrollToViewIfThisMonth(new Date())
 }
 
+function scrollTo(time: number) {
+  for (const item of calendarMonthRef.value)
+    item.scrollToViewIfThisMonth(new Date(time))
+}
+
+defineExpose({
+  scrollTo,
+})
+
 onMounted(scrollToView)
 </script>
 

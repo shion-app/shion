@@ -26,6 +26,7 @@ const props = defineProps<{
 
 defineExpose({
   scrollToViewportTime,
+  scrollTo,
 })
 
 const { format } = useDateFns()
@@ -210,17 +211,23 @@ async function scrollToViewportTime() {
 
   await sleep(200)
 
+  scrollTo(viewportTime)
+}
+
+function scrollTo(time: number, block: ScrollLogicalPosition = 'start') {
   let closest = Infinity
   let closestItem: HTMLElement | undefined
   for (const item of graphItemRef.value) {
-    const time = Number(item.dataset.start)
-    const current = Math.abs(viewportTime - time)
+    const start = Number(item.dataset.start)
+    const current = Math.abs(time - start)
     if (current < closest) {
       closest = current
       closestItem = item
     }
   }
-  closestItem?.scrollIntoView()
+  closestItem?.scrollIntoView({
+    block,
+  })
 }
 
 onMounted(() => {
