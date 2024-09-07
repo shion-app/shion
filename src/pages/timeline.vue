@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { endOfDay, isBefore, startOfDay, subMinutes } from 'date-fns'
-import { open } from '@tauri-apps/plugin-shell'
 import type { ComponentExposed } from 'vue-component-type-helpers'
 
 import type { SelectActivity, SelectHistory, SelectNote, SelectRemark } from '@/modules/database'
@@ -309,23 +308,6 @@ function deduplicateTimeRange<T extends {
   }))
 }
 
-async function handleSearch(keyword: string, page: number, size: number) {
-  const { list, count } = (await db.history.paginationSelect({
-    keyword,
-    page,
-    size,
-  }))
-  const counter = randomStep(list.map(i => i.lastVisited))
-  return {
-    list: deduplicateHistory(list, counter).map(i => ({
-      time: i.lastVisited,
-      content: i.title,
-      navigate: () => open(i.url),
-    })),
-    count,
-  }
-}
-
 watch(date, () => refresh(), {
   immediate: true,
 })
@@ -377,7 +359,7 @@ onRefresh(refresh)
       icon="i-mdi:magnify" @click="() => toggleSearchVisible()"
     />
   </status-bar-teleport>
-  <search v-model:visible="searchVisible" :search="handleSearch" />
+  <search v-model:visible="searchVisible" />
   <more-menu>
     <v-list>
       <v-list-item

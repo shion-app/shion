@@ -412,7 +412,14 @@ history:
     empty: 无导入数据
   tip: 导入过的浏览器将会自动同步数据
 search:
-  done: 无更多内容
+  tab:
+    history: 浏览器历史
+    moment: 瞬间
+    remark: 备注
+  tip:
+    input: 输入关键字, 点击搜索
+    empty: 没有匹配内容
+    done: 无更多内容
 filePicker:
   name: 应用程序
 importExport:

@@ -17,6 +17,16 @@ export interface ObsidianGroup {
   name: string
   id: number
 }
+
+interface SearchItem {
+  path: string
+  matched: string
+  target: 'content' | 'filename'
+  metadata: {
+    created: number
+    updated: number
+  }
+}
 export function useObsidian() {
   const configStore = useConfigStore()
   const extensionStore = useExtensionStore()
@@ -46,8 +56,21 @@ export function useObsidian() {
       })))).flat()
   }
 
+  async function search(pattern: string, start?: number, end?: number) {
+    return (await Promise.all(extensionConfig.value.obsidian.workspace.map(path =>
+      invoke<Array<SearchItem>>('search_obsidian', {
+        pattern,
+        path,
+        createdKey: extensionConfig.value.obsidian.created,
+        updatedKey: extensionConfig.value.obsidian.updated,
+        start,
+        end,
+      })))).flat()
+  }
+
   return {
     getList,
     getGroupList,
+    search,
   }
 }

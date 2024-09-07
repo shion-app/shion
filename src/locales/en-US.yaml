@@ -412,7 +412,14 @@ history:
     empty: No imported data
   tip: The imported browser will automatically synchronize data
 search:
-  done: No more content
+  tab:
+    history: History
+    moment: Moment
+    remark: Remark
+  tip:
+    input: Enter keywords and click to search
+    empty: No matching content
+    done: No more content
 filePicker:
   name: Executable program
 importExport:
