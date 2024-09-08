@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { startOfMonth } from 'date-fns'
+import { getYear, startOfMonth } from 'date-fns'
 
 import type { ComponentExposed } from 'vue-component-type-helpers'
 import type { Filter } from '../types'
@@ -83,10 +83,21 @@ function init() {
 function onScroll() {
   const { top } = arrivedState
   if (top)
-    list.value.unshift(...generate(--generatedYear))
+    addCalendarYear(generatedYear - 1)
 }
 
-function scrollTo(time: number) {
+function addCalendarYear(year: number) {
+  list.value.unshift(...generate(year))
+  generatedYear = year
+}
+
+async function scrollTo(time: number) {
+  const year = getYear(time)
+  while (year < generatedYear)
+    addCalendarYear(generatedYear - 1)
+
+  await nextTick()
+
   if (monthGridRef.value)
     monthGridRef.value.scrollTo(time)
 
