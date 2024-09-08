@@ -105,6 +105,11 @@ async function scrollTo(time: number) {
     yearGridRef.value.scrollTo(time)
 }
 
+async function switchDisplayMode() {
+  toggleMode()
+  await scrollTo(dateVModel.value.getTime())
+}
+
 defineExpose({
   scrollTo,
 })
@@ -128,7 +133,7 @@ init()
     <status-bar-button
       :tooltip="isMonthMode ? $t('statusBar.calendar.switch.year') : $t('statusBar.calendar.switch.month')"
       :text="isMonthMode ? $t('statusBar.calendar.month') : $t('statusBar.calendar.year')" icon="i-mdi:calendar-month"
-      @click="() => toggleMode()"
+      @click="switchDisplayMode"
     />
   </status-bar-teleport>
 </template>
