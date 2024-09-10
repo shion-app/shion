@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { isSameDay, isSameHour } from 'date-fns'
+import type { ECElementEvent } from 'echarts'
+
 import { db } from '@/modules/database'
 import type { SelectActivity, SelectLabel, SelectNote, SelectOverview, SelectProgram } from '@/modules/database'
 
@@ -17,6 +19,7 @@ const noteList = ref<Array<SelectNote>>([])
 const labelList = ref<Array<SelectLabel>>([])
 const activityList = ref<Array<SelectActivity>>([])
 const programList = ref<Array<SelectProgram>>([])
+let currentSeriesName = ''
 
 const vertical = computed(() => props.data.fields?.vertical || false)
 
@@ -88,7 +91,13 @@ const option = computed(() => {
       },
       formatter(params) {
         return params.filter(({ value }) => value != 0).sort((a, b) => b.value - a.value).map(({ marker, seriesName, value }) => {
-          return `<div class="flex items-center"><div class="shrink-0">${marker}</div>  <span style="font-size:14px;color:#666;font-weight:400;margin-left:6px" class="text-ellipsis overflow-hidden">${seriesName}</span> <div style="min-width: 40px; flex-grow: 1;"></div> <span style="float:right;font-size:14px;color:#666;font-weight:900">${formatHHmmss(value)}</span></div>`
+          return `
+            <div class="flex items-center ${(currentSeriesName.length == 0 || currentSeriesName == seriesName) ? '' : 'opacity-30'}">
+              <div class="shrink-0">${marker}</div>
+              <span style="font-size:14px;color:#666;font-weight:400;margin-left:6px" class="text-ellipsis overflow-hidden">${seriesName}</span>
+              <div style="min-width: 40px; flex-grow: 1;"></div>
+              <span style="float:right;font-size:14px;color:#666;font-weight:900">${formatHHmmss(value)}</span>
+            </div>`
         }).join('')
       },
       position,
@@ -124,9 +133,17 @@ async function init(date: Date) {
   ])
 }
 
+function handleMouseover(event: ECElementEvent) {
+  currentSeriesName = event.seriesName || ''
+}
+
+function handleMouseout() {
+  currentSeriesName = ''
+}
+
 watchImmediate(selectedDateVModel, init)
 </script>
 
 <template>
-  <vue-echarts :option="option" autoresize />
+  <vue-echarts :option="option" autoresize @mouseover="handleMouseover" @mouseout="handleMouseout" />
 </template>
