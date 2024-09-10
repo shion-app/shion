@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { isSameDay, isSameHour } from 'date-fns'
-import type { ECElementEvent } from 'echarts'
 
 import { db } from '@/modules/database'
 import type { SelectActivity, SelectLabel, SelectNote, SelectOverview, SelectProgram } from '@/modules/database'
@@ -133,7 +132,7 @@ async function init(date: Date) {
   ])
 }
 
-function handleMouseover(event: ECElementEvent) {
+function handleMouseover(event) {
   currentSeriesName = event.seriesName || ''
 }
 
