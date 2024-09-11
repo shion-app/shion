@@ -17,11 +17,11 @@ serde_json = "1.0"
 log = "^0.4"
 tauri = { version = "2.0.0-rc.0", features = [ "protocol-asset", "tray-icon", "devtools"] }
 tauri-plugin-process = "2.0.0-rc.0"
-tauri-plugin-fs = "2.0.0-rc.0"
+tauri-plugin-fs = "2.0.0-rc.3"
 tauri-plugin-shell = "2.0.0-rc.0"
 tauri-plugin-store = "2.0.0-rc.0"
 tauri-plugin-log = "2.0.0-rc.0"
-tauri-plugin-dialog = "2.0.0-rc.0"
+tauri-plugin-dialog = "2.0.0-rc.5"
 tauri-plugin-clipboard-manager = "2.1.0-beta"
 tauri-plugin-shion-watcher = { git = "https://github.com/shion-app/watcher" }
 tauri-plugin-shion-history = { git = "https://github.com/shion-app/history" }

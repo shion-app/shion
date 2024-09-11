@@ -39,7 +39,7 @@ async function handleImport() {
   let migration: Migration
   try {
     await invoke('decompress', {
-      target: selected.path,
+      target: selected,
       dest: verifyDest,
     })
     migration = await verifyMigrationFile()
@@ -47,7 +47,7 @@ async function handleImport() {
       recursive: true,
     })
     await invoke('decompress', {
-      target: selected.path,
+      target: selected,
       dest,
     })
   }

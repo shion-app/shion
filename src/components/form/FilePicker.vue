@@ -26,7 +26,7 @@ async function openFileDialog() {
     ],
   })
   if (selected)
-    modelValue.value = selected.path
+    modelValue.value = selected
 }
 </script>
 

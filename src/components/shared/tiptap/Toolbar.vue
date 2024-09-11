@@ -121,7 +121,7 @@ async function openFileDialog(filter: DialogFilter) {
     ],
   })
   if (selected?.length)
-    return await Promise.all(selected.map(({ path }) => uploadByPath(path)))
+    return await Promise.all(selected.map(path => uploadByPath(path)))
   return []
 }
 

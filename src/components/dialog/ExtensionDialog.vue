@@ -25,7 +25,7 @@ async function openFileDialog() {
     ],
   })
   if (selected)
-    config.value.dandanplay.path = selected.path
+    config.value.dandanplay.path = selected
 }
 </script>
 
