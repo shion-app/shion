@@ -20,6 +20,8 @@ useHotkey('*', (keyboardEvent) => {
 
   return !keyboardEvent.ctrlKey
 })
+
+useDandanplay()
 </script>
 
 <template>

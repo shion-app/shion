@@ -191,6 +191,7 @@ declare global {
   const useCssVars: typeof import('vue')['useCssVars']
   const useCurrentElement: typeof import('@vueuse/core')['useCurrentElement']
   const useCycleList: typeof import('@vueuse/core')['useCycleList']
+  const useDandanplay: typeof import('./hooks/useDandanplay')['useDandanplay']
   const useDark: typeof import('@vueuse/core')['useDark']
   const useDatabase: typeof import('./hooks/useDatabase')['useDatabase']
   const useDateFns: typeof import('./hooks/useDateFns')['useDateFns']
@@ -554,6 +555,7 @@ declare module 'vue' {
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useCurrentElement: UnwrapRef<typeof import('@vueuse/core')['useCurrentElement']>
     readonly useCycleList: UnwrapRef<typeof import('@vueuse/core')['useCycleList']>
+    readonly useDandanplay: UnwrapRef<typeof import('./hooks/useDandanplay')['useDandanplay']>
     readonly useDark: UnwrapRef<typeof import('@vueuse/core')['useDark']>
     readonly useDatabase: UnwrapRef<typeof import('./hooks/useDatabase')['useDatabase']>
     readonly useDateFns: UnwrapRef<typeof import('./hooks/useDateFns')['useDateFns']>

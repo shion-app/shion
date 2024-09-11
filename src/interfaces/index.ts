@@ -41,4 +41,6 @@ export interface NestedMenuItem {
 
 export type NestedMenuItemValue = NestedMenuItem['value']
 
+export type Maybe<T> = T | null
+
 export * from '@/components/modal/types'

@@ -1,8 +1,5 @@
 import { Store } from '@tauri-apps/plugin-store'
-import { onStatusChanged } from 'tauri-plugin-shion-watcher-api'
 import mergeOptions from 'merge-options'
-
-import { dandanplay as dandanplayExtension } from '@/modules/extension/dandanplay'
 
 interface Config {
   dandanplay: {
@@ -19,8 +16,6 @@ interface Config {
 const PATH = 'extension.json'
 
 export const useExtensionStore = defineStore('extension', () => {
-  const monitorStore = useMonitorStore()
-
   const store = new Store(PATH)
   const defaultConfig = {
     dandanplay: {
@@ -35,8 +30,6 @@ export const useExtensionStore = defineStore('extension', () => {
   }
   const config = ref<Config>(mergeOptions({}, defaultConfig))
   const ready = ref(false)
-
-  const dandanplay = dandanplayExtension()
 
   async function init() {
     const len = await store.length()
@@ -64,24 +57,7 @@ export const useExtensionStore = defineStore('extension', () => {
     config.value = mergeOptions(data, config.value)
   }
 
-  function getDandanplayInfo() {
-    return {
-      port: config.value.dandanplay.port,
-      id: monitorStore.whiteList.find(i => i.path == config.value.dandanplay.path)?.id,
-    }
-  }
-
   init()
-
-  function activate() {
-    const { port, id } = getDandanplayInfo()
-    if (id)
-      dandanplay.activate(port, id)
-  }
-
-  function inactivate() {
-    dandanplay.inactivate()
-  }
 
   watchDebounced(config, (v) => {
     for (const key in v)
@@ -91,21 +67,6 @@ export const useExtensionStore = defineStore('extension', () => {
   }, {
     debounce: 2000,
     deep: true,
-  })
-
-  onAppResume(activate)
-
-  onAppSuspend(inactivate)
-
-  onStatusChanged((e) => {
-    const { path, active } = e.payload
-    if (path != config.value.dandanplay.path)
-      return
-
-    if (active)
-      activate()
-    else
-      inactivate()
   })
 
   return {
