@@ -24,7 +24,7 @@ export function usePageRefresh() {
         notify.error({
           text: `${t('refresh.error')}: ${e}`,
         })
-        error('refresh error: ', e as any)
+        error('refresh error: ', (e as any).message)
         throw e
       }
       finally {
