@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [0.12.3] - 2024-09-12
+
+### Added
+
+- Add support for Arc browser
+- Add multiple formats and jump functions to `Timeline` search
+
+### Changed
+
+- `Overview` daily active chart floating distinction highlighted area
+
 ## [0.12.2] - 2024-08-31
 
 ### Added
