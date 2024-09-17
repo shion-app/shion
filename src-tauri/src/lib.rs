@@ -374,8 +374,7 @@ pub fn run() {
                 .center()
                 .decorations(false)
                 .fullscreen(false)
-                .resizable(false)
-                .inner_size(1152.0, 648.0)
+                .min_inner_size(1152.0, 648.0)
                 .title(title)
                 .build()?;
 

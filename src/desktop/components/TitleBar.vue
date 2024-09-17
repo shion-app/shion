@@ -14,6 +14,8 @@ const about = ref(false)
 const importExport = ref(false)
 const extension = ref(false)
 
+const isMaximized = ref(false)
+
 const dialogStore = useDialogStore()
 const configStore = useConfigStore()
 const changelogStore = useChangelogStore()
@@ -48,6 +50,27 @@ function openEarlyAccess() {
 function openXiaohongshu() {
   open('https://www.xiaohongshu.com/user/profile/66440a7e0000000007004206')
 }
+
+async function toggleMaximize() {
+  if (isMaximized.value)
+    await currentWindow.unmaximize()
+  else
+    await currentWindow.maximize()
+
+  await checkIsMaximized()
+}
+
+function init() {
+  currentWindow.onResized(async () => {
+    await checkIsMaximized()
+  })
+}
+
+async function checkIsMaximized() {
+  isMaximized.value = await currentWindow.isMaximized()
+}
+
+init()
 
 useHotkey('ctrl+shift+i', openDevtools)
 </script>
@@ -134,8 +157,8 @@ useHotkey('ctrl+shift+i', openDevtools)
       <v-btn variant="text" @click="() => currentWindow.minimize()">
         <div i-mdi:window-minimize />
       </v-btn>
-      <v-btn variant="text" :disabled="true">
-        <div i-mdi:window-maximize />
+      <v-btn variant="text" @click="toggleMaximize">
+        <div :class="isMaximized ? 'i-mdi:window-restore' : 'i-mdi:window-maximize'" />
       </v-btn>
       <v-btn variant="text" class="hover:bg-red hover:text-white" @click="() => currentWindow.hide()">
         <div i-mdi:close />
