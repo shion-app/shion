@@ -1,10 +1,10 @@
 // import { getVersion } from '@tauri-apps/plugin-app'
 import { Store } from '@tauri-apps/plugin-store'
 import i18next from 'i18next'
-import { useTheme } from 'vuetify/lib/framework.mjs'
 import { invoke } from '@tauri-apps/api/core'
 
 import { FaviconService } from '@/modules/favicon'
+import { ColorMode } from '@/hooks/useVuetifyTheme'
 
 interface Config {
   version: string
@@ -25,6 +25,7 @@ interface Config {
   scheduledExportPeriod: number
   lastExport: number
   serverPort: number
+  colorMode: ColorMode
 }
 
 const PATH = 'config.json'
@@ -37,7 +38,6 @@ export const useConfigStore = defineStore('config', () => {
   const store = new Store(PATH)
   const config = ref({} as Config)
   const ready = ref(false)
-  const theme = useTheme()
 
   async function init() {
     const data: Config = {
@@ -60,6 +60,7 @@ export const useConfigStore = defineStore('config', () => {
       scheduledExportPeriod: calcDuration(1, 'week'),
       lastExport: 0,
       serverPort: 15785,
+      colorMode: ColorMode.Light,
     }
     const len = await store.length()
     if (len == 0)
@@ -120,10 +121,6 @@ export const useConfigStore = defineStore('config', () => {
         },
       })
     }
-  })
-
-  watch(() => config.value.themeColor, (v) => {
-    theme.themes.value.light.colors.primary = v
   })
 
   return {

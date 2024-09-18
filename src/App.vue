@@ -11,6 +11,8 @@ useExportStore()
 
 const { config } = storeToRefs(configStore)
 
+const { theme } = useVuetifyTheme()
+
 useTour()
 
 useHotkey('*', (keyboardEvent) => {
@@ -26,7 +28,7 @@ useDandanplay()
 
 <template>
   <v-locale-provider :locale="config.locale">
-    <v-theme-provider with-background>
+    <v-theme-provider with-background :theme="theme">
       <layout />
       <ModalsContainer />
       <notification-container />

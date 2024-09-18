@@ -26,6 +26,7 @@ config:
   timelineMinMinute: 最小时间
   timelineGroupGapMinute: 分组间隔
   themeColor: 主题色
+  colorMode: 主题模式
   watcherWhitelist: 自动监听白名单
   faviconService: 图标获取
   scheduledExport: 定时导出数据
@@ -57,6 +58,11 @@ config:
       month: 月
   service:
     restart: 重启服务
+  appearance:
+    colorMode:
+      light: 浅色
+      dark: 深色
+      auto: 自动
 plan:
   create: 创建计划
   update: 修改计划

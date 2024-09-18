@@ -2,6 +2,7 @@ import { createVuetify } from 'vuetify'
 import { en, zhHans } from 'vuetify/locale'
 import { VTimePicker } from 'vuetify/labs/VTimePicker'
 import { VNumberInput } from 'vuetify/labs/VNumberInput'
+import colors from 'vuetify/util/colors'
 
 import mergeOptions from 'merge-options'
 import DateFnsAdapter from '@date-io/date-fns'
@@ -42,7 +43,13 @@ export const vuetify = createVuetify({
       light: {
         colors: {
           'primary': '#512DA8',
-          'on-background': '#424242',
+          'on-background': colors.grey.darken3,
+        },
+      },
+      dark: {
+        colors: {
+          primary: '#512DA8',
+          background: colors.grey.darken4,
         },
       },
     },

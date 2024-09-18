@@ -12,6 +12,9 @@ const store = useConfigStore()
 const { config } = storeToRefs(store)
 
 const { autostart, runAsAdmin } = useAutostart()
+const { t } = useI18n()
+
+const tab = ref('general')
 
 const localeOptions = [
   {
@@ -23,7 +26,21 @@ const localeOptions = [
     value: 'en-US',
   },
 ]
-const tab = ref('general')
+
+const colorModeOptions = computed(() => [
+  {
+    title: t('config.appearance.colorMode.light'),
+    value: ColorMode.Light,
+  },
+  {
+    title: t('config.appearance.colorMode.dark'),
+    value: ColorMode.Dark,
+  },
+  {
+    title: t('config.appearance.colorMode.auto'),
+    value: ColorMode.Auto,
+  },
+])
 </script>
 
 <template>
@@ -45,6 +62,14 @@ const tab = ref('general')
                 <v-list-item :title="$t('config.themeColor')">
                   <template #append>
                     <color-picker-button v-model="config.themeColor" />
+                  </template>
+                </v-list-item>
+                <v-list-item :title="$t('config.colorMode')">
+                  <template #append>
+                    <v-select
+                      v-model="config.colorMode" :items="colorModeOptions" hide-details class="w-[230px]"
+                      color="primary"
+                    />
                   </template>
                 </v-list-item>
               </v-list>
