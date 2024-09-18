@@ -22,7 +22,7 @@ import routes from '~pages'
 import { i18n } from '@/locales'
 import { vuetify } from '@/plugins/vuetify'
 import '@/plugins/zod'
-import '@/plugins/echarts'
+import '@/plugins/echarts/'
 
 const router = createRouter({
   history: createWebHashHistory(),

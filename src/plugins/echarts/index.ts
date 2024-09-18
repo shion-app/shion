@@ -1,4 +1,4 @@
-import { use } from 'echarts/core'
+import { registerTheme, use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { BarChart, HeatmapChart, LineChart, PieChart } from 'echarts/charts'
 import {
@@ -11,6 +11,8 @@ import {
   TooltipComponent,
   VisualMapComponent,
 } from 'echarts/components'
+
+import { theme as dark } from './dark'
 
 use([
   CanvasRenderer,
@@ -27,3 +29,5 @@ use([
   VisualMapComponent,
   CalendarComponent,
 ])
+
+registerTheme('dark', dark)

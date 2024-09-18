@@ -12,7 +12,7 @@ const props = defineProps<{
 const { selectedDate: selectedDateVModel } = useVModels(props)
 
 const { formatHHmmss, formatYYYYmmdd } = useDateFns()
-const { position } = useEcharts()
+const { position, theme } = useEcharts()
 
 const noteList = ref<Array<SelectNote>>([])
 const labelList = ref<Array<SelectLabel>>([])
@@ -144,5 +144,5 @@ watchImmediate(selectedDateVModel, init)
 </script>
 
 <template>
-  <vue-echarts :option="option" autoresize @mouseover="handleMouseover" @mouseout="handleMouseout" />
+  <vue-echarts :option="option" autoresize :theme="theme" @mouseover="handleMouseover" @mouseout="handleMouseout" />
 </template>

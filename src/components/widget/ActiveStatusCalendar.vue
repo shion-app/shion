@@ -27,7 +27,7 @@ const configStore = useConfigStore()
 const extensionStore = useExtensionStore()
 
 const { format, formatHHmmss } = useDateFns()
-const { position } = useEcharts()
+const { position, theme } = useEcharts()
 const { getList: getObsidianNoteList } = useObsidian()
 
 const { config } = storeToRefs(configStore)
@@ -208,5 +208,5 @@ watchDebounced(width, (v) => {
 </script>
 
 <template>
-  <vue-echarts ref="chartRef" :option="option" autoresize @click="handleClick" />
+  <vue-echarts ref="chartRef" :option="option" autoresize :theme="theme" @click="handleClick" />
 </template>

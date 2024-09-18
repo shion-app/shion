@@ -11,7 +11,7 @@ useExportStore()
 
 const { config } = storeToRefs(configStore)
 
-const { theme } = useVuetifyTheme()
+const { theme } = useVuetifyColorMode()
 
 useTour()
 

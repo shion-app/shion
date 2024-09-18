@@ -3,6 +3,7 @@ import type { TooltipComponentPositionCallback } from 'echarts'
 export function useEcharts() {
   const { bottom, mouseY } = layoutMainInject()
   const parentEl = useParentElement()
+  const { theme } = useVuetifyTheme()
 
   const position: TooltipComponentPositionCallback = (point, _, __, ___, size) => {
     if (!parentEl.value)
@@ -32,5 +33,6 @@ export function useEcharts() {
 
   return {
     position,
+    theme,
   }
 }

@@ -6,7 +6,7 @@ export const enum ColorMode {
   Auto = 'auto',
 }
 
-export function useVuetifyTheme() {
+export function useVuetifyColorMode() {
   const configStore = useConfigStore()
   const { config } = storeToRefs(configStore)
 
@@ -29,5 +29,13 @@ export function useVuetifyTheme() {
   return {
     theme: theme.global.name,
     mode,
+  }
+}
+
+export function useVuetifyTheme() {
+  const theme = useTheme()
+
+  return {
+    theme: theme.global.name,
   }
 }

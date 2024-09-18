@@ -5,7 +5,7 @@ import type { EChartsOption } from 'echarts'
 import { db } from '@/modules/database'
 import type { SelectActivity, SelectNote } from '@/modules/database'
 
-const { position } = useEcharts()
+const { position, theme } = useEcharts()
 const { formatHHmmss } = useDateFns()
 const { t } = useI18n()
 
@@ -120,5 +120,5 @@ init()
 </script>
 
 <template>
-  <vue-echarts :option="option" autoresize />
+  <vue-echarts :option="option" autoresize :theme="theme" />
 </template>

@@ -9,7 +9,7 @@ const props = defineProps<{
 }>()
 
 const { format, formatHHmmss } = useDateFns()
-const { position } = useEcharts()
+const { position, theme } = useEcharts()
 
 const noteList = ref<Array<SelectNote>>([])
 const activityList = ref<Array<SelectActivity>>([])
@@ -124,5 +124,5 @@ watch(() => props.data, init, {
 </script>
 
 <template>
-  <vue-echarts :option="option" autoresize />
+  <vue-echarts :option="option" autoresize :theme="theme" />
 </template>
