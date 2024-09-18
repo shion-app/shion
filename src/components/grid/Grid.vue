@@ -24,9 +24,15 @@ const { items: layout } = useVModels(props)
 const { column } = useGridColumn()
 const { toggleDrag, dragged, toggleIsGrid } = layoutInject()
 
+let inited = false
+
 toggleIsGrid(true)
 
 function handleLayoutUpdated(newLayout: Layout) {
+  if (!inited) {
+    inited = true
+    return
+  }
   const list = newLayout.sort((a, b) => {
     if (a.y !== b.y)
       return a.y - b.y
