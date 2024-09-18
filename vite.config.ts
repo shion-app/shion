@@ -41,6 +41,9 @@ export default defineConfig({
     Unocss({
       presets: [presetUno(), presetAttributify(), presetIcons(), presetTypography()],
       transformers: [transformerDirectives()],
+      shortcuts: {
+        'uno-card': 'bg-white dark:bg-[#212121]',
+      },
     }),
     Components({
       dirs: ['src/components', mobile ? 'src/mobile/components' : 'src/desktop/components'],

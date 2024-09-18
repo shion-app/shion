@@ -47,7 +47,7 @@ function handleLongpress() {
           v-if="isDesktop && !dragged"
           :class="selectedVModel || isHovering ? 'opacity-100' : 'opacity-0'"
           transition-opacity-400
-          absolute top-0 right-2 bg-white
+          absolute top-0 right-2 uno-card
         >
           <v-checkbox
             v-model="selectedVModel"
@@ -60,7 +60,7 @@ function handleLongpress() {
           v-if="isDesktop && !dragged && $slots.menu"
           :class="isHovering ? 'opacity-100' : 'opacity-0'"
           transition-opacity-400
-          absolute bottom-2 right-2.5 bg-white
+          absolute bottom-2 right-2.5 uno-card
         >
           <v-menu>
             <template #activator="{ props: menuProps }">

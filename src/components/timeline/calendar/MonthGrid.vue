@@ -41,7 +41,7 @@ onMounted(scrollToView)
 </script>
 
 <template>
-  <div sticky top-0 left-0 right-0 bg-white z-1 shadow>
+  <div sticky top-0 left-0 right-0 uno-card z-1 shadow>
     <div text-5>
       {{ currentYear }}
     </div>

@@ -21,7 +21,7 @@ async function finishTimer() {
     </div>
     <div
       shadow-lg hover:shadow-xl transition-shadow w-20 h-20 rounded-full cursor-pointer text-12 flex justify-center
-      items-center bg-white @click="() => {
+      items-center uno-card @click="() => {
         running ? finishTimer() : open()
       }"
     >
