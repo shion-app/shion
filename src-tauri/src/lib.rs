@@ -31,6 +31,7 @@ use tauri_plugin_autostart::MacosLauncher;
 use tauri_plugin_log::{Target, TargetKind, TimezoneStrategy};
 use tauri_plugin_shion_sql::{DbInstances, Migration, MigrationKind};
 use tauri_plugin_store::{with_store, StoreCollection};
+use tauri_plugin_window_state::{StateFlags, WindowExt};
 use zip_extensions::{zip_create_from_directory, zip_extract};
 
 pub use error::Result;
@@ -289,6 +290,7 @@ pub fn run() {
             MacosLauncher::LaunchAgent,
             None,
         ))
+        .plugin(tauri_plugin_window_state::Builder::new().build())
         .invoke_handler(tauri::generate_handler![
             update_tray_menu,
             open_devtools,
@@ -369,7 +371,7 @@ pub fn run() {
                 })
                 .build(app)?;
 
-            WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
+            let window = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
                 .visible(launch_visible)
                 .center()
                 .decorations(false)
@@ -377,6 +379,8 @@ pub fn run() {
                 .min_inner_size(1152.0, 648.0)
                 .title(title)
                 .build()?;
+
+            window.restore_state(StateFlags::all())?;
 
             start_server(&app_handle, server_port);
 

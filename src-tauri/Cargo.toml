@@ -29,6 +29,7 @@ tauri-plugin-shion-sql = { git = "https://github.com/shion-app/sql" }
 tauri-plugin-autostart = "2.0.0-rc.0"
 tauri-plugin-single-instance = "2.0.0-rc.0"
 tauri-plugin-updater = "2.0.0-rc.0"
+tauri-plugin-window-state = "=2.0.0-rc.5"
 sys-locale = "0.3.1"
 thiserror = "1.0"
 parse-changelog = { version = "0.6", default-features = false, features = ["serde"] }

@@ -72,6 +72,7 @@
     "store:allow-set",
     "store:allow-save",
     "updater:default",
+    "window-state:allow-save-window-state",
     "shion-history:allow-get-config",
     "shion-history:allow-set-config",
     "shion-history:allow-read-history",

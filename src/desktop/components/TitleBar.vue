@@ -4,6 +4,7 @@ import { appLogDir } from '@tauri-apps/api/path'
 import { attachConsole } from '@tauri-apps/plugin-log'
 import { invoke } from '@tauri-apps/api/core'
 import { open } from '@tauri-apps/plugin-shell'
+import { StateFlags, saveWindowState } from '@tauri-apps/plugin-window-state'
 
 import logo from '@/assets/logo.svg'
 
@@ -60,17 +61,18 @@ async function toggleMaximize() {
   await checkIsMaximized()
 }
 
-function init() {
-  currentWindow.onResized(async () => {
-    await checkIsMaximized()
-  })
-}
-
 async function checkIsMaximized() {
   isMaximized.value = await currentWindow.isMaximized()
 }
 
-init()
+function onWindowResized() {
+  saveWindowState(StateFlags.ALL)
+  checkIsMaximized()
+}
+
+const onDebounceWindowResized = useDebounceFn(onWindowResized)
+
+currentWindow.onResized(onDebounceWindowResized)
 
 useHotkey('ctrl+shift+i', openDevtools)
 </script>
