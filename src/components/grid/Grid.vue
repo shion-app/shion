@@ -12,6 +12,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'layoutUpdated', list: number[], layout: Layout): void
+  (e: 'columnChanged', col: number): void
 }>()
 
 defineSlots<{
@@ -39,6 +40,10 @@ function stopClickIfDraggable(e: Event) {
   if (dragged.value)
     e.stopPropagation()
 }
+
+watch(column, (v) => {
+  emit('columnChanged', v)
+})
 
 onBeforeUnmount(() => {
   toggleDrag(false)

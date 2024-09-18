@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Layout } from 'grid-layout-plus'
+import type { Layout, LayoutItem } from 'grid-layout-plus'
 
 import { db } from '@/modules/database'
 import type { InsertOverview, SelectLabel, SelectOverview, SelectPlan, SelectProgram, UpdateOverview } from '@/modules/database'
 import { WidgetType } from '@/modules/database/models/overview'
 import Grid from '@/components/grid/Grid.vue'
-import type { GridList } from '@/hooks/useGrid'
+import { type GridList } from '@/hooks/useGrid'
 import { useConfirmModal } from '@/hooks/useConfirmModal'
 
 type OverviewForm = Pick<InsertOverview, 'type' | 'w' | 'h'> & { category?: string; vertical?: boolean }
@@ -14,7 +14,7 @@ const { t } = useI18n()
 const { success } = useNotify()
 const { parseFieldsError } = useDatabase()
 const { open: openNoteCreate } = useNoteCreate()
-const { onRefresh } = usePageRefresh()
+const { onRefresh, refresh } = usePageRefresh()
 const { xs } = useTailwindBreakpoints()
 const confirm = useConfirmModal()
 
@@ -50,7 +50,6 @@ const { open, close, setModelValue } = useFormModal<
 ((model, modal) => {
   const categoryVisible = model.type == WidgetType.SINGLE_CATEGORY_BAR || model.type == WidgetType.TEXT_SUMMARY
   const verticalVisible = model.type == WidgetType.SINGLE_CATEGORY_BAR || model.type == WidgetType.DAILY_ACTIVIRY
-  const unrealColumnCount = count(column.value)
   const categoryItems: Array<{
     title: string
     value: string
@@ -93,7 +92,7 @@ const { open, close, setModelValue } = useFormModal<
               'onUpdate:modelValue': (v) => {
                 if (v == WidgetType.ACTIVE_STATUS_CALENDAR) {
                   setModelValue({
-                    w: col(unrealColumnCount),
+                    w: col(3),
                     h: 1,
                   })
                 }
@@ -111,7 +110,7 @@ const { open, close, setModelValue } = useFormModal<
             key: 'w',
             label: t('widget.column'),
             props: {
-              items: new Array(unrealColumnCount).fill(0).map((_, i) => i + 1).map(i => ({
+              items: new Array(count(column.value)).fill(0).map((_, i) => i + 1).map(i => ({
                 title: i,
                 value: col(i),
               })),
@@ -177,7 +176,7 @@ const { open, close, setModelValue } = useFormModal<
         }
         close()
         success({})
-        await refresh()
+        refresh()
       },
     },
   }
@@ -195,7 +194,7 @@ function openBatchRemoveModal() {
     onConfirm: async () => {
       await db.overview.batchRemove(selectedList.value)
       success({})
-      await refresh()
+      refresh()
     },
   })
 }
@@ -205,7 +204,7 @@ function handleRemove(id: number) {
     onConfirm: async () => {
       await db.overview.remove(id)
       success({})
-      await refresh()
+      refresh()
     },
   })
 }
@@ -240,8 +239,10 @@ function buildUpdateFn() {
   }
 }
 
-async function refresh() {
-  list.value = []
+async function handleRefresh(reset = true) {
+  if (reset)
+    list.value = []
+
   list.value = wrap(await db.overview.select())
 }
 
@@ -322,7 +323,77 @@ async function handleLayoutUpdated(list: number[], layout: Layout) {
   await db.overview.batchUpdate(overviewList)
 }
 
-onRefresh(refresh)
+function collides(l1: LayoutItem, l2: LayoutItem): boolean {
+  if (l1.x + l1.w <= l2.x)
+    return false
+  if (l1.x >= l2.x + l2.w)
+    return false
+  if (l1.y + l1.h <= l2.y)
+    return false
+  if (l1.y >= l2.y + l2.h)
+    return false
+  return true
+}
+
+function getSafeLayoutItem(layoutItems: LayoutItem[], item: LayoutItem, column: number) {
+  if (layoutItems.length == 0)
+    return item
+
+  let { x, y, w } = item
+  while (layoutItems.some(i => collides(i, { ...item, x, y }))) {
+    if (x + w > column) {
+      x = 0
+      y++
+      continue
+    }
+    x++
+  }
+  return {
+    ...item,
+    x,
+    y,
+  }
+}
+
+function calculateLayout(layoutItems: LayoutItem[], column: number) {
+  let x = 0
+  let y = 0
+  const list: LayoutItem[] = []
+
+  for (const item of layoutItems) {
+    if (x + item.w > column) {
+      x = 0
+      y++
+    }
+
+    const newLayoutItem = {
+      ...item, x, y,
+    }
+
+    const safeLayoutItem = getSafeLayoutItem(list, newLayoutItem, column)
+
+    list.push(safeLayoutItem)
+
+    x += safeLayoutItem.w
+  }
+
+  return list
+}
+
+async function handleColumnChanged(column: number) {
+  const newLayout = calculateLayout(gridItems.value, column)
+  const overviewList = newLayout.map(({ i, x, y, w, h }) => ({
+    id: Number(i),
+    x,
+    y,
+    w,
+    h,
+  }))
+  await db.overview.batchUpdate(overviewList)
+  await handleRefresh(false)
+}
+
+onRefresh(handleRefresh)
 
 refresh()
 </script>
@@ -330,7 +401,7 @@ refresh()
 <template>
   <Grid
     v-if="list.length" ref="grid" :items="gridItems" :component-props="cardList" :options="{ cellHeight: 180 }"
-    @layout-updated="handleLayoutUpdated"
+    @layout-updated="handleLayoutUpdated" @column-changed="handleColumnChanged"
   >
     <template #default="{ componentProps }">
       <grid-card
