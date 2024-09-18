@@ -357,10 +357,11 @@ function getSafeLayoutItem(layoutItems: LayoutItem[], item: LayoutItem, column: 
 
 function calculateLayout(layoutItems: LayoutItem[], column: number) {
   let x = 0
-  let y = 0
   const list: LayoutItem[] = []
 
   for (const item of layoutItems) {
+    let y = 0
+
     if (x + item.w > column) {
       x = 0
       y++
