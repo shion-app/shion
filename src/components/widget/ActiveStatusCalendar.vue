@@ -19,6 +19,8 @@ const props = defineProps<{
   selectedDate: Date
 }>()
 
+const CELL_SIZE = 17
+
 const { selectedDate: selectedDateVModel } = useVModels(props)
 
 const configStore = useConfigStore()
@@ -32,14 +34,17 @@ const { config } = storeToRefs(configStore)
 const { ready: isExtensionReady } = storeToRefs(extensionStore)
 
 const momentList = ref<Array<ObsidianNote>>([])
+const chartRef = ref()
 
 const dailyStatusMap = ref<Map<string, DailyStatus>>(new Map())
 
-const day = 51 * 7 + getDay(new Date())
-const range = generateRange(day)
+const { width } = useElementBounding(chartRef)
+
+const day = ref(51 * 7 + getDay(new Date()))
+const range = computed(() => generateRange(day.value))
 
 const calendarList = computed(() => {
-  const [start, end] = range
+  const [start, end] = range.value
   for (let time = start; isBefore(time, end); time = addDays(time, 1)) {
     const date = format(time, 'yyyy-MM-dd')
     if (!dailyStatusMap.value.get(date)) {
@@ -106,8 +111,8 @@ const option = computed<EChartsOption>(() => {
     calendar: {
       left: 50,
       top: 20,
-      range: range.map(date => format(date, 'yyyy-MM-dd')),
-      cellSize: 17,
+      range: range.value.map(date => format(date, 'yyyy-MM-dd')),
+      cellSize: CELL_SIZE,
       splitLine: {
         show: false,
       },
@@ -168,7 +173,7 @@ const option = computed<EChartsOption>(() => {
 })
 
 async function init() {
-  const [start, end] = range.map(date => date.getTime())
+  const [start, end] = range.value.map(date => date.getTime())
   dailyStatusMap.value = await getDailyStatusMap(start, end)
 }
 
@@ -187,13 +192,21 @@ function handleClick(params) {
 init()
 
 whenever(isExtensionReady, async () => {
-  const [start, end] = range.map(date => date.getTime())
+  const [start, end] = range.value.map(date => date.getTime())
   momentList.value = await getObsidianNoteList(start, end)
 }, {
+  immediate: true,
+})
+
+watchDebounced(width, (v) => {
+  const week = ~~((v - 70) / CELL_SIZE)
+  day.value = week * 7 + getDay(new Date())
+}, {
+  debounce: 300,
   immediate: true,
 })
 </script>
 
 <template>
-  <vue-echarts :option="option" autoresize @click="handleClick" />
+  <vue-echarts ref="chartRef" :option="option" autoresize @click="handleClick" />
 </template>
