@@ -34,8 +34,18 @@ export function useVuetifyColorMode() {
 
 export function useVuetifyTheme() {
   const theme = useTheme()
+  const { name } = theme.global
+
+  const isDark = computed(() => name.value == 'dark')
+
+  const textColor = computed(() => isDark.value ? '#ffffff' : '#000000')
+
+  const backgorundColor = computed(() => isDark.value ? '#000000' : '#ffffff')
 
   return {
-    theme: theme.global.name,
+    theme: name,
+    isDark,
+    textColor,
+    backgorundColor,
   }
 }

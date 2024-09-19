@@ -30,6 +30,7 @@ defineExpose({
 })
 
 const { format } = useDateFns()
+const { textColor, backgorundColor } = useVuetifyTheme()
 
 const listRef = ref<HTMLElement | null>(null)
 
@@ -119,7 +120,7 @@ function draw() {
 }
 
 function drawPrimaryPath(height: number, svg: SVG.Doc) {
-  svg.line(0, pointRadius, 0, height - pointRadius).stroke({ width: lineWidth }).opacity(0.6).translate(offsetLeft, 0)
+  svg.line(0, pointRadius, 0, height - pointRadius).stroke({ width: lineWidth, color: textColor.value }).opacity(0.6).translate(offsetLeft, 0)
 
   for (const item of graph.value.primary) {
     svg.line(item.start.x, item.start.y, item.end.x, item.end.y).stroke({ width: lineWidth, color: item.color }).translate(offsetLeft, 0)
@@ -188,11 +189,11 @@ function drawPoint(svg: SVG.Doc, item: GraphItem) {
   const endPointTranslateY = item.end.y - pointOffset
   const textYOffset = pointOffset / 2
   const outerPointRadius = pointRadius + outerOffset * 2
-  svg.text(format(item.start.time, 'HH:mm:ss')).translate(0, startPointTranslateY - textYOffset)
+  svg.text(format(item.start.time, 'HH:mm:ss')).fill(textColor.value).translate(0, startPointTranslateY - textYOffset)
   svg.circle(outerPointRadius).fill(item.color).translate(startPointTranslateX - outerOffset, startPointTranslateY - outerOffset)
-  svg.circle(pointRadius).fill('#ffffff').translate(startPointTranslateX, startPointTranslateY)
+  svg.circle(pointRadius).fill(backgorundColor.value).translate(startPointTranslateX, startPointTranslateY)
   if (item.start.time != item.end.time) {
-    svg.text(format(item.end.time, 'HH:mm:ss')).translate(0, endPointTranslateY - textYOffset)
+    svg.text(format(item.end.time, 'HH:mm:ss')).fill(textColor.value).translate(0, endPointTranslateY - textYOffset)
     svg.circle(pointRadius).fill(item.color).translate(endPointTranslateX, endPointTranslateY)
   }
 }
