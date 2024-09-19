@@ -49,7 +49,8 @@ export const vuetify = createVuetify({
       dark: {
         colors: {
           primary: '#512DA8',
-          background: colors.grey.darken4,
+          background: '#313131', // uno-card
+          surface: colors.grey.darken3, // uno-card-surface
         },
       },
     },

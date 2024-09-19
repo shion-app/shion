@@ -26,7 +26,7 @@ watchDebounced(expanded, (v) => {
     <div
       absolute
       :class="classNames('w-[180px] elevation-4 z-99', modelValue ? 'translate-x-[190px]' : '-translate-x-[190px]')"
-      transition-transform duration-300 top-0 bottom-0 right-0 rounded-r-lg uno-card @mouseenter="expanded = true"
+      transition-transform duration-300 top-0 bottom-0 right-0 rounded-r-lg uno-card-surface @mouseenter="expanded = true"
     >
       <slot name="menu" />
     </div>

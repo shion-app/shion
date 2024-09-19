@@ -42,7 +42,8 @@ export default defineConfig({
       presets: [presetUno(), presetAttributify(), presetIcons(), presetTypography()],
       transformers: [transformerDirectives()],
       shortcuts: {
-        'uno-card': 'bg-white dark:bg-[#212121]',
+        'uno-card': 'bg-white dark:bg-[#313131]',
+        'uno-card-surface': 'bg-white dark:bg-[#424242]',
       },
     }),
     Components({

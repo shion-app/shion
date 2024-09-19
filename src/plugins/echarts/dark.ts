@@ -18,7 +18,7 @@
  */
 
 const contrastColor = '#B9B8CE'
-const backgroundColor = '#212121'
+const backgroundColor = '#424242'
 const axisCommon = function () {
   return {
     axisLine: {
