@@ -126,39 +126,12 @@ export function useTour() {
             title: t('tour.step9.title'),
             description: t('tour.step9.description'),
             onNextClick: async () => {
-              await router.push('/collection/box')
+              toggleExpanded()
+              await router.push('/timer')
               tour.moveNext()
             },
             onPrevClick: async () => {
               await router.push('/collection/label')
-              tour.movePrevious()
-            },
-          },
-        },
-        {
-          element: '#nav-box',
-          popover: {
-            title: t('tour.step10.title'),
-            description: t('tour.step10.description'),
-            onNextClick: async () => {
-              await openSubmenuAsync('record')
-              await router.push('/record')
-              tour.moveNext()
-            },
-            onPrevClick: async () => {
-              await router.push('/collection/monitor')
-              tour.movePrevious()
-            },
-          },
-        },
-        {
-          element: '#nav-record',
-          popover: {
-            title: t('tour.step11.title'),
-            description: t('tour.step11.description'),
-            onPrevClick: async () => {
-              await openSubmenuAsync('collection')
-              await router.push('/collection/box')
               tour.movePrevious()
             },
           },
@@ -169,24 +142,12 @@ export function useTour() {
             title: t('tour.step12.title'),
             description: t('tour.step12.description'),
             onNextClick: async () => {
-              await router.push('/record/moment')
-              tour.moveNext()
-            },
-          },
-        },
-
-        {
-          element: '#nav-moment',
-          popover: {
-            title: t('tour.step13.title'),
-            description: t('tour.step13.description'),
-            onNextClick: async () => {
-              toggleExpanded()
               await router.push('/')
               tour.moveNext()
             },
             onPrevClick: async () => {
-              await router.push('/record/timer')
+              await openSubmenuAsync('collection')
+              await router.push('/collection/monitor')
               tour.movePrevious()
             },
           },
@@ -198,8 +159,7 @@ export function useTour() {
             description: t('tour.step14.description'),
             align: 'end',
             onPrevClick: async () => {
-              await openSubmenuAsync('record')
-              await router.push('/record/moment')
+              await router.push('/timer')
               tour.movePrevious()
             },
           },

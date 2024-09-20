@@ -57,13 +57,6 @@ export const useNavStore = defineStore('nav', () => {
           key: 'monitor',
         },
         // {
-        //   icon: 'i-mdi:cube-outline',
-        //   activeIcon: 'i-mdi:cube',
-        //   name: t('nav.box'),
-        //   to: '/collection/box',
-        //   key: 'box',
-        // },
-        // {
         //   icon: 'i-mdi:cloud-outline',
         //   activeIcon: 'i-mdi:cloud',
         //   name: t('nav.history'),
@@ -73,28 +66,11 @@ export const useNavStore = defineStore('nav', () => {
       ],
     },
     {
-      icon: 'i-mdi:pencil-outline',
-      activeIcon: 'i-mdi:pencil',
-      to: '/record',
+      icon: 'i-mdi:timer-outline',
+      activeIcon: 'i-mdi:timer',
+      to: '/timer',
       name: t('nav.record'),
-      key: 'record',
-      children: [
-        {
-          icon: 'i-mdi:timer-outline',
-          activeIcon: 'i-mdi:timer',
-          name: t('nav.timer'),
-          to: '/record/timer',
-          key: 'timer',
-        },
-
-        {
-          icon: 'i-mdi:lightning-bolt-outline',
-          activeIcon: 'i-mdi:lightning-bolt',
-          name: t('nav.moment'),
-          to: '/record/moment',
-          key: 'moment',
-        },
-      ],
+      key: 'timer',
     },
   ])
 
