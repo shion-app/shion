@@ -172,9 +172,9 @@ const option = computed<EChartsOption>(() => {
   }
 })
 
-async function init() {
+async function refresh() {
   const [start, end] = range.value.map(date => date.getTime())
-  dailyStatusMap.value = await getDailyStatusMap(start, end)
+    ;[dailyStatusMap.value, momentList.value] = await Promise.all([getDailyStatusMap(start, end), getObsidianData(start, end)])
 }
 
 async function getDailyStatusMap(start: number, end: number) {
@@ -184,23 +184,22 @@ async function getDailyStatusMap(start: number, end: number) {
   })))
 }
 
+async function getObsidianData(start: number, end: number) {
+  await until(isExtensionReady).toBe(true)
+  return await getObsidianNoteList(start, end)
+}
+
 function handleClick(params) {
   const [dateText] = params.value
   selectedDateVModel.value = new Date(dateText)
 }
 
-init()
+refresh()
 
-whenever(isExtensionReady, async () => {
-  const [start, end] = range.value.map(date => date.getTime())
-  momentList.value = await getObsidianNoteList(start, end)
-}, {
-  immediate: true,
-})
-
-watchDebounced(width, (v) => {
+watchDebounced(width, async (v) => {
   const week = ~~((v - 70) / CELL_SIZE)
   day.value = week * 7 + getDay(new Date())
+  await refresh()
 }, {
   debounce: 300,
   immediate: true,
