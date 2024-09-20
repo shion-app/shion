@@ -40,7 +40,7 @@ export function useVuetifyTheme() {
 
   const textColor = computed(() => isDark.value ? '#ffffff' : '#000000')
 
-  const backgorundColor = computed(() => isDark.value ? '#000000' : '#ffffff')
+  const backgorundColor = computed(() => isDark.value ? '#313131' : '#ffffff')
 
   return {
     theme: name,

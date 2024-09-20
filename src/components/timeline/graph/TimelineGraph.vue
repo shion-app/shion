@@ -30,7 +30,7 @@ defineExpose({
 })
 
 const { format } = useDateFns()
-const { textColor, backgorundColor } = useVuetifyTheme()
+const { textColor, backgorundColor, isDark } = useVuetifyTheme()
 
 const listRef = ref<HTMLElement | null>(null)
 
@@ -231,6 +231,12 @@ function scrollTo(time: number, block: ScrollLogicalPosition = 'start') {
   })
 }
 
+function drawSvg() {
+  primary.value?.clear()
+  secondary.value?.clear()
+  draw()
+}
+
 onMounted(() => {
   primary.value = SVG('timeline-primary')
   secondary.value = SVG('timeline-secondary')
@@ -239,11 +245,9 @@ onMounted(() => {
     listRef.value.scrollTop = listRef.value.scrollHeight
 })
 
-watchDeep(() => props.list, () => {
-  primary.value?.clear()
-  secondary.value?.clear()
-  draw()
-})
+watchDeep(() => props.list, drawSvg)
+
+watch(isDark, drawSvg)
 
 function isActivity(type: string, raw: unknown): raw is SelectActivity {
   return type == 'activity'
