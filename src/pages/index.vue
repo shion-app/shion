@@ -117,7 +117,7 @@ const { open, close, setModelValue } = useFormModal<
                 title: i,
                 value: col(i),
               })),
-              disabled: model.type == WidgetType.ACTIVE_STATUS_CALENDAR || model.type == WidgetType.RECENT_ACTIVIRY_PIE,
+              disabled: model.type == WidgetType.RECENT_ACTIVIRY_PIE,
             },
           },
           {
@@ -126,7 +126,7 @@ const { open, close, setModelValue } = useFormModal<
             label: t('widget.row'),
             props: {
               items: [1, 2, 3],
-              disabled: model.type == WidgetType.ACTIVE_STATUS_CALENDAR || model.type == WidgetType.RECENT_ACTIVIRY_PIE,
+              disabled: model.type == WidgetType.RECENT_ACTIVIRY_PIE,
             },
           },
           {
