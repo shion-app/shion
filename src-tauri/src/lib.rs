@@ -290,7 +290,11 @@ pub fn run() {
             MacosLauncher::LaunchAgent,
             None,
         ))
-        .plugin(tauri_plugin_window_state::Builder::new().build())
+        .plugin(
+            tauri_plugin_window_state::Builder::new()
+                .with_state_flags(StateFlags::MAXIMIZED | StateFlags::POSITION | StateFlags::SIZE)
+                .build(),
+        )
         .invoke_handler(tauri::generate_handler![
             update_tray_menu,
             open_devtools,
@@ -380,7 +384,8 @@ pub fn run() {
                 .title(title)
                 .build()?;
 
-            window.restore_state(StateFlags::all())?;
+            window
+                .restore_state(StateFlags::MAXIMIZED | StateFlags::POSITION | StateFlags::SIZE)?;
 
             start_server(&app_handle, server_port);
 

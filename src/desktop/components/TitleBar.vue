@@ -66,7 +66,7 @@ async function checkIsMaximized() {
 }
 
 function onWindowResized() {
-  saveWindowState(StateFlags.ALL)
+  saveWindowState(StateFlags.MAXIMIZED | StateFlags.POSITION | StateFlags.SIZE)
   checkIsMaximized()
 }
 
