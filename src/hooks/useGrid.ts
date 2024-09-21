@@ -21,10 +21,13 @@ export function useGridColumn() {
 
   const count = (realCol: number) => realCol / SPAN
 
+  const safeColumn = (col: number) => Math.min(col, column.value)
+
   return {
     column,
     col,
     count,
+    safeColumn,
   }
 }
 

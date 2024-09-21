@@ -22,13 +22,16 @@ const selectedDate = ref(new Date())
 const list = ref<GridList<SelectOverview>>([])
 
 const { wrap, select, selectedList } = useGrid(list)
-const { column, col, count } = useGridColumn()
+const { column, col, count, safeColumn } = useGridColumn()
 
 const isCreate = ref(true)
 
-const gridItems = computed(() => list.value.map(({ id, x, y, w, h }) => ({
-  i: id, x, y, w, h,
-})))
+const gridItems = computed(() => {
+  const items = list.value.map(({ id, x, y, w, h }) => ({
+    i: id, x, y, w: safeColumn(w), h,
+  }))
+  return calculateLayout(items, column.value)
+})
 
 const cardList = computed(() => list.value.map(({ id, type, data, selected }) => ({
   id,
