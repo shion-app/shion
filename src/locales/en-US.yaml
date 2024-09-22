@@ -330,6 +330,9 @@ statusBar:
     search:
       text: Search
       tooltip: Search
+  update:
+    text: New version released
+    tooltip: Click to update
 gridCard:
   move: Move
 sync:

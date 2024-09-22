@@ -13,14 +13,19 @@ export const useUpdateStore = defineStore('update', () => {
   const { config } = storeToRefs(configStore)
 
   const updating = ref(false)
+  const needUpdate = ref(false)
+
+  async function getUpdate() {
+    return await check({
+      timeout: 6,
+    })
+  }
 
   async function start(showInfo = false) {
     updating.value = true
     let update: Update | null
     try {
-      update = await check({
-        timeout: 6,
-      })
+      update = await getUpdate()
     }
     catch (e) {
       updating.value = false
@@ -31,6 +36,7 @@ export const useUpdateStore = defineStore('update', () => {
     }
 
     if (update) {
+      needUpdate.value = true
       const openModal = () => {
         confirm.require({
           title: t('updater.title'),
@@ -85,8 +91,15 @@ export const useUpdateStore = defineStore('update', () => {
     }
   })
 
+  const _timer = new Timer(async () => {
+    const update = await getUpdate()
+    if (update)
+      needUpdate.value = true
+  }, calcDuration(6, 'hour'))
+
   return {
     start,
     updating,
+    needUpdate,
   }
 })

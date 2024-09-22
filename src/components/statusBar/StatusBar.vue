@@ -1,9 +1,13 @@
 <script setup lang="ts">
 const timeStore = useTimerStore()
 const historyStore = useHistoryStore()
+const updateStore = useUpdateStore()
 
 const { time, running, text } = storeToRefs(timeStore)
 const { requesting, progress } = storeToRefs(historyStore)
+const { needUpdate } = storeToRefs(updateStore)
+
+const { start: startUpdate } = updateStore
 
 const route = useRoute()
 const { xs, sm } = useTailwindBreakpoints()
@@ -16,12 +20,21 @@ const timerText = computed(() => route.fullPath == '/timer' ? text.value : `#${t
 function navigateTimer() {
   router.push('/timer')
 }
+
+async function update() {
+  const open = await startUpdate(true)
+  open?.()
+}
 </script>
 
 <template>
   <div v-show="xs" id="status-bar-xs" px-4 flex h-full items-center relative />
-  <div v-show="sm" px-4 flex items-center>
+  <div v-show="sm" px-4 flex items-center space-x-1>
     <div flex-1 />
+    <status-bar-button
+      v-if="needUpdate" :tooltip="$t('statusBar.update.tooltip')" :text="$t('statusBar.update.text')"
+      icon="i-mdi:new-box" color="info" variant="flat" @click="update"
+    />
     <status-bar-button v-if="requesting" :tooltip="$t('statusBar.timeline.history.tooltip')">
       <div flex items-center space-x-1>
         <div>{{ $t('statusBar.timeline.history.text') }}</div>
