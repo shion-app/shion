@@ -33,12 +33,7 @@ function handleLayoutUpdated(newLayout: Layout) {
     inited = true
     return
   }
-  const list = newLayout.sort((a, b) => {
-    if (a.y !== b.y)
-      return a.y - b.y
-    else
-      return a.x - b.x
-  }).map(i => Number(i.i))
+  const list = sortByLocation(newLayout).map(i => Number(i.i))
   emit('layoutUpdated', list, newLayout)
 }
 

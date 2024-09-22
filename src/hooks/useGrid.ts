@@ -73,3 +73,12 @@ export function useGrid(list: Ref<GridList<{ id: number }>>) {
     items,
   }
 }
+
+export function sortByLocation(list: Layout) {
+  return list.sort((a, b) => {
+    if (a.y !== b.y)
+      return a.y - b.y
+    else
+      return a.x - b.x
+  })
+}

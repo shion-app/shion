@@ -27,10 +27,10 @@ const { column, col, count, safeColumn } = useGridColumn()
 const isCreate = ref(true)
 
 const gridItems = computed(() => {
-  const items = list.value.map(({ id, x, y, w, h }) => ({
+  const safeLayout = list.value.map(({ id, x, y, w, h }) => ({
     i: id, x, y, w: safeColumn(w), h,
   }))
-  return calculateLayout(items, column.value)
+  return calculateLayout(sortByLocation(safeLayout), column.value)
 })
 
 const cardList = computed(() => list.value.map(({ id, type, data, selected }) => ({
