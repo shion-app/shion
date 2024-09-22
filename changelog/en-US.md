@@ -2,6 +2,23 @@
 
 ## [Unreleased]
 
+## [0.12.4] - 2024-09-22
+
+### Added
+
+- Dark mode
+- Window size and position will be saved
+- New version release will be displayed in the status bar
+
+### Changed
+
+- Remove window size limit
+- `Active Calendar` removes width limit and will change with width
+
+### Removed
+
+- `Moment` related pages have been removed
+
 ## [0.12.3] - 2024-09-12
 
 ### Added
