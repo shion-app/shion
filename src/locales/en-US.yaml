@@ -40,6 +40,7 @@ config:
     scheduledExportPath: Click to select the save path
     runAsAdmin: Start the computer as an admin to increase the permissions of the automatic monitoring
     restartService: After changing the port, click to restart the service
+    checkUpdate: Automatically pop up an update pop-up window
   tooltip:
     runAsAdmin: Not recommended to enable (unstable operation)
   tab:

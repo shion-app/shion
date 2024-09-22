@@ -40,6 +40,7 @@ config:
     scheduledExportPath: 点击选择保存路径
     runAsAdmin: 以管理员身份开机启动，提高自动监听获取窗口的权限
     restartService: 更改端口号后，点击重启服务
+    checkUpdate: 主动弹出更新弹窗
   tooltip:
     runAsAdmin: 不推荐开启（运行不稳定）
   tab:

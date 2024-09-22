@@ -94,6 +94,9 @@ const colorModeOptions = computed(() => [
                 </v-list-item>
                 <v-list-item>
                   <v-list-item-title>{{ $t('config.checkUpdate') }}</v-list-item-title>
+                  <v-list-item-subtitle>
+                    {{ $t('config.desc.checkUpdate') }}
+                  </v-list-item-subtitle>
                   <template #append>
                     <v-list-item-action>
                       <v-checkbox-btn v-model="config.checkUpdate" />
