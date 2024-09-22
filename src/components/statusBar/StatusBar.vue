@@ -11,10 +11,10 @@ const router = useRouter()
 const { refresh, registered, loading } = usePageRefresh()
 const { dragged, isGrid, toggleDrag } = layoutInject()
 
-const timerText = computed(() => route.fullPath == '/record/timer' ? text.value : `#${text.value}# ${time.value}`)
+const timerText = computed(() => route.fullPath == '/timer' ? text.value : `#${text.value}# ${time.value}`)
 
 function navigateTimer() {
-  router.push('/record/timer')
+  router.push('/timer')
 }
 </script>
 

@@ -55,9 +55,6 @@ export default defineConfig({
         if (route.path == '/collection')
           return { ...route, redirect: '/collection/plan' }
 
-        if (route.path == '/record')
-          return { ...route, redirect: '/record/timer' }
-
         return route
       },
     }),
