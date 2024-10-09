@@ -4,6 +4,9 @@ pub mod prelude;
 
 pub mod activity;
 pub mod r#box;
+pub mod dimension;
+pub mod dimension_label;
+pub mod dimension_program;
 pub mod domain;
 pub mod history;
 pub mod label;

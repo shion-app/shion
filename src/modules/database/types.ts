@@ -22,6 +22,32 @@ export interface Box {
   createdAt: Generated<number>
   updatedAt: Generated<number>
 }
+export interface Dimension {
+  id: Generated<number>
+  name: string
+  color: string
+  sort: Generated<number>
+  code: Generated<string>
+  deletedAt: Generated<number>
+  createdAt: Generated<number>
+  updatedAt: Generated<number>
+}
+export interface DimensionLabel {
+  id: Generated<number>
+  dimensionId: number
+  labelId: number
+  deletedAt: Generated<number>
+  createdAt: Generated<number>
+  updatedAt: Generated<number>
+}
+export interface DimensionProgram {
+  id: Generated<number>
+  dimensionId: number
+  programId: number
+  deletedAt: Generated<number>
+  createdAt: Generated<number>
+  updatedAt: Generated<number>
+}
 export interface Domain {
   id: Generated<number>
   name: string
@@ -125,6 +151,9 @@ export interface Remark {
 export interface DB {
   activity: Activity
   box: Box
+  dimension: Dimension
+  dimensionLabel: DimensionLabel
+  dimensionProgram: DimensionProgram
   domain: Domain
   history: History
   label: Label

@@ -107,6 +107,12 @@ pub fn run() {
             sql: include_str!("../../prisma/migrations/20240811105024_/migration.sql"),
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 4,
+            description: "add dimension",
+            sql: include_str!("../../prisma/migrations/20241009131830_/migration.sql"),
+            kind: MigrationKind::Up,
+        },
     ];
 
     #[tauri::command]

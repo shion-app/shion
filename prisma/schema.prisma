@@ -28,16 +28,17 @@ model Plan {
 }
 
 model Label {
-  id         Int    @id @default(autoincrement())
+  id         Int              @id @default(autoincrement())
   name       String
   color      String
-  sort       Int    @default(0)
+  sort       Int              @default(0)
   plan_id    Int
-  deleted_at Int    @default(0)
-  created_at Int    @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
-  updated_at Int    @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
-  plan       Plan   @relation(fields: [plan_id], references: [id])
+  deleted_at Int              @default(0)
+  created_at Int              @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at Int              @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  plan       Plan             @relation(fields: [plan_id], references: [id])
   notes      Note[]
+  dimensions DimensionLabel[]
 
   @@unique([name, deleted_at])
   @@map("label")
@@ -59,18 +60,19 @@ model Note {
 }
 
 model Program {
-  id         Int        @id @default(autoincrement())
+  id         Int                @id @default(autoincrement())
   name       String
   color      String
   path       String
   icon       String
   platform   String
-  sort       Int        @default(0)
-  deleted_at Int        @default(0)
-  created_at Int        @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
-  updated_at Int        @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  sort       Int                @default(0)
+  deleted_at Int                @default(0)
+  created_at Int                @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at Int                @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
   activities Activity[]
   remarks    Remark[]
+  dimensions DimensionProgram[]
 
   @@unique([path, deleted_at])
   @@map("program")
@@ -185,4 +187,46 @@ model Remark {
   program    Program @relation(fields: [program_id], references: [id])
 
   @@map("remark")
+}
+
+model Dimension {
+  id         Int                @id @default(autoincrement())
+  name       String
+  color      String
+  sort       Int                @default(0)
+  code       String             @default("")
+  deleted_at Int                @default(0)
+  created_at Int                @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at Int                @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  labels     DimensionLabel[]
+  programs   DimensionProgram[]
+
+  @@unique([code, deleted_at])
+  @@map("dimension")
+}
+
+model DimensionLabel {
+  id           Int       @id @default(autoincrement())
+  dimension_id Int
+  label_id     Int
+  deleted_at   Int       @default(0)
+  created_at   Int       @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at   Int       @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  label        Label     @relation(fields: [label_id], references: [id])
+  dimension    Dimension @relation(fields: [dimension_id], references: [id])
+
+  @@map("dimension_label")
+}
+
+model DimensionProgram {
+  id           Int       @id @default(autoincrement())
+  dimension_id Int
+  program_id   Int
+  deleted_at   Int       @default(0)
+  created_at   Int       @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  updated_at   Int       @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
+  program      Program   @relation(fields: [program_id], references: [id])
+  dimension    Dimension @relation(fields: [dimension_id], references: [id])
+
+  @@map("dimension_program")
 }
