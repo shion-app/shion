@@ -63,6 +63,13 @@ export const useNavStore = defineStore('nav', () => {
         //   to: '/collection/history',
         //   key: 'history',
         // },
+        {
+          icon: 'i-mdi:shape-outline',
+          activeIcon: 'i-mdi:shape',
+          name: t('nav.dimension'),
+          to: '/collection/dimension',
+          key: 'dimension',
+        },
       ],
     },
     {

@@ -11,6 +11,7 @@ nav:
   moment: 瞬间
   box: 匣子
   history: 历史记录
+  dimension: 维度
   collection: 数据集合
   record: 记录
   list: 列表
@@ -83,6 +84,12 @@ box:
   name: 名称
   color: 颜色
   count: '{count} 项'
+dimension:
+  create: 创建维度
+  update: 修改维度
+  name: 名称
+  color: 颜色
+  code: 编码
 error:
   unique: '{field}已存在'
   unhandle: '未处理异常({error})'
@@ -213,6 +220,7 @@ hint:
   moment: 每一份思考与记忆
   monitor: 点击、浏览, 然后记录
   label: 在计划之下, 细分类型
+  dimension: 现在联通一切
 titleBar:
   view:
     desc: 视图

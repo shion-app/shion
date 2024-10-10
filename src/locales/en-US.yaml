@@ -11,6 +11,7 @@ nav:
   moment: Moment
   box: Box
   history: History
+  dimension: Dimension
   collection: Collection
   record: Record
   list: List
@@ -83,6 +84,12 @@ box:
   name: Name
   color: Color
   count: '{count} items'
+dimension:
+  create: Create dimension
+  update: Update dimension
+  name: Name
+  color: Color
+  code: Code
 error:
   unique: '{field} already exists'
   unhandle: Unhandled exception({error})
@@ -213,6 +220,7 @@ hint:
   moment: Every thought and memory
   monitor: Click, browse, and then record
   label: Under the plan, subdivide types
+  dimension: Now everything is connected
 titleBar:
   view:
     desc: View

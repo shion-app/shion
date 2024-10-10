@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = withDefaults(defineProps<{
-  type?: 'data' | 'overview' | 'plan' | 'timeline' | 'box' | 'moment' | 'monitor' | 'label' | 'history' | 'search'
+  type?: 'data' | 'overview' | 'plan' | 'timeline' | 'box' | 'moment' | 'monitor' | 'label' | 'history' | 'search' | 'dimension'
   desc?: string
   width?: number
 }>(), {
