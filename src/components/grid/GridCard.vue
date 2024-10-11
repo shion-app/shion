@@ -42,7 +42,7 @@ function handleLongpress() {
         <template v-if="$slots.append" #append>
           <slot name="append" />
         </template>
-        <slot />
+        <slot :is-hovering="isHovering" />
         <div
           v-if="isDesktop && !dragged"
           :class="selectedVModel || isHovering ? 'opacity-100' : 'opacity-0'"

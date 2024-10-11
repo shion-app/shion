@@ -8,6 +8,13 @@ import { useConfirmModal } from '@/hooks/useConfirmModal'
 
 type ProgramForm = Pick<InsertProgram, 'name' | 'color' | 'path'>
 
+interface SelectProgramDimension {
+  programId: number
+  dimensionId: number
+  name: string
+  color: string
+}
+
 const monitorStore = useMonitorStore()
 const activityStore = useActivityStore()
 
@@ -18,7 +25,6 @@ const router = useRouter()
 const { onRefresh } = usePageRefresh()
 const confirm = useConfirmModal()
 
-const { refresh } = monitorStore
 const { restart } = activityStore
 const { whiteList } = storeToRefs(monitorStore)
 
@@ -37,6 +43,7 @@ const cardList = computed(() => whiteList.value.map(({ id, name, totalTime, colo
 
 const filtering = ref(false)
 const filterList = ref<Array<Program & { checked: boolean }>>([])
+const dimensionList = ref<Array<SelectProgramDimension>>([])
 
 const { open, close, setModelValue } = useFormModal<ProgramForm>(
   () => ({
@@ -176,6 +183,11 @@ function navigate(id: number) {
   })
 }
 
+async function refresh() {
+  await monitorStore.refresh()
+  dimensionList.value = await db.program.selectDimension()
+}
+
 onRefresh(refresh)
 
 refresh()
@@ -190,7 +202,16 @@ refresh()
       <time-card
         v-bind="componentProps" @update="showUpdateForm" @remove="handleRemove"
         @update:selected="v => select(componentProps.id, v)" @click="navigate(componentProps.id)"
-      />
+      >
+        <template v-if="dimensionList.filter(i => i.programId == componentProps.id).length > 0" #dimension>
+          <v-chip
+            v-for="item in dimensionList.filter(i => i.programId == componentProps.id)" :key="item.dimensionId"
+            :color="item.color" size="x-small" class="mr-1"
+          >
+            {{ item.name }}
+          </v-chip>
+        </template>
+      </time-card>
     </template>
   </grid>
   <empty v-else type="monitor" :desc="$t('hint.monitor')" :width="300" />

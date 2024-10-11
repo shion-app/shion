@@ -6,6 +6,13 @@ import type { InsertLabel, SelectLabel, SelectPlan } from '@/modules/database'
 
 type LabelForm = Pick<InsertLabel, 'name' | 'planId' | 'color'>
 
+interface SelectLabelDimension {
+  labelId: number
+  dimensionId: number
+  name: string
+  color: string
+}
+
 const timeStore = useTimerStore()
 const { t } = useI18n()
 const router = useRouter()
@@ -21,6 +28,7 @@ const { wrap, getItemsByOrder, select, selectedList } = useGrid(labelList)
 const { running: timerRunning } = storeToRefs(timeStore)
 
 const planList = ref<Array<SelectPlan>>([])
+const dimensionList = ref<Array<SelectLabelDimension>>([])
 const isCreate = ref(true)
 
 const labelGroup = computed(() => {
@@ -105,7 +113,11 @@ function handleRemove(id: number) {
 }
 
 async function refresh() {
-  [labelList.value, planList.value] = await Promise.all([db.label.select().then(wrap), db.plan.select()])
+  [labelList.value, planList.value, dimensionList.value] = await Promise.all([
+    db.label.select().then(wrap),
+    db.plan.select(),
+    db.label.selectDimension(),
+  ])
 }
 
 function showCreateForm() {
@@ -222,6 +234,17 @@ refresh()
                   value="timer" :title="$t('label.button.start')" append-icon="mdi-timer-outline"
                   @click="handleStart(componentProps)"
                 />
+              </template>
+              <template v-if="dimensionList.filter(i => i.labelId == componentProps.id).length > 0" #dimension>
+                <v-chip
+                  v-for="item in dimensionList.filter(i => i.labelId == componentProps.id)"
+                  :key="item.dimensionId"
+                  :color="item.color"
+                  size="x-small"
+                  class="mr-1"
+                >
+                  {{ item.name }}
+                </v-chip>
               </template>
             </time-card>
           </template>
