@@ -87,6 +87,7 @@ box:
 dimension:
   create: Create dimension
   update: Update dimension
+  mark: Mark
   name: Name
   color: Color
   code: Code
@@ -482,3 +483,7 @@ extension:
     obsidian:
       duplicate: Cannot add repeatedly
       invalid: This folder is not a obsidian vault
+dimensionMark:
+  tab:
+    label: Label
+    monitor: Monitor

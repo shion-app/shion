@@ -14,6 +14,8 @@ const { onRefresh } = usePageRefresh()
 const confirm = useConfirmModal()
 
 const list = ref<GridList<SelectDimension>>([])
+const markDialogVisible = ref(false)
+const markDialogDimensionId = ref(0)
 
 const { items, wrap, select, selectedList } = useGrid(list)
 
@@ -157,6 +159,18 @@ async function handleLayoutUpdated(items: number[]) {
 //   })
 // }
 
+function handleMarkStart(id: number) {
+  markDialogDimensionId.value = id
+  markDialogVisible.value = true
+}
+
+function handleMarkSubmit() {
+  markDialogDimensionId.value = 0
+  markDialogVisible.value = false
+  success({})
+  refresh()
+}
+
 onRefresh(refresh)
 
 refresh()
@@ -171,7 +185,14 @@ refresh()
       <time-card
         v-bind="componentProps" @update="showUpdateForm" @remove="handleRemove"
         @update:selected="v => select(componentProps.id, v)"
-      />
+      >
+        <template #menu>
+          <v-list-item
+            value="dimension.mark" :title="$t('dimension.mark')" append-icon="mdi-star-outline"
+            @click="handleMarkStart(componentProps.id)"
+          />
+        </template>
+      </time-card>
     </template>
   </grid>
   <empty v-else type="dimension" :desc="$t('hint.dimension')" :width="250" />
@@ -181,7 +202,14 @@ refresh()
         v-if="selectedList.length" value="button.remove" :title="$t('button.remove')"
         append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal"
       />
-      <v-list-item value="dimension.create" :title="$t('dimension.create')" append-icon="mdi-plus" @click="showCreateForm" />
+      <v-list-item
+        value="dimension.create" :title="$t('dimension.create')" append-icon="mdi-plus"
+        @click="showCreateForm"
+      />
     </v-list>
   </more-menu>
+  <dimension-mark
+    v-model:visible="markDialogVisible" :dimension-id="markDialogDimensionId"
+    @submit="handleMarkSubmit"
+  />
 </template>

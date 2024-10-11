@@ -23,6 +23,7 @@ declare module '@vue/runtime-core' {
     ConfirmModal: typeof import('./components/modal/ConfirmModal.vue')['default']
     DailyActivity: typeof import('./components/widget/DailyActivity.vue')['default']
     DatetimePicker: typeof import('./components/form/DatetimePicker.vue')['default']
+    DimensionMark: typeof import('./components/dimension/DimensionMark.vue')['default']
     DynamicLogo: typeof import('./components/shared/DynamicLogo.vue')['default']
     Empty: typeof import('./components/shared/Empty.vue')['default']
     ExtensionDialog: typeof import('./components/dialog/ExtensionDialog.vue')['default']

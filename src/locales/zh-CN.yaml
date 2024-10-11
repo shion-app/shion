@@ -87,6 +87,7 @@ box:
 dimension:
   create: 创建维度
   update: 修改维度
+  mark: 标记
   name: 名称
   color: 颜色
   code: 编码
@@ -482,3 +483,7 @@ extension:
     obsidian:
       duplicate: 不能重复添加
       invalid: 该文件夹不是obsidian仓库
+dimensionMark:
+  tab:
+    label: 标签
+    monitor: 监听
