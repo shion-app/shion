@@ -53,6 +53,7 @@ const { open, close, setModelValue } = useFormModal<DimensionForm>(
                 value: code,
                 props: { disabled },
               })),
+              clearable: true,
             },
           },
         ],
@@ -60,7 +61,7 @@ const { open, close, setModelValue } = useFormModal<DimensionForm>(
       schema: z => z.object({
         name: z.string().min(1),
         color: z.string().length(7),
-        code: z.string().optional(),
+        code: z.string().nullish(),
       }),
       async onConfirm(v, setErrors) {
         try {
@@ -106,18 +107,18 @@ function handleRemove(id: number) {
 
 async function refresh() {
   list.value = wrap(await db.dimension.select())
+  availableCodeList.value = await db.dimension.selectAvailableCode()
 }
 
-async function showCreateForm() {
+function showCreateForm() {
   isCreate.value = true
   setModelValue({
     color: randomColor(),
   })
-  availableCodeList.value = await db.dimension.selectAvailableCode()
   open()
 }
 
-async function showUpdateForm(id: number) {
+function showUpdateForm(id: number) {
   setUpdateId(id)
   const dimension = list.value.find(i => i.id == id)
   if (!dimension)
@@ -125,7 +126,6 @@ async function showUpdateForm(id: number) {
 
   isCreate.value = false
   setModelValue(dimension)
-  availableCodeList.value = await db.dimension.selectAvailableCode()
   open()
 }
 
