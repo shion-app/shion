@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import type { SelectPlan } from '@/modules/database'
 import { db } from '@/modules/database'
 
 interface LabelCheckbox {
   name: string
   selected: boolean
   labelId: number
+  planId: number
 }
 
 interface ProgramCheckbox {
@@ -12,6 +14,8 @@ interface ProgramCheckbox {
   selected: boolean
   programId: number
 }
+
+type PlanCheckbox = SelectPlan & { selected: boolean }
 
 const props = defineProps<{
   visible: boolean
@@ -26,6 +30,7 @@ const { visible: visibleVModel } = useVModels(props)
 
 const labelCheckboxList = ref<Array<LabelCheckbox>>([])
 const programCheckboxList = ref<Array<ProgramCheckbox>>([])
+const planList = ref<Array<PlanCheckbox>>([])
 const tab = ref<'label' | 'monitor'>('label')
 
 let labelCheckboxBase: Array<LabelCheckbox> = []
@@ -50,7 +55,18 @@ async function init() {
     name: i.name,
     labelId: i.id,
     selected: !!dimensionLabelList.find(d => d.labelId == i.id),
+    planId: i.planId,
   }))
+  planList.value = (await db.plan.select()).flatMap((plan) => {
+    const list = labelCheckboxList.value.filter(label => label.planId == plan.id)
+    if (list.length) {
+      const selected = list.every(i => i.selected)
+      return [{ ...plan, selected }]
+    }
+    else {
+      return []
+    }
+  })
   labelCheckboxBase = labelCheckboxList.value.map(i => ({
     ...i,
   }))
@@ -105,27 +121,54 @@ function differenceBetween<T>(base: Array<T>, target: Array<T>, key: string) {
   }
 }
 
+function clickPlanCheckBox(plan: PlanCheckbox) {
+  plan.selected = !plan.selected
+  labelCheckboxList.value.filter(label => label.planId == plan.id).forEach(label => label.selected = plan.selected)
+}
+
+function clickLabelCheckBox(label: LabelCheckbox, plan: PlanCheckbox) {
+  label.selected = !label.selected
+  plan.selected = labelCheckboxList.value.filter(label => label.planId == plan.id).every(label => label.selected)
+}
+
 whenever(visibleVModel, init)
 </script>
 
 <template>
-  <advanced-dialog v-model:visible="visibleVModel" :title="$t('dimension.mark')">
+  <advanced-dialog v-model:visible="visibleVModel" :title="$t('dimension.mark')" class="w-[700px]!">
     <v-card-text>
       <v-tabs v-model="tab" color="primary">
         <v-tab prepend-icon="mdi-label-variant" :text="$t('dimensionMark.tab.label')" value="label" />
         <v-tab prepend-icon="mdi-eye" :text="$t('dimensionMark.tab.monitor')" value="monitor" />
       </v-tabs>
       <v-tabs-window v-model="tab" class="h-[350px] pt-0! overflow-y-auto!">
-        <div class="grid grid-cols-3">
-          <template v-if="tab == 'label'">
-            <v-checkbox v-for="item in labelCheckboxList" :key="item.labelId" v-model="item.selected" :label="item.name" />
+        <div v-if="tab == 'label'" py-2 space-y-6>
+          <template v-if="planList.length">
+            <div v-for="plan in planList" :key="plan.id">
+              <v-checkbox
+                :label="plan.name" hide-details :color="plan.color" :model-value="plan.selected"
+                @click="clickPlanCheckBox(plan)"
+              />
+              <v-divider />
+              <div class="grid grid-cols-3">
+                <v-checkbox
+                  v-for="item in labelCheckboxList.filter(label => label.planId == plan.id)"
+                  :key="item.labelId" :model-value="item.selected" :label="item.name" hide-details :color="plan.color"
+                  @click="clickLabelCheckBox(item, plan)"
+                />
+              </div>
+            </div>
           </template>
-          <template v-else-if="tab == 'monitor'">
+          <empty v-else :width="250" />
+        </div>
+        <div v-else-if="tab == 'monitor'" py-2>
+          <div v-if="programCheckboxList.length" class="grid grid-cols-3">
             <v-checkbox
               v-for="item in programCheckboxList" :key="item.programId" v-model="item.selected"
-              :label="item.name"
+              :label="item.name" hide-details
             />
-          </template>
+          </div>
+          <empty v-else :width="250" />
         </div>
       </v-tabs-window>
     </v-card-text>
