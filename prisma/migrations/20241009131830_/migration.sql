@@ -4,7 +4,7 @@ CREATE TABLE "dimension" (
     "name" TEXT NOT NULL,
     "color" TEXT NOT NULL,
     "sort" INTEGER NOT NULL DEFAULT 0,
-    "code" TEXT NOT NULL DEFAULT '',
+    "code" TEXT,
     "deleted_at" INTEGER NOT NULL DEFAULT 0,
     "created_at" INTEGER NOT NULL DEFAULT (ROUND((julianday('now') - 2440587.5) * 86400000)),
     "updated_at" INTEGER NOT NULL DEFAULT (ROUND((julianday('now') - 2440587.5) * 86400000))
@@ -33,6 +33,9 @@ CREATE TABLE "dimension_program" (
     CONSTRAINT "dimension_program_program_id_fkey" FOREIGN KEY ("program_id") REFERENCES "program" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "dimension_program_dimension_id_fkey" FOREIGN KEY ("dimension_id") REFERENCES "dimension" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "dimension_name_deleted_at_key" ON "dimension"("name", "deleted_at");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "dimension_code_deleted_at_key" ON "dimension"("code", "deleted_at");

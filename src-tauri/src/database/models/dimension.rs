@@ -12,8 +12,8 @@ pub struct Model {
     #[sea_orm(column_type = "Text")]
     pub color: String,
     pub sort: i64,
-    #[sea_orm(column_type = "Text")]
-    pub code: String,
+    #[sea_orm(column_type = "Text", nullable)]
+    pub code: Option<String>,
     pub deleted_at: i64,
     pub created_at: i64,
     pub updated_at: i64,

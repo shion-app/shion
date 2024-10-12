@@ -20,6 +20,8 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
+    #[sea_orm(has_many = "super::dimension_label::Entity")]
+    DimensionLabel,
     #[sea_orm(has_many = "super::note::Entity")]
     Note,
     #[sea_orm(
@@ -30,6 +32,12 @@ pub enum Relation {
         on_delete = "Restrict"
     )]
     Plan,
+}
+
+impl Related<super::dimension_label::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::DimensionLabel.def()
+    }
 }
 
 impl Related<super::note::Entity> for Entity {
