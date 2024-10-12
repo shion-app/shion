@@ -90,7 +90,13 @@ dimension:
   mark: Mark
   name: Name
   color: Color
-  code: Code
+  code: Code (Optional)
+  form:
+    code:
+      game: Game
+      video: Video
+      music: Music
+      browser: Browser
 error:
   unique: '{field} already exists'
   unhandle: Unhandled exception({error})

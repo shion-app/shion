@@ -90,7 +90,13 @@ dimension:
   mark: 标记
   name: 名称
   color: 颜色
-  code: 编码
+  code: 编码 (可选)
+  form:
+    code:
+      game: 游戏
+      video: 视频
+      music: 音乐
+      browser: 浏览器
 error:
   unique: '{field}已存在'
   unhandle: '未处理异常({error})'

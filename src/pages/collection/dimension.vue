@@ -16,6 +16,10 @@ const confirm = useConfirmModal()
 const list = ref<GridList<SelectDimension>>([])
 const markDialogVisible = ref(false)
 const markDialogDimensionId = ref(0)
+const availableCodeList = ref<Array<{
+  code: string
+  disabled: boolean
+}>>([])
 
 const { items, wrap, select, selectedList } = useGrid(list)
 
@@ -40,11 +44,15 @@ const { open, close, setModelValue } = useFormModal<DimensionForm>(
             label: t('dimension.color'),
           },
           {
-            type: 'select',
+            type: 'autocomplete',
             key: 'code',
             label: t('dimension.code'),
             props: {
-              items: [],
+              items: availableCodeList.value.map(({ code, disabled }) => ({
+                title: t(`dimension.form.code.${code}`),
+                value: code,
+                props: { disabled },
+              })),
             },
           },
         ],
@@ -100,15 +108,16 @@ async function refresh() {
   list.value = wrap(await db.dimension.select())
 }
 
-function showCreateForm() {
+async function showCreateForm() {
   isCreate.value = true
   setModelValue({
     color: randomColor(),
   })
+  availableCodeList.value = await db.dimension.selectAvailableCode()
   open()
 }
 
-function showUpdateForm(id: number) {
+async function showUpdateForm(id: number) {
   setUpdateId(id)
   const dimension = list.value.find(i => i.id == id)
   if (!dimension)
@@ -116,6 +125,7 @@ function showUpdateForm(id: number) {
 
   isCreate.value = false
   setModelValue(dimension)
+  availableCodeList.value = await db.dimension.selectAvailableCode()
   open()
 }
 
