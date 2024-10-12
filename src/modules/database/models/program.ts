@@ -61,4 +61,23 @@ export class Program extends Model<TransformProgram> {
       .groupBy('program.id')
       .orderBy(['program.sort'])
   }
+
+  @get()
+  selectDimension(value?: { id?: number }) {
+    const query = this.selectByLooseType(value)
+    return query
+      .select([
+        'program.id as programId',
+        'dimension.id as dimensionId',
+        'dimension.name',
+        'dimension.color',
+      ])
+      .innerJoin('dimensionProgram', join =>
+        join.onRef('program.id', '=', 'dimensionProgram.programId').on('dimensionProgram.deletedAt', '=', 0),
+      )
+      .innerJoin('dimension', join =>
+        join.onRef('dimensionProgram.dimensionId', '=', 'dimension.id').on('dimension.deletedAt', '=', 0),
+      )
+      .orderBy(['program.sort'])
+  }
 }

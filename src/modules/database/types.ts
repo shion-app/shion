@@ -27,7 +27,7 @@ export interface Dimension {
   name: string
   color: string
   sort: Generated<number>
-  code: Generated<string>
+  code: string | null
   deletedAt: Generated<number>
   createdAt: Generated<number>
   updatedAt: Generated<number>

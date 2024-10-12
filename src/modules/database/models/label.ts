@@ -55,4 +55,23 @@ export class Label extends Model<TransformLabel> {
       .groupBy('label.id')
       .orderBy(['label.sort'])
   }
+
+  @get()
+  selectDimension(value?: { id?: number }) {
+    const query = this.selectByLooseType(value)
+    return query
+      .select([
+        'label.id as labelId',
+        'dimension.id as dimensionId',
+        'dimension.name',
+        'dimension.color',
+      ])
+      .innerJoin('dimensionLabel', join =>
+        join.onRef('label.id', '=', 'dimensionLabel.labelId').on('dimensionLabel.deletedAt', '=', 0),
+      )
+      .innerJoin('dimension', join =>
+        join.onRef('dimensionLabel.dimensionId', '=', 'dimension.id').on('dimension.deletedAt', '=', 0),
+      )
+      .orderBy(['label.sort'])
+  }
 }

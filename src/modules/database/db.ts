@@ -31,6 +31,9 @@ import { Link } from './models/link'
 import { History } from './models/history'
 import { Domain } from './models/domain'
 import { Remark } from './models/remark'
+import { Dimension } from './models/dimension'
+import { DimensionLabel } from './models/dimensionLabel'
+import { DimensionProgram } from './models/dimensionProgram'
 
 export type { QueryResult } from 'tauri-plugin-shion-sql-api'
 
@@ -257,6 +260,9 @@ const link = new Link(kysely)
 const domain = new Domain(kysely)
 const history = new History(kysely, domain)
 const remark = new Remark(kysely, program)
+const dimension = new Dimension(kysely, label, program)
+const dimensionLabel = new DimensionLabel(kysely)
+const dimensionProgram = new DimensionProgram(kysely)
 const models = {
   program,
   activity,
@@ -270,6 +276,9 @@ const models = {
   domain,
   history,
   remark,
+  dimension,
+  dimensionLabel,
+  dimensionProgram,
 }
 
 export type Models = typeof models

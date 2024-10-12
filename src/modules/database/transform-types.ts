@@ -28,6 +28,12 @@ export type History = origin.History & { domain: ColumnType<Domain, never, never
 
 export type Remark = origin.Remark & { program: ColumnType<Program, never, never> }
 
+export type Dimension = origin.Dimension & { totalTime: TotalTime }
+
+export type DimensionLabel = origin.DimensionLabel
+
+export type DimensionProgram = origin.DimensionProgram
+
 export type Overview = Replace<origin.Overview, {
   type: WidgetType
   data: {
@@ -53,4 +59,7 @@ export interface DB {
   domain: Domain
   history: History
   remark: Remark
+  dimension: Dimension
+  dimensionLabel: DimensionLabel
+  dimensionProgram: DimensionProgram
 }

@@ -4,7 +4,7 @@ import Database from 'tauri-plugin-shion-sql-api'
 
 import type { DatabaseExecutor } from './db'
 import { DatabaseError, SqliteErrorEnum, createKyselyDatabaseWithModels, findSqliteMessageFields } from './db'
-import type { Activity, Box, Domain, History, Label, Moment, Note, Overview, Plan, Program, Remark } from './transform-types'
+import type { Activity, Box, Dimension, DimensionLabel, DimensionProgram, Domain, History, Label, Moment, Note, Overview, Plan, Program, Remark } from './transform-types'
 export { DatabaseError } from './db'
 
 class Executor implements DatabaseExecutor<Database> {
@@ -100,6 +100,9 @@ export type SelectBox = DeepSelectable<Box>
 export type SelectHistory = DeepSelectable<History>
 export type SelectDomain = DeepSelectable<Domain>
 export type SelectRemark = DeepSelectable<Remark>
+export type SelectDimension = DeepSelectable<Dimension>
+export type SelectDimensionLabel = DeepSelectable<DimensionLabel>
+export type SelectDimensionProgram = DeepSelectable<DimensionProgram>
 
 export type InsertPlan = Insertable<Plan>
 export type InsertNote = Insertable<Note>
@@ -109,6 +112,7 @@ export type InsertOverview = Insertable<Overview>
 export type InsertBox = Insertable<Box>
 export type InsertHistory = Insertable<History>
 export type InsertRemark = Insertable<Remark>
+export type InsertDimension = Insertable<Dimension>
 
 export type UpdateOverview = Updateable<Overview>
 
