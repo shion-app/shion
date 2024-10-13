@@ -171,6 +171,8 @@ async function handleStart(label: Pick<SelectLabel, 'id' | 'planId'>) {
   }
   if (needJump)
     router.push('/timer')
+  else
+    refresh()
 }
 
 async function handleLayoutUpdated(items: number[], list: GridList<SelectLabel>) {
