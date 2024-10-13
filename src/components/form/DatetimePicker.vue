@@ -78,14 +78,14 @@ watch(dateModel, (v) => {
     </v-confirm-edit>
     <v-confirm-edit v-else v-model="timeModel" @save="onSave" @cancel="onSave">
       <template #default="{ model: proxyModel, actions }">
-        <v-time-picker
-          v-model="proxyModel.value" color="primary" format="24hr" :min="minTime" :max="maxTime"
-          use-seconds class="w-full!"
+        <time-picker
+          v-model="proxyModel.value" :min="minTime" :max="maxTime"
+          class="w-full!"
         >
           <template #actions>
             <component :is="actions" />
           </template>
-        </v-time-picker>
+        </time-picker>
       </template>
     </v-confirm-edit>
   </advanced-dialog>
