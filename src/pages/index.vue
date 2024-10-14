@@ -51,7 +51,7 @@ const { open, close, setModelValue } = useFormModal<
   }
 >
 ((model, modal) => {
-  const categoryVisible = model.type == WidgetType.SINGLE_CATEGORY_BAR || model.type == WidgetType.TEXT_SUMMARY
+  const categoryVisible = model.type == WidgetType.SINGLE_CATEGORY_BAR || model.type == WidgetType.TEXT_SUMMARY || model.type == WidgetType.SINGLE_CATEGORY_HEATMAP
   const verticalVisible = model.type == WidgetType.SINGLE_CATEGORY_BAR || model.type == WidgetType.DAILY_ACTIVIRY
   const categoryItems: Array<{
     title: string
@@ -441,6 +441,10 @@ refresh()
             :data="componentProps.data"
           />
           <recent-activity-pie v-else-if="componentProps.type == WidgetType.RECENT_ACTIVIRY_PIE" />
+          <single-category-heatmap
+            v-else-if="componentProps.type == WidgetType.SINGLE_CATEGORY_HEATMAP"
+            :data="componentProps.data"
+          />
         </v-card-text>
       </grid-card>
     </template>

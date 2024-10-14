@@ -8,6 +8,7 @@ export enum WidgetType {
   TEXT_SUMMARY,
   DAILY_ACTIVIRY,
   RECENT_ACTIVIRY_PIE,
+  SINGLE_CATEGORY_HEATMAP,
 }
 
 @injectModel<OriginOverview, TransformOverview>({

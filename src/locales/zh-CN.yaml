@@ -286,12 +286,14 @@ widget:
     TEXT_SUMMARY: 文本总结
     DAILY_ACTIVIRY: 每日活跃
     RECENT_ACTIVIRY_PIE: 最近活跃饼状图
+    SINGLE_CATEGORY_HEATMAP: 单独类别热力图
   subtitle:
     ACTIVE_STATUS_CALENDAR: 近一年每日记录总结
-    SINGLE_CATEGORY_BAR: 近30天每日单项记录
+    SINGLE_CATEGORY_BAR: 最近每日单项记录柱状图
     TEXT_SUMMARY: 单项类别平均时长
     DAILY_ACTIVIRY: 24小时内每小时记录
     RECENT_ACTIVIRY_PIE: 最近几天各项活动占比
+    SINGLE_CATEGORY_HEATMAP: 最近每日单项记录热力图
   column: 占用列数
   row: 占用行数
   singleCategoryBar:

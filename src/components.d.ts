@@ -61,6 +61,7 @@ declare module '@vue/runtime-core' {
     SearchRemark: typeof import('./components/search/SearchRemark.vue')['default']
     SettingDialog: typeof import('./components/dialog/SettingDialog.vue')['default']
     SingleCategoryBar: typeof import('./components/widget/SingleCategoryBar.vue')['default']
+    SingleCategoryHeatmap: typeof import('./components/widget/SingleCategoryHeatmap.vue')['default']
     StatusBar: typeof import('./components/statusBar/StatusBar.vue')['default']
     StatusBarButton: typeof import('./components/shared/StatusBarButton.vue')['default']
     StatusBarContent: typeof import('./components/statusBar/StatusBarContent.vue')['default']
