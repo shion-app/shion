@@ -409,8 +409,8 @@ tour:
     title: Automatic Timing
     description: Only the software added here will be recorded, and adding a whitelist in the settings will automatically add it 💻
   step10:
-    title: Diary
-    description: Box for storing diary 📦
+    title: The third dimension
+    description: Create new collections by selecting label or monitoring software
   step11:
     title: Record
     description: Enter data here

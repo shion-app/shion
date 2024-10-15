@@ -126,12 +126,27 @@ export function useTour() {
             title: t('tour.step9.title'),
             description: t('tour.step9.description'),
             onNextClick: async () => {
+              await router.push('/collection/dimension')
+              tour.moveNext()
+            },
+            onPrevClick: async () => {
+              await router.push('/collection/label')
+              tour.movePrevious()
+            },
+          },
+        },
+        {
+          element: '#nav-dimension',
+          popover: {
+            title: t('tour.step10.title'),
+            description: t('tour.step10.description'),
+            onNextClick: async () => {
               toggleExpanded()
               await router.push('/timer')
               tour.moveNext()
             },
             onPrevClick: async () => {
-              await router.push('/collection/label')
+              await router.push('/collection/monitor')
               tour.movePrevious()
             },
           },
@@ -147,7 +162,7 @@ export function useTour() {
             },
             onPrevClick: async () => {
               await openSubmenuAsync('collection')
-              await router.push('/collection/monitor')
+              await router.push('/collection/dimension')
               tour.movePrevious()
             },
           },
