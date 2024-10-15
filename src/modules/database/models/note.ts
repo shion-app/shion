@@ -35,7 +35,7 @@ export class Note extends Model<TransformNote> {
   }
 
   @get()
-  select(value?: { id?: number; start?: number; end?: number; planId?: number; labelId?: number }) {
+  select(value?: { id?: number; start?: number; end?: number; planId?: number; labelId?: number; labelIdList?: number[] }) {
     let query = this.kysely.with('l', () => this.#label.select()).with('p', () => this.#plan.select()).selectFrom(['note', 'l', 'p']).where('note.deletedAt', '=', 0)
     if (value?.id)
       query = query.where('id', '=', value.id)
@@ -47,6 +47,8 @@ export class Note extends Model<TransformNote> {
       query = query.where('note.planId', '=', value.planId)
     if (value?.labelId)
       query = query.where('labelId', '=', value.labelId)
+    if (value?.labelIdList)
+      query = query.where('labelId', 'in', value.labelIdList)
 
     return query.select(eb => [
       jsonBuildObject({

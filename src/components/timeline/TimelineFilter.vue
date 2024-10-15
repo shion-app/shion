@@ -2,7 +2,7 @@
 import type { Filter } from './types'
 import type { ObsidianGroup } from '@/hooks/useObsidian'
 import { db } from '@/modules/database'
-import type { SelectDomain, SelectLabel, SelectPlan, SelectProgram } from '@/modules/database'
+import type { SelectDimension, SelectDomain, SelectLabel, SelectPlan, SelectProgram } from '@/modules/database'
 
 type CategoryItemOptions = Array<{
   title: string
@@ -39,17 +39,22 @@ const categoryOptions = computed(() => [
     title: t('timeline.moment'),
     value: 'moment',
   },
+  {
+    title: t('timeline.dimension'),
+    value: 'dimension',
+  },
 ])
 
 async function setModalValue() {
-  const [planList, labelList, programList, domainList, momentList] = await Promise.all([
+  const [planList, labelList, programList, domainList, momentList, dimensionList] = await Promise.all([
     db.plan.select(),
     db.label.select(),
     db.program.select(),
     db.domain.select(),
     getObsidianGroupList(),
+    db.dimension.select(),
   ])
-  return { planList, labelList, programList, domainList, momentList }
+  return { planList, labelList, programList, domainList, momentList, dimensionList }
 }
 
 function getCategoryItemOptions(data: {
@@ -58,8 +63,9 @@ function getCategoryItemOptions(data: {
   programList?: Array<SelectProgram>
   domainList?: Array<SelectDomain>
   momentList?: Array<ObsidianGroup>
+  dimensionList?: Array<SelectDimension>
 }, category: Filter['category']) {
-  const { planList, labelList, programList, domainList, momentList } = data
+  const { planList, labelList, programList, domainList, momentList, dimensionList } = data
   let list: Array<{ id: number; name: string }> = []
   switch (category) {
     case 'plan':
@@ -77,6 +83,9 @@ function getCategoryItemOptions(data: {
     case 'moment':
       list = momentList || []
       break
+    case 'dimension':
+      list = dimensionList || []
+      break
   }
   return list.map(i => ({
     title: i.name,
@@ -90,6 +99,7 @@ const { open, close, setModelValue } = useFormModal<Filter, {
   programList: Array<SelectProgram>
   domainList: Array<SelectDomain>
   momentList: Array<ObsidianGroup>
+  dimensionList: Array<SelectDimension>
 }>(
   (model, modal) => {
     const categoryItemOptions = getCategoryItemOptions(modal, model.category)

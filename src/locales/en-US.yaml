@@ -254,6 +254,7 @@ timeline:
   monitor: Monitor
   history: History
   moment: Moment
+  dimension: Dimension
   filter: Filter Categories
   reset: Reset Filter condition
 timelineGraph:

@@ -16,7 +16,7 @@ const props = defineProps<{
 }>()
 
 const { date: dateVModel } = useVModels(props)
-const { historyAdapter, labelAdapter, monitorAdapter, planAdapter, momentAdapter } = useAdapter()
+const { historyAdapter, labelAdapter, monitorAdapter, planAdapter, momentAdapter, dimensionAdapter } = useAdapter()
 
 let generatedYear = new Date().getFullYear()
 
@@ -53,6 +53,9 @@ const activeStatusMap = computedAsync<ActiveStatusMap>(async () => {
 
   if (props.category == 'moment')
     return await momentAdapter(start, end, props.id)
+
+  if (props.category == 'dimension')
+    return await dimensionAdapter(start, end, props.id)
 
   return new Map()
 })

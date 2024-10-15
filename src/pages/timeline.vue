@@ -2,7 +2,7 @@
 import { endOfDay, isBefore, isSameDay, startOfDay, subMinutes } from 'date-fns'
 import type { ComponentExposed } from 'vue-component-type-helpers'
 
-import type { SelectActivity, SelectHistory, SelectNote, SelectRemark } from '@/modules/database'
+import type { SelectActivity, SelectDimensionLabel, SelectDimensionProgram, SelectHistory, SelectNote, SelectRemark } from '@/modules/database'
 import { db } from '@/modules/database'
 import type { TimeLineNode } from '@/interfaces'
 import type { Filter } from '@/components/timeline/types'
@@ -38,6 +38,8 @@ const activityList = ref<Array<SelectActivity>>([])
 const historyList = ref<Array<SelectHistory>>([])
 const remarkList = ref<Array<SelectRemark>>([])
 const momentList = ref<Array<ObsidianNote>>([])
+const dimensionLabelList = ref<Array<SelectDimensionLabel>>([])
+const dimensionProgramList = ref<Array<SelectDimensionProgram>>([])
 const date = ref(new Date())
 const filterCategory = ref(route.query.category as Filter['category'])
 const filterTargetId = ref<Filter['id']>(route.query.id ? Number(route.query.id) : undefined)
@@ -74,25 +76,33 @@ const list = computed(() => {
                 type: 'note',
                 raw: i,
               }))
-            : filterCategory.value == 'label'
-              ? noteList.value
-                .filter(i => typeof filterTargetId.value == 'number' ? i.labelId == filterTargetId.value : true)
-                .map<computedTimeLineNode>(i => ({
-                  start: i.start,
-                  end: i.end,
-                  title: i.label.name,
-                  color: i.label.color,
-                  compressGroupId: `label-${i.labelId}`,
-                  type: 'note',
-                  raw: i,
-                }))
-              : []
+            : (filterCategory.value == 'label' || filterCategory.value == 'dimension')
+                ? noteList.value
+                  .filter(i => typeof filterTargetId.value == 'number'
+                    ? filterCategory.value == 'label'
+                      ? i.labelId == filterTargetId.value
+                      : !!dimensionLabelList.value.find(d => d.dimensionId == filterTargetId.value && i.labelId == d.labelId)
+                    : true)
+                  .map<computedTimeLineNode>(i => ({
+                    start: i.start,
+                    end: i.end,
+                    title: i.label.name,
+                    color: i.label.color,
+                    compressGroupId: `label-${i.labelId}`,
+                    type: 'note',
+                    raw: i,
+                  }))
+                : []
         ),
         ...(
-          filterCategory.value == 'monitor'
+          (filterCategory.value == 'monitor' || filterCategory.value == 'dimension')
             ? [
                 ...activityList.value
-                  .filter(i => typeof filterTargetId.value == 'number' ? i.programId == filterTargetId.value : true)
+                  .filter(i => typeof filterTargetId.value == 'number'
+                    ? filterCategory.value == 'monitor'
+                      ? i.programId == filterTargetId.value
+                      : !!dimensionProgramList.value.find(d => d.dimensionId == filterTargetId.value && i.programId == d.programId)
+                    : true)
                   .map<computedTimeLineNode>(i => ({
                     start: i.start,
                     end: i.end,
@@ -202,6 +212,12 @@ const list = computed(() => {
 async function handleRefresh(pullHistory = true) {
   const start = startOfDay(date.value).getTime()
   const end = endOfDay(date.value).getTime()
+
+  ;[dimensionLabelList.value, dimensionProgramList.value] = await Promise.all([
+    db.dimensionLabel.select(),
+    db.dimensionProgram.select(),
+  ])
+
   const [_noteList, _activityList, _remarkList, _historyList, _momentList] = await Promise.all([
     db.note.select({
       start,

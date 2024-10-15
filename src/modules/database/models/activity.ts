@@ -29,7 +29,7 @@ export class Activity extends Model<TransformActivity> {
   }
 
   @get()
-  select(value?: { id?: number; start?: number; end?: number; programId?: number }) {
+  select(value?: { id?: number; start?: number; end?: number; programId?: number; programIdList?: number[] }) {
     let query = this.kysely.with('p', () => this.#program.select()).selectFrom(['activity', 'p']).where('activity.deletedAt', '=', 0)
     if (value?.id)
       query = query.where('id', '=', value.id)
@@ -39,6 +39,8 @@ export class Activity extends Model<TransformActivity> {
       query = query.where('start', '<', value.end)
     if (value?.programId)
       query = query.where('programId', '=', value.programId)
+    if (value?.programIdList)
+      query = query.where('programId', 'in', value.programIdList)
 
     return query.select(eb =>
       jsonBuildObject({

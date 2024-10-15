@@ -141,11 +141,36 @@ export function useAdapter() {
     })))
   }
 
+  const dimensionAdapter: CalendarStatusAdapter = async (start, end, id) => {
+    const [labelList, programList] = await Promise.all([
+      db.dimensionLabel.select({
+        dimensionId: id,
+      })
+        .then(list => list.map(i => i.labelId))
+        .then(idList => db.note.select({
+          start,
+          end,
+          labelIdList: idList,
+        })),
+      db.dimensionProgram.select({
+        dimensionId: id,
+      })
+        .then(list => list.map(i => i.programId))
+        .then(idList => db.activity.select({
+          start,
+          end,
+          programIdList: idList,
+        })),
+    ])
+    return calcTime([...labelList, ...programList], start, end)
+  }
+
   return {
     planAdapter,
     labelAdapter,
     monitorAdapter,
     historyAdapter,
     momentAdapter,
+    dimensionAdapter,
   }
 }

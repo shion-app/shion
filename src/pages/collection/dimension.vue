@@ -7,6 +7,7 @@ import { db } from '@/modules/database'
 
 type DimensionForm = Pick<InsertDimension, 'name' | 'color' | 'code'>
 
+const router = useRouter()
 const { t } = useI18n()
 const { parseFieldsError } = useDatabase()
 const { success } = useNotify()
@@ -159,15 +160,15 @@ async function handleLayoutUpdated(items: number[]) {
   }
 }
 
-// function navigate(id: number) {
-//   router.push({
-//     path: '/timeline',
-//     query: {
-//       category: 'dimension',
-//       id,
-//     },
-//   })
-// }
+function navigate(id: number) {
+  router.push({
+    path: '/timeline',
+    query: {
+      category: 'dimension',
+      id,
+    },
+  })
+}
 
 function handleMarkStart(id: number) {
   markDialogDimensionId.value = id
@@ -194,7 +195,7 @@ refresh()
     <template #default="{ componentProps }">
       <time-card
         v-bind="componentProps" @update="showUpdateForm" @remove="handleRemove"
-        @update:selected="v => select(componentProps.id, v)"
+        @update:selected="v => select(componentProps.id, v)" @click="navigate(componentProps.id)"
       >
         <template #menu>
           <v-list-item
