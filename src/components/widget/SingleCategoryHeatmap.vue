@@ -63,7 +63,7 @@ const calendarList = computed(() => {
 const title = computed(() => props.data.widget?.title as string)
 const color = computed(() => props.data.widget?.color as string)
 
-async function init() {
+async function refresh() {
   noteList.value = activityList.value = []
   const { query } = props.data
   if (!query)
@@ -176,7 +176,7 @@ const option = computed<EChartsOption>(() => {
   }
 })
 
-watch(() => props.data, init, {
+watch(() => props.data, refresh, {
   deep: true,
   immediate: true,
 })
@@ -184,6 +184,7 @@ watch(() => props.data, init, {
 watchDebounced(width, async (v) => {
   const week = ~~((v - 70) / CELL_SIZE)
   day.value = week * 7 + getDay(new Date())
+  await refresh()
 }, {
   debounce: 300,
   immediate: true,
