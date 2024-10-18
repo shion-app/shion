@@ -85,28 +85,40 @@ async function refresh() {
 
 const buildMarker = color => `<span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:${color};" class="shrink-0"></span>`
 
-function changeColor(value: string, index: number, length: number) {
+function generatePieces(value: string, index: number, length: number, hour: number) {
   const color = Color(value)
   const isDark = color.isDark()
+  let colorStr = ''
   if (isDark) {
     const ratio = (length - index) / length
-    return color.lighten(ratio).toString()
+    colorStr = color.lighten(ratio).toString()
   }
   else {
     const ratio = index / length
-    return color.darken(ratio).toString()
+    colorStr = color.darken(ratio).toString()
+  }
+  const isLast = index == length - 1
+  if (isLast) {
+    return {
+      gt: calcDuration(hour, 'hour'), color: colorStr,
+    }
+  }
+  else {
+    return {
+      lte: calcDuration(hour, 'hour'), color: colorStr,
+    }
   }
 }
 
 const option = computed<EChartsOption>(() => {
-  const partition = [0.5, 1, 2, 3]
+  let partition = [0.5, 1, 2, 3]
+  const last = partition[partition.length - 1]
+  partition = [...partition, last]
   const pieces = [
     {
       lte: calcDuration(0, 'hour'), color: colors.grey.lighten2,
     },
-    ...partition.map((h, index) => ({
-      lte: calcDuration(h, 'hour'), color: changeColor(color.value, index, partition.length),
-    })),
+    ...partition.map((h, index) => generatePieces(color.value, index, partition.length, h)),
   ]
   return {
     title: {
