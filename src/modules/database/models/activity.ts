@@ -57,4 +57,18 @@ export class Activity extends Model<TransformActivity> {
       }).as('program'),
     ).selectAll(this.table).whereRef('activity.programId', '=', 'p.id')
   }
+
+  @get()
+  selectByDimension(value: { start: number; end: number; dimensionId: number }) {
+    const { start, end, dimensionId } = value
+    return this.transaction().execute(trx => trx.dimensionProgram.select({
+      dimensionId,
+    })
+      .then(list => list.map(i => i.programId))
+      .then(idList => trx.activity.select({
+        start,
+        end,
+        programIdList: idList,
+      })))
+  }
 }

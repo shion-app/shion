@@ -74,4 +74,18 @@ export class Note extends Model<TransformNote> {
       }).as('plan'),
     ]).selectAll(this.table).whereRef('note.labelId', '=', 'l.id').whereRef('note.planId', '=', 'p.id')
   }
+
+  @get()
+  selectByDimension(value: { start: number; end: number; dimensionId: number }) {
+    const { start, end, dimensionId } = value
+    return this.transaction().execute(trx => trx.dimensionLabel.select({
+      dimensionId,
+    })
+      .then(list => list.map(i => i.labelId))
+      .then(idList => trx.note.select({
+        start,
+        end,
+        labelIdList: idList,
+      })))
+  }
 }
