@@ -21,19 +21,20 @@ const range = computed(() => generateRange(day.value))
 const title = computed(() => props.data.widget?.title as string)
 
 const list = computed(() => {
-  return noteList.value.length > 0
-    ? splitByDay(noteList.value, range.value).map(i => ({
+  return [
+    ...splitByDay(noteList.value, range.value).map(i => ({
       start: i.start,
       end: i.end,
       name: i.plan.name,
       color: i.plan.color,
-    }))
-    : splitByDay(activityList.value, range.value).map(i => ({
+    })),
+    ...splitByDay(activityList.value, range.value).map(i => ({
       start: i.start,
       end: i.end,
       name: i.program.name,
       color: i.program.color,
-    }))
+    })),
+  ]
 })
 
 const clockInAverage = computed(() => totalTime.value / clockIn.value)
@@ -57,12 +58,17 @@ async function init() {
     ...where,
     start: start.getTime(),
     end: end.getTime(),
-  }
-  if (table == db.note.table)
+  } as any
+  if (table == db.note.table) {
     noteList.value = await db.note.select(condition)
-
-  else if (table == db.activity.table)
+  }
+  else if (table == db.activity.table) {
     activityList.value = await db.activity.select(condition)
+  }
+  else if (table == db.dimension.table) {
+    noteList.value = await db.note.selectByDimension(condition)
+    activityList.value = await db.activity.selectByDimension(condition)
+  }
 
   let date = end
   clockIn.value = totalTime.value = 0

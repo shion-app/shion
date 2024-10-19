@@ -95,12 +95,12 @@ const option = computed(() => {
               <div class="shrink-0">${marker}</div>
               <span style="font-size:14px;color:#666;font-weight:400;margin-left:6px" class="text-ellipsis overflow-hidden">${seriesName}</span>
               <div style="min-width: 40px; flex-grow: 1;"></div>
-              <span style="float:right;font-size:14px;color:#666;font-weight:900">${formatHHmmss(value)}</span>
+              <span>${formatHHmmss(value)}</span>
             </div>`
         }).join('')
       },
       position,
-      extraCssText: `max-width:${vertical.value ? 100 : 60}%;`,
+      extraCssText: `max-width:calc(${vertical.value ? 100 : 60}% + 80px);`,
     },
     grid: {
       top: 36,

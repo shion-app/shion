@@ -6,6 +6,16 @@ import Color from 'color'
 import { addDays, getDay, isBefore, isSameYear } from 'date-fns'
 import { type SelectActivity, type SelectNote, type SelectOverview, db } from '@/modules/database'
 
+interface DailyStatus {
+  total: number
+  list: Array<{
+    total: number
+    name: string
+    color: string
+    key: string
+  }>
+}
+
 const props = defineProps<{
   data: SelectOverview['data']
 }>()
@@ -28,38 +38,53 @@ const { width } = useElementBounding(chartRef)
 
 const range = computed(() => generateRange(day.value))
 
-const list = computed(() => {
-  return noteList.value.length > 0
-    ? splitByDay(noteList.value, range.value).map(i => ({
-      start: i.start,
-      end: i.end,
-      name: i.plan.name,
-      color: i.plan.color,
-    }))
-    : splitByDay(activityList.value, range.value).map(i => ({
-      start: i.start,
-      end: i.end,
-      name: i.program.name,
-      color: i.program.color,
+const dailyStatusMap = computed(() => {
+  const transformNoteList = splitByDay(noteList.value, range.value).map(({ start, end, label }) => ({ start, end, color: label.color, key: `label-${label.id}`, name: label.name }))
+  const transformactivityList = splitByDay(activityList.value, range.value).map(({ start, end, program }) => ({ start, end, color: program.color, key: `program-${program.id}`, name: program.name }))
 
-    }))
+  const map = new Map<string, DailyStatus>()
+
+  for (const { start, end, key, color, name } of [...transformNoteList, ...transformactivityList]) {
+    const date = format(start, 'yyyy-MM-dd')
+    if (!map.get(date)) {
+      map.set(date, {
+        total: 0,
+        list: [],
+      })
+    }
+    const group = map.get(date)!
+    const spend = end - start
+    group.total += spend
+    const target = group.list.find(i => i.key == key)
+    if (target) {
+      target.total += spend
+    }
+    else {
+      group.list.push({
+        total: spend,
+        name,
+        color,
+        key,
+      })
+    }
+  }
+
+  return map
 })
 
 const calendarList = computed(() => {
-  const map = new Map<string, number>()
-  for (const { start, end } of list.value) {
-    const date = format(start, 'yyyy-MM-dd')
-    map.set(date, (map.get(date) || 0) + end - start)
-  }
   const [start, end] = range.value
   for (let time = start; isBefore(time, end); time = addDays(time, 1)) {
     const date = format(time, 'yyyy-MM-dd')
-    if (!map.get(date))
-      map.set(date, 0)
+    if (!dailyStatusMap.value.get(date)) {
+      dailyStatusMap.value.set(date, {
+        total: 0,
+        list: [],
+      })
+    }
   }
-  return [...map.entries()]
+  return [...dailyStatusMap.value.entries()].map(([date, { total }]) => [date, total])
 })
-
 const title = computed(() => props.data.widget?.title as string)
 const color = computed(() => props.data.widget?.color as string)
 
@@ -75,28 +100,25 @@ async function refresh() {
     ...where,
     start: start.getTime(),
     end: end.getTime(),
-  }
-  if (table == db.note.table)
+  } as any
+  if (table == db.note.table) {
     noteList.value = await db.note.select(condition)
-
-  else if (table == db.activity.table)
+  }
+  else if (table == db.activity.table) {
     activityList.value = await db.activity.select(condition)
+  }
+  else if (table == db.dimension.table) {
+    noteList.value = await db.note.selectByDimension(condition)
+    activityList.value = await db.activity.selectByDimension(condition)
+  }
 }
 
 const buildMarker = color => `<span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:${color};" class="shrink-0"></span>`
 
 function generatePieces(value: string, index: number, length: number, hour: number) {
   const color = Color(value)
-  const isDark = color.isDark()
-  let colorStr = ''
-  if (isDark) {
-    const ratio = (length - index) / length
-    colorStr = color.lighten(ratio).toString()
-  }
-  else {
-    const ratio = index / length
-    colorStr = color.darken(ratio).toString()
-  }
+  const ratio = (length - index) / (length + 1)
+  const colorStr = color.lightness(ratio * 100).toString()
   const isLast = index == length - 1
   if (isLast) {
     return {
@@ -111,7 +133,7 @@ function generatePieces(value: string, index: number, length: number, hour: numb
 }
 
 const option = computed<EChartsOption>(() => {
-  let partition = [0.5, 1, 2, 3]
+  let partition = [1, 3, 5, 8]
   const last = partition[partition.length - 1]
   partition = [...partition, last]
   const pieces = [
@@ -165,20 +187,23 @@ const option = computed<EChartsOption>(() => {
         if (value == 0)
           return ''
 
+        const key = format(date, 'yyyy-MM-dd')
+        const timeDetail = dailyStatusMap.value.get(key)?.list.sort((a, b) => b.total - a.total) || []
+        const timeDetailTemplate = timeDetail.map(({
+          name, total, color,
+        }) => `<div style="display: flex; align-items: center;">${buildMarker(color)}<span style="margin-left: 6px;" class="text-ellipsis overflow-hidden">${name}</span><div style="min-width: 40px; flex-grow: 1;"></div><span>${formatHHmmss(total)}</span></div>`).join('')
+
         return `<div style="margin-bottom: 6px;">
                   <span>${dateText}</span>
+                  <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatHHmmss(value)}</span>
                 </div>
                 <div>
-                  <div style="display: flex; align-items: center;">
-                    ${buildMarker(params.color)}
-                    <div style="min-width: 40px; flex-grow: 1;"></div>
-                    <span style="font-size:14px;color:#666;font-weight:900">${formatHHmmss(value)}</span>
-                  </div>
+                  ${timeDetailTemplate}
                 </div>
                 `
       },
       position,
-      extraCssText: 'max-width:60%;',
+      extraCssText: 'max-width:calc(60% + 80px);',
     },
     series: {
       type: 'heatmap',

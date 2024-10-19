@@ -2,7 +2,7 @@
 import type { Layout, LayoutItem } from 'grid-layout-plus'
 
 import { db } from '@/modules/database'
-import type { InsertOverview, SelectLabel, SelectOverview, SelectPlan, SelectProgram, UpdateOverview } from '@/modules/database'
+import type { InsertOverview, SelectDimension, SelectLabel, SelectOverview, SelectPlan, SelectProgram, UpdateOverview } from '@/modules/database'
 import { WidgetType } from '@/modules/database/models/overview'
 import Grid from '@/components/grid/Grid.vue'
 import { type GridList } from '@/hooks/useGrid'
@@ -48,6 +48,7 @@ const { open, close, setModelValue } = useFormModal<
     planList: Array<SelectPlan>
     labelList: Array<SelectLabel>
     programList: Array<SelectProgram>
+    dimensionList: Array<SelectDimension>
   }
 >
 ((model, modal) => {
@@ -73,6 +74,12 @@ const { open, close, setModelValue } = useFormModal<
     categoryItems.push(...modal.programList?.map(i => ({
       title: `${t('widget.singleCategoryBar.program')}/${i.name}`,
       value: `programId/${i.id}`,
+    })))
+  }
+  if (modal.dimensionList?.length) {
+    categoryItems.push(...modal.dimensionList?.map(i => ({
+      title: `${t('widget.singleCategoryBar.dimension')}/${i.name}`,
+      value: `dimensionId/${i.id}`,
     })))
   }
   return {
@@ -167,7 +174,9 @@ const { open, close, setModelValue } = useFormModal<
                   ? modal.labelList
                   : identifier == 'programId'
                     ? modal.programList
-                    : []) || []).map(({ id, name, color }) => ({ id, title: name, color }))
+                    : identifier == 'dimensionId'
+                      ? modal.dimensionList
+                      : []) || []).map(({ id, name, color }) => ({ id, title: name, color }))
           const { title, color } = list.find(i => i.id == Number(id))!
           widget = { title, color }
         }
@@ -184,12 +193,13 @@ const { open, close, setModelValue } = useFormModal<
     },
   }
 }, async () => {
-  const [planList, labelList, programList] = await Promise.all([
+  const [planList, labelList, programList, dimensionList] = await Promise.all([
     db.plan.select(),
     db.label.select(),
     db.program.select(),
+    db.dimension.select(),
   ])
-  return { planList, labelList, programList }
+  return { planList, labelList, programList, dimensionList }
 })
 
 function openBatchRemoveModal() {
@@ -282,7 +292,12 @@ function showUpdateForm(id: number, list: GridList<SelectOverview>) {
 
 function transformCategory(category: NonNullable<OverviewForm['category']>): SelectOverview['data']['query'] {
   const [field, id] = category.split('/')
-  const table = field == 'programId' ? db.activity.table : db.note.table
+  const table
+  = field == 'programId'
+    ? db.activity.table
+    : field == 'dimensionId'
+      ? db.dimension.table
+      : db.note.table
   return {
     table,
     where: {

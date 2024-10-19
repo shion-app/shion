@@ -302,6 +302,7 @@ widget:
     plan: Plan
     label: Label
     program: Program
+    dimension: Dimension
     vertical: Vertical arrangement
   textSummary:
     clockIn: Clock in

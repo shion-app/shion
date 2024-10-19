@@ -302,6 +302,7 @@ widget:
     plan: 计划
     label: 标签
     program: 程序
+    dimension: 维度
     vertical: 垂直排列
   textSummary:
     clockIn: 打卡时长

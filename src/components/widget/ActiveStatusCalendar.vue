@@ -162,7 +162,7 @@ const option = computed<EChartsOption>(() => {
                 `
       },
       position,
-      extraCssText: 'max-width:60%;',
+      extraCssText: 'max-width:calc(60% + 80px);',
     },
     series: {
       type: 'heatmap',
@@ -174,7 +174,7 @@ const option = computed<EChartsOption>(() => {
 
 async function refresh() {
   const [start, end] = range.value.map(date => date.getTime())
-    ;[dailyStatusMap.value, momentList.value] = await Promise.all([getDailyStatusMap(start, end), getObsidianData(start, end)])
+  ;[dailyStatusMap.value, momentList.value] = await Promise.all([getDailyStatusMap(start, end), getObsidianData(start, end)])
 }
 
 async function getDailyStatusMap(start: number, end: number) {

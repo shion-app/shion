@@ -85,3 +85,17 @@ function promiseStatus(p: Promise<unknown>) {
 export async function isPromisePending(p: Promise<unknown>) {
   return (await promiseStatus(p)) == 'pending'
 }
+
+export function filterUniqueByKey<T>(arr: T[], key: keyof T): T[] {
+  const set = new Set()
+  return arr.filter((item) => {
+    const value = item[key]
+    if (set.has(value)) {
+      return false
+    }
+    else {
+      set.add(value)
+      return true
+    }
+  })
+}

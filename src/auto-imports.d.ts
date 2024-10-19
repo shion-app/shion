@@ -47,6 +47,7 @@ declare global {
   const effectScope: typeof import('vue')['effectScope']
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const extractTime: typeof import('./utils/time')['extractTime']
+  const filterUniqueByKey: typeof import('./utils/index')['filterUniqueByKey']
   const generateRange: typeof import('./utils/time')['generateRange']
   const getActivePinia: typeof import('pinia')['getActivePinia']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
@@ -415,6 +416,7 @@ declare module 'vue' {
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly extractTime: UnwrapRef<typeof import('./utils/time')['extractTime']>
+    readonly filterUniqueByKey: UnwrapRef<typeof import('./utils/index')['filterUniqueByKey']>
     readonly generateRange: UnwrapRef<typeof import('./utils/time')['generateRange']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
