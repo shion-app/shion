@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+## [0.13.0] - 2024-10-21
+
+### Added
+
+- Data collection `Dimension`
+- Overview chart adds data category `Dimension`
+- Add new chart `single category heatmap`
+
+### Changed
+
+- Modify overview chart display
+- Add `Dimension` tag to label and monitoring page
+- Optimize timepicker component
+
+### Fixed
+
+- After `direct input` on label page, page is not refreshed
+
 ## [0.12.4] - 2024-09-22
 
 ### Added

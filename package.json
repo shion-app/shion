@@ -1,7 +1,7 @@
 {
   "name": "shion",
   "type": "module",
-  "version": "0.12.4",
+  "version": "0.13.0",
   "private": true,
   "license": "GPL-3.0-only",
   "scripts": {
