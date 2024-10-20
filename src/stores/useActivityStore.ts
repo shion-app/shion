@@ -1,11 +1,13 @@
 import { getProgramByPath, onStatusChanged, resume, suspend } from 'tauri-plugin-shion-watcher-api'
 import { debug } from '@tauri-apps/plugin-log'
+import { format } from 'date-fns'
 
 import type { SelectProgram } from '@/modules/database'
 import { db } from '@/modules/database'
 
-const MIN_TIME_SLICE = 10 * 1000
-const TIMER_INTERVAL = 60 * 1000
+const MIN_TIME_SLICE = calcDuration(10, 'second')
+const RECORD_TIMER_INTERVAL = calcDuration(60, 'second')
+const LOG_TIMER_INTERVAL = calcDuration(65, 'second')
 
 interface Activity {
   path: string
@@ -82,6 +84,13 @@ class Watcher {
     await this.record(list)
     this.pool = []
   }
+
+  log() {
+    debug('------------activity status-------------')
+    for (const { path, active, start, end } of this.pool)
+      debug(`start: ${format(start, 'HH:mm:ss')}, end: ${format(end, 'HH:mm:ss')}, path: ${path}, active: ${active}`)
+    debug('----------------------------------------')
+  }
 }
 
 export const useActivityStore = defineStore('activity', () => {
@@ -94,7 +103,11 @@ export const useActivityStore = defineStore('activity', () => {
 
   const timer = new Timer(() => {
     watcher.record(monitor.whiteList)
-  }, TIMER_INTERVAL)
+  }, RECORD_TIMER_INTERVAL)
+
+  const _logTimer = new Timer(() => {
+    watcher.log()
+  }, LOG_TIMER_INTERVAL)
 
   async function handleSuspend() {
     await suspend()
