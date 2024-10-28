@@ -155,11 +155,11 @@ async function handleSelect() {
 
 async function showFilterDialog() {
   filtering.value = true
-  await checkIsAdmin()
   filterList.value = (await getProgramList()).filter(p => !whiteList.value.find(w => w.path == p.path)).map(p => ({
     ...p,
     checked: false,
   }))
+  await checkIsAdmin()
 }
 
 async function handleLayoutUpdated(items: number[]) {
