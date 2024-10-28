@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [0.13.1] - 2024-10-28
+
+### Added
+
+- Announcement
+- When filtering the `Monitor` page, the administrator's identity is displayed
+- `Help` is added to the `Status Bar`
+
+### Changed
+
+- Update settings
+- Optimize tutorials
+
 ## [0.13.0] - 2024-10-21
 
 ### Added
