@@ -88,6 +88,14 @@
     "shion-sql:allow-commit-transaction",
     "shion-sql:allow-rollback-transaction",
     "shion-sql:allow-execute-transaction",
-    "shion-sql:allow-select-transaction"
+    "shion-sql:allow-select-transaction",
+    {
+      "identifier": "http:default",
+      "allow": [
+        {
+          "url": "https://**"
+        }
+      ]
+    }
   ]
 }
