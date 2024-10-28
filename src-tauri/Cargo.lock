@@ -3186,6 +3186,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "is-root"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9df98242b01855f02bede53e1c2c90411af31b71d744936272cb21ab3a77ee9e"
+dependencies = [
+ "users",
+ "winapi",
+]
+
+[[package]]
 name = "is-wsl"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5723,6 +5733,7 @@ dependencies = [
  "futures-util",
  "gray_matter",
  "grep",
+ "is-root",
  "jsonwebtoken",
  "lazy_static",
  "log",
@@ -7408,6 +7419,16 @@ dependencies = [
  "serde",
  "unic-ucd-ident",
  "url",
+]
+
+[[package]]
+name = "users"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "24cc0f6d6f267b73e5a2cadf007ba8f9bc39c6a6f9666f8cf25ea809a153b032"
+dependencies = [
+ "libc",
+ "log",
 ]
 
 [[package]]

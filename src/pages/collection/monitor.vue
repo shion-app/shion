@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { type Program, getProgramList } from 'tauri-plugin-shion-watcher-api'
 import { UseObjectUrl } from '@vueuse/components'
+import { invoke } from '@tauri-apps/api/core'
 
 import { db } from '@/modules/database'
 import type { InsertProgram } from '@/modules/database'
@@ -44,6 +45,7 @@ const cardList = computed(() => whiteList.value.map(({ id, name, totalTime, colo
 const filtering = ref(false)
 const filterList = ref<Array<Program & { checked: boolean }>>([])
 const dimensionList = ref<Array<SelectProgramDimension>>([])
+const isAdmin = ref(false)
 
 const { open, close, setModelValue } = useFormModal<ProgramForm>(
   () => ({
@@ -153,6 +155,7 @@ async function handleSelect() {
 
 async function showFilterDialog() {
   filtering.value = true
+  await checkIsAdmin()
   filterList.value = (await getProgramList()).filter(p => !whiteList.value.find(w => w.path == p.path)).map(p => ({
     ...p,
     checked: false,
@@ -186,6 +189,10 @@ function navigate(id: number) {
 async function refresh() {
   await monitorStore.refresh()
   dimensionList.value = await db.program.selectDimension()
+}
+
+async function checkIsAdmin() {
+  isAdmin.value = await invoke('is_admin')
 }
 
 onRefresh(refresh)
@@ -233,6 +240,7 @@ refresh()
         <div text-3.5 mb-4 text-gray>
           {{ $t('monitor.tip') }}
         </div>
+        <div>{{ $t('monitor.isAdmin') }}{{ isAdmin ? '✅' : '❌' }}</div>
         <div grid grid-cols-2>
           <v-card
             v-for="program in filterList" :key="program.path" m-2 :color="program.checked ? 'primary' : ''"

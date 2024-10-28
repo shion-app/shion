@@ -153,7 +153,8 @@ overview:
   update: 更新展示组件
 monitor:
   filterProgram: 筛选要监听的程序
-  tip: 以下列表为正在运行的程序，部分程序需要以管理员身份运行此应用才能获取到
+  tip: 以下列表为正在运行的程序。以管理员身份运行的程序，其获取和监听，需要以管理员身份重新运行shion才能正常工作
+  isAdmin: '是否为管理员: '
 program:
   update: 更新程序
   name: 名称

@@ -262,6 +262,11 @@ pub fn run() {
         obsidian::search(pattern, path, created_key, updated_key, start, end)
     }
 
+    #[tauri::command]
+    fn is_admin() -> bool {
+        is_root::is_root()
+    }
+
     tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_fs::init())
@@ -317,7 +322,8 @@ pub fn run() {
             get_active_status_calendar_map,
             read_obsidian,
             get_obsidian_group,
-            search_obsidian
+            search_obsidian,
+            is_admin
         ])
         .setup(|app| {
             let app_handle = app.app_handle();

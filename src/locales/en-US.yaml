@@ -153,7 +153,8 @@ overview:
   update: Update widget
 monitor:
   filterProgram: Filter Program to monitor
-  tip: The following list is the running programs. Some programs need to be run as an administrator to get them
+  tip: The following list shows the running programs. The program running as an administrator needs to be rerun as an administrator in order to function properly for it to obtain and listen
+  isAdmin: 'Is isAdmin: '
 program:
   update: Update program
   name: Name
