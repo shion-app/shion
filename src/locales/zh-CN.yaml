@@ -247,7 +247,7 @@ titleBar:
     problem: 常见问题
   announcement:
     desc: 公告
-    earlyAccess: 抢先体验
+    message: 通知
     xiaohongshu: 小红书
 timeline:
   plan: 计划

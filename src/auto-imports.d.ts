@@ -157,6 +157,7 @@ declare global {
   const useActiveElement: typeof import('@vueuse/core')['useActiveElement']
   const useActivityStore: typeof import('./stores/useActivityStore')['useActivityStore']
   const useAnimate: typeof import('@vueuse/core')['useAnimate']
+  const useAnnouncementStore: typeof import('./stores/useAnnouncementStore')['useAnnouncementStore']
   const useArrayDifference: typeof import('@vueuse/core')['useArrayDifference']
   const useArrayEvery: typeof import('@vueuse/core')['useArrayEvery']
   const useArrayFilter: typeof import('@vueuse/core')['useArrayFilter']
@@ -526,6 +527,7 @@ declare module 'vue' {
     readonly useActiveElement: UnwrapRef<typeof import('@vueuse/core')['useActiveElement']>
     readonly useActivityStore: UnwrapRef<typeof import('./stores/useActivityStore')['useActivityStore']>
     readonly useAnimate: UnwrapRef<typeof import('@vueuse/core')['useAnimate']>
+    readonly useAnnouncementStore: UnwrapRef<typeof import('./stores/useAnnouncementStore')['useAnnouncementStore']>
     readonly useArrayDifference: UnwrapRef<typeof import('@vueuse/core')['useArrayDifference']>
     readonly useArrayEvery: UnwrapRef<typeof import('@vueuse/core')['useArrayEvery']>
     readonly useArrayFilter: UnwrapRef<typeof import('@vueuse/core')['useArrayFilter']>

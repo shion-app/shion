@@ -2,6 +2,7 @@
 import { Store } from '@tauri-apps/plugin-store'
 import i18next from 'i18next'
 import { invoke } from '@tauri-apps/api/core'
+import mergeOptions from 'merge-options'
 
 import { FaviconService } from '@/modules/favicon'
 import { ColorMode } from '@/hooks/useVuetifyTheme'
@@ -26,6 +27,9 @@ interface Config {
   lastExport: number
   serverPort: number
   colorMode: ColorMode
+  announcement: {
+    lastVisited: number
+  }
 }
 
 const PATH = 'config.json'
@@ -61,6 +65,9 @@ export const useConfigStore = defineStore('config', () => {
       lastExport: 0,
       serverPort: 15785,
       colorMode: ColorMode.Light,
+      announcement: {
+        lastVisited: 0,
+      },
     }
     const len = await store.length()
     if (len == 0)
@@ -87,12 +94,9 @@ export const useConfigStore = defineStore('config', () => {
   }
 
   function update(data: Config) {
-    const temp = {}
-    for (const key in data) {
-      if (key == 'version' || !Object.hasOwn(config.value, key))
-        temp[key] = data[key]
-    }
-    Object.assign(config.value, temp)
+    config.value = mergeOptions(data, config.value, {
+      version: data.version,
+    })
   }
 
   async function handleVersionChange() {

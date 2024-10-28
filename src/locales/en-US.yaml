@@ -247,8 +247,8 @@ titleBar:
     problem: General problem
   announcement:
     desc: Announcement
-    earlyAccess: Early access
-    xiaohongshu: 小红书
+    message: Message
+    xiaohongshu: Xiao hong shu
 timeline:
   plan: Plan
   label: Label

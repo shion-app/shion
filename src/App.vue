@@ -8,6 +8,7 @@ useTimerStore()
 useMonitorStore()
 useActivityStore()
 useExportStore()
+useAnnouncementStore()
 
 const { config } = storeToRefs(configStore)
 

@@ -14,15 +14,19 @@ const history = ref(false)
 const about = ref(false)
 const importExport = ref(false)
 const extension = ref(false)
+const announcement = ref(false)
 
 const isMaximized = ref(false)
 
 const dialogStore = useDialogStore()
 const configStore = useConfigStore()
 const changelogStore = useChangelogStore()
+const announcementStore = useAnnouncementStore()
+
 const { dialog } = storeToRefs(dialogStore)
 const { config } = storeToRefs(configStore)
 const { dialog: changelog } = storeToRefs(changelogStore)
+const { hasNew: hasNewAnnouncement, needPopup: needPopupAnnouncement } = storeToRefs(announcementStore)
 
 const currentWindow = getCurrentWindow()
 
@@ -40,11 +44,6 @@ function openDevtools() {
 
 function jumpToDocument() {
   const url = config.value.locale == 'zh-CN' ? 'https://shion.app/zh/guide/general' : 'https://shion.app/guide/general'
-  open(url)
-}
-
-function openEarlyAccess() {
-  const url = config.value.locale == 'zh-CN' ? 'https://shion.app/zh/guide/early-access' : 'https://shion.app/guide/early-access'
   open(url)
 }
 
@@ -70,11 +69,18 @@ function onWindowResized() {
   checkIsMaximized()
 }
 
+function openAnnouncement() {
+  announcement.value = true
+  announcementStore.readFinish()
+}
+
 const onDebounceWindowResized = useDebounceFn(onWindowResized)
 
 currentWindow.onResized(onDebounceWindowResized)
 
 useHotkey('ctrl+shift+i', openDevtools)
+
+whenever(needPopupAnnouncement, openAnnouncement)
 </script>
 
 <template>
@@ -130,15 +136,20 @@ useHotkey('ctrl+shift+i', openDevtools)
         <template #activator="{ props }">
           <v-btn variant="text" v-bind="props">
             {{ $t('titleBar.announcement.desc') }}
+            <v-badge v-if="hasNewAnnouncement" color="red" dot>
+              <div w-4 h-1 />
+            </v-badge>
           </v-btn>
         </template>
         <v-list min-width="150">
           <v-list-item
-            value="titleBar.announcement.earlyAccess" :title="$t('titleBar.announcement.earlyAccess')"
-            @click="openEarlyAccess"
+            value="titleBar.announcement.message" :title="$t('titleBar.announcement.message')"
+            @click="openAnnouncement"
           >
-            <template #append>
-              <div i-mdi:link-variant text-4 />
+            <template v-if="hasNewAnnouncement" #append>
+              <v-badge color="red" dot>
+                <div i-mdi:bell-outline text-4 />
+              </v-badge>
             </template>
           </v-list-item>
           <template v-if="config.locale == 'zh-CN'">
@@ -173,5 +184,6 @@ useHotkey('ctrl+shift+i', openDevtools)
     <import-export-dialog v-model:visible="importExport" />
     <changelog-dialog v-model:visible="changelog" />
     <extension-dialog v-model:visible="extension" />
+    <announcement-dialog v-model:visible="announcement" />
   </div>
 </template>
