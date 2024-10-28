@@ -33,6 +33,7 @@ declare module '@vue/runtime-core' {
     FormModal: typeof import('./components/modal/FormModal.vue')['default']
     Grid: typeof import('./components/grid/Grid.vue')['default']
     GridCard: typeof import('./components/grid/GridCard.vue')['default']
+    HelpDialog: typeof import('./components/dialog/HelpDialog.vue')['default']
     HistoryDialog: typeof import('./components/dialog/HistoryDialog.vue')['default']
     ImportExportDialog: typeof import('./components/dialog/ImportExportDialog.vue')['default']
     Layout: typeof import('./components/layout/Layout.vue')['default']

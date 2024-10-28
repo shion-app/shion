@@ -354,6 +354,14 @@ statusBar:
   update:
     text: New version released
     tooltip: Click to update
+  help:
+    text: Help
+    tooltip:
+      manual: Manual recording
+      automatic: Automatic recording
+      dimension: Dimension organization
+      chart: Chart display
+      timeline: Timeline display
 gridCard:
   move: Move
 sync:
@@ -498,3 +506,22 @@ dimensionMark:
   tab:
     label: Label
     monitor: Monitor
+help:
+  chart:
+    step1: Create a chart, freely adjust the type, position and size, but there is no data yet, go to **the data collection**
+    step2: For a general introduction to charts, go to [link](https://shion.app/guide/display#chart)
+  timeline:
+    step1: The timeline records all the data that occurred in a day in detail. Use the calendar on the right to jump to other dates at any time, or you can **click icon** to operate on the data
+    step2: There are many operations in the bottom bar under the timeline, you can **filter**, **expand**, **search** and other functions
+    step3: For a general introduction to the timeline, go to [link](https://shion.app/guide/display#timeline)
+  manual:
+    step1: You need to create a **plan** first, then create a **label** under the plan, and then you can start **recording**
+    step2: For example, you create a **reading** plan, and a **specific book** is the label, and the record is **an activity**
+    step3: For a general introduction to manual recording, please go to [link](https://shion.app/guide/record#manual)
+  automatic:
+    step1: By adding the specified software, let shion monitor its activities, and its **mouse**, **keyboard**, **audio** activities will be monitored
+    step2: If you think manual addition is too troublesome, click `View`-`Settings`-`Monitor whitelist` to add
+    step3: If you encounter trouble, you can go to [link](https://shion.app/guide/record#automatic)
+  dimension:
+    step1: Through the dimension, you can freely classify the **manual recording** and **automatic recording** data and mark them
+    step2: For example, create a **game** dimension to install several automatic recording software

@@ -354,6 +354,14 @@ statusBar:
   update:
     text: 新版本已发布
     tooltip: 点击更新
+  help:
+    text: 帮助
+    tooltip:
+      manual: 手动记录
+      automatic: 自动记录
+      dimension: 维度组织
+      chart: 图表展示
+      timeline: 时间线展示
 gridCard:
   move: 移动
 sync:
@@ -498,3 +506,22 @@ dimensionMark:
   tab:
     label: 标签
     monitor: 监听
+help:
+  chart:
+    step1: 创建图表，自由调整种类、位置及大小，但现在还没有数据，前往**数据集合**吧
+    step2: 图表的大致介绍可以前往[链接](https://shion.app/zh/guide/display#chart)
+  timeline:
+    step1: 时间线细致地记录了一天发生的所有数据，配合右侧的日历随时跳转到其他日期，也可以**点击图标**对数据进行操作
+    step2: 时间线下的底部栏有着许多操作，你可以进行**筛选**、**展开**、**搜索**等等功能
+    step3: 时间线的大致介绍可以前往[链接](https://shion.app/zh/guide/display#timeline)
+  manual:
+    step1: 你需要先创建一个**计划**，然后在计划之下创建一个**标签**，随后便可以开始进行**记录**
+    step2: 举个例子，你创建了一个**读书**的计划，而一本**具体的书**便是标签，记录则是**一次活动**
+    step3: 手动记录的大致介绍可以前往[链接](https://shion.app/zh/guide/record#manual)
+  automatic:
+    step1: 通过添加指定软件，让shion进行监听其活动，其**鼠标**、**键盘**、**音频**活动都会被监听
+    step2: 如果觉得手动添加过于麻烦，点击`视图`-`设置`-`自动监听白名单`进行添加
+    step3: 如果你遇到了麻烦，可以前往[链接](https://shion.app/zh/guide/record#automatic)
+  dimension:
+    step1: 通过维度，你可以将**手动记录**和**自动记录**的数据自由归类，为其打上标记
+    step2: 比如创建一个**游戏**的维度来装下几个自动记录的软件
