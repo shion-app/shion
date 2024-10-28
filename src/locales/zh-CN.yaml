@@ -390,55 +390,25 @@ tour:
   prevBtnText: 上一步
   step1:
     title: 开始
-    description: 感谢使用shion, 接下来快速介绍一下使用方法。请耐心看完教程, 如果碰到疑问, 请查看帮助🎉
+    description: 感谢使用shion, 接下来快速介绍一下。如果碰到疑问, 请查看顶部栏和状态栏的帮助🎉
   step1-1:
     title: 提示
-    description: 另外需要说明软件当前仍处于开发阶段, 提供反馈信息才能让这款软件更加完善⚠️
+    description: 软件当前仍处于开发阶段, 使用前你需要知道⚠️
   step2:
     title: 导航栏
     description: 这里是导航栏, 无需多言🧭
   step3:
     title: 仔细看清
-    description: 每个页面的操作按钮都藏在了这里👀
-  step4:
-    title: 首页
-    description: 在这里创建图表, 可以直观了解数据, 但现在还不是时候📊
-  step5:
-    title: 时间线
-    description: 配合日历, 筛选类别, 查看每天的记录和活跃度📅
-  step6:
-    title: 数据集合
-    description: 在收集数据前, 先创建对应的集合
-  step7:
-    title: 手动计时
-    description: 创建计划, 它可以是比较宽泛的内容, 比如说"读书"如何?
-  step8:
-    title: 手动计时
-    description: 再创建标签, 这时你的计划变得更加具体。此时具体的书名是个好的选择🔖
-  step9:
-    title: 自动计时
-    description: 只有在这添加过的软件, 才会被记录, 在设置中添加白名单即可自动添加💻
-  step10:
-    title: 第三个维度
-    description: 通过标记标签或是监听的软件, 构建新的集合
-  step11:
-    title: 记录
-    description: 在这里录入数据
-  step12:
-    title: 手动计时
-    description: 选择某个标签, 然后计时开始⏱️
-  step13:
-    title: 日记
-    description: 用文字、图片、视频, 记录下生活的瞬间📷
+    description: 每个页面的操作按钮，都藏在了这里👀
   step14:
     title: 状态栏
     description: 当前页面的快捷操作、状态都在这里👆
   step15:
     title: 顶栏
-    description: 设置、更新、导入浏览器历史记录, 有关应用的信息都在这里⚙️
+    description: 软件的设置，还有一大堆配置都在这，不要漏掉了⚙️
   step16:
     title: 结束
-    description: 所有功能介绍完毕, 现在开始使用吧🥳
+    description: 现在开始使用吧🥳
 history:
   import:
     button: 导入数据
@@ -508,7 +478,7 @@ dimensionMark:
     monitor: 监听
 help:
   chart:
-    step1: 创建图表，自由调整种类、位置及大小，但现在还没有数据，前往**数据集合**吧
+    step1: 创建图表，自由调整种类、位置及大小。还没有数据的话，前往**数据集合**吧
     step2: 图表的大致介绍可以前往[链接](https://shion.app/zh/guide/display#chart)
   timeline:
     step1: 时间线细致地记录了一天发生的所有数据，配合右侧的日历随时跳转到其他日期，也可以**点击图标**对数据进行操作

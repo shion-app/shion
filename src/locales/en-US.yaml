@@ -390,55 +390,25 @@ tour:
   prevBtnText: Previous
   step1:
     title: Start
-    description: Thank you for using shion. Next, let's quickly introduce the usage method. Please read the tutorial patiently. If you encounter any questions, please check the help 🎉
+    description: Thank you for using shion, let me introduce it quickly. If you have any questions, please check the help in the top bar and status bar.🎉
   step1-1:
-    title: Warning
-    description: It should be noted that the software is still under development. Feedback is required to make the software more perfect ⚠️
+    title: Tips
+    description: The software is still in the development stage, you need to know before using it ⚠️
   step2:
     title: Navigation bar
     description: This is the navigation bar, no need to say more 🧭
   step3:
-    title: Take a closer look
-    description: The operation buttons for each page are hidden here 👀
-  step4:
-    title: Home page
-    description: Creating a chart here can provide a visual understanding of the data, but it's not the time yet 📊
-  step5:
-    title: Timeline
-    description: Collaborate with the calendar, filter categories to view daily records and active status 📅
-  step6:
-    title: Collection
-    description: Before collecting data, create the corresponding collection first
-  step7:
-    title: Manual Timing
-    description: How about creating a plan, which can be a relatively broad content, such as "reading"?
-  step8:
-    title: Manual Timing
-    description: Create the label again, and your plan will become more specific. At this point, a specific book title is a good choice 🔖
-  step9:
-    title: Automatic Timing
-    description: Only the software added here will be recorded, and adding a whitelist in the settings will automatically add it 💻
-  step10:
-    title: The third dimension
-    description: Create new collections by selecting label or monitoring software
-  step11:
-    title: Record
-    description: Enter data here
-  step12:
-    title: Manual Timing
-    description: Select a label and start timing ⏱️
-  step13:
-    title: Diary
-    description: Use text, pictures, and videos to record the moments of life 📷
+    title: Look carefully
+    description: The operation buttons of each page are hidden here 👀
   step14:
     title: Status bar
     description: The shortcut operations and status of the current page are all here 👆
   step15:
-    title: Title bar
-    description: Settings, updates, importing browser history, and information about the application are all here ⚙️
+    title: Top bar
+    description: The software settings and a lot of configurations are here, don't miss them ⚙️
   step16:
     title: End
-    description: All the functions have been introduced. Let's start using them now 🥳
+    description: Start using it now🥳
 history:
   import:
     button: Import data
@@ -508,7 +478,7 @@ dimensionMark:
     monitor: Monitor
 help:
   chart:
-    step1: Create a chart, freely adjust the type, position and size, but there is no data yet, go to **the data collection**
+    step1: Create a chart and freely adjust the type, position and size. If you don't have data yet, go to **Data Collection**
     step2: For a general introduction to charts, go to [link](https://shion.app/guide/display#chart)
   timeline:
     step1: The timeline records all the data that occurred in a day in detail. Use the calendar on the right to jump to other dates at any time, or you can **click icon** to operate on the data
