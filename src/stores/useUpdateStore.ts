@@ -95,7 +95,7 @@ export const useUpdateStore = defineStore('update', () => {
     const update = await getUpdate()
     if (update)
       needUpdate.value = true
-  }, calcDuration(6, 'hour'))
+  }, calcDuration(6, 'hour'), true)
 
   return {
     start,
