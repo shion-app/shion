@@ -2,6 +2,7 @@ import { createVuetify } from 'vuetify'
 import { en, zhHans } from 'vuetify/locale'
 import { VTimePicker } from 'vuetify/labs/VTimePicker'
 import { VNumberInput } from 'vuetify/labs/VNumberInput'
+import { VDateInput } from 'vuetify/labs/VDateInput'
 import colors from 'vuetify/util/colors'
 
 import mergeOptions from 'merge-options'
@@ -12,6 +13,7 @@ export const vuetify = createVuetify({
   components: {
     VTimePicker,
     VNumberInput,
+    VDateInput,
   },
   locale: {
     locale: 'en-US',
@@ -63,6 +65,9 @@ export const vuetify = createVuetify({
       variant: 'solo',
     },
     VAutocomplete: {
+      variant: 'solo',
+    },
+    VDateInput: {
       variant: 'solo',
     },
     VSlider: {

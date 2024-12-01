@@ -41,8 +41,13 @@ export class Program extends Model<TransformProgram> {
   }
 
   @get()
-  select(value?: { id?: number }) {
-    const query = this.selectByLooseType(value)
+  select(value?: { id?: number; start?: number; end?: number; orderByTotalTime?: boolean }) {
+    let query = this.selectByLooseType(value)
+    if (value?.start)
+      query = query.where('end', '>', value.start)
+    if (value?.end)
+      query = query.where('start', '<', value.end)
+
     return query
       .select([
         'program.id',
@@ -59,7 +64,7 @@ export class Program extends Model<TransformProgram> {
       ])
       .leftJoin('activity as a', join => join.onRef('a.programId', '=', 'program.id').on('a.deletedAt', '=', 0))
       .groupBy('program.id')
-      .orderBy(['program.sort'])
+      .orderBy(value?.orderByTotalTime ? ['totalTime desc'] : ['program.sort'])
   }
 
   @get()

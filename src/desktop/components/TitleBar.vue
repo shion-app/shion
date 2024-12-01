@@ -15,6 +15,7 @@ const about = ref(false)
 const importExport = ref(false)
 const extension = ref(false)
 const announcement = ref(false)
+const report = ref(false)
 
 const isMaximized = ref(false)
 
@@ -106,6 +107,10 @@ whenever(needPopupAnnouncement, openAnnouncement)
             value="titleBar.view.extension" :title="$t('titleBar.view.extension')"
             @click="extension = true"
           />
+          <v-list-item
+            value="titleBar.view.report" :title="$t('titleBar.view.report')"
+            @click="report = true"
+          />
         </v-list>
       </v-menu>
       <v-menu>
@@ -185,5 +190,6 @@ whenever(needPopupAnnouncement, openAnnouncement)
     <changelog-dialog v-model:visible="changelog" />
     <extension-dialog v-model:visible="extension" />
     <announcement-dialog v-model:visible="announcement" />
+    <report-dialog v-model:visible="report" />
   </div>
 </template>

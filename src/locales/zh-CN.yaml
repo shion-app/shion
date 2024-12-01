@@ -237,6 +237,7 @@ titleBar:
     history: 浏览器历史记录
     importExport: 导入与导出
     extension: 扩展
+    report: 报表
   help:
     desc: 帮助
     about: 关于
@@ -495,3 +496,13 @@ help:
   dimension:
     step1: 通过维度，你可以将**手动记录**和**自动记录**的数据自由归类，为其打上标记
     step2: 比如创建一个**游戏**的维度来装下几个自动记录的软件
+report:
+  select:
+    title: 范围
+    week: 本周
+    month: 本月
+    year: 今年
+    custom: 自由选择
+  range:
+    title: 自定义
+  generate: 生成报表

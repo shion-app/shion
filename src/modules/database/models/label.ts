@@ -37,8 +37,13 @@ export class Label extends Model<TransformLabel> {
   }
 
   @get()
-  select(value?: { id?: number }) {
-    const query = this.selectByLooseType(value)
+  select(value?: { id?: number; start?: number; end?: number; orderByTotalTime?: boolean }) {
+    let query = this.selectByLooseType(value)
+    if (value?.start)
+      query = query.where('end', '>', value.start)
+    if (value?.end)
+      query = query.where('start', '<', value.end)
+
     return query
       .select([
         'label.id',
@@ -53,7 +58,7 @@ export class Label extends Model<TransformLabel> {
       ])
       .leftJoin('note as n', join => join.onRef('n.labelId', '=', 'label.id').on('n.deletedAt', '=', 0))
       .groupBy('label.id')
-      .orderBy(['label.sort'])
+      .orderBy(value?.orderByTotalTime ? ['totalTime desc'] : ['label.sort'])
   }
 
   @get()
