@@ -6,6 +6,11 @@ const isGrid = ref(false)
 const toggleDrag = useToggle(dragged)
 const toggleIsGrid = useToggle(isGrid)
 
+const el = ref()
+
+const { bottom } = useElementBounding(el)
+const { y } = useMouse()
+
 layoutProvide({
   headerHeight: sm.value ? 36 : 48,
   footerHeight: sm.value ? 24 : 54,
@@ -14,11 +19,13 @@ layoutProvide({
   toggleDrag,
   isGrid,
   toggleIsGrid,
+  bottom,
+  mouseY: y,
 })
 </script>
 
 <template>
-  <div h-screen relative>
+  <div ref="el" h-screen relative>
     <slot />
   </div>
 </template>

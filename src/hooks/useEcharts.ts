@@ -1,7 +1,7 @@
 import type { TooltipComponentPositionCallback } from 'echarts'
 
 export function useEcharts() {
-  const { bottom, mouseY } = layoutMainInject()
+  const { bottom, mouseY } = layoutInject()
   const parentEl = useParentElement()
   const { theme } = useVuetifyTheme()
 
