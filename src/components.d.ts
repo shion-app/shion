@@ -54,6 +54,7 @@ declare module '@vue/runtime-core' {
     PageLabel: typeof import('./components/page/PageLabel.vue')['default']
     PagePlan: typeof import('./components/page/PagePlan.vue')['default']
     RecentActivityPie: typeof import('./components/widget/RecentActivityPie.vue')['default']
+    ReportChartDialog: typeof import('./components/dialog/ReportChartDialog.vue')['default']
     ReportDialog: typeof import('./components/dialog/ReportDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

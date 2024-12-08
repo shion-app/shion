@@ -6,6 +6,10 @@ const props = defineProps<{
   visible: boolean
 }>()
 
+const emit = defineEmits<{
+  (e: 'submit', start: number, end: number): void
+}>()
+
 const { visible: visibleVModel } = useVModels(props)
 const { t } = useI18n()
 
@@ -52,6 +56,7 @@ async function submit() {
   loading.value = true
   report.value = await generate(start, end)
   loading.value = false
+  emit('submit', start, end)
 }
 
 function transformRangeToModel(start: Date, end: Date) {
@@ -79,6 +84,12 @@ watchImmediate(selectType, (v) => {
       break
   }
   dateRange.value = transformRangeToModel(...range.value)
+})
+
+watchDeep(dateRange, (v) => {
+  const list = v || []
+  if (list.length > 1)
+    range.value = [list[0], list[list.length - 1]]
 })
 </script>
 

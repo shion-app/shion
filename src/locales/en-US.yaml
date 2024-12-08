@@ -506,3 +506,8 @@ report:
   range:
     title: Custom
   generate: Generate report
+reportChart:
+  save: Save
+  title:
+    program: Program
+    label: Label

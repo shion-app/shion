@@ -16,8 +16,14 @@ const importExport = ref(false)
 const extension = ref(false)
 const announcement = ref(false)
 const report = ref(false)
+const reportChart = ref(false)
 
 const isMaximized = ref(false)
+
+const reportChartData = reactive({
+  start: 0,
+  end: 0,
+})
 
 const dialogStore = useDialogStore()
 const configStore = useConfigStore()
@@ -73,6 +79,12 @@ function onWindowResized() {
 function openAnnouncement() {
   announcement.value = true
   announcementStore.readFinish()
+}
+
+function handleReportSubmit(start: number, end: number) {
+  reportChart.value = true
+  reportChartData.start = start
+  reportChartData.end = end
 }
 
 const onDebounceWindowResized = useDebounceFn(onWindowResized)
@@ -190,6 +202,7 @@ whenever(needPopupAnnouncement, openAnnouncement)
     <changelog-dialog v-model:visible="changelog" />
     <extension-dialog v-model:visible="extension" />
     <announcement-dialog v-model:visible="announcement" />
-    <report-dialog v-model:visible="report" />
+    <report-dialog v-model:visible="report" @submit="handleReportSubmit" />
+    <report-chart-dialog v-model:visible="reportChart" v-bind="reportChartData" />
   </div>
 </template>

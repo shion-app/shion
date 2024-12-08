@@ -506,3 +506,8 @@ report:
   range:
     title: 自定义
   generate: 生成报表
+reportChart:
+  save: 保存
+  title:
+    program: 监听
+    label: 标签
