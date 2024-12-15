@@ -25,6 +25,7 @@
     "autostart:allow-is-enabled",
     "clipboard-manager:allow-write-text",
     "dialog:allow-open",
+    "dialog:allow-save",
     "fs:allow-copy-file",
     "fs:allow-mkdir",
     "fs:allow-write-file",
