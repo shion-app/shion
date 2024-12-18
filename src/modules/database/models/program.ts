@@ -41,12 +41,14 @@ export class Program extends Model<TransformProgram> {
   }
 
   @get()
-  select(value?: { id?: number; start?: number; end?: number; orderByTotalTime?: boolean }) {
+  select(value?: { id?: number; start?: number; end?: number; orderByTotalTime?: boolean; limit?: number }) {
     let query = this.selectByLooseType(value)
     if (value?.start)
       query = query.where('end', '>', value.start)
     if (value?.end)
       query = query.where('start', '<', value.end)
+    if (value?.limit)
+      query = query.limit(value.limit)
 
     return query
       .select([

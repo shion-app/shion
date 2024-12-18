@@ -511,3 +511,6 @@ reportChart:
   title:
     program: 监听
     label: 标签
+    domain: 浏览器访问
+    overview: 总览
+    visit: '{visit}次'

@@ -511,3 +511,6 @@ reportChart:
   title:
     program: Program
     label: Label
+    domain: Browser visit
+    overview: Overview
+    visit: '{visit} visits'

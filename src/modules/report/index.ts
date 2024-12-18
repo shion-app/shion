@@ -59,16 +59,19 @@ export async function generate(start: number, end: number) {
       start,
       end,
       orderByTotalTime: true,
+      limit: 20,
     }),
     db.label.select({
       start,
       end,
       orderByTotalTime: true,
+      limit: 20,
     }),
     db.domain.select({
       start,
       end,
       orderByCount: true,
+      limit: 20,
     }),
     db.activity.select({
       start,

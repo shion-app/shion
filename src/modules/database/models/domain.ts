@@ -6,14 +6,16 @@ export class Domain extends Model<TransformDomain> {
   table = 'domain' as const
 
   @get()
-  select(value?: { id?: number; pattern?: string; start?: number; end?: number; orderByCount?: boolean }) {
+  select(value?: { id?: number; pattern?: string; start?: number; end?: number; orderByCount?: boolean; limit?: number }) {
     let query = this.selectByLooseType(value)
     if (value?.pattern)
       query = query.where('pattern', '=', value.pattern)
     if (value?.start)
-      query = query.where('end', '>', value.start)
+      query = query.where('lastVisited', '>', value.start)
     if (value?.end)
-      query = query.where('start', '<', value.end)
+      query = query.where('lastVisited', '<', value.end)
+    if (value?.limit)
+      query = query.limit(value.limit)
     return query
       .select([
         'domain.id',
