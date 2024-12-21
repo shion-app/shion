@@ -511,6 +511,7 @@ reportChart:
   title:
     program: Program
     label: Label
-    domain: Browser visit
+    domain: Browser
     overview: Overview
     visit: '{visit} visits'
+  tagline: Capturing moments in life🍂

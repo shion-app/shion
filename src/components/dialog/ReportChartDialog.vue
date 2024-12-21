@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import html2canvas from 'html2canvas'
 import { save as saveDialog } from '@tauri-apps/plugin-dialog'
-
 import { writeFile } from '@tauri-apps/plugin-fs'
+
 import type { Report } from '@/modules/report'
 import { generate } from '@/modules/report'
+import qrcode from '@/assets/qrcode.png'
 
 interface Item {
   name: string
   value: number
   color: string
+  image?: string
+  id?: number
 }
 
 const props = defineProps<{
@@ -36,9 +39,9 @@ const report = ref<Report>({
 const loading = ref(false)
 const chart = ref<ComponentPublicInstance>()
 
-const programList = computed(() => report.value.orderProgramList.map(({ name, color, totalTime }) => ({ name, color, value: totalTime })))
-const labelList = computed(() => report.value.orderLabelList.map(({ name, color, totalTime }) => ({ name, color, value: totalTime })))
-const domainList = computed(() => report.value.orderDomainList.map(({ name, color, itemCount }) => ({ name, color, value: itemCount })))
+const programList = computed(() => report.value.orderProgramList.map(({ name, color, totalTime, icon, id }) => ({ name, color, value: totalTime, image: icon, id })))
+const labelList = computed(() => report.value.orderLabelList.map(({ name, color, totalTime, id }) => ({ name, color, value: totalTime, id })))
+const domainList = computed(() => report.value.orderDomainList.map(({ name, color, itemCount, id }) => ({ name, color, value: itemCount, id })))
 const overviewList = computed(() => [...programList.value, ...labelList.value].sort((a, b) => b.value - a.value))
 
 const programBar = computed(() => getBarOption(programList.value, list => t('reportChart.title.program') + getTotalTime(list), formatHHmmss))
@@ -66,7 +69,7 @@ function getTotalCount(list: Array<Item>) {
   return ` (${text})`
 }
 
-function getBarOption(list: Array<Item>, formatTitle: (list: Array<Item>) => string, formatValue: (number) => string) {
+function getBarOption(list: Array<Item>, formatTitle: (list: Array<Item>) => string, formatValue: (value: number) => string) {
   list = [...list]
   while (list.length < 8) {
     list.push({
@@ -78,9 +81,10 @@ function getBarOption(list: Array<Item>, formatTitle: (list: Array<Item>) => str
   // log轴添加最小值，增强对比
   list.push({
     name: '',
-    value: 1,
+    value: IGNORE_VALUE,
     color: '',
   })
+  const hasImage = list.some(i => i.image)
   return {
     title: {
       text: formatTitle(list),
@@ -108,8 +112,44 @@ function getBarOption(list: Array<Item>, formatTitle: (list: Array<Item>) => str
       },
     },
     series: [
+      ...(hasImage
+        ? [
+            {
+              type: 'bar',
+              stack: 'bar',
+              barMaxWidth: 100,
+              data: list.filter(({ id }) => id).map(({ color }) => ({
+              // 展示label图片，稍微偏大一点
+                value: IGNORE_VALUE + 0.0001,
+                itemStyle: {
+                  color,
+                },
+              })),
+              label: {
+                show: true,
+                position: 'outside',
+                formatter: ({ value, dataIndex }) => value <= IGNORE_VALUE ? '' : `{${list[dataIndex].id}|}`,
+                rich: Object.fromEntries(list.filter(({ id }) => id).map(({ id, image: src }) => {
+                  const image = new Image()
+                  image.crossOrigin = 'anonymous'
+                  if (src)
+                    image.src = src
+
+                  return [id, {
+                    height: 16,
+                    width: 16,
+                    backgroundColor: {
+                      image,
+                    },
+                  }]
+                })),
+              },
+            },
+          ]
+        : []),
       {
         type: 'bar',
+        stack: 'bar',
         barMaxWidth: 100,
         data: list.map(({ value, color }) => ({
           value,
@@ -218,8 +258,8 @@ async function save() {
       await writeFile(selected, new Uint8Array(buffer))
     }
     catch (e) {
-      error({
-        text: e as string,
+      return error({
+        text: (e as any).message as string,
       })
     }
     finally {
@@ -229,8 +269,19 @@ async function save() {
   }
 }
 
-whenever(visibleVModel, async () => {
-  report.value = await generate(props.start, props.end)
+watch(visibleVModel, async (v) => {
+  if (v) {
+    report.value = await generate(props.start, props.end)
+  }
+  else {
+    report.value = {
+      orderProgramList: [],
+      orderLabelList: [],
+      orderDomainList: [],
+      successiveNote: {},
+      successiveActivity: {},
+    }
+  }
 })
 </script>
 
@@ -240,10 +291,19 @@ whenever(visibleVModel, async () => {
       <div class="text-[26px] font-bold sticky top-0 bg-white z-1 pt-6 pb-4">
         {{ range }}
       </div>
-      <vue-echarts v-if="programList.length" class="h-[240px]" :option="programBar" autoresize :theme="theme" />
-      <vue-echarts v-if="labelList.length" class="h-[240px]" :option="labelBar" autoresize :theme="theme" />
-      <vue-echarts v-if="domainList.length" class="h-[240px]" :option="domainBar" autoresize :theme="theme" />
-      <vue-echarts v-if="overviewList.length" class="h-[400px]" :option="overviewPipe" autoresize :theme="theme" />
+      <vue-echarts v-if="programList.length" class="h-[280px]" :option="programBar" autoresize :theme="theme" />
+      <vue-echarts v-if="labelList.length" class="h-[280px]" :option="labelBar" autoresize :theme="theme" />
+      <vue-echarts v-if="domainList.length" class="h-[280px]" :option="domainBar" autoresize :theme="theme" />
+      <vue-echarts v-if="overviewList.length" class="h-[440px]" :option="overviewPipe" autoresize :theme="theme" />
+      <div v-if="loading" class="flex space-x-1 pb-6">
+        <div class="flex-1" />
+        <div>
+          <img :src="qrcode" class="w-[96px] h-[96px] ml-auto">
+          <div class="text-sm">
+            {{ $t('reportChart.tagline') }}
+          </div>
+        </div>
+      </div>
     </v-card-text>
     <v-card-actions>
       <v-btn color="primary" :loading="loading" @click="save">
