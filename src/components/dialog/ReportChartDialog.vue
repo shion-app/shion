@@ -28,9 +28,12 @@ const { theme } = useEcharts()
 const { formatHHmmss, formatYYYYmmdd } = useDateFns()
 const { t } = useI18n()
 const { success, error } = useNotify()
+const { xl } = useTailwindBreakpoints()
 
 const loading = ref(false)
 const chart = ref<ComponentPublicInstance>()
+
+const textUtil = caclTextWidth()
 
 const programList = computed(() => props.report.orderProgramList.map(({ name, color, totalTime, icon, id }) => ({ name, color, value: totalTime, image: icon, id })))
 const labelList = computed(() => props.report.orderLabelList.map(({ name, color, totalTime, id }) => ({ name, color, value: totalTime, id })))
@@ -158,6 +161,8 @@ function getBarOption(list: Array<Item>, title: string, formatValue: (value: num
           overflow: 'truncate',
           width: 100,
           distance: -20,
+          fontSize: 14,
+          fontWeight: 'bold',
         },
       },
     ],
@@ -177,6 +182,20 @@ function getBarOption(list: Array<Item>, title: string, formatValue: (value: num
         `
       },
     },
+  }
+}
+
+function caclTextWidth() {
+  const canvas = document.createElement('canvas')
+  const context = canvas.getContext('2d')
+
+  return (text: string) => {
+    if (!context)
+      return 0
+
+    context.font = '14px sans-serif'
+    const metrics = context.measureText(text)
+    return metrics.width
   }
 }
 
@@ -201,14 +220,65 @@ function getPipeOption(list: Array<Item>, title: string) {
         `
       },
     },
+    legend: [
+      {
+        orient: 'vertical',
+        left: 0,
+        top: 30,
+        selectedMode: false,
+        textStyle: {
+          fontSize: 14,
+        },
+        data: list.slice(0, 16).map(({ name }) => name),
+        formatter: (name) => {
+          const item = list.find(i => i.name == name)
+          if (item)
+            return `${name} (${formatHHmmss(item.value)})`
+
+          return name
+        },
+      },
+      {
+        orient: 'vertical',
+        right: 30,
+        top: 30,
+        selectedMode: false,
+        textStyle: {
+          fontSize: 14,
+        },
+        data: list.slice(16, 32).map(({ name }) => name),
+        formatter: (name: string) => {
+          const item = list.find(i => i.name == name)
+          if (item) {
+            const maxWidth = xl.value ? 250 : 180
+            let text = `${name} (${formatHHmmss(item.value)})`
+            let len = name.length
+            while (textUtil(text) > maxWidth) {
+              len -= 1
+              text = `${name.slice(0, len)}... (${formatHHmmss(item.value)})`
+            }
+            return text
+          }
+
+          return name
+        },
+      },
+    ],
     series: [
       {
         type: 'pie',
+        radius: ['20%', '60%'],
+        center: ['50%', '50%'],
+        label: {
+          show: false,
+        },
+
         data: list.map(({ name, color, value }) => ({
           value,
           name,
           itemStyle: {
             color,
+            borderRadius: 6,
           },
         })),
       },
@@ -265,9 +335,14 @@ async function save() {
 
 <template>
   <advanced-dialog v-model:visible="visibleVModel" :title="$t('titleBar.view.report')" class="w-[80%]!">
-    <v-card-text ref="chart" class="sm:max-h-[500px] space-y-4 !pt-0" :class="loading ? '' : 'overflow-y-auto'">
-      <div class="text-[26px] font-bold sticky top-0 bg-white z-1 pt-6 pb-4">
-        {{ range }}
+    <v-card-text ref="chart" class="sm:max-h-[600px] space-y-4 !pt-0" :class="loading ? '' : 'overflow-y-auto'">
+      <div class="sticky top-0 bg-white z-1 pt-4">
+        <div class="text-center font-bold text-[28px]">
+          {{ $t('reportChart.summary') }}
+        </div>
+        <div class="text-right text-[20px] py-4">
+          {{ range }}
+        </div>
       </div>
       <vue-echarts v-if="programList.length" class="h-[280px]" :option="programBar" autoresize :theme="theme" />
       <vue-echarts v-if="labelList.length" class="h-[280px]" :option="labelBar" autoresize :theme="theme" />

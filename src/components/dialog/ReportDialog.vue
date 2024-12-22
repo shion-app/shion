@@ -10,6 +10,7 @@ const props = defineProps<{
 const { visible: visibleVModel } = useVModels(props)
 const { t } = useI18n()
 const configStore = useConfigStore()
+const { xl } = useTailwindBreakpoints()
 
 const { config } = storeToRefs(configStore)
 
@@ -59,7 +60,7 @@ const selectOptions = computed(() => [
 async function submit() {
   const [start, end] = range.value.map(date => date.getTime())
   loading.value = true
-  report.value = await generate(start, end)
+  report.value = await generate(start, end, xl.value ? 30 : 20)
   loading.value = false
   reportChartVisible.value = true
 }

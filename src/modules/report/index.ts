@@ -53,25 +53,25 @@ export interface Report {
 //   }
 // }
 
-export async function generate(start: number, end: number) {
+export async function generate(start: number, end: number, limit: number) {
   const [programList, labelList, domainList, programTotalTime, labelTotalTime, domainTotalCount] = await Promise.all([
     db.program.select({
       start,
       end,
       orderByTotalTime: true,
-      limit: 20,
+      limit,
     }),
     db.label.select({
       start,
       end,
       orderByTotalTime: true,
-      limit: 20,
+      limit,
     }),
     db.domain.select({
       start,
       end,
       orderByCount: true,
-      limit: 20,
+      limit,
     }),
     db.program.select({
       start,

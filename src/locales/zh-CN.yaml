@@ -506,9 +506,10 @@ report:
   range:
     title: 自定义
   generate: 生成报表
-  tip: 单项柱状图上最多显示20项
+  tip: 当数据类别过多时，图表中只展示有限个数
 reportChart:
   save: 保存
+  summary: shion总结报表
   title:
     program: 监听
     label: 标签

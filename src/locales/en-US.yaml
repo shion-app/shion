@@ -506,9 +506,10 @@ report:
   range:
     title: Custom
   generate: Generate report
-  tip: A maximum of 20 items can be displayed on a single bar chart
+  tip: When there are too many data categories, only a limited number are shown in the chart
 reportChart:
   save: Save
+  summary: shion summary report
   title:
     program: Program
     label: Label
