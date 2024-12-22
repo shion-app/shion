@@ -506,6 +506,7 @@ report:
   range:
     title: 自定义
   generate: 生成报表
+  tip: 单项柱状图上最多显示20项
 reportChart:
   save: 保存
   title:

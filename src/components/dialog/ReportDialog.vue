@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { addDays, endOfMonth, endOfWeek, endOfYear, isBefore, isSameDay, startOfMonth, startOfWeek, startOfYear } from 'date-fns'
-import { type Report, generate } from '@/modules/report'
+import type { Report } from '@/modules/report'
+import { generate } from '@/modules/report'
 
 const props = defineProps<{
   visible: boolean
-}>()
-
-const emit = defineEmits<{
-  (e: 'submit', start: number, end: number): void
 }>()
 
 const { visible: visibleVModel } = useVModels(props)
@@ -20,17 +17,22 @@ enum SelectType {
   Custom,
 }
 
-const selectType = ref(SelectType.Week)
-const range = ref<[Date, Date]>([new Date(), new Date()])
-const dateRange = ref<Array<Date> | null>(null)
-const loading = ref(false)
+const reportChartVisible = ref(false)
 const report = ref<Report>({
   orderProgramList: [],
   orderLabelList: [],
   orderDomainList: [],
-  successiveActivity: {},
-  successiveNote: {},
+  // successiveNote: {},
+  // successiveActivity: {},
+  domainTotalCount: 0,
+  labelTotalTime: 0,
+  programTotalTime: 0,
 })
+
+const selectType = ref(SelectType.Week)
+const range = ref<[Date, Date]>([new Date(), new Date()])
+const dateRange = ref<Array<Date> | null>(null)
+const loading = ref(false)
 
 const selectOptions = computed(() => [
   {
@@ -56,7 +58,7 @@ async function submit() {
   loading.value = true
   report.value = await generate(start, end)
   loading.value = false
-  emit('submit', start, end)
+  reportChartVisible.value = true
 }
 
 function transformRangeToModel(start: Date, end: Date) {
@@ -112,6 +114,13 @@ watchDeep(dateRange, (v) => {
             </div>
           </template>
         </v-list-item>
+        <div class="flex text-orange items-centr mt-4 space-x-1 text-sm">
+          <div class="flex-1" />
+          <div class="i-mdi:information text-4 mt-[2px]" />
+          <div class=" ">
+            {{ $t('report.tip') }}
+          </div>
+        </div>
       </v-list>
     </v-card-text>
     <v-card-actions>
@@ -120,4 +129,11 @@ watchDeep(dateRange, (v) => {
       </v-btn>
     </v-card-actions>
   </advanced-dialog>
+  <report-chart-dialog
+    v-model:visible="reportChartVisible" v-bind="{
+      report,
+      start: range[0],
+      end: range[1],
+    }"
+  />
 </template>

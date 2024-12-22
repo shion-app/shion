@@ -506,6 +506,7 @@ report:
   range:
     title: Custom
   generate: Generate report
+  tip: A maximum of 20 items can be displayed on a single bar chart
 reportChart:
   save: Save
   title:

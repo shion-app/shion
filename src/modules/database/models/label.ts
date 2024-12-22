@@ -37,7 +37,7 @@ export class Label extends Model<TransformLabel> {
   }
 
   @get()
-  select(value?: { id?: number; start?: number; end?: number; orderByTotalTime?: boolean; limit?: number }) {
+  select(value?: { id?: number; start?: number; end?: number; orderByTotalTime?: boolean; limit?: number; onlyTotalTime?: boolean }) {
     let query = this.selectByLooseType(value)
     if (value?.start)
       query = query.where('end', '>', value.start)
@@ -45,19 +45,26 @@ export class Label extends Model<TransformLabel> {
       query = query.where('start', '<', value.end)
     if (value?.limit)
       query = query.limit(value.limit)
+    const totalTime = sql<number>`ifnull(sum(n.end - n.start), 0)`.as('totalTime')
 
     return query
-      .select([
-        'label.id',
-        'label.name',
-        'label.color',
-        'label.sort',
-        'label.planId',
-        'label.deletedAt',
-        'label.createdAt',
-        'label.updatedAt',
-        sql<number>`ifnull(sum(n.end - n.start), 0)`.as('totalTime'),
-      ])
+      .select(
+        value?.onlyTotalTime
+          ? [
+              totalTime,
+
+            ]
+          : [
+              'label.id',
+              'label.name',
+              'label.color',
+              'label.sort',
+              'label.planId',
+              'label.deletedAt',
+              'label.createdAt',
+              'label.updatedAt',
+              totalTime,
+            ])
       .leftJoin('note as n', join => join.onRef('n.labelId', '=', 'label.id').on('n.deletedAt', '=', 0))
       .groupBy('label.id')
       .orderBy(value?.orderByTotalTime ? ['totalTime desc'] : ['label.sort'])

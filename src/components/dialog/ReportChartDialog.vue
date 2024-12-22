@@ -4,7 +4,6 @@ import { save as saveDialog } from '@tauri-apps/plugin-dialog'
 import { writeFile } from '@tauri-apps/plugin-fs'
 
 import type { Report } from '@/modules/report'
-import { generate } from '@/modules/report'
 import qrcode from '@/assets/qrcode.png'
 
 interface Item {
@@ -17,8 +16,9 @@ interface Item {
 
 const props = defineProps<{
   visible: boolean
-  start: number
-  end: number
+  start: Date
+  end: Date
+  report: Report
 }>()
 
 const IGNORE_VALUE = 1
@@ -29,27 +29,20 @@ const { formatHHmmss, formatYYYYmmdd } = useDateFns()
 const { t } = useI18n()
 const { success, error } = useNotify()
 
-const report = ref<Report>({
-  orderProgramList: [],
-  orderLabelList: [],
-  orderDomainList: [],
-  successiveNote: {},
-  successiveActivity: {},
-})
 const loading = ref(false)
 const chart = ref<ComponentPublicInstance>()
 
-const programList = computed(() => report.value.orderProgramList.map(({ name, color, totalTime, icon, id }) => ({ name, color, value: totalTime, image: icon, id })))
-const labelList = computed(() => report.value.orderLabelList.map(({ name, color, totalTime, id }) => ({ name, color, value: totalTime, id })))
-const domainList = computed(() => report.value.orderDomainList.map(({ name, color, itemCount, id }) => ({ name, color, value: itemCount, id })))
+const programList = computed(() => props.report.orderProgramList.map(({ name, color, totalTime, icon, id }) => ({ name, color, value: totalTime, image: icon, id })))
+const labelList = computed(() => props.report.orderLabelList.map(({ name, color, totalTime, id }) => ({ name, color, value: totalTime, id })))
+const domainList = computed(() => props.report.orderDomainList.map(({ name, color, itemCount, id }) => ({ name, color, value: itemCount, id })))
 const overviewList = computed(() => [...programList.value, ...labelList.value].sort((a, b) => b.value - a.value))
 
-const programBar = computed(() => getBarOption(programList.value, list => t('reportChart.title.program') + getTotalTime(list), formatHHmmss))
-const labelBar = computed(() => getBarOption(labelList.value, list => t('reportChart.title.label') + getTotalTime(list), formatHHmmss))
-const domainBar = computed(() => getBarOption(domainList.value, list => t('reportChart.title.domain') + getTotalCount(list), visit => t('reportChart.title.visit', {
+const programBar = computed(() => getBarOption(programList.value, t('reportChart.title.program') + formatTotalTime(props.report.programTotalTime), formatHHmmss))
+const labelBar = computed(() => getBarOption(labelList.value, t('reportChart.title.label') + formatTotalTime(props.report.labelTotalTime), formatHHmmss))
+const domainBar = computed(() => getBarOption(domainList.value, t('reportChart.title.domain') + formatTotalCount(props.report.domainTotalCount), visit => t('reportChart.title.visit', {
   visit,
 })))
-const overviewPipe = computed(() => getPipeOption(overviewList.value))
+const overviewPipe = computed(() => getPipeOption(overviewList.value, t('reportChart.title.overview') + formatTotalTime(props.report.programTotalTime + props.report.labelTotalTime)))
 
 const range = computed(() => `${formatYYYYmmdd(props.start, {
   year: true,
@@ -57,19 +50,19 @@ const range = computed(() => `${formatYYYYmmdd(props.start, {
   year: true,
 })}`)
 
-function getTotalTime(list: Array<Item>) {
-  const text = formatHHmmss(list.reduce((acc, cur) => acc += cur.value, 0))
+function formatTotalTime(value: number) {
+  const text = formatHHmmss(value)
   return ` (${text})`
 }
 
-function getTotalCount(list: Array<Item>) {
+function formatTotalCount(value: number) {
   const text = t('reportChart.title.visit', {
-    visit: list.reduce((acc, cur) => acc += cur.value, 0),
+    visit: value,
   })
   return ` (${text})`
 }
 
-function getBarOption(list: Array<Item>, formatTitle: (list: Array<Item>) => string, formatValue: (value: number) => string) {
+function getBarOption(list: Array<Item>, title: string, formatValue: (value: number) => string) {
   list = [...list]
   while (list.length < 8) {
     list.push({
@@ -87,7 +80,7 @@ function getBarOption(list: Array<Item>, formatTitle: (list: Array<Item>) => str
   const hasImage = list.some(i => i.image)
   return {
     title: {
-      text: formatTitle(list),
+      text: title,
     },
     grid: {
       left: 10,
@@ -187,10 +180,10 @@ function getBarOption(list: Array<Item>, formatTitle: (list: Array<Item>) => str
   }
 }
 
-function getPipeOption(list: Array<Item>) {
+function getPipeOption(list: Array<Item>, title: string) {
   return {
     title: {
-      text: t('reportChart.title.overview') + getTotalTime(list),
+      text: title,
     },
     tooltip: {
       show: !loading.value,
@@ -268,21 +261,6 @@ async function save() {
     success({})
   }
 }
-
-watch(visibleVModel, async (v) => {
-  if (v) {
-    report.value = await generate(props.start, props.end)
-  }
-  else {
-    report.value = {
-      orderProgramList: [],
-      orderLabelList: [],
-      orderDomainList: [],
-      successiveNote: {},
-      successiveActivity: {},
-    }
-  }
-})
 </script>
 
 <template>

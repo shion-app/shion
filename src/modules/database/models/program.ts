@@ -41,7 +41,7 @@ export class Program extends Model<TransformProgram> {
   }
 
   @get()
-  select(value?: { id?: number; start?: number; end?: number; orderByTotalTime?: boolean; limit?: number }) {
+  select(value?: { id?: number; start?: number; end?: number; orderByTotalTime?: boolean; limit?: number; onlyTotalTime?: boolean }) {
     let query = this.selectByLooseType(value)
     if (value?.start)
       query = query.where('end', '>', value.start)
@@ -49,21 +49,28 @@ export class Program extends Model<TransformProgram> {
       query = query.where('start', '<', value.end)
     if (value?.limit)
       query = query.limit(value.limit)
+    const totalTime = sql<number>`ifnull(sum(a.end - a.start), 0)`.as('totalTime')
 
     return query
-      .select([
-        'program.id',
-        'program.color',
-        'program.icon',
-        'program.name',
-        'program.path',
-        'program.sort',
-        'program.platform',
-        'program.deletedAt',
-        'program.createdAt',
-        'program.updatedAt',
-        sql<number>`ifnull(sum(a.end - a.start), 0)`.as('totalTime'),
-      ])
+      .select(
+        value?.onlyTotalTime
+          ? [
+              totalTime,
+
+            ]
+          : [
+              'program.id',
+              'program.color',
+              'program.icon',
+              'program.name',
+              'program.path',
+              'program.sort',
+              'program.platform',
+              'program.deletedAt',
+              'program.createdAt',
+              'program.updatedAt',
+              totalTime,
+            ])
       .leftJoin('activity as a', join => join.onRef('a.programId', '=', 'program.id').on('a.deletedAt', '=', 0))
       .groupBy('program.id')
       .orderBy(value?.orderByTotalTime ? ['totalTime desc'] : ['program.sort'])
