@@ -148,7 +148,7 @@ importers:
         version: https://codeload.github.com/shion-app/sql/tar.gz/1329be13245f50d3729f125ff4d7a837e282a673
       tauri-plugin-shion-watcher-api:
         specifier: github:shion-app/watcher
-        version: git+https://git@github.com:shion-app/watcher.git#4647a96db198adfea841f34351a9d5ba388b42a6
+        version: git+https://git@github.com:shion-app/watcher.git#c0741b6fdd4305ba7470da2940cff508114e7faa
       vee-validate:
         specifier: ^4.11.8
         version: 4.11.8(vue@3.4.34(typescript@5.2.2))
@@ -4557,8 +4557,8 @@ packages:
     resolution: {tarball: https://codeload.github.com/shion-app/sql/tar.gz/1329be13245f50d3729f125ff4d7a837e282a673}
     version: 0.0.0
 
-  tauri-plugin-shion-watcher-api@git+https://git@github.com:shion-app/watcher.git#4647a96db198adfea841f34351a9d5ba388b42a6:
-    resolution: {commit: 4647a96db198adfea841f34351a9d5ba388b42a6, repo: git@github.com:shion-app/watcher.git, type: git}
+  tauri-plugin-shion-watcher-api@git+https://git@github.com:shion-app/watcher.git#c0741b6fdd4305ba7470da2940cff508114e7faa:
+    resolution: {commit: c0741b6fdd4305ba7470da2940cff508114e7faa, repo: git@github.com:shion-app/watcher.git, type: git}
     version: 0.0.0
 
   temp-dir@2.0.0:
@@ -10326,9 +10326,9 @@ snapshots:
     dependencies:
       '@tauri-apps/api': 2.0.0-rc.0
 
-  tauri-plugin-shion-watcher-api@git+https://git@github.com:shion-app/watcher.git#4647a96db198adfea841f34351a9d5ba388b42a6:
+  tauri-plugin-shion-watcher-api@git+https://git@github.com:shion-app/watcher.git#c0741b6fdd4305ba7470da2940cff508114e7faa:
     dependencies:
-      '@tauri-apps/api': 2.0.0-rc.0
+      '@tauri-apps/api': 2.0.0-rc.4
       tslib: 2.5.0
 
   temp-dir@2.0.0: {}
