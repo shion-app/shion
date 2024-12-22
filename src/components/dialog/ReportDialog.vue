@@ -9,6 +9,9 @@ const props = defineProps<{
 
 const { visible: visibleVModel } = useVModels(props)
 const { t } = useI18n()
+const configStore = useConfigStore()
+
+const { config } = storeToRefs(configStore)
 
 enum SelectType {
   Week,
@@ -72,12 +75,22 @@ function transformRangeToModel(start: Date, end: Date) {
   return list
 }
 
-watchImmediate(selectType, (v) => {
+function handleDateRangeUpdated(v) {
+  const list = (v as Array<Date> | null) || []
+  if (list.length > 1)
+    range.value = [list[0], list[list.length - 1]]
+}
+
+watchEffect(() => {
   const today = new Date()
-  switch (v) {
-    case SelectType.Week:
-      range.value = [startOfWeek(today), endOfWeek(today)]
+  switch (selectType.value) {
+    case SelectType.Week: {
+      const weekStartsOn = config.value.locale == 'zh-CN' ? 1 : 0
+      range.value = [startOfWeek(today, {
+        weekStartsOn,
+      }), endOfWeek(today, { weekStartsOn })]
       break
+    }
     case SelectType.Month:
       range.value = [startOfMonth(today), endOfMonth(today)]
       break
@@ -87,12 +100,6 @@ watchImmediate(selectType, (v) => {
   }
   dateRange.value = transformRangeToModel(...range.value)
 })
-
-watchDeep(dateRange, (v) => {
-  const list = v || []
-  if (list.length > 1)
-    range.value = [list[0], list[list.length - 1]]
-})
 </script>
 
 <template>
@@ -101,15 +108,15 @@ watchDeep(dateRange, (v) => {
       <v-list lines="two">
         <v-list-item :title="$t('report.select.title')">
           <template #append>
-            <v-select v-model="selectType" :items="selectOptions" hide-details color="primary" class="w-[250px]" />
+            <v-select v-model="selectType" :items="selectOptions" hide-details color="primary" class="w-[280px]" />
           </template>
         </v-list-item>
         <v-list-item :title="$t('report.range.title')" :disabled="selectType != SelectType.Custom">
           <template #append>
-            <div class="w-[250px]">
+            <div class="w-[280px]">
               <v-date-input
-                v-model="dateRange" multiple="range" :prepend-icon="undefined" hide-details
-                color="primary"
+                v-model="dateRange" multiple="range" :prepend-icon="undefined" hide-details color="primary"
+                @update:model-value="handleDateRangeUpdated"
               />
             </div>
           </template>
