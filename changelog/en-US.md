@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+## [0.13.2] - 2024-12-24
+
+### Added
+
+- `View`-`Report`, you can export summary reports
+
+### Changed
+
+- Monitoring will not end events immediately when audio stops
+
+### Fixed
+
+- Fix the problem that monitoring is always closed
+
 ## [0.13.1] - 2024-10-28
 
 ### Added
