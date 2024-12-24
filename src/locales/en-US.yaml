@@ -512,6 +512,7 @@ reportChart:
   summary: shion summary report
   title:
     program: Program
+    plan: Plan
     label: Label
     domain: Browser
     overview: Overview

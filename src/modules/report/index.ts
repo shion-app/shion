@@ -1,11 +1,13 @@
 import { db } from '../database'
-import type { SelectDomain, SelectLabel, SelectProgram } from '../database'
+import type { SelectDomain, SelectLabel, SelectPlan, SelectProgram } from '../database'
 
 export interface Report {
   orderProgramList: Array<SelectProgram>
+  orderPlanList: Array<SelectPlan>
   orderLabelList: Array<SelectLabel>
   orderDomainList: Array<SelectDomain>
   programTotalTime: number
+  planTotalTime: number
   labelTotalTime: number
   domainTotalCount: number
   // successiveActivity: Record<number, Segment>
@@ -54,8 +56,14 @@ export interface Report {
 // }
 
 export async function generate(start: number, end: number, limit: number) {
-  const [programList, labelList, domainList, programTotalTime, labelTotalTime, domainTotalCount] = await Promise.all([
+  const [programList, planList, labelList, domainList, programTotalTime, planTotalTime, labelTotalTime, domainTotalCount] = await Promise.all([
     db.program.select({
+      start,
+      end,
+      orderByTotalTime: true,
+      limit,
+    }),
+    db.plan.select({
       start,
       end,
       orderByTotalTime: true,
@@ -78,6 +86,11 @@ export async function generate(start: number, end: number, limit: number) {
       end,
       onlyTotalTime: true,
     }),
+    db.plan.select({
+      start,
+      end,
+      onlyTotalTime: true,
+    }),
     db.label.select({
       start,
       end,
@@ -95,11 +108,13 @@ export async function generate(start: number, end: number, limit: number) {
 
   const data: Report = {
     orderProgramList: programList,
+    orderPlanList: planList,
     orderLabelList: labelList,
     orderDomainList: domainList,
     // successiveNote: noteGroupMap,
     // successiveActivity: activityGroupMap,
     programTotalTime: programTotalTime.reduce((acc, cur) => acc += cur.totalTime, 0),
+    planTotalTime: planTotalTime.reduce((acc, cur) => acc += cur.totalTime, 0),
     labelTotalTime: labelTotalTime.reduce((acc, cur) => acc += cur.totalTime, 0),
     domainTotalCount: domainTotalCount.reduce((acc, cur) => acc += cur.itemCount, 0),
   }

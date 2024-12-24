@@ -36,11 +36,13 @@ const chart = ref<ComponentPublicInstance>()
 const textUtil = caclTextWidth()
 
 const programList = computed(() => props.report.orderProgramList.map(({ name, color, totalTime, icon, id }) => ({ name, color, value: totalTime, image: icon, id })))
+const planList = computed(() => props.report.orderPlanList.map(({ name, color, totalTime, id }) => ({ name, color, value: totalTime, id })))
 const labelList = computed(() => props.report.orderLabelList.map(({ name, color, totalTime, id }) => ({ name, color, value: totalTime, id })))
 const domainList = computed(() => props.report.orderDomainList.map(({ name, color, itemCount, id }) => ({ name, color, value: itemCount, id })))
 const overviewList = computed(() => [...programList.value, ...labelList.value].sort((a, b) => b.value - a.value))
 
 const programBar = computed(() => getBarOption(programList.value, t('reportChart.title.program') + formatTotalTime(props.report.programTotalTime), formatHHmmss))
+const planBar = computed(() => getBarOption(planList.value, t('reportChart.title.plan') + formatTotalTime(props.report.planTotalTime), formatHHmmss))
 const labelBar = computed(() => getBarOption(labelList.value, t('reportChart.title.label') + formatTotalTime(props.report.labelTotalTime), formatHHmmss))
 const domainBar = computed(() => getBarOption(domainList.value, t('reportChart.title.domain') + formatTotalCount(props.report.domainTotalCount), visit => t('reportChart.title.visit', {
   visit,
@@ -106,6 +108,9 @@ function getBarOption(list: Array<Item>, title: string, formatValue: (value: num
       axisLabel: {
         show: false,
       },
+    },
+    emphasis: {
+      disabled: true,
     },
     series: [
       ...(hasImage
@@ -264,6 +269,9 @@ function getPipeOption(list: Array<Item>, title: string) {
         },
       },
     ],
+    emphasis: {
+      disabled: true,
+    },
     series: [
       {
         type: 'pie',
@@ -345,6 +353,7 @@ async function save() {
         </div>
       </div>
       <vue-echarts v-if="programList.length" class="h-[280px]" :option="programBar" autoresize :theme="theme" />
+      <vue-echarts v-if="planList.length" class="h-[280px]" :option="planBar" autoresize :theme="theme" />
       <vue-echarts v-if="labelList.length" class="h-[280px]" :option="labelBar" autoresize :theme="theme" />
       <vue-echarts v-if="domainList.length" class="h-[280px]" :option="domainBar" autoresize :theme="theme" />
       <vue-echarts v-if="overviewList.length" class="h-[440px]" :option="overviewPipe" autoresize :theme="theme" />

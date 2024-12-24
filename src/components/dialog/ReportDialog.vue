@@ -24,11 +24,13 @@ enum SelectType {
 const reportChartVisible = ref(false)
 const report = ref<Report>({
   orderProgramList: [],
+  orderPlanList: [],
   orderLabelList: [],
   orderDomainList: [],
   // successiveNote: {},
   // successiveActivity: {},
   domainTotalCount: 0,
+  planTotalTime: 0,
   labelTotalTime: 0,
   programTotalTime: 0,
 })

@@ -512,6 +512,7 @@ reportChart:
   summary: shion总结报表
   title:
     program: 监听
+    plan: 计划
     label: 标签
     domain: 浏览器访问
     overview: 总览
