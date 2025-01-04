@@ -23,7 +23,7 @@
 > Document from machine translation🤖
 
 > [!CAUTION]
-> Users who use versions before v0.11.7 need to download the latest version again
+> Not supporting multi device synchronization, only for offline use
 
 <a href="https://shion.app/download" target="_blank">Download</a>
 
@@ -48,4 +48,4 @@ In the future, Shion will explore more 🌈
 + 🏷️Manual recording
 + 🖥️Third-party application integration
 + 🧰Extension（dandanplay, obsidian）
-
++ 🖨️Export summary report
