@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.13.3] - 2025-01-05
+
+### Added
+
+- Ability to hide `Plan` and `Label`
+
+### Changed
+
+- Heatmap color range
+
 ## [0.13.2] - 2024-12-24
 
 ### Added
