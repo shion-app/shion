@@ -133,7 +133,7 @@ function generatePieces(value: string, index: number, length: number, hour: numb
 }
 
 const option = computed<EChartsOption>(() => {
-  let partition = [1, 3, 5, 8]
+  let partition = [0.5, 1, 3, 5, 8]
   const last = partition[partition.length - 1]
   partition = [...partition, last]
   const pieces = [
