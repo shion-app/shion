@@ -30,6 +30,7 @@ const { running: timerRunning } = storeToRefs(timeStore)
 const planList = ref<Array<SelectPlan>>([])
 const dimensionList = ref<Array<SelectLabelDimension>>([])
 const isCreate = ref(true)
+const [listModeVisible, toggleListModeVisible] = useToggle(true)
 
 const labelGroup = computed(() => {
   const map = new Map<number, GridList<SelectLabel>>()
@@ -114,7 +115,7 @@ function handleRemove(id: number) {
 
 async function refresh() {
   [labelList.value, planList.value, dimensionList.value] = await Promise.all([
-    db.label.select().then(wrap),
+    db.label.select({ hidden: !listModeVisible.value }).then(wrap),
     db.plan.select(),
     db.label.selectDimension(),
   ])
@@ -190,13 +191,14 @@ async function handleLayoutUpdated(items: number[], list: GridList<SelectLabel>)
 }
 
 function getCardList(list: GridList<SelectLabel>) {
-  return list.map(({ id, name, totalTime, color, planId, selected }) => ({
+  return list.map(({ id, name, totalTime, color, planId, selected, hidden }) => ({
     id,
     title: name,
     totalTime,
     color,
     planId,
     selected,
+    hidden,
   }))
 }
 
@@ -208,6 +210,30 @@ function navigate(id: number) {
       id,
     },
   })
+}
+
+async function toggleListMode() {
+  toggleListModeVisible()
+  await refresh()
+}
+
+function flip(value: number) {
+  return value === 0 ? 1 : 0
+}
+
+async function handleToggleVisible(label: Pick<SelectLabel, 'id' | 'hidden'>) {
+  await db.label.update(label.id, {
+    hidden: flip(label.hidden),
+  })
+  await refresh()
+  success({})
+}
+
+async function setBatchHidden() {
+  const list = selectedList.value.map(id => ({ id, hidden: listModeVisible.value ? 1 : 0 }))
+  await db.label.batchUpdate(list)
+  await refresh()
+  success({})
 }
 
 onRefresh(refresh)
@@ -236,14 +262,17 @@ refresh()
                   value="timer" :title="$t('label.button.start')" append-icon="mdi-timer-outline"
                   @click="handleStart(componentProps)"
                 />
+                <v-list-item
+                  value="listMode"
+                  :title="Boolean(componentProps.hidden) ? $t('label.button.show') : $t('label.button.hide')"
+                  :append-icon="Boolean(componentProps.hidden) ? 'i-mdi:eye' : 'i-mdi:eye-off'"
+                  @click="handleToggleVisible(componentProps)"
+                />
               </template>
               <template v-if="dimensionList.filter(i => i.labelId == componentProps.id).length > 0" #dimension>
                 <v-chip
                   v-for="item in dimensionList.filter(i => i.labelId == componentProps.id)"
-                  :key="item.dimensionId"
-                  :color="item.color"
-                  size="x-small"
-                  class="mr-1"
+                  :key="item.dimensionId" :color="item.color" size="x-small" class="mr-1"
                 >
                   {{ item.name }}
                 </v-chip>
@@ -262,6 +291,17 @@ refresh()
         append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal"
       />
       <v-list-item value="label.create" :title="$t('label.create')" append-icon="mdi-plus" @click="showCreateForm" />
+      <v-list-item
+        v-if="selectedList.length" value="button.listMode" :title="listModeVisible ? $t('label.button.hide') : $t('label.button.show')"
+        :append-icon="listModeVisible ? 'i-mdi:eye-off' : 'i-mdi:eye'" @click="setBatchHidden"
+      />
     </v-list>
   </more-menu>
+  <status-bar-teleport :xs="false">
+    <status-bar-button
+      :tooltip="listModeVisible ? $t('statusBar.listMode.tooltip.hide') : $t('statusBar.listMode.tooltip.show')"
+      :icon="listModeVisible ? 'i-mdi:eye' : 'i-mdi:eye-off'" :text="$t('statusBar.listMode.text')"
+      @click="toggleListMode"
+    />
+  </status-bar-teleport>
 </template>

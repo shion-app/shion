@@ -70,6 +70,9 @@ plan:
   update: Update plan
   name: Name
   color: Color
+  button:
+    show: Convert to visible
+    hide: Convert to hidden
 label:
   create: Create Label
   update: Update Label
@@ -78,6 +81,8 @@ label:
   color: Color
   button:
     start: Start timing
+    show: Convert to visible
+    hide: Convert to hidden
 box:
   create: Create box
   update: Update box
@@ -363,6 +368,11 @@ statusBar:
       dimension: Dimension organization
       chart: Chart display
       timeline: Timeline display
+  listMode:
+    text: List mode
+    tooltip:
+      show: Show
+      hide: Hide
 gridCard:
   move: Move
 sync:

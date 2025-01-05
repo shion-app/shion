@@ -70,6 +70,9 @@ plan:
   update: 修改计划
   name: 名称
   color: 颜色
+  button:
+    show: 转为显示
+    hide: 转为隐藏
 label:
   create: 创建标签
   update: 修改标签
@@ -78,6 +81,8 @@ label:
   color: 颜色
   button:
     start: 开始计时
+    show: 转为显示
+    hide: 转为隐藏
 box:
   create: 创建匣子
   update: 修改匣子
@@ -363,6 +368,11 @@ statusBar:
       dimension: 维度组织
       chart: 图表展示
       timeline: 时间线展示
+  listMode:
+    text: 列表模式
+    tooltip:
+      show: 显示
+      hide: 隐藏
 gridCard:
   move: 移动
 sync:

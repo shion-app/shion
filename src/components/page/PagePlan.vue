@@ -19,6 +19,7 @@ const list = ref<GridList<SelectPlan>>([])
 const { items, wrap, select, selectedList } = useGrid(list)
 
 const isCreate = ref(true)
+const [listModeVisible, toggleListModeVisible] = useToggle(true)
 
 const { setUpdateId, handleUpdate } = buildUpdateFn()
 
@@ -58,12 +59,13 @@ const { open, close, setModelValue } = useFormModal<PlanForm>(
     },
   }))
 
-const cardList = computed(() => list.value.map(({ id, name, totalTime, color, selected }) => ({
+const cardList = computed(() => list.value.map(({ id, name, totalTime, color, selected, hidden }) => ({
   id,
   title: name,
   totalTime,
   color,
   selected,
+  hidden,
 })))
 
 function openBatchRemoveModal() {
@@ -87,7 +89,7 @@ function handleRemove(id: number) {
 }
 
 async function refresh() {
-  list.value = wrap(await db.plan.select())
+  list.value = wrap(await db.plan.select({ hidden: !listModeVisible.value }))
 }
 
 function showCreateForm() {
@@ -149,6 +151,29 @@ function navigate(id: number) {
   })
 }
 
+async function toggleListMode() {
+  toggleListModeVisible()
+  await refresh()
+}
+
+function flip(value: number) {
+  return value === 0 ? 1 : 0
+}
+
+async function handleToggleVisible(plan: Pick<SelectPlan, 'id' | 'hidden'>) {
+  const hidden = flip(plan.hidden)
+  await db.plan.setHidden([{ id: plan.id, hidden }])
+  await refresh()
+  success({})
+}
+
+async function setBatchHidden() {
+  const list = selectedList.value.map(id => ({ id, hidden: listModeVisible.value ? 1 : 0 }))
+  await db.plan.setHidden(list)
+  await refresh()
+  success({})
+}
+
 onRefresh(refresh)
 
 refresh()
@@ -163,7 +188,16 @@ refresh()
       <time-card
         v-bind="componentProps" @update="showUpdateForm" @remove="handleRemove"
         @update:selected="v => select(componentProps.id, v)" @click="navigate(componentProps.id)"
-      />
+      >
+        <template #menu>
+          <v-list-item
+            value="listMode"
+            :title="Boolean(componentProps.hidden) ? $t('plan.button.show') : $t('plan.button.hide')"
+            :append-icon="Boolean(componentProps.hidden) ? 'i-mdi:eye' : 'i-mdi:eye-off'"
+            @click="handleToggleVisible(componentProps)"
+          />
+        </template>
+      </time-card>
     </template>
   </grid>
   <empty v-else type="plan" :desc="$t('hint.plan')" :width="250" />
@@ -174,6 +208,18 @@ refresh()
         append-icon="mdi-trash-can-outline" base-color="red" @click="openBatchRemoveModal"
       />
       <v-list-item value="plan.create" :title="$t('plan.create')" append-icon="mdi-plus" @click="showCreateForm" />
+      <v-list-item
+        v-if="selectedList.length" value="plan.listMode"
+        :title="listModeVisible ? $t('plan.button.hide') : $t('plan.button.show')"
+        :append-icon="listModeVisible ? 'i-mdi:eye-off' : 'i-mdi:eye'" @click="setBatchHidden"
+      />
     </v-list>
   </more-menu>
+  <status-bar-teleport :xs="false">
+    <status-bar-button
+      :tooltip="listModeVisible ? $t('statusBar.listMode.tooltip.hide') : $t('statusBar.listMode.tooltip.show')"
+      :icon="listModeVisible ? 'i-mdi:eye' : 'i-mdi:eye-off'" :text="$t('statusBar.listMode.text')"
+      @click="toggleListMode"
+    />
+  </status-bar-teleport>
 </template>
