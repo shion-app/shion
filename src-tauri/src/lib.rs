@@ -113,6 +113,12 @@ pub fn run() {
             sql: include_str!("../../prisma/migrations/20241009131830_/migration.sql"),
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 5,
+            description: "add hidden column",
+            sql: include_str!("../../prisma/migrations/20250105032822_/migration.sql"),
+            kind: MigrationKind::Up,
+        },
     ];
 
     #[tauri::command]

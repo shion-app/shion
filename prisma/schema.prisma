@@ -18,6 +18,7 @@ model Plan {
   color      String
   sort       Int     @default(0)
   deleted_at Int     @default(0)
+  hidden     Boolean @default(false)
   created_at Int     @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
   updated_at Int     @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
   labels     Label[]
@@ -33,6 +34,7 @@ model Label {
   color      String
   sort       Int              @default(0)
   plan_id    Int
+  hidden     Boolean          @default(false)
   deleted_at Int              @default(0)
   created_at Int              @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
   updated_at Int              @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
@@ -67,6 +69,7 @@ model Program {
   icon       String
   platform   String
   sort       Int                @default(0)
+  hidden     Boolean            @default(false)
   deleted_at Int                @default(0)
   created_at Int                @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))
   updated_at Int                @default(dbgenerated("(ROUND((julianday('now') - 2440587.5) * 86400000))"))

@@ -18,6 +18,7 @@ pub struct Model {
     #[sea_orm(column_type = "Text")]
     pub platform: String,
     pub sort: i64,
+    pub hidden: bool,
     pub deleted_at: i64,
     pub created_at: i64,
     pub updated_at: i64,

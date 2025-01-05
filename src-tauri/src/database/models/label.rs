@@ -13,6 +13,7 @@ pub struct Model {
     pub color: String,
     pub sort: i64,
     pub plan_id: i64,
+    pub hidden: bool,
     pub deleted_at: i64,
     pub created_at: i64,
     pub updated_at: i64,

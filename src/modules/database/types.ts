@@ -74,6 +74,7 @@ export interface Label {
   color: string
   sort: Generated<number>
   planId: number
+  hidden: Generated<number>
   deletedAt: Generated<number>
   createdAt: Generated<number>
   updatedAt: Generated<number>
@@ -122,6 +123,7 @@ export interface Plan {
   color: string
   sort: Generated<number>
   deletedAt: Generated<number>
+  hidden: Generated<number>
   createdAt: Generated<number>
   updatedAt: Generated<number>
 }
@@ -133,6 +135,7 @@ export interface Program {
   icon: string
   platform: string
   sort: Generated<number>
+  hidden: Generated<number>
   deletedAt: Generated<number>
   createdAt: Generated<number>
   updatedAt: Generated<number>
