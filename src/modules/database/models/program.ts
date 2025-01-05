@@ -41,12 +41,14 @@ export class Program extends Model<TransformProgram> {
   }
 
   @get()
-  select(value?: { id?: number; start?: number; end?: number; orderByTotalTime?: boolean; limit?: number; onlyTotalTime?: boolean }) {
+  select(value?: { id?: number; start?: number; end?: number; orderByTotalTime?: boolean; limit?: number; onlyTotalTime?: boolean; hidden?: boolean }) {
     let query = this.selectByLooseType(value)
     if (value?.start)
       query = query.where('end', '>', value.start)
     if (value?.end)
       query = query.where('start', '<', value.end)
+    if (typeof value?.hidden === 'boolean')
+      query = query.where('hidden', '=', value?.hidden ? 1 : 0)
     if (value?.limit)
       query = query.limit(value.limit)
     const totalTime = sql<number>`ifnull(sum(a.end - a.start), 0)`.as('totalTime')
@@ -65,6 +67,7 @@ export class Program extends Model<TransformProgram> {
               'program.name',
               'program.path',
               'program.sort',
+              'program.hidden',
               'program.platform',
               'program.deletedAt',
               'program.createdAt',

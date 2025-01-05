@@ -46,6 +46,7 @@ export class Remark extends Model<TransformRemark> {
         name: eb.ref('p.name'),
         path: eb.ref('p.path'),
         sort: eb.ref('p.sort'),
+        hidden: eb.ref('p.hidden'),
         deletedAt: eb.ref('p.deletedAt'),
         createdAt: eb.ref('p.createdAt'),
         updatedAt: eb.ref('p.updatedAt'),

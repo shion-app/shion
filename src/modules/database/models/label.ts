@@ -37,12 +37,16 @@ export class Label extends Model<TransformLabel> {
   }
 
   @get()
-  select(value?: { id?: number; start?: number; end?: number; orderByTotalTime?: boolean; limit?: number; onlyTotalTime?: boolean }) {
+  select(value?: { id?: number; start?: number; end?: number; orderByTotalTime?: boolean; limit?: number; onlyTotalTime?: boolean; hidden?: boolean; planId?: number }) {
     let query = this.selectByLooseType(value)
     if (value?.start)
       query = query.where('end', '>', value.start)
     if (value?.end)
       query = query.where('start', '<', value.end)
+    if (typeof value?.hidden === 'boolean')
+      query = query.where('hidden', '=', value.hidden ? 1 : 0)
+    if (value?.planId)
+      query = query.where('label.planId', '=', value.planId)
     if (value?.limit)
       query = query.limit(value.limit)
     const totalTime = sql<number>`ifnull(sum(n.end - n.start), 0)`.as('totalTime')
@@ -59,6 +63,7 @@ export class Label extends Model<TransformLabel> {
               'label.name',
               'label.color',
               'label.sort',
+              'label.hidden',
               'label.planId',
               'label.deletedAt',
               'label.createdAt',
