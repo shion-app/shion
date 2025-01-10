@@ -184,6 +184,20 @@ const colorModeOptions = computed(() => [
                   </v-radio-group>
                 </v-list-item>
                 <v-divider />
+                <v-list-subheader>{{ $t('config.header.timeblock') }}</v-list-subheader>
+                <v-list-item>
+                  <v-list-item-title>
+                    {{ $t('config.timeblockMinMinute') }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    {{ $t('config.desc.timeblockMinMinute') }}
+                  </v-list-item-subtitle>
+                  <v-slider
+                    v-model="config.timeblockMinMinute" px-4 py-2 thumb-label hide-details :min="1" :max="10"
+                    :step="1" @touchmove.stop
+                  />
+                </v-list-item>
+                <v-divider />
                 <v-list-subheader>{{ $t('config.header.monitor') }}</v-list-subheader>
                 <v-list-item>
                   <v-list-item-title>

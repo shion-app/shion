@@ -16,6 +16,7 @@ interface Config {
   launchVisible: boolean
   timelineMinMinute: number
   timelineGroupGapMinute: number
+  timeblockMinMinute: number
   themeColor: string
   tour: boolean
   autoShowChangelogDisable: boolean
@@ -54,6 +55,7 @@ export const useConfigStore = defineStore('config', () => {
       launchVisible: true,
       timelineMinMinute: 0,
       timelineGroupGapMinute: 30,
+      timeblockMinMinute: 1,
       themeColor: '#512DA8',
       tour: true,
       autoShowChangelogDisable: false,

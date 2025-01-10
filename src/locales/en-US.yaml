@@ -1,6 +1,7 @@
 nav:
   overview: Overview
   timeline: Timeline
+  timeblock: Timeblock
   plan: Plan
   timer: Timer
   label: Label
@@ -26,6 +27,7 @@ config:
   serverPort: Port
   timelineMinMinute: Minimum time
   timelineGroupGapMinute: Grouping Intervals
+  timeblockMinMinute: Minimum time
   themeColor: Theme color
   colorMode: Theme Mode
   watcherWhitelist: Monitor whitelist
@@ -38,6 +40,7 @@ config:
     timelineGroupGapMinute: When displaying the timeline, separate segments of the same type that are separated by the current minute
     watcherWhitelist: Programs that are in the following folders and have not been added will be added when running
     faviconService: Select service providers in the timeline for website icon requests
+    timeblockMinMinute: When displaying the timeblock, filter out segments smaller than the current minute
     scheduledExportPath: Click to select the save path
     runAsAdmin: Start the computer as an admin to increase the permissions of the automatic monitoring
     restartService: After changing the port, click to restart the service
@@ -52,6 +55,7 @@ config:
     service: Service
   header:
     timeline: Timeline
+    timeblock: Timeblock
     monitor: Monitor
   export:
     period:
@@ -368,6 +372,7 @@ statusBar:
       dimension: Dimension organization
       chart: Chart display
       timeline: Timeline display
+      timeblock: Timeblock display
   listMode:
     text: List mode
     tooltip:
@@ -462,6 +467,8 @@ watcherWhitelist:
   duplicate: Cannot add repeatedly
 refresh:
   error: Error occurred during refresh
+timeblock:
+  today: Today
 extension:
   tab:
     dandanplay: Dandanplay
@@ -495,6 +502,9 @@ help:
     step1: The timeline records all the data that occurred in a day in detail. Use the calendar on the right to jump to other dates at any time, or you can **click icon** to operate on the data
     step2: There are many operations in the bottom bar under the timeline, you can **filter**, **expand**, **search** and other functions
     step3: For a general introduction to the timeline, go to [link](https://shion.app/guide/display#timeline)
+  timeblock:
+    step1: The time block roughly displays the recent data
+    step2: For a general introduction to the time block, please go to [link](https://shion.app/guide/display#timeblock)
   manual:
     step1: You need to create a **plan** first, then create a **label** under the plan, and then you can start **recording**
     step2: For example, you create a **reading** plan, and a **specific book** is the label, and the record is **an activity**

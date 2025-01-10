@@ -14,6 +14,8 @@ const content = computed(() => {
     return `${t('help.chart.step1')}\n\n${t('help.chart.step2')}`
   else if (props.page == 'timeline')
     return `${t('help.timeline.step1')}\n\n${t('help.timeline.step2')}\n\n${t('help.timeline.step3')}`
+  else if (props.page == 'timeblock')
+    return `${t('help.timeblock.step1')}\n\n${t('help.timeblock.step2')}`
   else if (props.page == 'manual')
     return `${t('help.manual.step1')}\n\n${t('help.manual.step2')}\n\n${t('help.manual.step3')}`
   else if (props.page == 'automatic')

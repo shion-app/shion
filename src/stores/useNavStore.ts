@@ -29,6 +29,13 @@ export const useNavStore = defineStore('nav', () => {
       key: 'timeline',
     },
     {
+      icon: 'i-mdi:timeline-outline',
+      activeIcon: 'i-mdi:timeline',
+      name: t('nav.timeblock'),
+      to: '/timeblock',
+      key: 'timeblock',
+    },
+    {
       icon: 'i-mdi:database-outline',
       activeIcon: 'i-mdi:database',
       to: '/collection',

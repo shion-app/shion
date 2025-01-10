@@ -1,6 +1,7 @@
 nav:
   overview: 总览
   timeline: 时间线
+  timeblock: 时间块
   plan: 计划
   timer: 计时
   label: 标签
@@ -26,6 +27,7 @@ config:
   serverPort: 端口号
   timelineMinMinute: 最小时间
   timelineGroupGapMinute: 分组间隔
+  timeblockMinMinute: 最小时间
   themeColor: 主题色
   colorMode: 主题模式
   watcherWhitelist: 自动监听白名单
@@ -38,6 +40,7 @@ config:
     timelineGroupGapMinute: 时间线显示时，分离同类型相隔当前分钟的片段
     watcherWhitelist: 在下列文件夹中且未添加的程序，运行时自动加入监听
     faviconService: 选择时间线中进行网站图标请求的服务提供者
+    timeblockMinMinute: 时间块显示时，筛选掉小于当前分钟的片段
     scheduledExportPath: 点击选择保存路径
     runAsAdmin: 以管理员身份开机启动，提高自动监听获取窗口的权限
     restartService: 更改端口号后，点击重启服务
@@ -52,6 +55,7 @@ config:
     service: 第三方服务
   header:
     timeline: 时间线
+    timeblock: 时间块
     monitor: 自动监听
   export:
     period:
@@ -368,6 +372,7 @@ statusBar:
       dimension: 维度组织
       chart: 图表展示
       timeline: 时间线展示
+      timeblock: 时间块展示
   listMode:
     text: 列表模式
     tooltip:
@@ -462,6 +467,8 @@ watcherWhitelist:
   duplicate: 不能重复添加
 refresh:
   error: 刷新时发生错误
+timeblock:
+  today: 今天
 extension:
   tab:
     dandanplay: 弹弹play
@@ -495,6 +502,9 @@ help:
     step1: 时间线细致地记录了一天发生的所有数据，配合右侧的日历随时跳转到其他日期，也可以**点击图标**对数据进行操作
     step2: 时间线下的底部栏有着许多操作，你可以进行**筛选**、**展开**、**搜索**等等功能
     step3: 时间线的大致介绍可以前往[链接](https://shion.app/zh/guide/display#timeline)
+  timeblock:
+    step1: 时间块大致展示最近的数据
+    step2: 时间块的大致介绍，可以前往[链接](https://shion.app/zh/guide/display#timeblock)
   manual:
     step1: 你需要先创建一个**计划**，然后在计划之下创建一个**标签**，随后便可以开始进行**记录**
     step2: 举个例子，你创建了一个**读书**的计划，而一本**具体的书**便是标签，记录则是**一次活动**

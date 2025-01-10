@@ -25,6 +25,8 @@ const page = computed(() => {
     return 'chart'
   else if (path == '/timeline')
     return 'timeline'
+  else if (path == '/timeblock')
+    return 'timeblock'
   else if (path == '/collection/plan' || path == '/collection/label' || path == '/timer')
     return 'manual'
   else if (path == '/collection/monitor')
