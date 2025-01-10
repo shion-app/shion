@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.13.4] - 2025-01-10
+
+### Added
+
+- Added `time block`
+
 ## [0.13.3] - 2025-01-05
 
 ### Added
