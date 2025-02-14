@@ -75,7 +75,7 @@ const option = computed(() => {
       axisLabel: {
         formatter: formatHHmmss,
       },
-      splitNumber: 2,
+      minInterval: calcDuration(0.5, 'hour'),
     },
   ]
 
