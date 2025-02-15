@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.13.5] - 2025-02-15
+
+### Added
+
+- Cancel browser synchronization
+
+### Changed
+
+- Minimum time scale of the y-axis of the chart widget
+
 ## [0.13.4] - 2025-01-10
 
 ### Added
