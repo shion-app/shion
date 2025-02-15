@@ -435,6 +435,8 @@ history:
     calculating: 计算中...
     empty: 无导入数据
   tip: 导入过的浏览器将会自动同步数据
+  cancel:
+    button: 取消同步
 search:
   tab:
     history: 浏览器历史

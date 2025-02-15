@@ -81,6 +81,14 @@ export const useHistoryStore = defineStore('history', () => {
     return await pullBrowsers(browsers)
   }
 
+  async function cancel(list: string[]) {
+    for (const browser of state.value.browsers) {
+      if (list.includes(browser.name))
+        browser.last_sync = 0
+    }
+    await setConfig(state.value)
+  }
+
   const timer = new Timer(async () => {
     info('scheduled task(history): in progress...')
     await pullActiveBrowsers()
@@ -103,5 +111,6 @@ export const useHistoryStore = defineStore('history', () => {
     progressText,
     requesting,
     completedCount,
+    cancel,
   }
 })

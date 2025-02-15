@@ -6,6 +6,13 @@ import MicrosoftEdge from '@/assets/browser/Microsoft Edge.svg'
 import Firefox from '@/assets/browser/Firefox.svg'
 import Arc from '@/assets/browser/Arc.svg'
 
+interface Browser {
+  name: string
+  url: string
+  used: boolean
+  selected: boolean
+}
+
 const props = defineProps<{
   visible: boolean
 }>()
@@ -16,18 +23,25 @@ const { success, error, info } = useNotify()
 
 const store = useHistoryStore()
 const { config, progress, progressText, completedCount } = storeToRefs(store)
-const { pull } = store
+const { pull, cancel } = store
 
 const pullDialogVisible = ref(false)
 
-const browsers = computed(() => config.value.browsers.map(({ name, last_sync }) => ({
-  name,
-  url: getBrowserUrl(name),
-  used: last_sync != 0,
-})))
+const browsers = ref<Array<Browser>>([])
+
 const isDisableImport = computed(() => browsers.value.filter(i => !i.used).length == 0)
+const isDisableCancel = computed(() => browsers.value.filter(i => i.selected).length == 0)
 
 const { visible: visibleVModel } = useVModels(props)
+
+watchDeep(() => config.value.browsers, (v) => {
+  browsers.value = v.map(({ name, last_sync }) => ({
+    name,
+    url: getBrowserUrl(name),
+    used: last_sync != 0,
+    selected: false,
+  }))
+})
 
 function getBrowserUrl(name: string) {
   switch (name) {
@@ -84,6 +98,12 @@ async function importBrowserData() {
     },
   })
 }
+
+async function cancelSync() {
+  const list = browsers.value.filter(i => i.selected).map(i => i.name)
+  await cancel(list)
+  success({})
+}
 </script>
 
 <template>
@@ -91,14 +111,27 @@ async function importBrowserData() {
     <v-card-text class="sm:max-h-[400px]" overflow-y-auto>
       <div>{{ $t('history.tip') }}</div>
       <div grid grid-cols-3>
-        <div v-for="{ name, url, used } in browsers" :key="name" p-4 flex flex-col items-center space-y-2>
-          <img :src="url" :alt="name" width="64" height="64" :class="used ? '' : 'grayscale'">
-          <div>{{ name }}</div>
-        </div>
+        <v-hover v-for="browser in browsers" :key="browser.name">
+          <template #default="{ isHovering, props: hoverProps }">
+            <div p-4 flex flex-col items-center space-y-2 relative v-bind="hoverProps">
+              <div
+                :class="[browser.selected || isHovering ? 'opacity-100' : 'opacity-0', browser.used ? '' : 'hidden']" transition-opacity-400 absolute
+                top-0 right-2 uno-card-surface
+              >
+                <v-checkbox v-model="browser.selected" hide-details density="comfortable" @click.stop />
+              </div>
+              <img :src="browser.url" :alt="browser.name" width="64" height="64" :class="browser.used ? '' : 'grayscale'">
+              <div>{{ browser.name }}</div>
+            </div>
+          </template>
+        </v-hover>
       </div>
     </v-card-text>
     <v-card-actions>
       <div flex-1 />
+      <v-btn color="primary" :disabled="isDisableCancel" @click="cancelSync">
+        {{ $t('history.cancel.button') }}
+      </v-btn>
       <v-btn color="primary" :disabled="isDisableImport" @click="importBrowserData">
         {{ $t('history.import.button') }}
       </v-btn>
